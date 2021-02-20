@@ -4,33 +4,39 @@
       app
       v-model="drawerModel"
     >
-      <v-list>
-        <v-list-item class="px-2 py-1">
-          <v-list-item-avatar size="48">
-            <v-img :src="profileImageUrl"></v-img>
-          </v-list-item-avatar>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ profileName }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ profileEmail }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-btn
-              icon
-              title="Sair"
-              aria-label="Sair"
-              @click.stop="signOut"
-            >
-              <v-icon>mdi-logout-variant</v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
-      </v-list>
+      <v-img
+        :src="require('../assets/unsplash_bookshelf.jpg')"
+        gradient="to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)"
+        :aspect-ratio="1520 / 605"
+      >
+        <v-list dark>
+          <v-list-item class="py-1">
+            <v-list-item-avatar size="48">
+              <v-img :src="profileImageUrl"></v-img>
+            </v-list-item-avatar>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ profileName }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ profileEmail }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                icon
+                title="Sair"
+                aria-label="Sair"
+                @click.stop="signOut"
+              >
+                <v-icon>mdi-logout-variant</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-img>
 
       <v-divider/>
 
@@ -96,7 +102,9 @@
 
     <v-main>
       <v-container>
-        <router-view/>
+        <v-fade-transition mode="out-in">
+          <router-view/>
+        </v-fade-transition>
       </v-container>
     </v-main>
 
@@ -158,8 +166,8 @@ export default {
     },
 
     handleItemClick: function (to) {
-      if (this.$router.currentRoute.path !== '/dashboard/' + (to || '')) {
-        this.$router.push('/dashboard/' + (to || ''))
+      if (this.$router.currentRoute.path !== '/dashboard/' + (to || 'home')) {
+        this.$router.push('/dashboard/' + (to || 'home'))
       }
     },
 

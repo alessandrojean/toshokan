@@ -1,10 +1,10 @@
 <template>
-  <v-card class="book-card">
+  <v-card class="book-card" @click="$emit('click')">
     <v-img
       :lazy-src="lazySrc"
       :src="coverUrl"
       class="grey lighten-2 white--text align-end"
-      gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.6)"
+      gradient="to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%"
       :aspect-ratio="2/3"
       @error="handleError"
     >
