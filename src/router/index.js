@@ -9,6 +9,7 @@ import DashboardHome from '@/views/DashboardHome.vue'
 import DashboardCollection from '@/views/DashboardCollection.vue'
 import DashboardList from '@/views/DashboardList.vue'
 import DashboardNewBook from '@/views/DashboardNewBook.vue'
+import DashboardDetails from '@/views/DashboardDetails.vue'
 
 Vue.use(VueRouter)
 
@@ -27,7 +28,7 @@ const routes = [
     children: [
       {
         path: 'home',
-        name: 'Início',
+        name: 'dashboard-home',
         component: DashboardHome,
         meta: {
           title: 'Início'
@@ -42,7 +43,7 @@ const routes = [
         children: [
           {
             path: '',
-            name: 'Coleção',
+            name: 'collection',
             component: DashboardList,
             meta: {
               title: 'Coleção'
@@ -50,10 +51,18 @@ const routes = [
           },
           {
             path: 'new',
-            name: 'Novo',
+            name: 'new-book',
             component: DashboardNewBook,
             meta: {
               title: 'Novo item'
+            }
+          },
+          {
+            path: ':bookId',
+            name: 'book-details',
+            component: DashboardDetails,
+            meta: {
+              title: 'Detalhes'
             }
           }
         ]

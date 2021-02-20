@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-row
-      class="mb-5 align-center"
+      class="mb-3"
+      align="center"
       v-if="!loading"
     >
-      <v-col md="10">
+      <v-col md="9">
         <v-chip-group
           v-model="activeCollection"
           mandatory
@@ -21,7 +22,11 @@
         </v-chip-group>
       </v-col>
 
-      <v-col md="2" class="text-md-right text-center">
+      <v-col md="3" class="d-flex justify-space-between justify-md-end align-center">
+        <p class="text-body-1 mb-0 mr-4">
+          {{ itemsToShow.length }} {{ itemsToShow.length === 1 ? 'item' : 'itens' }}
+        </p>
+
         <v-btn
           color="primary"
           outlined
@@ -41,11 +46,10 @@
         key="table"
         v-model="selected"
         :headers="headers"
-        :items="collection[collections[activeCollection]]"
-        :items-per-page="30"
-        :footer-props="{
-          itemsPerPageOptions: [30]
-        }"
+        :items="itemsToShow"
+        :items-per-page="18"
+        :page.sync="page"
+        hide-default-footer
         show-select
         :loading="loading"
         loading-text="Carregando, por favor aguarde."
@@ -91,25 +95,80 @@
         <template v-slot:item.labelPrice.value="{ item }">
           {{ formatPrice(item.labelPrice) }}
         </template>
+
+        <template v-slot:footer>
+          <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
+            <span class="mr-4 grey--text">
+              Página {{ page }} de {{ numberOfPages }}
+            </span>
+
+            <v-btn
+              icon
+              class="mr-1"
+              @click="formerPage"
+            >
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+
+            <v-btn
+              icon
+              class="ml-1"
+              @click="nextPage"
+            >
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-row>
+        </template>
       </v-data-table>
 
-      <v-row
-        key="grid"
-        dense
+      <v-data-iterator
+        :items="itemsToShow"
+        item-key="id"
+        :items-per-page="18"
+        :page.sync="page"
+        hide-default-footer
         v-if="mode === 'grid' && !loading"
       >
-        <v-col
-          v-for="item in collection[collections[activeCollection]]"
-          :key="item.id"
-          xl="1"
-          md="2"
-          lg="2"
-          sm="4"
-          cols="4"
-        >
-          <book-card :book="item" />
-        </v-col>
-      </v-row>
+        <template v-slot:default="{ items }">
+          <v-row dense>
+            <v-col
+              v-for="item in items"
+              :key="item.id"
+              xl="1"
+              md="2"
+              lg="2"
+              sm="4"
+              cols="4"
+            >
+              <book-card :book="item" @click="handleCardClick" />
+            </v-col>
+          </v-row>
+        </template>
+
+        <template v-slot:footer>
+          <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
+            <span class="mr-4 grey--text">
+              Página {{ page }} de {{ numberOfPages }}
+            </span>
+
+            <v-btn
+              icon
+              class="mr-1"
+              @click="formerPage"
+            >
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+
+            <v-btn
+              icon
+              class="ml-1"
+              @click="nextPage"
+            >
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-row>
+        </template>
+      </v-data-iterator>
     </v-fade-transition>
   </div>
 </template>
@@ -154,6 +213,7 @@ export default {
       }
     ],
     mode: 'grid',
+    page: 1,
     selected: []
   }),
 
@@ -164,9 +224,19 @@ export default {
       },
       set: function (activeCollection) {
         if (typeof activeCollection === 'number' && activeCollection !== this.current) {
-          this.updateCurrent(this.collections[activeCollection])
+          const current = this.collections[activeCollection]
+
+          this.updateCurrent(current)
         }
       }
+    },
+
+    itemsToShow: function () {
+      return this.collection[this.collections[this.activeCollection]]
+    },
+
+    numberOfPages () {
+      return Math.ceil(this.itemsToShow.length / 18)
     },
 
     ...mapState('sheet', ['collection', 'current', 'loading']),
@@ -183,8 +253,15 @@ export default {
       return formatter.format(price.value)
     },
 
+    handleCardClick: function (book) {
+      this.$router.push({
+        name: 'book-details',
+        params: { bookId: book.id }
+      })
+    },
+
     handleNewClick: function () {
-      this.$router.push('/dashboard/collection/new')
+      this.$router.push({ name: 'new-book' })
     },
 
     handleToggleViewClick: function () {
@@ -192,6 +269,18 @@ export default {
       this.appbarIcons[0].icon = this.mode === 'table'
         ? 'mdi-view-list-outline'
         : 'mdi-view-grid-outline'
+    },
+
+    nextPage: function () {
+      if (this.page + 1 <= this.numberOfPages) {
+        this.page += 1
+      }
+    },
+
+    formerPage: function () {
+      if (this.page - 1 >= 1) {
+        this.page -= 1
+      }
     },
 
     ...mapGetters('sheet', ['getCollectionByName']),

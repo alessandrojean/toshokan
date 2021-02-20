@@ -1,5 +1,5 @@
 <template>
-  <v-card class="book-card" @click="$emit('click')">
+  <v-card class="book-card" @click="$emit('click', book)">
     <v-img
       :lazy-src="lazySrc"
       :src="coverUrl"

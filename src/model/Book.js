@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
 
 import { IMPRINT_REPLACEMENTS } from '../services/cbl'
+import { isbn as validateIsbn, issn as validateIssn } from '../util/validators'
 
 export function parseBook (value, index) {
   const format = value[6].split(' × ')
@@ -11,6 +12,7 @@ export function parseBook (value, index) {
     sheetLocation: `Coleção!B${index + 5}`,
     id: value[0],
     code: value[1],
+    codeType: getCodeType(value[1]),
     collection: value[2],
     title: value[3],
     titleParts: splitTitle(value[3]),
@@ -84,6 +86,24 @@ export function formatBook (book) {
 export function splitTitle (title) {
   const titleRegex = /\s+#(\d+)(?::\s+)?/
   return title.split(titleRegex)
+}
+
+export function getCodeType (code) {
+  code = code.replace(/-/g, '')
+
+  if (code.match(/^789/)) {
+    return 'EAN-13'
+  }
+
+  if (validateIsbn(code)) {
+    return 'ISBN-' + code.length
+  }
+
+  if (validateIssn(code)) {
+    return 'ISSN'
+  }
+
+  return code !== 'N/A' ? 'ID' : 'N/A'
 }
 
 export function parseBookFromCbl (cblBook) {
