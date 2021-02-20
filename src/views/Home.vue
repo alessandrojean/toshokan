@@ -47,7 +47,7 @@ export default {
   watch: {
     signedIn: function (newValue) {
       if (newValue) {
-        this.$router.replace('/dashboard')
+        this.$router.replace('/dashboard/home')
       }
     }
   }

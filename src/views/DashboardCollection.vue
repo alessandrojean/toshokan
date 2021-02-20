@@ -1,5 +1,7 @@
 <template>
-  <h1>Coleção</h1>
+  <section class="pa-md-2">
+    <router-view/>
+  </section>
 </template>
 
 <script>
@@ -7,7 +9,3 @@ export default {
   name: 'DashboardCollection'
 }
 </script>
-
-<style>
-
-</style>

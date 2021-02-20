@@ -3,8 +3,18 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
-  name: 'DashboardHome'
+  name: 'DashboardHome',
+
+  methods: {
+    ...mapMutations('appbar', ['updateIcons'])
+  },
+
+  mounted: function () {
+    this.updateIcons([])
+  }
 }
 </script>
 

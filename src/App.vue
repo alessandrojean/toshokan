@@ -21,3 +21,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.loading-wrapper {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+</style>

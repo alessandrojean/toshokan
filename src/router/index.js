@@ -7,6 +7,8 @@ import Home from '@/views/Home.vue'
 
 import DashboardHome from '@/views/DashboardHome.vue'
 import DashboardCollection from '@/views/DashboardCollection.vue'
+import DashboardList from '@/views/DashboardList.vue'
+import DashboardNewBook from '@/views/DashboardNewBook.vue'
 
 Vue.use(VueRouter)
 
@@ -24,11 +26,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
     children: [
       {
-        path: '',
-        name: 'Painel',
+        path: 'home',
+        name: 'Início',
         component: DashboardHome,
         meta: {
-          title: 'Painel'
+          title: 'Início'
         }
       },
       {
@@ -36,7 +38,25 @@ const routes = [
         component: DashboardCollection,
         meta: {
           title: 'Coleção'
-        }
+        },
+        children: [
+          {
+            path: '',
+            name: 'Coleção',
+            component: DashboardList,
+            meta: {
+              title: 'Coleção'
+            }
+          },
+          {
+            path: 'new',
+            name: 'Novo',
+            component: DashboardNewBook,
+            meta: {
+              title: 'Novo item'
+            }
+          }
+        ]
       }
     ]
   }

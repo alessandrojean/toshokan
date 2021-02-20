@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer
       app
-      v-model="drawer"
+      v-model="drawerModel"
     >
       <v-list>
         <v-list-item class="px-2 py-1">
@@ -38,12 +38,13 @@
         <v-list-item-group
           v-model="selectedItem"
           color="primary"
+          mandatory
         >
           <v-list-item
             v-for="(item, i) in drawerItems"
             :key="item.title"
             link
-            @click.stop="$router.push('/dashboard/' + (item.to || ''))"
+            @click.stop="handleItemClick(item.to)"
           >
             <v-list-item-icon>
               <v-icon>
@@ -64,31 +65,62 @@
       color="primary"
       dark
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"/>
+      <v-app-bar-nav-icon
+        v-if="!backButton"
+        @click="updateDrawer(!drawer)"
+      />
 
-      <v-toolbar-title>{{ drawerItems[selectedItem].title }}</v-toolbar-title>
+      <v-btn
+        icon
+        v-if="backButton"
+        @click="handleBackButtonClick"
+      >
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+
+      <v-toolbar-title>{{ $router.currentRoute.meta.title }}</v-toolbar-title>
 
       <v-spacer/>
+
+      <template v-for="icon in icons">
+        <v-btn
+          icon
+          :key="icon.title"
+          :title="icon.title"
+          @click="icon.click"
+        >
+          <v-icon>{{ icon.icon }}</v-icon>
+        </v-btn>
+      </template>
     </v-app-bar>
 
     <v-main>
-      <v-container fluid>
+      <v-container>
         <router-view/>
       </v-container>
     </v-main>
+
+    <v-fade-transition>
+      <div class="loading-wrapper" v-if="loading">
+        <v-progress-circular
+          :size="50"
+          color="primary"
+          indeterminate
+        />
+      </div>
+    </v-fade-transition>
   </v-app>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'Dashboard',
 
   data: () => ({
-    drawer: true,
     drawerItems: [
-      { title: 'Início', icon: 'mdi-home-outline', to: '' },
+      { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
       { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
       { title: 'Estatísticas', icon: 'mdi-chart-box-outline' },
       { title: 'Configurações', icon: 'mdi-cog-outline' },
@@ -98,23 +130,54 @@ export default {
     selectedItem: 0
   }),
 
-  computed: mapState('auth', [
-    'signedIn',
-    'profileName',
-    'profileEmail',
-    'profileImageUrl'
-  ]),
+  computed: {
+    drawerModel: {
+      get: function () {
+        return this.drawer
+      },
+
+      set: function (value) {
+        this.updateDrawer(value)
+      }
+    },
+
+    ...mapState('auth', [
+      'signedIn',
+      'profileName',
+      'profileEmail',
+      'profileImageUrl'
+    ]),
+    ...mapState('sheet', ['loading']),
+    ...mapState('appbar', ['backButton', 'drawer', 'icons'])
+  },
 
   methods: {
-    ...mapActions('auth', ['signOut'])
+    handleBackButtonClick: function () {
+      this.$router.go(-1)
+      this.showDrawer()
+    },
+
+    handleItemClick: function (to) {
+      if (this.$router.currentRoute.path !== '/dashboard/' + (to || '')) {
+        this.$router.push('/dashboard/' + (to || ''))
+      }
+    },
+
+    ...mapActions('auth', ['signOut']),
+    ...mapActions('sheet', ['loadSheetData']),
+    ...mapMutations('appbar', ['updateDrawer', 'showDrawer'])
   },
 
   created: function () {
     const currentPath = this.$router.currentRoute.path
     const currentIndex = this.drawerItems
-      .findIndex(item => currentPath === '/dashboard/' + item.to)
+      .findIndex(item => currentPath.includes('/dashboard/' + item.to))
 
     this.selectedItem = currentIndex !== -1 ? currentIndex : 0
+  },
+
+  mounted: function () {
+    this.loadSheetData()
   },
 
   watch: {
@@ -126,7 +189,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
