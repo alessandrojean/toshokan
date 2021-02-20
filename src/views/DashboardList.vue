@@ -47,12 +47,14 @@
         loading-text="Carregando, por favor aguarde."
         v-if="mode === 'table' && !loading"
       >
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template v-slot:item.coverUrl="{ item }">
           <v-avatar size="36">
             <v-img :src="item.coverUrl"></v-img>
           </v-avatar>
         </template>
 
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template v-slot:item.title="{ item }">
           {{ item.titleParts[0] }}
           <span v-if="item.titleParts[1]" class="text--secondary">
@@ -63,10 +65,12 @@
           </span>
         </template>
 
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template v-slot:item.authors="{ item }">
           {{ item.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
         </template>
 
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template v-slot:item.status="{ item }">
           <v-chip
             :color="item.status === 'Lido' ? 'primary' : null"
@@ -79,6 +83,7 @@
           </v-chip>
         </template>
 
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template v-slot:item.labelPrice.value="{ item }">
           {{ formatPrice(item.labelPrice) }}
         </template>
