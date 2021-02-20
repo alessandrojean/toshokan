@@ -126,6 +126,7 @@
                 <v-combobox
                   v-model="book.imprint"
                   :error-messages="imprintErrors"
+                  :items="imprints"
                   label="Editora"
                   placeholder="ex. NewPOP"
                   required
@@ -280,6 +281,7 @@
                 <v-combobox
                   v-model="book.store"
                   :error-messages="storeErrors"
+                  :items="stores"
                   label="Loja"
                   placeholder="ex. Amazon"
                   required
@@ -394,7 +396,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { required, url } from 'vuelidate/lib/validators'
 
 import { decimalComma, format } from '../util/validators'
@@ -546,7 +548,8 @@ export default {
       return errors
     },
 
-    ...mapGetters('sheet', ['collections'])
+    ...mapGetters('sheet', ['collections']),
+    ...mapState('sheet', ['imprints', 'stores'])
   },
 
   methods: {

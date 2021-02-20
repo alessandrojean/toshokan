@@ -1,5 +1,6 @@
 import groupBy from 'lodash.groupby'
 import sortBy from 'lodash.sortby'
+import uniqBy from 'lodash.uniqby'
 
 import { formatBook, parseBook } from '@/model/Book'
 
@@ -7,7 +8,9 @@ const state = () => ({
   collection: {},
   current: '',
   loading: true,
-  sheetId: undefined
+  sheetId: undefined,
+  imprints: [],
+  stores: []
 })
 
 const getters = {
@@ -61,6 +64,15 @@ const actions = {
           .then(response => {
             const books = (response.result.valueRanges[0].values || [])
               .map(parseBook)
+
+            const imprints = uniqBy(books, 'imprint')
+              .map(b => b.imprint)
+              .sort()
+
+            const stores = uniqBy(books, 'store')
+              .map(b => b.store)
+              .sort()
+
             const collection = sortBy(books, [
               'collection',
               b => b.titleParts[0],
@@ -69,6 +81,8 @@ const actions = {
             ])
 
             commit('updateCollection', groupBy(collection, 'collection'))
+            commit('updateImprints', imprints)
+            commit('updateStores', stores)
             commit('updateLoading', false)
           })
       })
@@ -107,6 +121,12 @@ const mutations = {
   },
   updateSheetId: function (state, sheetId) {
     state.sheetId = sheetId
+  },
+  updateImprints: function (state, imprints) {
+    state.imprints = imprints
+  },
+  updateStores: function (state, stores) {
+    state.stores = stores
   }
 }
 
