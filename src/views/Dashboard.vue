@@ -54,7 +54,7 @@
           >
             <v-list-item-icon>
               <v-icon>
-                {{ i === selectedItem ? item.icon.replace('-outline', '') : item.icon }}
+                {{ currentIcon(i, selectedItem, item.icon) }}
               </v-icon>
             </v-list-item-icon>
 
@@ -74,6 +74,7 @@
       <v-app-bar-nav-icon
         v-if="!backButton"
         @click="updateDrawer(!drawer)"
+        class="d-none d-lg-inline-flex"
       />
 
       <v-btn
@@ -84,7 +85,9 @@
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
 
-      <v-toolbar-title>{{ $router.currentRoute.meta.title }}</v-toolbar-title>
+      <v-toolbar-title class="pl-0 pl-lg-5">
+        {{ $router.currentRoute.meta.title }}
+      </v-toolbar-title>
 
       <v-spacer/>
 
@@ -108,6 +111,30 @@
       </v-container>
     </v-main>
 
+    <v-bottom-navigation
+      app
+      v-model="bottomValue"
+      :input-value="bottomActive"
+      grow
+      mandatory
+      background-color="primary"
+      dark
+      class="d-sm-flex d-lg-none"
+      :class="{ 'v-bottom-navigation--hidden': !bottomActive }"
+    >
+      <v-btn
+        v-for="(item, i) in bottomItems"
+        :key="item.title"
+        @click="handleItemClick(item.to)"
+      >
+        <span>{{ item.title }}</span>
+
+        <v-icon>
+          {{ currentIcon(i, bottomValue, item.icon) }}
+        </v-icon>
+      </v-btn>
+    </v-bottom-navigation>
+
     <v-fade-transition>
       <div class="loading-wrapper" v-if="loading">
         <v-progress-circular
@@ -123,10 +150,19 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 
+import { bottomNavIsShowing } from '../util/appbar'
+
 export default {
   name: 'Dashboard',
 
   data: () => ({
+    bottomItems: [
+      { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
+      { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
+      { title: 'Estatísticas', icon: 'mdi-chart-box-outline' },
+      { title: 'Mais', icon: 'mdi-dots-horizontal' }
+    ],
+    bottomValue: 0,
     drawerItems: [
       { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
       { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
@@ -145,7 +181,7 @@ export default {
       },
 
       set: function (value) {
-        this.updateDrawer(value)
+        this.updateDrawer(value && !bottomNavIsShowing())
       }
     },
 
@@ -155,11 +191,21 @@ export default {
       'profileEmail',
       'profileImageUrl'
     ]),
+
     ...mapState('sheet', ['loading']),
-    ...mapState('appbar', ['backButton', 'drawer', 'icons'])
+    ...mapState('appbar', [
+      'backButton',
+      'bottomActive',
+      'drawer',
+      'icons'
+    ])
   },
 
   methods: {
+    currentIcon: function (i, selected, icon) {
+      return i === selected ? icon.replace('-outline', '') : icon
+    },
+
     handleBackButtonClick: function () {
       this.$router.go(-1)
       this.showDrawer()
@@ -185,6 +231,8 @@ export default {
   },
 
   mounted: function () {
+    this.updateDrawer(!bottomNavIsShowing())
+
     this.loadSheetData()
   },
 
@@ -197,3 +245,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-bottom-navigation.v-bottom-navigation--hidden {
+  transform: translateY(100%) !important;
+}
+</style>

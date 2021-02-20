@@ -1,36 +1,40 @@
 <template>
   <div>
-    <div
-      class="mb-5 d-flex justify-space-between align-center"
+    <v-row
+      class="mb-5 align-center"
       v-if="!loading"
     >
-      <v-chip-group
-        v-model="activeCollection"
-        mandatory
-        active-class="primary--text"
-      >
-        <v-chip
-          v-for="col in collections"
-          :key="col"
-          filter
-          outlined
+      <v-col md="10">
+        <v-chip-group
+          v-model="activeCollection"
+          mandatory
+          active-class="primary--text"
         >
-          {{ col }}
-        </v-chip>
-      </v-chip-group>
+          <v-chip
+            v-for="col in collections"
+            :key="col"
+            filter
+            outlined
+          >
+            {{ col }}
+          </v-chip>
+        </v-chip-group>
+      </v-col>
 
-      <v-btn
-        color="primary"
-        outlined
-        text
-        @click="handleNewClick"
-      >
-        <v-icon left>
-          mdi-book-plus-outline
-        </v-icon>
-        Novo
-      </v-btn>
-    </div>
+      <v-col md="2" class="text-md-right text-center">
+        <v-btn
+          color="primary"
+          outlined
+          text
+          @click="handleNewClick"
+        >
+          <v-icon left>
+            mdi-book-plus-outline
+          </v-icon>
+          Novo
+        </v-btn>
+      </v-col>
+    </v-row>
 
     <v-fade-transition mode="out-in">
       <v-data-table
@@ -101,6 +105,7 @@
           md="2"
           lg="2"
           sm="4"
+          cols="4"
         >
           <book-card :book="item" />
         </v-col>
@@ -191,12 +196,17 @@ export default {
 
     ...mapGetters('sheet', ['getCollectionByName']),
     ...mapMutations('sheet', ['updateCurrent']),
-    ...mapMutations('appbar', ['showDrawer', 'updateIcons'])
+    ...mapMutations('appbar', [
+      'showBottomNav',
+      'showDrawer',
+      'updateIcons'
+    ])
   },
 
   mounted: function () {
     this.updateIcons(this.appbarIcons)
     this.showDrawer()
+    this.showBottomNav()
     this.fabHidden = false
   },
 

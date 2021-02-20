@@ -1,6 +1,8 @@
 <template>
   <section class="pa-md-2">
-    <router-view/>
+    <v-fade-transition mode="out-in">
+      <router-view/>
+    </v-fade-transition>
   </section>
 </template>
 

@@ -44,11 +44,10 @@
                   :search-input.sync="searchQuery"
                   :error-messages="searchError"
                   hide-no-data
-                  hide-details
                   cache-items
                   label="ISBN 13 ou ISBN 10"
                   outlined
-                  class="mt-1 mb-6"
+                  class="mt-1"
                   prepend-inner-icon="mdi-book-search-outline"
                   item-value="code"
                   item-text="code"
@@ -71,7 +70,7 @@
                   text
                   outlined
                   color="primary"
-                  class="mt-4"
+                  class="mt-7"
                   @click="step = 2"
                 >
                   Preencher manualmente
@@ -89,6 +88,7 @@
                   placeholder="ex. 978-85-8362-150-8"
                   required
                   outlined
+                  :readonly="searchQuery && searchQuery.length > 0"
                   class="mt-1"
                   @input="$v.book.code.$touch()"
                   @blur="$v.book.code.$touch()"
@@ -437,7 +437,7 @@ export default {
       { title: 'Euro', code: 'EUR', symbol: '€' },
       { title: 'Iene', code: 'JPY', symbol: '¥' }
     ],
-    searchError: '',
+    searchError: [],
     searchSelection: null,
     searchQuery: null,
     searchResults: [],
@@ -619,15 +619,16 @@ export default {
       searchByIsbn(query)
         .then(results => {
           this.searchResults = results.slice(0, results.length)
-          this.searchError = ''
+          this.searchError = []
         })
         .catch(err => {
-          this.searchError = err.message || err
+          console.log(err.message || err)
+          this.searchError = [err.message || err]
         })
         .finally(() => (this.searching = false))
     },
 
-    ...mapMutations('appbar', ['hideDrawer']),
+    ...mapMutations('appbar', ['hideBottomNav', 'hideDrawer']),
     ...mapMutations('sheet', ['updateLoading']),
     ...mapActions('sheet', ['insertBook'])
   },
@@ -664,7 +665,7 @@ export default {
     step: function (newValue) {
       if (newValue === 1) {
         this.searchSelection = null
-        this.searchError = ''
+        this.searchError = []
 
         this.clearBook()
       } else if (newValue === 3) {
@@ -675,6 +676,7 @@ export default {
 
   mounted: function () {
     this.hideDrawer()
+    this.hideBottomNav()
   }
 }
 </script>

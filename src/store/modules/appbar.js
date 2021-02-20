@@ -1,6 +1,9 @@
+import { bottomNavIsShowing } from '../../util/appbar'
+
 const state = () => ({
   backButton: false,
-  drawer: true,
+  bottomActive: true,
+  drawer: !bottomNavIsShowing(),
   icons: []
 })
 
@@ -18,9 +21,26 @@ const mutations = {
     state.backButton = true
   },
 
+  hideBottomNav: function (state) {
+    state.bottomActive = false
+  },
+
   showDrawer: function (state) {
-    state.drawer = true
     state.backButton = false
+
+    if (bottomNavIsShowing()) {
+      return
+    }
+
+    state.drawer = true
+  },
+
+  showBottomNav: function (state) {
+    state.bottomActive = true
+  },
+
+  updateBottomActive: function (state, bottomActive) {
+    state.bottomActive = bottomActive
   },
 
   updateDrawer: function (state, drawer) {
