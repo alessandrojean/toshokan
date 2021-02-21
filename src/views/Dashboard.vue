@@ -91,19 +91,21 @@
 
       <v-spacer/>
 
-      <template v-for="icon in icons">
-        <v-btn
-          icon
-          :key="icon.title"
-          :title="icon.title"
-          @click="icon.click"
-        >
-          <v-icon>{{ icon.icon }}</v-icon>
-        </v-btn>
-      </template>
+      <v-fade-transition>
+        <template v-for="icon in icons">
+          <v-btn
+            icon
+            :key="icon.title"
+            :title="icon.title"
+            @click="icon.click"
+          >
+            <v-icon>{{ icon.icon }}</v-icon>
+          </v-btn>
+        </template>
+      </v-fade-transition>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="grey lighten-5">
       <v-container>
         <v-fade-transition mode="out-in">
           <router-view/>
@@ -159,14 +161,14 @@ export default {
     bottomItems: [
       { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
       { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
-      { title: 'Estatísticas', icon: 'mdi-chart-box-outline' },
+      { title: 'Estatísticas', icon: 'mdi-chart-box-outline', to: 'stats' },
       { title: 'Mais', icon: 'mdi-dots-horizontal' }
     ],
     bottomValue: 0,
     drawerItems: [
       { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
       { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
-      { title: 'Estatísticas', icon: 'mdi-chart-box-outline' },
+      { title: 'Estatísticas', icon: 'mdi-chart-box-outline', to: 'stats' },
       { title: 'Configurações', icon: 'mdi-cog-outline' },
       { title: 'Sobre', icon: 'mdi-information-outline' }
     ],

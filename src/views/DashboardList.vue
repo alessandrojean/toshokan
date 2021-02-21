@@ -42,84 +42,88 @@
     </v-row>
 
     <v-fade-transition mode="out-in">
-      <v-data-table
-        key="table"
-        v-model="selected"
-        :headers="headers"
-        :items="itemsToShow"
-        :items-per-page="18"
-        :page.sync="page"
-        hide-default-footer
-        show-select
-        :loading="loading"
-        loading-text="Carregando, por favor aguarde."
-        v-if="mode === 'table' && !loading"
-      >
-        <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.coverUrl="{ item }">
-          <v-avatar size="36">
-            <v-img :src="item.coverUrl"></v-img>
-          </v-avatar>
-        </template>
-
-        <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.title="{ item }">
-          {{ item.titleParts[0] }}
-          <span v-if="item.titleParts[1]" class="text--secondary">
-            #{{ item.titleParts[1] }}
-          </span>
-          <span v-if="item.titleParts[2]" class="text--secondary">
-            - {{ item.titleParts[2] }}
-          </span>
-        </template>
-
-        <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.authors="{ item }">
-          {{ item.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
-        </template>
-
-        <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.status="{ item }">
-          <v-chip
-            :color="item.status === 'Lido' ? 'primary' : null"
-            :text-color="item.status === 'Lido' ? 'white' : 'black'"
+      <div v-if="mode === 'table' && !loading">
+        <v-sheet
+          elevation="2"
+          rounded
+        >
+          <v-data-table
+            key="table"
+            v-model="selected"
+            :headers="headers"
+            :items="itemsToShow"
+            :items-per-page="18"
+            :page.sync="page"
+            hide-default-footer
+            show-select
+            :loading="loading"
+            loading-text="Carregando, por favor aguarde."
           >
-            <v-avatar left v-if="item.status === 'Lido'">
-              <v-icon>mdi-book-check-outline</v-icon>
-            </v-avatar>
-            {{ item.status }}
-          </v-chip>
-        </template>
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.coverUrl="{ item }">
+              <v-avatar size="36" class="grey lighten-3">
+                <v-img :src="item.coverUrl"></v-img>
+              </v-avatar>
+            </template>
 
-        <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template v-slot:item.labelPrice.value="{ item }">
-          {{ formatPrice(item.labelPrice) }}
-        </template>
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.title="{ item }">
+              {{ item.titleParts[0] }}
+              <span v-if="item.titleParts[1]" class="text--secondary">
+                #{{ item.titleParts[1] }}
+              </span>
+              <span v-if="item.titleParts[2]" class="text--secondary">
+                - {{ item.titleParts[2] }}
+              </span>
+            </template>
 
-        <template v-slot:footer>
-          <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
-            <span class="mr-4 grey--text">
-              Página {{ page }} de {{ numberOfPages }}
-            </span>
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.authors="{ item }">
+              {{ item.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
+            </template>
 
-            <v-btn
-              icon
-              class="mr-1"
-              @click="formerPage"
-            >
-              <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.status="{ item }">
+              <v-chip
+                :color="item.status === 'Lido' ? 'primary' : null"
+                :text-color="item.status === 'Lido' ? 'white' : 'black'"
+              >
+                <v-avatar left v-if="item.status === 'Lido'">
+                  <v-icon>mdi-book-check-outline</v-icon>
+                </v-avatar>
+                {{ item.status }}
+              </v-chip>
+            </template>
 
-            <v-btn
-              icon
-              class="ml-1"
-              @click="nextPage"
-            >
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
-          </v-row>
-        </template>
-      </v-data-table>
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.labelPrice.value="{ item }">
+              {{ formatPrice(item.labelPrice) }}
+            </template>
+          </v-data-table>
+        </v-sheet>
+
+        <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
+          <span class="mr-4 grey--text">
+            Página {{ page }} de {{ numberOfPages }}
+          </span>
+
+          <v-btn
+            icon
+            class="mr-1"
+            @click="formerPage"
+          >
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+
+          <v-btn
+            icon
+            class="ml-1"
+            @click="nextPage"
+          >
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-row>
+      </div>
 
       <v-data-iterator
         :items="itemsToShow"
@@ -227,6 +231,7 @@ export default {
           const current = this.collections[activeCollection]
 
           this.updateCurrent(current)
+          this.page = 1
         }
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="mt-2">
     <v-col md="8" offset-md="2">
       <v-stepper v-model="step" alt-labels>
         <v-stepper-header>
@@ -70,7 +70,7 @@
                   text
                   outlined
                   color="primary"
-                  class="mt-7"
+                  class="mt-7 mb-6"
                   @click="step = 2"
                 >
                   Preencher manualmente
@@ -321,7 +321,7 @@
               </v-col>
             </v-row>
 
-            <div class="mt-4 d-flex justify-space-between">
+            <div class="mt-4 mb-4 d-flex justify-space-between">
               <v-btn
                 text
                 color="primary"
@@ -370,7 +370,7 @@
               </v-col>
             </v-row>
 
-            <div class="mt-4 d-flex justify-space-between">
+            <div class="mt-4 mb-4 d-flex justify-space-between">
               <v-btn
                 text
                 color="primary"
@@ -631,7 +631,7 @@ export default {
         .finally(() => (this.searching = false))
     },
 
-    ...mapMutations('appbar', ['hideBottomNav', 'hideDrawer']),
+    ...mapMutations('appbar', ['hideBottomNav', 'hideDrawer', 'updateIcons']),
     ...mapMutations('sheet', ['updateLoading']),
     ...mapActions('sheet', ['insertBook'])
   },
@@ -680,13 +680,14 @@ export default {
   mounted: function () {
     this.hideDrawer()
     this.hideBottomNav()
+    this.updateIcons([])
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.v-stepper,
-.v-stepper__header {
-  box-shadow: none;
-}
+// .v-stepper,
+// .v-stepper__header {
+//   box-shadow: none;
+// }
 </style>

@@ -10,6 +10,7 @@ import DashboardCollection from '@/views/DashboardCollection.vue'
 import DashboardList from '@/views/DashboardList.vue'
 import DashboardNewBook from '@/views/DashboardNewBook.vue'
 import DashboardDetails from '@/views/DashboardDetails.vue'
+import DashboardStats from '@/views/DashboardStats.vue'
 
 Vue.use(VueRouter)
 
@@ -66,6 +67,14 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: 'stats',
+        name: 'stats',
+        component: DashboardStats,
+        meta: {
+          title: 'Estatísticas'
+        }
       }
     ]
   }
