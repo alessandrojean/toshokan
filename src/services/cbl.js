@@ -14,6 +14,7 @@ const cbl = axios.create({
 export const IMPRINT_REPLACEMENTS = {
   'Editora JBC': 'JBC',
   INK: 'JBC',
+  'Japorama Editora e Comunicção': 'JBC',
   'New Pop Editora': 'NewPOP',
   'NewPOP Editora': 'NewPOP',
   'Panini Brasil': 'Panini',

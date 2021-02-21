@@ -77,7 +77,7 @@ export function formatBook (book) {
       priceFormatter.format(book.paidPrice.value.replace(',', '.')),
     book.store,
     book.coverUrl || '',
-    book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1'),
+    book.boughtAt ? book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1') : '',
     dateFormatter.format(book.createdAt || new Date()),
     dateFormatter.format(new Date())
   ]

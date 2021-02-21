@@ -270,8 +270,10 @@ export default {
     },
 
     handleToggleViewClick: function () {
-      this.mode = this.mode === 'grid' ? 'table' : 'grid'
-      this.appbarIcons[0].icon = this.mode === 'table'
+      const current = this.mode
+
+      this.mode = current === 'grid' ? 'table' : 'grid'
+      this.appbarIcons[0].icon = current === 'grid'
         ? 'mdi-view-list-outline'
         : 'mdi-view-grid-outline'
     },

@@ -303,6 +303,7 @@
                       v-model="book.boughtAtFormatted"
                       label="Data de entrada"
                       placeholder="ex. 18/02/2021"
+                      clearable
                       append-icon="mdi-calendar"
                       outlined
                       readonly
@@ -645,8 +646,18 @@ export default {
       this.book.boughtAtFormatted = this.formatDate(newValue)
     },
 
+    'book.boughtAtFormatted': function (newValue) {
+      if (!newValue) {
+        this.book.boughtAt = undefined
+      }
+    },
+
     labelPriceSelected: function (newValue) {
       this.book.labelPrice.currency = this.currencies[newValue].code
+    },
+
+    paidPriceSelected: function (newValue) {
+      this.book.paidPrice.currency = this.currencies[newValue].code
     },
 
     searchSelection: function (newValue) {
