@@ -7,30 +7,10 @@
     <v-row>
       <v-col md="4" v-if="!loading && book">
         <v-card>
-          <v-img
+          <v-custom-img
             :src="book.coverUrl"
             :aspect-ratio="1 / 1"
-            @error="handleCoverError"
-            class="grey lighten-2"
-          >
-            <template v-slot:placeholder>
-              <v-row
-                class="fill-height ma-0"
-                align="center"
-                justify="center"
-              >
-                <v-progress-circular
-                  indeterminate
-                  color="grey lighten-5"
-                  v-if="coverError.length === 0"
-                />
-
-                <v-icon v-else large>
-                  mdi-book-off-outline
-                </v-icon>
-              </v-row>
-            </template>
-          </v-img>
+          />
 
           <v-list two-line>
             <v-list-item>
@@ -88,8 +68,14 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 
+import VCustomImg from '@/components/VCustomImg.vue'
+
 export default {
   name: 'DashboardDetails',
+
+  components: {
+    VCustomImg
+  },
 
   data: () => ({
     book: null,
@@ -99,8 +85,7 @@ export default {
         to: { name: 'collection' },
         exact: true
       }
-    ],
-    coverError: ''
+    ]
   }),
 
   computed: {
@@ -112,10 +97,6 @@ export default {
   },
 
   methods: {
-    handleCoverError: function (error) {
-      this.coverError = error.message || error
-    },
-
     ...mapMutations('sheet', ['updateLoading']),
     ...mapMutations('appbar', ['updateIcons'])
   },

@@ -39,23 +39,23 @@ export function parseBook (value, index) {
   }
 }
 
+const formatFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+  useGrouping: false
+})
+
+const priceFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  useGrouping: false
+})
+
+const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+  dateStyle: 'short',
+  timeStyle: 'medium'
+})
+
 export function formatBook (book) {
-  const formatFormatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-    useGrouping: false
-  })
-
-  const priceFormatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    useGrouping: false
-  })
-
-  const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-    dateStyle: 'short',
-    timeStyle: 'medium'
-  })
-
   return [
     book.id || nanoid(),
     book.code.replace(/^(\d{3})(\d{2})(\d{4})(\d{3})(\d{1})$/, '$1-$2-$3-$4-$5'),

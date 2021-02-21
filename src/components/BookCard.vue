@@ -1,31 +1,11 @@
 <template>
   <v-card class="book-card" @click="$emit('click', book)">
-    <v-img
-      :lazy-src="lazySrc"
-      :src="coverUrl"
-      class="grey lighten-2 white--text align-end"
+    <v-custom-img
+      :src="thumbnailUrl"
       gradient="to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%"
       :aspect-ratio="2/3"
-      @error="handleError"
+      ref="imageRef"
     >
-      <template v-slot:placeholder>
-        <v-row
-          class="fill-height ma-0"
-          align="center"
-          justify="center"
-        >
-          <v-progress-circular
-            indeterminate
-            color="grey lighten-5"
-            v-if="error.length === 0"
-          />
-
-          <v-icon v-else large>
-            mdi-book-off-outline
-          </v-icon>
-        </v-row>
-      </template>
-
       <p
         class="text-body-2 font-weight-bold text-truncate mb-0 pa-4 pb-0"
         style="max-width: 100%;"
@@ -35,13 +15,19 @@
       <v-card-subtitle class="text-caption white--text pt-0">
         Volume {{ volume }}
       </v-card-subtitle>
-    </v-img>
+    </v-custom-img>
   </v-card>
 </template>
 
 <script>
+import VCustomImg from './VCustomImg.vue'
+
 export default {
   name: 'BookCard',
+
+  components: {
+    VCustomImg
+  },
 
   props: {
     book: {
@@ -50,37 +36,19 @@ export default {
     }
   },
 
-  data: () => ({
-    error: ''
-  }),
-
   computed: {
-    coverUrl: function () {
+    thumbnailUrl: function () {
       return this.book.coverUrl.replace('_SL700_', '_SL300_')
-    },
-
-    lazySrc: function () {
-      if (this.book.coverUrl.includes('images-amazon.com')) {
-        return this.book.coverUrl.replace('_SL700_', '_SL150_')
-      }
-
-      return undefined
     },
 
     volume: function () {
       return this.book.titleParts[1] ? '#' + this.book.titleParts[1] : 'único'
     }
-  },
-
-  methods: {
-    handleError: function (error) {
-      this.error = error.message || error
-    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .book-card {
   overflow: hidden;
 }

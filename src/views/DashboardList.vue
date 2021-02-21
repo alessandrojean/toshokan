@@ -61,8 +61,12 @@
           >
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.coverUrl="{ item }">
-              <v-avatar size="36" class="grey lighten-3">
-                <v-img :src="item.coverUrl"></v-img>
+              <v-avatar size="36" class="deep-purple lighten-1">
+                <v-custom-img
+                  :src="item.coverUrl"
+                  :progress-size="16"
+                  :progress-width="2"
+                />
               </v-avatar>
             </template>
 
@@ -181,12 +185,14 @@
 import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import BookCard from '@/components/BookCard'
+import VCustomImg from '@/components/VCustomImg'
 
 export default {
   name: 'DashboardList',
 
   components: {
-    BookCard
+    BookCard,
+    VCustomImg
   },
 
   data: vm => ({
@@ -273,7 +279,7 @@ export default {
       const current = this.mode
 
       this.mode = current === 'grid' ? 'table' : 'grid'
-      this.appbarIcons[0].icon = current === 'grid'
+      this.appbarIcons[0].icon = current === 'table'
         ? 'mdi-view-list-outline'
         : 'mdi-view-grid-outline'
     },

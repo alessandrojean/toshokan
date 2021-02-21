@@ -1,5 +1,4 @@
 import groupBy from 'lodash.groupby'
-import sortBy from 'lodash.sortby'
 import uniqBy from 'lodash.uniqby'
 
 import { formatBook, parseBook } from '@/model/Book'
@@ -73,6 +72,12 @@ const actions = {
           .then(response => {
             const books = (response.result.valueRanges[0].values || [])
               .map(parseBook)
+              .sort((a, b) => {
+                return a.collection.localeCompare(b.collection) ||
+                  a.titleParts[0].localeCompare(b.titleParts[0]) ||
+                  a.imprint.localeCompare(b.imprint) ||
+                  (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01')
+              })
 
             const imprints = uniqBy(books, 'imprint')
               .map(b => b.imprint)
@@ -81,13 +86,6 @@ const actions = {
             const stores = uniqBy(books, 'store')
               .map(b => b.store)
               .sort()
-
-            const collection = sortBy(books, [
-              'collection',
-              b => b.titleParts[0],
-              'imprint',
-              b => b.titleParts[1] || '01'
-            ])
 
             const stats = {
               count: response.result.valueRanges[1].values[0][0],
@@ -112,7 +110,7 @@ const actions = {
                 }))
             }
 
-            commit('updateCollection', groupBy(collection, 'collection'))
+            commit('updateCollection', groupBy(books, 'collection'))
             commit('updateImprints', imprints)
             commit('updateStores', stores)
             commit('updateStats', stats)
@@ -131,6 +129,20 @@ const actions = {
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
         values: [formatBook(book)]
+      })
+      .then(() => dispatch('loadSheetData'))
+  },
+
+  bulkInsert: function ({ commit, dispatch, state }, books) {
+    commit('updateLoading', true)
+
+    return window.gapi.client.sheets.spreadsheets.values
+      .append({
+        spreadsheetId: state.sheetId,
+        range: 'Coleção!B5',
+        valueInputOption: 'USER_ENTERED',
+        insertDataOption: 'INSERT_ROWS',
+        values: books.map(formatBook)
       })
       .then(() => dispatch('loadSheetData'))
   }
