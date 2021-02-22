@@ -1,7 +1,8 @@
 import groupBy from 'lodash.groupby'
 import uniqBy from 'lodash.uniqby'
+import Vue from 'vue'
 
-import { formatBook, parseBook } from '@/model/Book'
+import { bookCompare, formatBook, parseBook } from '@/model/Book'
 
 const state = () => ({
   collection: {},
@@ -72,12 +73,7 @@ const actions = {
           .then(response => {
             const books = (response.result.valueRanges[0].values || [])
               .map(parseBook)
-              .sort((a, b) => {
-                return a.collection.localeCompare(b.collection) ||
-                  a.titleParts[0].localeCompare(b.titleParts[0]) ||
-                  a.imprint.localeCompare(b.imprint) ||
-                  (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01')
-              })
+              .sort(bookCompare)
 
             const imprints = uniqBy(books, 'imprint')
               .map(b => b.imprint)
@@ -101,7 +97,7 @@ const actions = {
                 percent: response.result.valueRanges[3].values[2][0]
               },
               monthly: response.result.valueRanges[4].values
-                .slice(0, 5)
+                .slice(0, 6)
                 .reverse()
                 .map(row => ({
                   month: row[0],
@@ -145,10 +141,39 @@ const actions = {
         values: books.map(formatBook)
       })
       .then(() => dispatch('loadSheetData'))
+  },
+
+  updateBook: function ({ commit, dispatch, state }, { book, oldBook }) {
+    commit('updateLoading', true)
+
+    return window.gapi.client.sheets.spreadsheets.values
+      .update({
+        spreadsheetId: state.sheetId,
+        range: oldBook.sheetLocation,
+        valueInputOption: 'USER_ENTERED',
+        values: [formatBook(book)]
+      })
+      .then(() => {
+        commit('updateBook', { book, oldBook })
+        commit('updateLoading', false)
+      })
   }
 }
 
 const mutations = {
+  updateBook: function (state, { book, oldBook }) {
+    const index = state.collection[oldBook.collection]
+      .findIndex(b => b.sheetLocation === oldBook.sheetLocation)
+
+    if (book.collection === oldBook.collection) {
+      Vue.set(state.collection[book.collection], index, book)
+    } else {
+      Vue.delete(state.collection[oldBook.collection], index)
+      state.collection[book.collection].push(book)
+    }
+
+    state.collection[book.collection].sort(bookCompare)
+  },
   updateCollection: function (state, collection) {
     state.collection = { ...state.collection, ...collection }
 

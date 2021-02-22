@@ -21,10 +21,6 @@
           :width="progressWidth"
           v-if="error.length === 0 && srcToShow.length > 0"
         />
-
-        <v-icon v-else v-bind="errorProps">
-          {{ errorIcon }}
-        </v-icon>
       </v-row>
     </template>
 
@@ -42,16 +38,6 @@ export default {
     src: {
       type: String,
       default: ''
-    },
-    errorIcon: {
-      type: String,
-      default: 'mdi-book-off-outline'
-    },
-    errorProps: {
-      type: Object,
-      default: () => ({
-        large: true
-      })
     },
     progressSize: {
       type: Number,

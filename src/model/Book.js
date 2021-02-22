@@ -4,7 +4,6 @@ import { IMPRINT_REPLACEMENTS } from '../services/cbl'
 import { isbn as validateIsbn, issn as validateIssn } from '../util/validators'
 
 export function parseBook (value, index) {
-  const format = value[6].split(' × ')
   const labelPrice = value[8].split(' ')
   const paidPrice = value[9].split(' ')
 
@@ -18,22 +17,19 @@ export function parseBook (value, index) {
     titleParts: splitTitle(value[3]),
     authors: value[4].split(/;\s+/g),
     imprint: value[5],
-    format: {
-      width: parseFloat(format[0]) || 0.0,
-      height: parseFloat(format[1]) || 0.0
-    },
+    format: value[6].replace(/\./g, ','),
     status: value[7],
     labelPrice: {
       currency: labelPrice[0],
-      value: parseFloat(labelPrice[1]) || 0.0
+      value: labelPrice[1].replace('.', ',') || '0,0'
     },
     paidPrice: {
       currency: paidPrice[0],
-      value: parseFloat(paidPrice[1]) || 0.0
+      value: paidPrice[1].replace('.', ',') || '0,0'
     },
     store: value[10],
     coverUrl: value[11],
-    boughtAt: new Date(value[12].split('/').reverse().join('-')),
+    boughtAt: value[12].split('/').reverse().join('-'),
     createdAt: new Date(value[13].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
     updatedAt: new Date(value[14].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
   }
@@ -115,4 +111,11 @@ export function parseBookFromCbl (cblBook) {
     authors: cblBook.Authors,
     imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint
   }
+}
+
+export function bookCompare (a, b) {
+  return a.collection.localeCompare(b.collection) ||
+    a.titleParts[0].localeCompare(b.titleParts[0]) ||
+    a.imprint.localeCompare(b.imprint) ||
+    (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01')
 }

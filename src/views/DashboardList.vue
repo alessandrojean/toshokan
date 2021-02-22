@@ -310,6 +310,17 @@ export default {
     this.showDrawer()
     this.showBottomNav()
     this.fabHidden = false
+
+    const queryCollection = this.$route.query.collection
+
+    if (queryCollection && this.collection[queryCollection]) {
+      if (queryCollection !== this.current) {
+        this.updateCurrent(queryCollection)
+      }
+    }
+
+    const queryPage = this.$route.query.page
+    this.page = (queryPage && queryPage <= this.numberOfPages) ? queryPage : 1
   },
 
   deactivated: function () {
