@@ -107,12 +107,28 @@ router.beforeEach((to, from, next) => {
  */
 router.beforeEach((to, from, next) => {
   if (to.fullPath.includes('/dashboard')) {
-    if (store.getters['auth/isSignedIn']) {
+    if (store.getters['auth/isStarted'] && store.getters['auth/isSignedIn']) {
       next()
       return
     }
 
+    if (!store.getters['auth/isStarted']) {
+      store.dispatch('auth/initApp')
+        .then(isSignedIn => next(isSignedIn ? undefined : '/'))
+        .catch(() => next('/'))
+
+      return
+    }
+
     next('/')
+    return
+  }
+
+  if (!store.getters['auth/isStarted']) {
+    store.dispatch('auth/initApp')
+      .then(() => next())
+      .catch(() => next('/'))
+
     return
   }
 

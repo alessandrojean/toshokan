@@ -49,7 +49,7 @@
         <v-card>
           <v-custom-img
             :src="book.coverUrl"
-            :aspect-ratio="1 / 1"
+            :aspect-ratio="2 / 2.5"
           />
 
           <v-list two-line>
@@ -101,11 +101,141 @@
           </v-card-actions>
         </v-card>
       </v-col>
+
+      <v-col md="8" v-if="book && !loading">
+        <v-card>
+          <v-list two-line>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-account-group-outline
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ book.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ book.authors.length === 1 ? 'Autor' : 'Autores' }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider inset></v-divider>
+
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-office-building-outline
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ book.imprint }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Editora
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider inset></v-divider>
+
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-ruler-square
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ book.format }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Formato
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider inset></v-divider>
+
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-storefront-outline
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ book.store }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Local da compra
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider inset></v-divider>
+
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-cash
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ formattedLabelPrice }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Preço de capa
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-action />
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ formattedPaidPrice }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Preço pago
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-divider inset></v-divider>
+
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon color="primary">
+                  mdi-calendar-blank-outline
+                </v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ boughtAt }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Data da aquisição
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
     </v-row>
 
     <v-dialog
       v-model="editDialog"
-      transition="fade-transition"
       max-width="700px"
     >
       <v-card>
@@ -170,6 +300,22 @@ export default {
   }),
 
   computed: {
+    boughtAt () {
+      if (this.book.boughtAt.length > 0) {
+        return this.book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+      }
+
+      return 'Desconhecida'
+    },
+
+    formattedLabelPrice () {
+      return this.formatPrice(this.book.labelPrice)
+    },
+
+    formattedPaidPrice () {
+      return this.formatPrice(this.book.paidPrice)
+    },
+
     volume: function () {
       return this.book.titleParts[1] ? '#' + this.book.titleParts[1] : 'único'
     },
@@ -182,6 +328,15 @@ export default {
   },
 
   methods: {
+    formatPrice: function (price) {
+      const formatter = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: price.currency
+      })
+
+      return formatter.format(price.value.replace(',', '.'))
+    },
+
     handleCancelClick () {
       this.editDialog = false
 
@@ -247,7 +402,7 @@ export default {
     this.updateLoading(false)
 
     if (!theBook) {
-      this.$router.go(-1)
+      this.$router.replace({ name: 'collection' })
       return
     }
 

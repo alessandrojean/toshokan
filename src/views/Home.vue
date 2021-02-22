@@ -21,11 +21,33 @@
           color="primary"
           @click.stop="signIn"
           :loading="!started && !signedIn"
+          v-if="!signedIn"
         >
           <v-icon left>
             mdi-google
           </v-icon>
           Entrar
+        </v-btn>
+
+        <v-btn
+          text
+          color="primary"
+          @click.stop="$router.push({ name: 'dashboard-home' })"
+          v-if="signedIn"
+        >
+          Painel
+        </v-btn>
+
+        <v-btn
+          text
+          color="primary"
+          @click.stop="signOut"
+          v-if="signedIn"
+        >
+          Sair
+          <v-icon right>
+            mdi-logout-variant
+          </v-icon>
         </v-btn>
       </v-container>
     </v-app-bar>
@@ -41,15 +63,7 @@ export default {
   computed: mapState('auth', ['started', 'signedIn']),
 
   methods: {
-    ...mapActions('auth', ['signIn'])
-  },
-
-  watch: {
-    signedIn: function (newValue) {
-      if (newValue) {
-        this.$router.replace('/dashboard/home')
-      }
-    }
+    ...mapActions('auth', ['signIn', 'signOut'])
   }
 }
 </script>

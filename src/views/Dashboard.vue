@@ -136,16 +136,6 @@
         </v-icon>
       </v-btn>
     </v-bottom-navigation>
-
-    <v-fade-transition>
-      <div class="loading-wrapper" v-if="loading">
-        <v-progress-circular
-          :size="50"
-          color="primary"
-          indeterminate
-        />
-      </div>
-    </v-fade-transition>
   </v-app>
 </template>
 

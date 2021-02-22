@@ -12,33 +12,40 @@ const state = () => ({
 })
 
 const getters = {
-  isSignedIn: state => state.signedIn
+  isSignedIn: state => state.signedIn,
+  isStarted: state => state.started
 }
 
 const actions = {
-  initApp: function ({ commit, state }) {
-    window.gapi.load('client:auth2', () => {
-      window.gapi.client
-        .init({
-          discoveryDocs: state.discoveryDocs,
-          clientId: process.env.VUE_APP_CLIENT_ID,
-          scope: state.scopes
-        })
-        .then(() => {
-          window.gapi.auth2
-            .getAuthInstance()
-            .isSignedIn
-            .listen(signedIn => commit('updateSignedIn', signedIn))
+  initApp: function ({ commit, dispatch, state }) {
+    return new Promise((resolve, reject) => {
+      window.gapi.load('client:auth2', () => {
+        window.gapi.client
+          .init({
+            discoveryDocs: state.discoveryDocs,
+            clientId: process.env.VUE_APP_CLIENT_ID,
+            scope: state.scopes
+          })
+          .then(() => {
+            window.gapi.auth2
+              .getAuthInstance()
+              .isSignedIn
+              .listen(signedIn => commit('updateSignedIn', signedIn))
 
-          commit('updateStarted', true)
-          commit('updateSignedIn', window.gapi.auth2.getAuthInstance().isSignedIn.get())
-        })
+            const signedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
+
+            commit('updateStarted', true)
+            commit('updateSignedIn', signedIn)
+
+            resolve(signedIn)
+          }, () => reject(new Error('Não foi possível inicializar.')))
+      })
     })
   },
-  signIn: function ({ commit }) {
+  signIn: function () {
     window.gapi.auth2.getAuthInstance().signIn()
   },
-  signOut: function ({ commit }) {
+  signOut: function () {
     window.gapi.auth2.getAuthInstance().signOut()
   }
 }

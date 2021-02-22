@@ -7,6 +7,7 @@ import { bookCompare, formatBook, parseBook } from '@/model/Book'
 const state = () => ({
   collection: {},
   current: '',
+  display: 'grid',
   loading: true,
   sheetId: undefined,
   imprints: [],
@@ -51,7 +52,7 @@ const actions = {
   loadSheetData: function ({ commit, dispatch }) {
     commit('updateLoading', true)
 
-    dispatch('findSheetId')
+    return dispatch('findSheetId')
       .then(sheetId => {
         const COLLECTION_RANGE = 'Coleção!B5:P'
         const TOTAL_RANGE = 'Estatísticas!C5'
@@ -169,7 +170,15 @@ const mutations = {
       Vue.set(state.collection[book.collection], index, book)
     } else {
       Vue.delete(state.collection[oldBook.collection], index)
-      state.collection[book.collection].push(book)
+
+      if (state.collection[book.collection]) {
+        state.collection[book.collection].push(book)
+      } else {
+        state.collection = {
+          ...state.collection,
+          [book.collection]: [book]
+        }
+      }
     }
 
     state.collection[book.collection].sort(bookCompare)
@@ -185,6 +194,9 @@ const mutations = {
   },
   updateCurrent: function (state, current) {
     state.current = current
+  },
+  updateDisplay: function (state, display) {
+    state.display = display
   },
   updateLoading: function (state, loading) {
     state.loading = loading

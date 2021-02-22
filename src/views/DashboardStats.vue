@@ -1,6 +1,6 @@
 <template>
   <div class="ma-3">
-    <v-row>
+    <v-row v-if="!loading">
       <v-col md="6" cols="12">
         <v-card>
           <v-card-text>

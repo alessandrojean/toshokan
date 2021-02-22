@@ -5,17 +5,18 @@
       align="center"
       v-if="!loading"
     >
-      <v-col md="9">
+      <v-col md="9" class="px-0 px-md-3">
         <v-chip-group
           v-model="activeCollection"
           mandatory
           active-class="primary--text"
         >
           <v-chip
-            v-for="col in collections"
+            v-for="(col, i) in collections"
             :key="col"
             filter
             outlined
+            :class="{ 'ml-md-0': i === 0, 'ml-3': i === 0 }"
           >
             {{ col }}
           </v-chip>
@@ -42,7 +43,7 @@
     </v-row>
 
     <v-fade-transition mode="out-in">
-      <div v-if="mode === 'table' && !loading">
+      <div v-if="display === 'table' && !loading">
         <v-sheet
           elevation="2"
           rounded
@@ -55,13 +56,12 @@
             :items-per-page="18"
             :page.sync="page"
             hide-default-footer
-            show-select
             :loading="loading"
             loading-text="Carregando, por favor aguarde."
           >
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.coverUrl="{ item }">
-              <v-avatar size="36" class="deep-purple lighten-1">
+              <v-avatar size="36">
                 <v-custom-img
                   :src="item.coverUrl"
                   :progress-size="16"
@@ -72,6 +72,7 @@
 
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.title="{ item }">
+              <p class="text-truncate mb-0" style="max-width: 300px;">
               {{ item.titleParts[0] }}
               <span v-if="item.titleParts[1]" class="text--secondary">
                 #{{ item.titleParts[1] }}
@@ -79,29 +80,43 @@
               <span v-if="item.titleParts[2]" class="text--secondary">
                 - {{ item.titleParts[2] }}
               </span>
-            </template>
-
-            <!-- eslint-disable-next-line vue/valid-v-slot -->
-            <template v-slot:item.authors="{ item }">
-              {{ item.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
+              </p>
             </template>
 
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.status="{ item }">
               <v-chip
-                :color="item.status === 'Lido' ? 'primary' : null"
-                :text-color="item.status === 'Lido' ? 'white' : 'black'"
+                :color="item.status === 'Lido' ? null : 'primary'"
+                :text-color="item.status === 'Lido' ? 'black' : 'white'"
+                small
               >
-                <v-avatar left v-if="item.status === 'Lido'">
-                  <v-icon>mdi-book-check-outline</v-icon>
-                </v-avatar>
                 {{ item.status }}
               </v-chip>
             </template>
 
             <!-- eslint-disable-next-line vue/valid-v-slot -->
-            <template v-slot:item.labelPrice.value="{ item }">
+            <template v-slot:item.labelPrice="{ item }">
               {{ formatPrice(item.labelPrice) }}
+            </template>
+
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.paidPrice="{ item }">
+              {{ formatPrice(item.paidPrice) }}
+            </template>
+
+            <!-- eslint-disable-next-line vue/valid-v-slot -->
+            <template v-slot:item.details="{ item }">
+              <v-btn
+                icon
+                small
+                title="Detalhes"
+                color="primary"
+                @click.stop="handleCardClick(item)"
+              >
+                <v-icon>
+                  mdi-information-outline
+                </v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </v-sheet>
@@ -135,7 +150,7 @@
         :items-per-page="18"
         :page.sync="page"
         hide-default-footer
-        v-if="mode === 'grid' && !loading"
+        v-if="display === 'grid' && !loading"
       >
         <template v-slot:default="{ items }">
           <v-row dense>
@@ -207,22 +222,46 @@ export default {
     headers: [
       { text: '', value: 'coverUrl', sortable: false, width: 36 },
       { text: 'Título', value: 'title' },
-      { text: 'Autores', value: 'authors', sortable: false },
-      { text: 'Editora', value: 'imprint' },
+      {
+        text: 'Editora',
+        value: 'imprint',
+        align: 'center',
+        width: 150
+      },
       {
         text: 'Estado',
         value: 'status',
-        width: 50,
+        width: 100,
         align: 'center'
       },
       {
         text: 'Preço de capa',
-        value: 'labelPrice.value',
+        value: 'labelPrice',
         width: 130,
-        align: 'end'
+        align: 'end',
+        sort: (a, b) => {
+          return a.currency.localeCompare(b.currency) ||
+            (parseFloat(a.value.replace(',', '.')) - parseFloat(b.value.replace(',', '.')))
+        }
+      },
+      {
+        text: 'Preço pago',
+        value: 'paidPrice',
+        width: 130,
+        align: 'end',
+        sort: (a, b) => {
+          return a.currency.localeCompare(b.currency) ||
+            (parseFloat(a.value.replace(',', '.')) - parseFloat(b.value.replace(',', '.')))
+        }
+      },
+      {
+        text: '',
+        value: 'details',
+        align: 'end',
+        width: 50,
+        sortable: false
       }
     ],
-    mode: 'grid',
     page: 1,
     selected: []
   }),
@@ -250,7 +289,7 @@ export default {
       return Math.ceil(this.itemsToShow.length / 18)
     },
 
-    ...mapState('sheet', ['collection', 'current', 'loading']),
+    ...mapState('sheet', ['collection', 'display', 'current', 'loading']),
     ...mapGetters('sheet', ['collections'])
   },
 
@@ -261,7 +300,7 @@ export default {
         currency: price.currency
       })
 
-      return formatter.format(price.value)
+      return formatter.format(price.value.replace(',', '.'))
     },
 
     handleCardClick: function (book) {
@@ -276,9 +315,10 @@ export default {
     },
 
     handleToggleViewClick: function () {
-      const current = this.mode
+      const current = this.display
 
-      this.mode = current === 'grid' ? 'table' : 'grid'
+      this.updateDisplay(current === 'grid' ? 'table' : 'grid')
+      // this.mode = current === 'grid' ? 'table' : 'grid'
       this.appbarIcons[0].icon = current === 'table'
         ? 'mdi-view-list-outline'
         : 'mdi-view-grid-outline'
@@ -297,7 +337,7 @@ export default {
     },
 
     ...mapGetters('sheet', ['getCollectionByName']),
-    ...mapMutations('sheet', ['updateCurrent']),
+    ...mapMutations('sheet', ['updateCurrent', 'updateDisplay']),
     ...mapMutations('appbar', [
       'showBottomNav',
       'showDrawer',
