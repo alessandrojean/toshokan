@@ -18,10 +18,11 @@
         class="d-flex justify-center justify-md-end align-center"
       >
         <v-btn
-          color="red"
+          color="primary"
           outlined
           text
           class="mr-1"
+          @click="deleteDialog = true"
         >
           <v-icon left>
             mdi-delete-outline
@@ -270,6 +271,41 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="deleteDialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title>
+          Excluir este item?
+        </v-card-title>
+
+        <v-card-text>
+          Esta operação não pode ser desfeita.
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer/>
+
+          <v-btn
+            color="primary"
+            text
+            @click="deleteDialog = false"
+          >
+            Cancelar
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            text
+            @click="handleDeleteClick"
+          >
+            Excluir
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -296,7 +332,8 @@ export default {
         exact: true
       }
     ],
-    editDialog: false
+    editDialog: false,
+    deleteDialog: false
   }),
 
   computed: {
@@ -355,6 +392,13 @@ export default {
       })
     },
 
+    handleDeleteClick () {
+      this.deleteDialog = false
+
+      this.deleteBook(this.book)
+        .then(() => this.$router.replace({ name: 'collection' }))
+    },
+
     handleSaveClick () {
       this.editDialog = false
       this.saveBook({ book: this.editingBook, oldBook: this.book })
@@ -385,7 +429,8 @@ export default {
     ...mapMutations('appbar', ['updateIcons']),
     ...mapMutations('book', ['clearBook', 'updateBook']),
     ...mapActions('sheet', {
-      saveBook: 'updateBook'
+      saveBook: 'updateBook',
+      deleteBook: 'deleteBook'
     })
   },
 

@@ -127,7 +127,13 @@ const actions = {
         insertDataOption: 'INSERT_ROWS',
         values: [formatBook(book)]
       })
-      .then(() => dispatch('loadSheetData'))
+      .then(
+        () => dispatch('loadSheetData'),
+        response => {
+          console.error(response)
+          commit('updateLoading', false)
+        }
+      )
   },
 
   bulkInsert: function ({ commit, dispatch, state }, books) {
@@ -141,10 +147,16 @@ const actions = {
         insertDataOption: 'INSERT_ROWS',
         values: books.map(formatBook)
       })
-      .then(() => dispatch('loadSheetData'))
+      .then(
+        () => dispatch('loadSheetData'),
+        response => {
+          console.error(response)
+          commit('updateLoading', false)
+        }
+      )
   },
 
-  updateBook: function ({ commit, dispatch, state }, { book, oldBook }) {
+  updateBook: function ({ commit, state }, { book, oldBook }) {
     commit('updateLoading', true)
 
     return window.gapi.client.sheets.spreadsheets.values
@@ -154,10 +166,48 @@ const actions = {
         valueInputOption: 'USER_ENTERED',
         values: [formatBook(book)]
       })
-      .then(() => {
-        commit('updateBook', { book, oldBook })
-        commit('updateLoading', false)
+      .then(
+        () => {
+          commit('updateBook', { book, oldBook })
+          commit('updateLoading', false)
+        },
+        response => {
+          console.error(response)
+          commit('updateLoading', false)
+        }
+      )
+  },
+
+  deleteBook: function ({ commit, dispatch, state }, book) {
+    commit('updateLoading', true)
+
+    const bookRow = book.sheetLocation.substring(9)
+
+    return window.gapi.client.sheets.spreadsheets
+      .batchUpdate({
+        spreadsheetId: state.sheetId,
+        resource: {
+          requests: [
+            {
+              deleteDimension: {
+                range: {
+                  sheetId: 0,
+                  dimension: 'ROWS',
+                  startIndex: bookRow - 1,
+                  endIndex: bookRow
+                }
+              }
+            }
+          ]
+        }
       })
+      .then(
+        () => dispatch('loadSheetData'),
+        response => {
+          console.error(response)
+          commit('updateLoading', false)
+        }
+      )
   }
 }
 
