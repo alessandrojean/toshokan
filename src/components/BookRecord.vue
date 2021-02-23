@@ -489,6 +489,18 @@ export default {
     ...mapMutations('book', ['clearBook'])
   },
 
+  mounted () {
+    if (this.edit) {
+      const lpCurrency = this.book.labelPrice.currency
+      const lpIndex = this.currencies.findIndex(c => c.code === lpCurrency)
+      this.labelPriceSelected = Math.max(lpIndex, 0)
+
+      const ppCurrency = this.book.paidPrice.currency
+      const ppIndex = this.currencies.findIndex(c => c.code === ppCurrency)
+      this.paidPriceSelected = Math.max(ppIndex, 0)
+    }
+  },
+
   watch: {
     labelPriceSelected: function (newValue) {
       this.$store.commit('book/updateLabelPrice', {

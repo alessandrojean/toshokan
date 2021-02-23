@@ -93,13 +93,29 @@
 
           <v-card-actions>
             <v-spacer />
+
             <v-btn
-              text
+              icon
+              color="primary"
+              :loading="favoriteLoading"
+              :title="book.favorite === 'Sim' ? 'Remover dos favoritos': 'Adicionar aos favoritos'"
+              @click="handleToggleFavoriteClick"
+            >
+              <v-icon>
+                {{ book.favorite === 'Sim' ? 'mdi-star' : 'mdi-star-outline' }}
+              </v-icon>
+            </v-btn>
+
+            <v-btn
+              icon
               color="primary"
               :loading="statusLoading"
+              :title="'Marcar como ' + (book.status === 'Lido' ? 'não lido' : 'lido')"
               @click="handleToggleStatusClick"
             >
-              Marcar como {{ book.status === 'Lido' ? 'não lido' : 'lido' }}
+              <v-icon>
+                {{ book.status === 'Lido' ? 'mdi-book-check' : 'mdi-book-remove-outline' }}
+              </v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -334,8 +350,9 @@ export default {
         exact: true
       }
     ],
-    editDialog: false,
     deleteDialog: false,
+    editDialog: false,
+    favoriteLoading: false,
     statusLoading: false
   }),
 
@@ -422,8 +439,24 @@ export default {
           this.breadcrumbItems[1].text = this.editingBook.collection
           this.breadcrumbItems[1].to.query.collection = this.editingBook.collection
 
-          this.breadcrumbItems[2].text = this.editingBook.title
+          this.breadcrumbItems[2].text = this.editingBook.titleParts[0]
+          this.breadcrumbItems[2].to.query.collection = this.editingBook.collection
+          this.breadcrumbItems[2].to.query.search = this.editingBook.titleParts[0]
 
+          this.breadcrumbItems[3].text = 'Volume ' + this.volume
+
+          this.clearBook()
+        })
+    },
+
+    handleToggleFavoriteClick () {
+      this.favoriteLoading = true
+      this.updateBook(this.book)
+      this.updateFavorite(this.book.favorite === 'Sim' ? '' : 'Sim')
+      this.saveBook({ book: this.editingBook, oldBook: this.book, withoutLoading: true })
+        .then(() => {
+          this.book.favorite = this.editingBook.favorite
+          this.favoriteLoading = false
           this.clearBook()
         })
     },
@@ -442,7 +475,12 @@ export default {
 
     ...mapMutations('sheet', ['updateLoading']),
     ...mapMutations('appbar', ['updateIcons']),
-    ...mapMutations('book', ['clearBook', 'updateBook', 'updateStatus']),
+    ...mapMutations('book', [
+      'clearBook',
+      'updateBook',
+      'updateFavorite',
+      'updateStatus'
+    ]),
     ...mapActions('sheet', {
       saveBook: 'updateBook',
       deleteBook: 'deleteBook'
@@ -474,7 +512,18 @@ export default {
         exact: true
       },
       {
-        text: theBook.title,
+        text: theBook.titleParts[0],
+        to: {
+          name: 'collection',
+          query: {
+            collection: theBook.collection,
+            page: 1,
+            search: theBook.titleParts[0]
+          }
+        }
+      },
+      {
+        text: 'Volume ' + this.volume,
         disabled: true
       }
     ])

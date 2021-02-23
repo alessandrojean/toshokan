@@ -7,7 +7,7 @@ import { bookCompare, formatBook, parseBook } from '@/model/Book'
 const state = () => ({
   collection: {},
   current: '',
-  display: 'grid',
+  display: (localStorage && localStorage.getItem('DISPLAY_MODE')) || 'grid',
   lastAdded: [],
   loading: true,
   sheetId: undefined,
@@ -55,7 +55,7 @@ const actions = {
 
     return dispatch('findSheetId')
       .then(sheetId => {
-        const COLLECTION_RANGE = 'Coleção!B5:P'
+        const COLLECTION_RANGE = 'Coleção!B5:Q'
         const TOTAL_RANGE = 'Estatísticas!C5'
         const MONEY_RANGE = 'Estatísticas!C8:C11'
         const STATUS_RANGE = 'Estatísticas!C14:C16'
@@ -270,6 +270,7 @@ const mutations = {
   },
   updateDisplay: function (state, display) {
     state.display = display
+    localStorage && localStorage.setItem('DISPLAY_MODE', display)
   },
   updateLoading: function (state, loading) {
     state.loading = loading

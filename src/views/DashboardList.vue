@@ -1,31 +1,9 @@
 <template>
   <div>
-    <v-row
-      class="mb-3"
-      align="center"
-      v-if="!loading"
-    >
-      <v-col md="9" class="px-0 px-md-3">
-        <v-chip-group
-          v-model="activeCollection"
-          mandatory
-          active-class="primary--text"
-        >
-          <v-chip
-            v-for="(col, i) in collections"
-            :key="col"
-            filter
-            outlined
-            :class="{ 'ml-md-0': i === 0, 'ml-3': i === 0 }"
-          >
-            {{ col }}
-          </v-chip>
-        </v-chip-group>
-      </v-col>
-
-      <v-col md="3" class="d-flex justify-space-between justify-md-end align-center">
+    <v-row class="pb-2" v-if="!loading">
+      <v-col md="3" cols="12" class="mt-md-0 mt-1 d-flex align-center justify-end justify-md-start">
         <p class="text-body-1 mb-0 mr-4">
-          {{ itemsToShow.length }} {{ itemsToShow.length === 1 ? 'item' : 'itens' }}
+          {{ showingCount }} {{ showingCount === 1 ? 'item' : 'itens' }}
         </p>
 
         <v-btn
@@ -39,6 +17,56 @@
           </v-icon>
           Novo
         </v-btn>
+      </v-col>
+
+      <v-col md="3" cols="12" offset-md="3" v-if="$vuetify.breakpoint.mdAndUp">
+        <v-text-field
+          clearable
+          outlined
+          dense
+          placeholder="Pesquisar..."
+          append-icon="mdi-magnify"
+          hide-details
+          :value="search"
+          @keydown.enter.prevent="search = $event.target.value"
+          @click:append.stop="handleSearchClick"
+          @click:clear.stop="search = ''"
+        />
+      </v-col>
+
+      <v-col md="3" cols="12" v-if="$vuetify.breakpoint.mdAndUp">
+        <v-select
+          v-model="sortBy"
+          outlined
+          dense
+          placeholder="Ordenar por..."
+          :items="sortByOptions"
+          item-value="key"
+          item-text="title"
+          hide-details
+        />
+      </v-col>
+
+      <v-col class="px-0 px-md-3 pt-0">
+        <v-chip-group
+          v-model="activeCollection"
+          mandatory
+          active-class="primary--text"
+        >
+          <v-chip
+            v-for="(col, i) in collections"
+            :key="col"
+            filter
+            outlined
+            :class="{
+              'ml-md-0': i === 0,
+              'ml-3': i === 0,
+              'mr-3': i === collections.length - 1
+            }"
+          >
+            {{ col }}
+          </v-chip>
+        </v-chip-group>
       </v-col>
     </v-row>
 
@@ -56,8 +84,15 @@
             :items-per-page="18"
             :page.sync="page"
             hide-default-footer
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
+            :search="search"
             :loading="loading"
             loading-text="Carregando, por favor aguarde."
+            no-results-text="Nenhum item encontrado."
+            no-data-text="Nenhum item cadastrado."
+            @page-count="pageCount = $event.pageCount"
+            @pagination="showingCount = $event.itemsLength"
           >
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.coverUrl="{ item }">
@@ -86,11 +121,20 @@
             <!-- eslint-disable-next-line vue/valid-v-slot -->
             <template v-slot:item.status="{ item }">
               <v-chip
+                link
+                small
+                :disabled="statusLoading.length > 0 && statusLoading !== item.id"
                 :color="item.status === 'Lido' ? null : 'primary'"
                 :text-color="item.status === 'Lido' ? 'black' : 'white'"
-                small
+                @click="handleToggleStatusClick(item)"
               >
-                {{ item.status }}
+                <v-progress-circular
+                  v-if="statusLoading === item.id"
+                  indeterminate
+                  :width="1"
+                  :size="10"
+                />
+                <span v-else>{{ item.status }}</span>
               </v-chip>
             </template>
 
@@ -109,6 +153,20 @@
               <v-btn
                 icon
                 small
+                color="primary"
+                :loading="favoriteLoading === item.id"
+                :disabled="favoriteLoading.length > 0 && favoriteLoading !== item.id"
+                :title="item.favorite === 'Sim' ? 'Remover dos favoritos': 'Adicionar aos favoritos'"
+                @click="handleToggleFavoriteClick(item)"
+              >
+                <v-icon>
+                  {{ item.favorite === 'Sim' ? 'mdi-star' : 'mdi-star-outline' }}
+                </v-icon>
+              </v-btn>
+
+              <v-btn
+                icon
+                small
                 title="Detalhes"
                 color="primary"
                 @click.stop="handleCardClick(item)"
@@ -121,7 +179,12 @@
           </v-data-table>
         </v-sheet>
 
-        <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
+        <v-row
+          class="mt-6 mb-1 mx-1"
+          align="center"
+          justify="end"
+          v-if="numberOfPages > 0"
+        >
           <span class="mr-4 grey--text">
             Página {{ page }} de {{ numberOfPages }}
           </span>
@@ -149,8 +212,16 @@
         item-key="id"
         :items-per-page="18"
         :page.sync="page"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        :search="search"
+        :custom-sort="gridSort"
         hide-default-footer
+        no-data-text="Nenhum item cadastrado."
+        no-results-text="Nenhum item encontrado."
         v-if="display === 'grid' && !loading"
+        @page-count="pageCount = $event"
+        @pagination="showingCount = $event.itemsLength"
       >
         <template v-slot:default="{ items }">
           <v-row dense>
@@ -169,7 +240,12 @@
         </template>
 
         <template v-slot:footer>
-          <v-row class="mt-6 mb-1 mx-1" align="center" justify="end">
+          <v-row
+            class="mt-6 mb-1 mx-1"
+            align="center"
+            justify="end"
+            v-if="numberOfPages > 0"
+          >
             <span class="mr-4 grey--text">
               Página {{ page }} de {{ numberOfPages }}
             </span>
@@ -197,10 +273,16 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { sortItems } from 'vuetify/lib/util/helpers'
 
 import BookCard from '@/components/BookCard'
 import VCustomImg from '@/components/VCustomImg'
+
+const priceSort = (a, b) => {
+  return a.currency.localeCompare(b.currency) ||
+    (parseFloat(a.value.replace(',', '.')) - parseFloat(b.value.replace(',', '.')))
+}
 
 export default {
   name: 'DashboardList',
@@ -218,7 +300,9 @@ export default {
         click: vm.handleToggleViewClick.bind(vm)
       }
     ],
+    current: '',
     fabHidden: true,
+    favoriteLoading: '',
     headers: [
       { text: '', value: 'coverUrl', sortable: false, width: 36 },
       { text: 'Título', value: 'title' },
@@ -239,31 +323,38 @@ export default {
         value: 'labelPrice',
         width: 130,
         align: 'end',
-        sort: (a, b) => {
-          return a.currency.localeCompare(b.currency) ||
-            (parseFloat(a.value.replace(',', '.')) - parseFloat(b.value.replace(',', '.')))
-        }
+        sort: priceSort
       },
       {
         text: 'Preço pago',
         value: 'paidPrice',
         width: 130,
         align: 'end',
-        sort: (a, b) => {
-          return a.currency.localeCompare(b.currency) ||
-            (parseFloat(a.value.replace(',', '.')) - parseFloat(b.value.replace(',', '.')))
-        }
+        sort: priceSort
       },
       {
         text: '',
         value: 'details',
         align: 'end',
-        width: 50,
+        width: 100,
         sortable: false
       }
     ],
     page: 1,
-    selected: []
+    pageCount: -1,
+    search: '',
+    selected: [],
+    showingCount: 0,
+    sortBy: 'title',
+    sortByOptions: [
+      { key: 'title', title: 'Título' },
+      { key: 'imprint', title: 'Editora' },
+      { key: 'status', title: 'Estado' },
+      { key: 'labelPrice', title: 'Preço de capa' },
+      { key: 'paidPrice', title: 'Preço pago' }
+    ],
+    sortDesc: false,
+    statusLoading: ''
   }),
 
   computed: {
@@ -273,24 +364,36 @@ export default {
       },
       set: function (activeCollection) {
         if (typeof activeCollection === 'number' && activeCollection !== this.current) {
-          const current = this.collections[activeCollection]
-
-          this.updateCurrent(current)
-          this.page = 1
+          this.current = this.collections[activeCollection]
         }
       }
     },
 
     itemsToShow: function () {
-      return this.collection[this.collections[this.activeCollection]]
+      const group = this.collections[this.activeCollection]
+      return this.collection[group] || []
     },
 
     numberOfPages () {
+      if (this.pageCount >= 0) {
+        return this.pageCount
+      }
+
+      if (this.itemsToShow.length === 0) {
+        return 0
+      }
+
       return Math.ceil(this.itemsToShow.length / 18)
     },
 
-    ...mapState('sheet', ['collection', 'display', 'current', 'loading']),
-    ...mapGetters('sheet', ['collections'])
+    ...mapState('sheet', [
+      'collection',
+      'display',
+      // 'current',
+      'loading'
+    ]),
+    ...mapGetters('sheet', ['collections']),
+    ...mapState('book', { editingBook: 'book' })
   },
 
   methods: {
@@ -312,6 +415,13 @@ export default {
 
     handleNewClick: function () {
       this.$router.push({ name: 'new-book' })
+    },
+
+    handleSearchClick (event) {
+      const slot = event.target.parentElement.parentElement.parentElement
+      const input = slot.querySelector('.v-text-field__slot input')
+
+      this.search = input.value
     },
 
     handleToggleViewClick: function () {
@@ -336,13 +446,60 @@ export default {
       }
     },
 
+    handleToggleFavoriteClick (book) {
+      if (this.favoriteLoading.length > 0) {
+        return
+      }
+
+      this.favoriteLoading = book.id
+      this.updateBook(book)
+      this.updateFavorite(book.favorite === 'Sim' ? '' : 'Sim')
+      this.saveBook({ book: this.editingBook, oldBook: book, withoutLoading: true })
+        .then(() => {
+          book.favorite = this.editingBook.favorite
+          this.favoriteLoading = ''
+          this.clearBook()
+        })
+    },
+
+    handleToggleStatusClick (book) {
+      if (this.statusLoading.length > 0) {
+        return
+      }
+
+      this.statusLoading = book.id
+      this.updateBook(book)
+      this.updateStatus(book.status === 'Lido' ? 'Não lido' : 'Lido')
+      this.saveBook({ book: this.editingBook, oldBook: book, withoutLoading: true })
+        .then(() => {
+          book.status = this.editingBook.status
+          this.statusLoading = ''
+          this.clearBook()
+        })
+    },
+
+    gridSort (items, sortBy, sortDesc, locale, customSorters) {
+      return sortItems(items, sortBy, sortDesc, locale, {
+        ...customSorters,
+        labelPrice: priceSort,
+        paidPrice: priceSort
+      })
+    },
+
     ...mapGetters('sheet', ['getCollectionByName']),
-    ...mapMutations('sheet', ['updateCurrent', 'updateDisplay']),
+    ...mapMutations('sheet', ['updateDisplay', 'updateLoading']),
     ...mapMutations('appbar', [
       'showBottomNav',
       'showDrawer',
       'updateIcons'
-    ])
+    ]),
+    ...mapMutations('book', [
+      'clearBook',
+      'updateBook',
+      'updateFavorite',
+      'updateStatus'
+    ]),
+    ...mapActions('sheet', { saveBook: 'updateBook' })
   },
 
   mounted: function () {
@@ -354,13 +511,22 @@ export default {
     const queryCollection = this.$route.query.collection
 
     if (queryCollection && this.collection[queryCollection]) {
-      if (queryCollection !== this.current) {
-        this.updateCurrent(queryCollection)
-      }
+      const index = this.collections.indexOf(queryCollection)
+      this.activeCollection = Math.max(index, 0)
     }
 
-    const queryPage = this.$route.query.page
-    this.page = (queryPage && queryPage <= this.numberOfPages) ? queryPage : 1
+    const queryPage = parseInt(this.$route.query.page)
+    this.page = queryPage || 1
+
+    this.search = this.$route.query.search || ''
+    this.showingCount = this.itemsToShow.length
+
+    const querySort = this.$route.query.sortBy || 'title'
+    const sortIsValid = this.sortByOptions.find(s => s.key === querySort)
+
+    if (sortIsValid) {
+      this.sortBy = querySort
+    }
   },
 
   deactivated: function () {
@@ -370,7 +536,53 @@ export default {
   watch: {
     loading: function (newValue) {
       if (!newValue) {
-        this.activeCollection = this.collections[0]
+        const index = this.collections.indexOf(this.$route.query.collection)
+        this.activeCollection = Math.max(index, 0)
+
+        const queryPage = parseInt(this.$route.query.page) || 1
+        this.page = (queryPage <= this.numberOfPages) ? queryPage : 1
+
+        this.showingCount = this.itemsToShow.length
+      }
+    },
+
+    activeCollection (newValue, oldValue) {
+      if (newValue !== oldValue && this.collections[newValue] !== this.$route.query.collection) {
+        const query = this.$route.query
+        this.$router.push({
+          query: {
+            ...query,
+            collection: this.collections[newValue],
+            page: 1
+          }
+        })
+      }
+    },
+
+    page (newPage) {
+      if (newPage !== parseInt(this.$route.query.page)) {
+        const query = this.$route.query
+        this.$router.push({ query: { ...query, page: newPage } })
+      }
+    },
+
+    search (newValue, oldValue) {
+      if (newValue !== oldValue && newValue !== this.$route.query.search) {
+        const query = { ...this.$route.query }
+
+        if (newValue.length > 0) {
+          this.$router.push({ query: { ...query, search: newValue } })
+        } else {
+          delete query.search
+          this.$router.push({ query })
+        }
+      }
+    },
+
+    sortBy (newValue, oldValue) {
+      if (newValue !== oldValue && newValue !== this.$route.query.sortBy) {
+        const query = this.$route.query
+        this.$router.replace({ query: { ...query, sortBy: newValue } })
       }
     }
   }

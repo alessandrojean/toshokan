@@ -30,8 +30,9 @@ export function parseBook (value, index) {
     store: value[10],
     coverUrl: value[11],
     boughtAt: value[12].split('/').reverse().join('-'),
-    createdAt: new Date(value[13].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
-    updatedAt: new Date(value[14].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
+    favorite: value[13],
+    createdAt: new Date(value[14].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
+    updatedAt: new Date(value[15].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
   }
 }
 
@@ -74,6 +75,7 @@ export function formatBook (book) {
     book.store,
     book.coverUrl || '',
     book.boughtAt ? book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1') : '',
+    book.favorite || '',
     dateFormatter.format(book.createdAt || new Date()),
     dateFormatter.format(new Date())
   ]

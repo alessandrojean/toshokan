@@ -181,11 +181,6 @@ export default {
 
   mounted: function () {
     this.updateIcons([])
-
-    window.google.charts.load('current', {
-      packages: ['corechart'],
-      language: 'pt-BR'
-    })
   }
 }
 </script>

@@ -125,14 +125,14 @@
       :class="{ 'v-bottom-navigation--hidden': !bottomActive }"
     >
       <v-btn
-        v-for="(item, i) in bottomItems"
+        v-for="item in bottomItems"
         :key="item.title"
         @click="handleItemClick(item.to)"
       >
         <span>{{ item.title }}</span>
 
         <v-icon>
-          {{ currentIcon(i, bottomValue, item.icon) }}
+          {{ currentIcon(item.icon, item.to) }}
         </v-icon>
       </v-btn>
     </v-bottom-navigation>
@@ -152,17 +152,17 @@ export default {
       {
         title: 'Início',
         icon: 'mdi-home-outline',
-        to: 'home'
+        to: '/dashboard/home'
       },
       {
         title: 'Coleção',
         icon: 'mdi-book-multiple-outline',
-        to: 'collection'
+        to: '/dashboard/collection'
       },
       {
         title: 'Estatísticas',
         icon: 'mdi-chart-box-outline',
-        to: 'stats'
+        to: '/dashboard/stats'
       },
       {
         title: 'Mais',
@@ -241,8 +241,8 @@ export default {
     },
 
     handleItemClick: function (to) {
-      if (this.$router.currentRoute.path !== '/dashboard/' + (to || 'home')) {
-        this.$router.push('/dashboard/' + (to || 'home'))
+      if (this.$router.currentRoute.path !== (to || '/dashboard/home')) {
+        this.$router.push(to || '/dashboard/home')
       }
     },
 

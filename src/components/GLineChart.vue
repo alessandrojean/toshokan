@@ -86,6 +86,10 @@ export default {
   },
 
   mounted () {
+    window.google.charts.load('current', {
+      packages: ['corechart'],
+      language: 'pt-BR'
+    })
     window.google.charts.setOnLoadCallback(() => this.drawChart())
   }
 }

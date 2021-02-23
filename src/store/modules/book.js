@@ -133,6 +133,10 @@ const mutations = {
 
   updateStatus: function (state, status) {
     state.book.status = status
+  },
+
+  updateFavorite: function (state, favorite) {
+    state.book.favorite = favorite
   }
 }
 
