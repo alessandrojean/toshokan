@@ -91,7 +91,7 @@
 
       <v-spacer/>
 
-      <v-fade-transition>
+      <v-fade-transition group>
         <template v-for="icon in icons">
           <v-btn
             icon

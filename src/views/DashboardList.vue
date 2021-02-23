@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row class="pb-2" v-if="!loading">
-      <v-col md="3" cols="12" class="mt-md-0 mt-1 d-flex align-center justify-end justify-md-start">
+      <v-col md="3" cols="12" class="mt-md-0 mt-1 d-flex align-center justify-space-between justify-md-start">
         <p class="text-body-1 mb-0 mr-4">
           {{ showingCount }} {{ showingCount === 1 ? 'item' : 'itens' }}
         </p>
@@ -269,6 +269,55 @@
         </template>
       </v-data-iterator>
     </v-fade-transition>
+
+    <v-bottom-sheet v-model="filterSheet">
+      <v-card rounded="t-lg">
+
+        <v-toolbar flat>
+          <v-toolbar-title>
+            Filtrar
+          </v-toolbar-title>
+
+          <v-spacer/>
+
+          <v-btn
+            icon
+            color="primary"
+            @click="filterSheet = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <div class="px-4 mt-2 pb-2">
+          <v-text-field
+            clearable
+            outlined
+            placeholder="Pesquisar..."
+            append-icon="mdi-magnify"
+            hide-details
+            :value="search"
+            @keydown.enter.prevent="search = $event.target.value"
+            @click:append.stop="handleSearchClick"
+            @click:clear.stop="search = ''"
+          />
+
+          <v-select
+            v-model="sortBy"
+            outlined
+            label="Ordernar por"
+            placeholder="Ordenar por..."
+            :items="sortByOptions"
+            item-value="key"
+            item-text="title"
+            hide-details
+            class="mt-6"
+          />
+
+          <v-checkbox v-model="sortDesc" label="Inverter o sentido" />
+        </div>
+      </v-card>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -303,6 +352,7 @@ export default {
     current: '',
     fabHidden: true,
     favoriteLoading: '',
+    filterSheet: false,
     headers: [
       { text: '', value: 'coverUrl', sortable: false, width: 36 },
       { text: 'Título', value: 'title' },
@@ -503,6 +553,14 @@ export default {
   },
 
   mounted: function () {
+    if (this.$vuetify.breakpoint.smAndDown) {
+      this.appbarIcons.push({
+        title: 'Filtrar',
+        icon: 'mdi-filter-variant',
+        click: () => { this.filterSheet = true }
+      })
+    }
+
     this.updateIcons(this.appbarIcons)
     this.showDrawer()
     this.showBottomNav()
