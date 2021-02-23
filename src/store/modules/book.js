@@ -129,6 +129,10 @@ const mutations = {
 
   updateCoverUrl: function (state, coverUrl) {
     state.book.coverUrl = coverUrl
+  },
+
+  updateStatus: function (state, status) {
+    state.book.status = status
   }
 }
 

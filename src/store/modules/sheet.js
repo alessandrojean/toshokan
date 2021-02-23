@@ -8,6 +8,7 @@ const state = () => ({
   collection: {},
   current: '',
   display: 'grid',
+  lastAdded: [],
   loading: true,
   sheetId: undefined,
   imprints: [],
@@ -59,6 +60,9 @@ const actions = {
         const MONEY_RANGE = 'Estatísticas!C8:C11'
         const STATUS_RANGE = 'Estatísticas!C14:C16'
         const MONTHLY_RANGE = 'Estatísticas!E5:G'
+        const AUTHORS_RANGE = 'Estatísticas!I5:J'
+        const SERIES_RANGE = 'Estatísticas!L5:M'
+        const IMPRINTS_RANGE = 'Estatísticas!O5:P'
 
         window.gapi.client.sheets.spreadsheets.values
           .batchGet({
@@ -68,13 +72,19 @@ const actions = {
               TOTAL_RANGE,
               MONEY_RANGE,
               STATUS_RANGE,
-              MONTHLY_RANGE
+              MONTHLY_RANGE,
+              AUTHORS_RANGE,
+              SERIES_RANGE,
+              IMPRINTS_RANGE
             ]
           })
           .then(response => {
             const books = (response.result.valueRanges[0].values || [])
               .map(parseBook)
-              .sort(bookCompare)
+
+            const lastAdded = books.slice(-6).reverse()
+
+            books.sort(bookCompare)
 
             const imprints = uniqBy(books, 'imprint')
               .map(b => b.imprint)
@@ -104,9 +114,19 @@ const actions = {
                   month: row[0],
                   totalSpent: row[1],
                   count: row[2]
-                }))
+                })),
+              authors: response.result.valueRanges[5].values
+                .slice(0, 10)
+                .map(row => ({ name: row[0], count: row[1] })),
+              series: response.result.valueRanges[6].values
+                .slice(0, 10)
+                .map(row => ({ name: row[0], count: row[1] })),
+              imprints: response.result.valueRanges[7].values
+                .slice(0, 10)
+                .map(row => ({ name: row[0], count: row[1] }))
             }
 
+            commit('updateLastAdded', lastAdded)
             commit('updateCollection', groupBy(books, 'collection'))
             commit('updateImprints', imprints)
             commit('updateStores', stores)
@@ -156,8 +176,8 @@ const actions = {
       )
   },
 
-  updateBook: function ({ commit, state }, { book, oldBook }) {
-    commit('updateLoading', true)
+  updateBook: function ({ commit, state }, { book, oldBook, withoutLoading }) {
+    commit('updateLoading', !withoutLoading)
 
     return window.gapi.client.sheets.spreadsheets.values
       .update({
@@ -241,6 +261,9 @@ const mutations = {
     if (state.current === '' || !collection[state.current]) {
       state.current = collections[0]
     }
+  },
+  updateLastAdded: function (state, lastAdded) {
+    state.lastAdded = lastAdded
   },
   updateCurrent: function (state, current) {
     state.current = current

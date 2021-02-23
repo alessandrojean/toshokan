@@ -47,14 +47,14 @@
           mandatory
         >
           <v-list-item
-            v-for="(item, i) in drawerItems"
+            v-for="item in drawerItems"
             :key="item.title"
             link
-            @click.stop="handleItemClick(item.to)"
+            :to="item.to"
           >
             <v-list-item-icon>
               <v-icon>
-                {{ currentIcon(i, selectedItem, item.icon) }}
+                {{ currentIcon(item.icon, item.to) }}
               </v-icon>
             </v-list-item-icon>
 
@@ -149,18 +149,53 @@ export default {
 
   data: () => ({
     bottomItems: [
-      { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
-      { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
-      { title: 'Estatísticas', icon: 'mdi-chart-box-outline', to: 'stats' },
-      { title: 'Mais', icon: 'mdi-dots-horizontal' }
+      {
+        title: 'Início',
+        icon: 'mdi-home-outline',
+        to: 'home'
+      },
+      {
+        title: 'Coleção',
+        icon: 'mdi-book-multiple-outline',
+        to: 'collection'
+      },
+      {
+        title: 'Estatísticas',
+        icon: 'mdi-chart-box-outline',
+        to: 'stats'
+      },
+      {
+        title: 'Mais',
+        icon: 'mdi-dots-horizontal'
+      }
     ],
     bottomValue: 0,
     drawerItems: [
-      { title: 'Início', icon: 'mdi-home-outline', to: 'home' },
-      { title: 'Coleção', icon: 'mdi-book-multiple-outline', to: 'collection' },
-      { title: 'Estatísticas', icon: 'mdi-chart-box-outline', to: 'stats' },
-      { title: 'Configurações', icon: 'mdi-cog-outline' },
-      { title: 'Sobre', icon: 'mdi-information-outline' }
+      {
+        title: 'Início',
+        icon: 'mdi-home-outline',
+        to: '/dashboard/home'
+      },
+      {
+        title: 'Coleção',
+        icon: 'mdi-book-multiple-outline',
+        to: '/dashboard/collection'
+      },
+      {
+        title: 'Estatísticas',
+        icon: 'mdi-chart-box-outline',
+        to: '/dashboard/stats'
+      },
+      {
+        title: 'Ferramentas',
+        icon: 'mdi-toolbox-outline',
+        to: '/dashboard/tools'
+      },
+      {
+        title: 'Configurações',
+        icon: 'mdi-cog-outline',
+        to: '/dashboard/settings'
+      }
     ],
     mini: true,
     selectedItem: 0
@@ -194,8 +229,10 @@ export default {
   },
 
   methods: {
-    currentIcon: function (i, selected, icon) {
-      return i === selected ? icon.replace('-outline', '') : icon
+    currentIcon: function (icon, routePath) {
+      const active = this.$route.matched.find(r => r.path === routePath)
+
+      return active ? icon.replace('-outline', '') : icon
     },
 
     handleBackButtonClick: function () {
@@ -206,6 +243,20 @@ export default {
     handleItemClick: function (to) {
       if (this.$router.currentRoute.path !== '/dashboard/' + (to || 'home')) {
         this.$router.push('/dashboard/' + (to || 'home'))
+      }
+    },
+
+    handleRouteChange: function () {
+      const path = this.$route.path
+
+      if (path.includes('home')) {
+        this.bottomValue = 0
+      } else if (path.includes('collection')) {
+        this.bottomValue = 1
+      } else if (path.includes('stats')) {
+        this.bottomValue = 2
+      } else {
+        this.bottomValue = 3
       }
     },
 
@@ -224,7 +275,7 @@ export default {
 
   mounted: function () {
     this.updateDrawer(!bottomNavIsShowing())
-
+    this.handleRouteChange()
     this.loadSheetData()
   },
 
@@ -233,6 +284,10 @@ export default {
       if (!newValue) {
         this.$router.replace('/')
       }
+    },
+
+    '$route.path': function (newValue) {
+      this.handleRouteChange()
     }
   }
 }

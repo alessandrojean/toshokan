@@ -96,8 +96,10 @@
             <v-btn
               text
               color="primary"
+              :loading="statusLoading"
+              @click="handleToggleStatusClick"
             >
-              Marcar como lido
+              Marcar como {{ book.status === 'Lido' ? 'não lido' : 'lido' }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -333,7 +335,8 @@ export default {
       }
     ],
     editDialog: false,
-    deleteDialog: false
+    deleteDialog: false,
+    statusLoading: false
   }),
 
   computed: {
@@ -425,9 +428,21 @@ export default {
         })
     },
 
+    handleToggleStatusClick () {
+      this.statusLoading = true
+      this.updateBook(this.book)
+      this.updateStatus(this.book.status === 'Lido' ? 'Não lido' : 'Lido')
+      this.saveBook({ book: this.editingBook, oldBook: this.book, withoutLoading: true })
+        .then(() => {
+          this.book.status = this.editingBook.status
+          this.statusLoading = false
+          this.clearBook()
+        })
+    },
+
     ...mapMutations('sheet', ['updateLoading']),
     ...mapMutations('appbar', ['updateIcons']),
-    ...mapMutations('book', ['clearBook', 'updateBook']),
+    ...mapMutations('book', ['clearBook', 'updateBook', 'updateStatus']),
     ...mapActions('sheet', {
       saveBook: 'updateBook',
       deleteBook: 'deleteBook'

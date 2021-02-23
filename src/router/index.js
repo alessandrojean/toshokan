@@ -5,19 +5,21 @@ import store from '../store'
 
 import Home from '@/views/Home.vue'
 
-import DashboardHome from '@/views/DashboardHome.vue'
-import DashboardCollection from '@/views/DashboardCollection.vue'
-import DashboardList from '@/views/DashboardList.vue'
-import DashboardNewBook from '@/views/DashboardNewBook.vue'
-import DashboardDetails from '@/views/DashboardDetails.vue'
-import DashboardStats from '@/views/DashboardStats.vue'
+import DashboardHome from '@/views/DashboardHome'
+import DashboardCollection from '@/views/DashboardCollection'
+import DashboardList from '@/views/DashboardList'
+import DashboardNewBook from '@/views/DashboardNewBook'
+import DashboardDetails from '@/views/DashboardDetails'
+import DashboardStats from '@/views/DashboardStats'
+import DashboardSettings from '@/views/DashboardSettings'
+import DashboardTools from '@/views/DashboardTools'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home,
     meta: {
       title: 'Início'
@@ -75,8 +77,32 @@ const routes = [
         meta: {
           title: 'Estatísticas'
         }
+      },
+      {
+        path: 'tools',
+        name: 'tools',
+        component: DashboardTools,
+        meta: {
+          title: 'Ferramentas'
+        }
+      },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: DashboardSettings,
+        meta: {
+          title: 'Configurações'
+        }
+      },
+      {
+        path: '*',
+        component: DashboardHome
       }
     ]
+  },
+  {
+    path: '*',
+    component: Home
   }
   // {
   //   path: '/about',
