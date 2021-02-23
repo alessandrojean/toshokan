@@ -39,87 +39,40 @@
     </v-row>
 
     <v-row v-if="!loading">
-      <v-col md="4" cols="12">
+      <v-col
+        v-for="mostPresent in mostPresents"
+        :key="mostPresent.key"
+        md="4"
+        cols="12"
+      >
         <v-card>
           <v-card-title class="text-body-1">
-            Séries mais presentes
+            {{ mostPresent.title }}
           </v-card-title>
           <v-simple-table>
             <thead>
               <tr>
                 <th class="text-left">
-                  Série
+                  {{ mostPresent.value }}
                 </th>
                 <th class="text-right">
-                  Volumes
+                  {{ mostPresent.count }}
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="serie in stats.series"
-                :key="serie.name"
+                v-for="row in stats[mostPresent.key]"
+                :key="row.name"
               >
-                <td>{{ serie.name }}</td>
-                <td class="text-right">{{ serie.count }}</td>
-              </tr>
-            </tbody>
-          </v-simple-table>
-        </v-card>
-      </v-col>
-
-      <v-col md="4" cols="12">
-        <v-card>
-          <v-card-title class="text-body-1">
-            Autores mais presentes
-          </v-card-title>
-          <v-simple-table>
-            <thead>
-              <tr>
-                <th class="text-left">
-                  Autor
-                </th>
-                <th class="text-right">
-                  Volumes
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="author in stats.authors"
-                :key="author.name"
-              >
-                <td>{{ author.name }}</td>
-                <td class="text-right">{{ author.count }}</td>
-              </tr>
-            </tbody>
-          </v-simple-table>
-        </v-card>
-      </v-col>
-
-      <v-col md="4" cols="12">
-        <v-card>
-          <v-card-title class="text-body-1">
-            Editoras mais presentes
-          </v-card-title>
-          <v-simple-table>
-            <thead>
-              <tr>
-                <th class="text-left">
-                  Editora
-                </th>
-                <th class="text-right">
-                  Volumes
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="imprint in stats.imprints"
-                :key="imprint.name"
-              >
-                <td>{{ imprint.name }}</td>
-                <td class="text-right">{{ imprint.count }}</td>
+                <td>
+                  <router-link
+                    :to="{ name: 'collection', query: { search: row.name } }"
+                  >
+                    {{ row.name }}
+                  </router-link>
+                </td>
+                <td class="text-right">{{ row.count }}</td>
               </tr>
             </tbody>
           </v-simple-table>
@@ -140,6 +93,29 @@ export default {
   components: {
     GLineChart
   },
+
+  data: () => ({
+    mostPresents: [
+      {
+        title: 'Séries mais presentes',
+        value: 'Série',
+        count: 'Volumes',
+        key: 'series'
+      },
+      {
+        title: 'Autores mais presentes',
+        value: 'Autor',
+        count: 'Volumes',
+        key: 'authors'
+      },
+      {
+        title: 'Editoras mais presentes',
+        value: 'Editora',
+        count: 'Volumes',
+        key: 'imprints'
+      }
+    ]
+  }),
 
   computed: {
     monthlyColumns () {
