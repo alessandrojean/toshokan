@@ -270,7 +270,7 @@
       </v-data-iterator>
     </v-fade-transition>
 
-    <v-bottom-sheet v-model="filterSheet">
+    <v-bottom-sheet v-model="filterSheet" transition="fade-transition">
       <v-card rounded="t-lg">
 
         <v-toolbar flat>
