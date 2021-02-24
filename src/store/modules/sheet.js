@@ -150,6 +150,7 @@ const actions = {
       .then(
         () => dispatch('loadSheetData'),
         response => {
+          // eslint-disable-next-line no-console
           console.error(response)
           commit('updateLoading', false)
         }
@@ -170,6 +171,7 @@ const actions = {
       .then(
         () => dispatch('loadSheetData'),
         response => {
+          // eslint-disable-next-line no-console
           console.error(response)
           commit('updateLoading', false)
         }
@@ -192,6 +194,7 @@ const actions = {
           commit('updateLoading', false)
         },
         response => {
+          // eslint-disable-next-line no-console
           console.error(response)
           commit('updateLoading', false)
         }
@@ -224,6 +227,7 @@ const actions = {
       .then(
         () => dispatch('loadSheetData'),
         response => {
+          // eslint-disable-next-line no-console
           console.error(response)
           commit('updateLoading', false)
         }
