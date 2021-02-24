@@ -9,7 +9,7 @@ const state = () => ({
   current: '',
   display: (localStorage && localStorage.getItem('DISPLAY_MODE')) || 'grid',
   lastAdded: [],
-  loading: true,
+  loading: false,
   sheetId: undefined,
   imprints: [],
   stores: [],
