@@ -113,7 +113,7 @@
             />
 
             <v-row
-              v-if="book.coverUrl.length > 0 && !$v.coverUrl.$invalid"
+              v-if="!$v.coverUrl.$invalid"
               class="mt-2 mb-10"
             >
               <v-col

@@ -117,6 +117,15 @@
                 {{ book.status === 'Lido' ? 'mdi-book-check' : 'mdi-book-remove-outline' }}
               </v-icon>
             </v-btn>
+
+            <v-btn
+              icon
+              color="primary"
+              title="Editar a imagem de capa"
+              @click="showCoverDialog"
+            >
+              <v-icon>mdi-image-edit-outline</v-icon>
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -258,10 +267,8 @@
       max-width="700px"
     >
       <v-card>
-        <v-card-title class="pt-6">
-          <span class="headline">
-            Editar o item
-          </span>
+        <v-card-title>
+          Editar o item
         </v-card-title>
         <v-card-text>
           <v-container class="pa-0 pt-6">
@@ -324,11 +331,88 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="coverDialog"
+      max-width="700px"
+    >
+      <v-card>
+        <v-card-title>
+          Editar a imagem de capa
+        </v-card-title>
+
+        <v-card-text>
+          <v-container class="pa-0 pt-6">
+            <v-text-field
+              v-model="coverUrl"
+              :error-messages="coverUrlErrors"
+              label="Imagem de capa"
+              outlined
+              @input="$v.coverUrl.$touch()"
+              @blur="$v.coverUrl.$touch()"
+            />
+
+            <v-row
+              v-if="!$v.coverUrl.$invalid"
+              class="mt-2 mb-10"
+            >
+              <v-col
+                lg="4"
+                offset-lg="4"
+                md="6"
+                offset-md="3"
+              >
+                <v-card>
+                  <v-custom-img
+                    :src="editingBook.coverUrl"
+                    :aspect-ratio="2 / 3"
+                  />
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            :loading="coverLoading"
+            @click.stop="handleCoverSearchClick"
+          >
+            Procurar
+          </v-btn>
+
+          <v-spacer />
+
+          <v-btn
+            color="primary"
+            text
+            :disabled="coverLoading"
+            @click.stop="handleCoverCancelClick"
+          >
+            Cancelar
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            text
+            :disabled="$v.invalid || coverLoading"
+            @click="handleCoverSaveClick"
+          >
+            Salvar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+import { url } from 'vuelidate/lib/validators'
+
+import { findCovers } from '../services/cover'
 
 import BookRecord from '@/components/BookRecord'
 import VCustomImg from '@/components/VCustomImg'
@@ -350,11 +434,17 @@ export default {
         exact: true
       }
     ],
+    coverDialog: false,
+    coverLoading: false,
     deleteDialog: false,
     editDialog: false,
     favoriteLoading: false,
     statusLoading: false
   }),
+
+  validations: {
+    coverUrl: { url }
+  },
 
   computed: {
     boughtAt () {
@@ -363,6 +453,22 @@ export default {
       }
 
       return 'Desconhecida'
+    },
+
+    coverUrl: {
+      get () {
+        return this.editingBook.coverUrl
+      },
+      set (coverUrl) {
+        this.$store.commit('book/updateCoverUrl', coverUrl)
+      }
+    },
+
+    coverUrlErrors: function () {
+      const errors = []
+      if (!this.$v.coverUrl.$dirty) return errors
+      !this.$v.coverUrl.url && errors.push('Endereço inválido.')
+      return errors
     },
 
     formattedLabelPrice () {
@@ -471,6 +577,45 @@ export default {
           this.statusLoading = false
           this.clearBook()
         })
+    },
+
+    async handleCoverSearchClick () {
+      if (this.editingBook.coverUrl.length > 0) {
+        return
+      }
+
+      this.coverLoading = true
+
+      const results = await findCovers(this.book)
+
+      if (results.length > 0) {
+        this.$store.commit('book/updateCoverUrl', results[0])
+      }
+
+      this.coverLoading = false
+    },
+
+    handleCoverCancelClick () {
+      this.coverDialog = false
+      this.clearBook()
+    },
+
+    handleCoverSaveClick () {
+      this.coverDialog = false
+
+      this.saveBook({ book: this.editingBook, oldBook: this.book })
+        .then(() => {
+          this.book.coverUrl = this.editingBook.coverUrl
+          this.clearBook()
+        })
+    },
+
+    showCoverDialog () {
+      this.updateBook(this.book)
+
+      this.$nextTick(() => {
+        this.coverDialog = true
+      })
     },
 
     ...mapMutations('sheet', ['updateLoading']),

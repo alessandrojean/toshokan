@@ -70,6 +70,7 @@
       app
       color="primary"
       dark
+      hide-on-scroll
     >
       <v-app-bar-nav-icon
         v-if="!backButton"

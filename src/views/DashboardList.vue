@@ -395,7 +395,7 @@ export default {
     search: '',
     selected: [],
     showingCount: 0,
-    sortBy: 'title',
+    sortBy: '',
     sortByOptions: [
       { key: 'title', title: 'Título' },
       { key: 'imprint', title: 'Editora' },
@@ -579,7 +579,7 @@ export default {
     this.search = this.$route.query.search || ''
     this.showingCount = this.itemsToShow.length
 
-    const querySort = this.$route.query.sortBy || 'title'
+    const querySort = this.$route.query.sortBy || ''
     const sortIsValid = this.sortByOptions.find(s => s.key === querySort)
 
     if (sortIsValid) {
@@ -614,6 +614,8 @@ export default {
             page: 1
           }
         })
+
+        this.page = 1
       }
     },
 
@@ -634,6 +636,8 @@ export default {
           delete query.search
           this.$router.push({ query })
         }
+
+        this.page = 1
       }
     },
 

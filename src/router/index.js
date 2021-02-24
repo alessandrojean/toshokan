@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import goTo from 'vuetify/es5/services/goto'
 
 import store from '../store'
 
 import Home from '@/views/Home.vue'
-
 import DashboardHome from '@/views/DashboardHome'
 import DashboardCollection from '@/views/DashboardCollection'
 import DashboardList from '@/views/DashboardList'
@@ -117,6 +117,17 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
+  // scrollBehavior: (to, from, savedPosition) => {
+  //   let scrollTo = 0
+
+  //   if (to.hash) {
+  //     scrollTo = to.hash
+  //   } else {
+  //     scrollTo = savedPosition.y
+  //   }
+
+  //   return goTo(scrollTo)
+  // },
   routes
 })
 

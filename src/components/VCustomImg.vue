@@ -49,9 +49,9 @@ export default {
     }
   },
 
-  data: vm => ({
+  data: () => ({
     error: '',
-    srcToShow: vm.src.length > 0 ? vm.src : placeholder
+    srcToShow: ''
   }),
 
   computed: {
@@ -79,6 +79,16 @@ export default {
       }
 
       cover.src = this.src
+    }
+  },
+
+  mounted () {
+    this.srcToShow = this.src.length > 0 ? this.src : placeholder
+  },
+
+  watch: {
+    src (newValue) {
+      this.srcToShow = newValue.length > 0 ? newValue : placeholder
     }
   }
 }
