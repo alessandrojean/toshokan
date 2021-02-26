@@ -43,10 +43,10 @@ const actions = {
     })
   },
   signIn: function () {
-    window.gapi.auth2.getAuthInstance().signIn()
+    return window.gapi.auth2.getAuthInstance().signIn()
   },
   signOut: function () {
-    window.gapi.auth2.getAuthInstance().signOut()
+    return window.gapi.auth2.getAuthInstance().signOut()
   }
 }
 

@@ -163,7 +163,7 @@ router.beforeEach((to, from, next) => {
 
   if (!store.getters['auth/isStarted']) {
     store.dispatch('auth/initApp')
-      .then(() => next())
+      .then(isSignedIn => next(isSignedIn ? '/dashboard/home' : undefined))
       .catch(() => next('/'))
 
     return
