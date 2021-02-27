@@ -1,6 +1,6 @@
 <template>
   <div class="ma-3">
-    <v-row v-if="!loading">
+    <v-row v-if="!loading && Object.keys(stats).length > 0">
       <v-col md="3" cols="6">
         <v-card color="#385F73" dark>
           <v-card-title class="text-md-h5 text-h6">

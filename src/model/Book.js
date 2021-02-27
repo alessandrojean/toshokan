@@ -105,13 +105,20 @@ export function getCodeType (code) {
 }
 
 export function parseBookFromCbl (cblBook) {
+  const allowedRoles = ['Autor', 'Ilustrador', 'Roteirista']
+
   return {
     code: cblBook.RowKey,
     title: cblBook.Title.trim()
       .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
       .replace(/#(\d{1})$/, '#0$1'),
-    authors: cblBook.Authors,
-    imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint
+    authors: cblBook.Profissoes && cblBook.Profissoes.length === cblBook.Authors.length
+      ? cblBook.Authors.filter((a, i) => allowedRoles.includes(cblBook.Profissoes[i]))
+      : cblBook.Authors,
+    imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
+    format: cblBook.Dimensao
+      ? cblBook.Dimensao.replace(/(\d+)(\d)x(\d+)(\d)$/, '$1,$2 x $3,$4')
+      : ''
   }
 }
 

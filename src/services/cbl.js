@@ -14,7 +14,7 @@ const cbl = axios.create({
 export const IMPRINT_REPLACEMENTS = {
   'Editora JBC': 'JBC',
   INK: 'JBC',
-  'Japorama Editora e Comunicção': 'JBC',
+  'Japorama Editora e Comunicação': 'JBC',
   'New Pop Editora': 'NewPOP',
   'NewPOP Editora': 'NewPOP',
   'Panini Brasil': 'Panini',
@@ -43,7 +43,7 @@ function createSearchPayload (query, dataOptions) {
     searchFields: 'FormattedKey,RowKey,Authors,Title,Imprint',
     searchMode: 'any',
     select: 'Authors,Colection,Countries,Date,Imprint,Title,RowKey,' +
-      'PartitionKey,RecordId,FormattedKey,Subject,Veiculacao',
+      'PartitionKey,RecordId,FormattedKey,Subject,Veiculacao,Profissoes,Dimensao',
     skip: 0,
     top: 12
   }
@@ -78,7 +78,7 @@ export async function searchByIsbn (isbn) {
     throw new Error('O ISBN informado é inválido.')
   }
 
-  const searchResults = await search(isbn, {
+  const searchResults = await search(isbn.replace(/-/g, ''), {
     dataOptions: { searchFields: 'FormattedKey,RowKey' }
   })
 
