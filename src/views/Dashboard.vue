@@ -1,5 +1,36 @@
 <template>
-  <v-app>
+  <div>
+    <nav class="bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <!-- Heroicon name: outline/library -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+              </svg>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Início
+                </a>
+
+                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Coleção
+                </a>
+
+                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Estatísticas
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- <v-app>
     <v-navigation-drawer
       app
       v-model="drawerModel"
@@ -137,7 +168,7 @@
         </v-icon>
       </v-btn>
     </v-bottom-navigation>
-  </v-app>
+  </v-app> -->
 </template>
 
 <script>

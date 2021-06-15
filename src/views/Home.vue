@@ -1,77 +1,38 @@
 <template>
-  <v-app>
-    <v-row
-      align="center"
-      justify="center"
-      class="deep-purple flex-column ma-0 pa-0"
-    >
-      <v-avatar color="deep-purple lighten-4" size="72">
-        <v-icon color="primary" x-large>
-          mdi-bookshelf
-        </v-icon>
-      </v-avatar>
-
-      <button
-        class="sign-in-button mt-10"
-        @click.stop="signIn"
-        :disabled="!started"
-        v-if="!signedIn"
-        title="Entrar com Google"
-      >
-      </button>
-    </v-row>
-    <!-- <v-app-bar
-      app
-      color="white"
-      flat
-    >
-      <v-container class="py-0 fill-height">
-        <v-avatar class="mr-10" color="indigo" size="32">
-          <v-icon dark>
-            mdi-bookshelf
-          </v-icon>
-        </v-avatar>
-
-        <v-toolbar-title>Toshokan</v-toolbar-title>
-
-        <v-spacer/>
-
-        <v-btn
-          text
-          color="primary"
-          @click.stop="signIn"
-          :loading="!started && !signedIn"
-          v-if="!signedIn"
-        >
-          <v-icon left>
-            mdi-google
-          </v-icon>
-          Entrar
-        </v-btn>
-
-        <v-btn
-          text
-          color="primary"
-          @click.stop="$router.push({ name: 'dashboard-home' })"
-          v-if="signedIn"
-        >
-          Painel
-        </v-btn>
-
-        <v-btn
-          text
-          color="primary"
-          @click.stop="signOut"
-          v-if="signedIn"
-        >
-          Sair
-          <v-icon right>
-            mdi-logout-variant
-          </v-icon>
-        </v-btn>
-      </v-container>
-    </v-app-bar> -->
-  </v-app>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-xs w-full space-y-8">
+      <div>
+        <!-- Heroicon name: outline/library -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+        </svg>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Autentique-se
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          para obter acesso ao Toshokan
+        </p>
+      </div>
+      <div class="mt-8 space-y-6">
+        <div>
+          <button
+            type="button"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:bg-indigo-600 disabled:cursor-default"
+            @click.stop="signIn"
+            :disabled="!started"
+          >
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <!-- Heroicon name: solid/lock-closed -->
+              <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 group-disabled:text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+              </svg>
+            </span>
+            Entrar com Google
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -106,25 +67,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.sign-in-button {
-  font-size: 0;
-  width: 191px;
-  height: 46px;
-  background-image: url('~@/assets/btn_google_signin_light_normal_web.png');
-}
-
-.sign-in-button:focus {
-  background-image: url('~@/assets/btn_google_signin_light_focus_web.png');
-  outline: none;
-}
-
-.sign-in-button:disabled {
-  background-image: url('~@/assets/btn_google_signin_light_disabled_web.png');
-}
-
-.sign-in-button:active {
-  background-image: url('~@/assets/btn_google_signin_light_pressed_web.png');
-}
-</style>
