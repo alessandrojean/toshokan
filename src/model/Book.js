@@ -117,7 +117,9 @@ export function parseBookFromCbl (cblBook) {
       : cblBook.Authors,
     imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
     format: cblBook.Dimensao
-      ? cblBook.Dimensao.replace(/(\d+)(\d)x(\d+)(\d)$/, '$1,$2 x $3,$4')
+      ? cblBook.Dimensao.replace(/(\d{2})(\d)?x(\d{2})(\d)?$/, (m, p1, p2, p3, p4) => {
+        return p1 + (p2 ? ',' + p2 : '') + ' x ' + p3 + (p4 ? ',' + p4 : '')
+      })
       : ''
   }
 }
