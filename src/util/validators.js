@@ -1,14 +1,12 @@
-import { helpers } from 'vuelidate/lib/validators'
+import { helpers } from '@vuelidate/validators'
 
 export function decimalComma (digits) {
   return helpers.regex(
-    'decimalComma',
     new RegExp(`^\\d+(\\,\\d{1,${digits}})?$`)
   )
 }
 
 export const format = helpers.regex(
-  'format',
   /^\d+((,|\.)\d{1,2})? (x|×) \d+((,|\.)\d{1,2})?$/
 )
 

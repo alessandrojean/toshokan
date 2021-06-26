@@ -1,28 +1,24 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-// import goTo from 'vuetify/es5/services/goto'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import store from '../store'
 
-import Home from '@/views/Home.vue'
-import DashboardHome from '@/views/DashboardHome'
-import DashboardCollection from '@/views/DashboardCollection'
-import DashboardList from '@/views/DashboardList'
-import DashboardNewBook from '@/views/DashboardNewBook'
-import DashboardDetails from '@/views/DashboardDetails'
-import DashboardStats from '@/views/DashboardStats'
-import DashboardSettings from '@/views/DashboardSettings'
-import DashboardTools from '@/views/DashboardTools'
-
-Vue.use(VueRouter)
+import Home from '@/views/Home'
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: Home,
     meta: {
       title: 'Início'
+    }
+  },
+  {
+    path: '/error',
+    name: 'Error',
+    component: () => import(/* webpackChunkName: "error" */ '../views/Error.vue'),
+    meta: {
+      title: 'Erro crítico'
     }
   },
   {
@@ -31,39 +27,31 @@ const routes = [
     children: [
       {
         path: 'home',
-        name: 'dashboard-home',
-        component: DashboardHome,
+        name: 'DashboardHome',
+        component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/DashboardHome.vue'),
         meta: {
           title: 'Início'
         }
       },
       {
         path: 'collection',
-        component: DashboardCollection,
+        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/DashboardCollection.vue'),
         meta: {
           title: 'Coleção'
         },
         children: [
           {
             path: '',
-            name: 'collection',
-            component: DashboardList,
+            name: 'DashboardCollection',
+            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/DashboardCollectionList.vue'),
             meta: {
               title: 'Coleção'
             }
           },
           {
-            path: 'new',
-            name: 'new-book',
-            component: DashboardNewBook,
-            meta: {
-              title: 'Novo item'
-            }
-          },
-          {
             path: ':bookId',
-            name: 'book-details',
-            component: DashboardDetails,
+            name: 'BookDetails',
+            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/DashboardDetails.vue'),
             meta: {
               title: 'Detalhes'
             }
@@ -71,63 +59,57 @@ const routes = [
         ]
       },
       {
+        path: 'new',
+        name: 'DashboardNewBook',
+        component: () => import(/* webpackChunkName: "dashboard-new-book" */ '../views/DashboardNewBook.vue'),
+        meta: {
+          title: 'Novo livro'
+        }
+      },
+      {
+        path: 'search',
+        name: 'DashboardSearch',
+        component: () => import(/* webpackChunkName: "dashboard-search" */ '../views/DashboardSearch.vue'),
+        meta: {
+          title: 'Busca'
+        }
+      },
+      {
         path: 'stats',
-        name: 'stats',
-        component: DashboardStats,
+        name: 'DashboardStats',
+        component: () => import(/* webpackChunkName: "dashboard-stats" */ '../views/DashboardStats.vue'),
         meta: {
           title: 'Estatísticas'
         }
       },
       {
-        path: 'tools',
-        name: 'tools',
-        component: DashboardTools,
-        meta: {
-          title: 'Ferramentas'
-        }
-      },
-      {
         path: 'settings',
-        name: 'settings',
-        component: DashboardSettings,
+        name: 'DashboardSettings',
+        component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/DashboardSettings.vue'),
         meta: {
           title: 'Configurações'
         }
       },
       {
-        path: '*',
-        component: DashboardHome
+        path: 'wishlist',
+        name: 'DashboardWishlist',
+        component: () => import(/* webpackChunkName: "dashboard-wishlist" */ '../views/DashboardWishlist.vue'),
+        meta: {
+          title: 'Lista de desejos'
+        }
       }
     ]
-  },
-  {
-    path: '*',
-    component: Home
   }
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  // }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  // scrollBehavior: (to, from, savedPosition) => {
-  //   let scrollTo = 0
-
-  //   if (to.hash) {
-  //     scrollTo = to.hash
-  //   } else {
-  //     scrollTo = savedPosition.y
-  //   }
-
-  //   return goTo(scrollTo)
-  // },
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  scrollBehavior () {
+    return {
+      top: 0,
+      behavior: 'smooth'
+    }
+  },
   routes
 })
 

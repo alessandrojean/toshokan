@@ -1,43 +1,43 @@
 <template>
   <div>
-    <router-view/>
-
-    <v-fade-transition>
-      <div class="loading-wrapper" v-if="loading || !started">
-        <v-progress-circular
-          :size="50"
-          color="#673AB7"
-          indeterminate
-        />
+    <transition
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+    >
+      <div
+        v-if="!authStarted"
+        class="z-30 absolute w-full h-full flex justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
+      >
+        <BookOpenIcon class="animate-pulse h-28 w-28 mx-auto text-indigo-500" aria-hidden="true" />
       </div>
-    </v-fade-transition>
+    </transition>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+import { BookOpenIcon } from '@heroicons/vue/outline'
 
 export default {
-  name: 'App',
+  components: {
+    BookOpenIcon
+  },
 
-  computed: {
-    ...mapState('auth', ['started']),
-    ...mapState('sheet', ['loading'])
+  setup () {
+    const store = useStore()
+
+    const authStarted = computed(() => store.state.auth.started)
+
+    return {
+      authStarted
+    }
   }
 }
 </script>
-
-<style lang="scss">
-.loading-wrapper {
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-</style>

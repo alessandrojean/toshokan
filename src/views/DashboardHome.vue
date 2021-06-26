@@ -1,82 +1,102 @@
 <template>
-  <div class="ma-3">
-    <v-row v-if="!loading && Object.keys(stats).length > 0">
-      <v-col md="3" cols="6">
-        <v-card color="#385F73" dark>
-          <v-card-title class="text-md-h5 text-h6">
-            {{ count }}
-          </v-card-title>
+  <div>
+    <!-- <SimpleHeader title="Dashboard" :loading="loading" /> -->
+    <header class="bg-white shadow dark:bg-gray-800">
+      <div class="max-w-7xl mx-auto lg:flex lg:items-center lg:justify-between py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex-1 flex items-center space-x-4">
+          <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
+          <h1 class="text-2xl font-semibold font-title text-gray-900 dark:text-gray-100">
+            Olá, {{ profileName }}!
+          </h1>
+        </div>
+        <div class="flex mt-5 lg:mt-0 lg:ml-4">
+          <router-link
+            :to="{ name: 'DashboardNewBook' }"
+            class="button is-primary"
+          >
+            <PlusIcon aria-hidden="true" />
+            Novo livro
+          </router-link>
+        </div>
+      </div>
+    </header>
 
-          <v-card-subtitle class="text-md-body-1 text-caption">
-            {{ count === '1' ? 'item' : 'itens' }}
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
+    <main class="max-w-7xl mx-auto py-6 px-5 md:px-8">
+      <BetaWarning />
 
-      <v-col md="3" cols="6">
-        <v-card color="#1F7087" dark>
-          <v-card-title class="text-md-h5 text-h6">
-            {{ stats.money.totalSpentPaid }}
-          </v-card-title>
+      <div v-if="loading" class="animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
+      <h2 v-else class="font-medium font-title text-xl mb-3 dark:text-gray-200">Visão geral</h2>
 
-          <v-card-subtitle class="text-md-body-1 text-caption">
-            gasto
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-5 lg:grid-cols-4">
+        <StatCard
+          title="Contagem"
+          :value="count"
+          :loading="loading"
+        >
+          <template v-slot:icon="{ cssClass }">
+            <BookOpenIcon :class="cssClass" />
+          </template>
+        </StatCard>
 
-      <v-col md="3" cols="6">
-        <v-card color="#952175" dark>
-          <v-card-title class="text-md-h5 text-h6">
-            {{ stats.money.saved }}
-          </v-card-title>
+        <StatCard
+          title="Leitura"
+          :value="stats.status?.percent"
+          :loading="loading"
+        >
+          <template v-slot:icon="{ cssClass }">
+            <BookmarkIcon :class="cssClass" />
+          </template>
+        </StatCard>
 
-          <v-card-subtitle class="text-md-body-1 text-caption">
-            economizado
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
+        <StatCard
+          title="Gasto total"
+          :value="stats.money?.totalSpentPaid"
+          :loading="loading"
+          :sensitive="true"
+        >
+          <template v-slot:icon="{ cssClass }">
+            <CurrencyDollarIcon :class="cssClass" />
+          </template>
+        </StatCard>
 
-      <v-col md="3" cols="6">
-        <v-card color="pink" dark>
-          <v-card-title class="text-md-h5 text-h6">
-            {{ stats.status.percent }}
-          </v-card-title>
+        <StatCard
+          title="Economia total"
+          :value="stats.money?.saved"
+          :loading="loading"
+          :sensitive="true"
+        >
+          <template v-slot:icon="{ cssClass }">
+            <EmojiHappyIcon :class="cssClass" />
+          </template>
+        </StatCard>
+      </div>
 
-          <v-card-subtitle class="text-md-body-1 text-caption">
-            lido
-          </v-card-subtitle>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <h2
-      class="grey--text text--darken-3 font-weight-medium mt-8 mb-2"
-      v-if="!loading"
-    >
-      Últimos adicionados
-    </h2>
-
-    <v-row dense v-if="!loading">
-      <v-col
-        v-for="item in lastAdded"
-        :key="item.id"
-        xl="1"
-        md="2"
-        lg="2"
-        sm="4"
-        cols="4"
-      >
-        <book-card :book="item" @click="handleCardClick" />
-      </v-col>
-    </v-row>
+      <!-- Last added books -->
+      <LastAddedBooks
+        :loading="loading"
+        :last-added="lastAdded"
+      />
+    </main>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
-import BookCard from '@/components/BookCard'
+import {
+  BookOpenIcon,
+  BookmarkIcon,
+  CurrencyDollarIcon,
+  EmojiHappyIcon
+} from '@heroicons/vue/outline'
+
+import { PlusIcon } from '@heroicons/vue/solid'
+
+import BetaWarning from '@/components/BetaWarning'
+import LastAddedBooks from '@/components/LastAddedBooks'
+import StatCard from '@/components/StatCard'
 
 const formatter = new Intl.NumberFormat('pt-BR')
 
@@ -84,30 +104,38 @@ export default {
   name: 'DashboardHome',
 
   components: {
-    BookCard
+    BetaWarning,
+    LastAddedBooks,
+    StatCard,
+    BookOpenIcon,
+    BookmarkIcon,
+    CurrencyDollarIcon,
+    EmojiHappyIcon,
+    PlusIcon
   },
 
-  computed: {
-    count: function () {
-      return formatter.format(this.stats.count)
-    },
+  setup () {
+    const store = useStore()
 
-    ...mapState('sheet', ['lastAdded', 'loading', 'stats'])
-  },
+    const count = computed(() => {
+      const statsCount = store.state.sheet.stats.count
+      return statsCount ? formatter.format(statsCount) : ''
+    })
 
-  methods: {
-    handleCardClick: function (book) {
-      this.$router.push({
-        name: 'book-details',
-        params: { bookId: book.id }
-      })
-    },
+    const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
+    const profileName = computed(() => store.state.auth.profileName)
+    const lastAdded = computed(() => store.state.sheet.lastAdded)
+    const loading = computed(() => store.state.sheet.loading)
+    const stats = computed(() => store.state.sheet.stats)
 
-    ...mapMutations('appbar', ['updateIcons'])
-  },
-
-  mounted: function () {
-    this.updateIcons([])
+    return {
+      count,
+      lastAdded,
+      loading,
+      profileImageUrl,
+      profileName,
+      stats
+    }
   }
 }
 </script>

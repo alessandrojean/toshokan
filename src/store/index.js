@@ -1,18 +1,19 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
 import auth from './modules/auth'
+import collection from './modules/collection'
 import sheet from './modules/sheet'
-import appbar from './modules/appbar'
-import book from './modules/book'
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
+  state: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
   modules: {
     auth,
-    sheet,
-    appbar,
-    book
+    collection,
+    sheet
   }
 })

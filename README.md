@@ -7,11 +7,11 @@ It compiles in a static HTML that works great on mobile and can
 be deployed anywhere.
 
 <p align="center">
-<img src="./images/collection.png" width="250">
+  <img src="./images/screenshot-library.png">
 </p>
 
 It was inspired by the [expenses](https://github.com/jakubgarfield/expenses)
-by jakubgarfield, and it uses the Vuetify components and Material Design Icons.
+by jakubgarfield, and it uses the Tailwind CSS for the UI.
 
 ## Features
 

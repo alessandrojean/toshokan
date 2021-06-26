@@ -16,6 +16,7 @@ export function parseBook (value, index) {
     title: value[3],
     titleParts: splitTitle(value[3]),
     authors: value[4].split(/;\s+/g),
+    authorsStr: value[4],
     imprint: value[5],
     format: value[6].replace(/\./g, ','),
     status: value[7],
@@ -27,6 +28,10 @@ export function parseBook (value, index) {
       currency: paidPrice[0],
       value: paidPrice[1].replace('.', ',') || '0,0'
     },
+    labelPriceCurrency: labelPrice[0],
+    labelPriceValue: labelPrice[1].replace('.', ',') || '0,0',
+    paidPriceCurrency: paidPrice[0],
+    paidPriceValue: paidPrice[1].replace('.', ',') || '0,0',
     store: value[10],
     coverUrl: value[11],
     boughtAt: value[12].split('/').reverse().join('-'),
@@ -109,6 +114,7 @@ export function parseBookFromCbl (cblBook) {
 
   return {
     code: cblBook.RowKey,
+    codeType: cblBook.RowKey.length === 13 ? 'ISBN-13' : 'ISBN-10',
     title: cblBook.Title.trim()
       .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
       .replace(/#(\d{1})$/, '#0$1'),

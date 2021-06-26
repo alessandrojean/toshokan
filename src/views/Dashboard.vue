@@ -1,332 +1,94 @@
 <template>
-  <div>
-    <nav class="bg-gray-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <!-- Heroicon name: outline/library -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-              </svg>
-            </div>
-            <div class="hidden md:block">
-              <div class="ml-10 flex items-baseline space-x-4">
-                <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Início
-                </a>
+  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col">
+    <AppNavbar />
 
-                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Coleção
-                </a>
-
-                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                  Estatísticas
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-  </div>
-  <!-- <v-app>
-    <v-navigation-drawer
-      app
-      v-model="drawerModel"
-    >
-      <v-img
-        :src="require('../assets/unsplash_bookshelf.jpg')"
-        gradient="to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8)"
-        :aspect-ratio="1520 / 605"
-      >
-        <v-list dark>
-          <v-list-item class="py-1">
-            <v-list-item-avatar size="48">
-              <v-img :src="profileImageUrl"></v-img>
-            </v-list-item-avatar>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ profileName }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ profileEmail }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-btn
-                icon
-                title="Sair"
-                aria-label="Sair"
-                @click.stop="signOut"
-              >
-                <v-icon>mdi-logout-variant</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
-      </v-img>
-
-      <v-divider/>
-
-      <v-list dense nav>
-        <v-list-item-group
-          v-model="selectedItem"
-          color="primary"
-          mandatory
+    <main class="flex-1 flex">
+      <router-view v-slot="{ Component }" >
+        <transition
+          mode="out-in"
+          enter-active-class="transition duration-500 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100 "
+          leave-active-class="transition duration-300 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
         >
-          <v-list-item
-            v-for="item in drawerItems"
-            :key="item.title"
-            link
-            :to="item.to"
-          >
-            <v-list-item-icon>
-              <v-icon>
-                {{ currentIcon(item.icon, item.to) }}
-              </v-icon>
-            </v-list-item-icon>
+          <component :is="Component" class="w-full" />
+        </transition>
+      </router-view>
+    </main>
 
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+    <footer class="bg-white dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto text-center space-y-2">
+        <BookOpenIcon class="h-8 w-8 mx-auto text-gray-400 dark:text-gray-600" aria-hidden="true" />
 
-    <v-app-bar
-      app
-      color="primary"
-      dark
-      hide-on-scroll
-    >
-      <v-app-bar-nav-icon
-        v-if="!backButton"
-        @click="updateDrawer(!drawer)"
-        class="d-none d-lg-inline-flex"
-      />
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Toshokan v{{ appVersion }}
+          <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="hover:text-indigo-500 hover:underline dark:hover:text-gray-200 font-mono">{{ gitHash }}</a>)</span>
+        </p>
 
-      <v-btn
-        icon
-        v-if="backButton"
-        @click="handleBackButtonClick"
-      >
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-
-      <v-toolbar-title class="pl-0 pl-lg-5">
-        {{ $router.currentRoute.meta.title }}
-      </v-toolbar-title>
-
-      <v-spacer/>
-
-      <v-fade-transition group>
-        <template v-for="icon in icons">
-          <v-btn
-            icon
-            :key="icon.title"
-            :title="icon.title"
-            @click="icon.click"
-          >
-            <v-icon>{{ icon.icon }}</v-icon>
-          </v-btn>
-        </template>
-      </v-fade-transition>
-    </v-app-bar>
-
-    <v-main class="grey lighten-5">
-      <v-container>
-        <v-fade-transition mode="out-in">
-          <router-view/>
-        </v-fade-transition>
-      </v-container>
-    </v-main>
-
-    <v-bottom-navigation
-      app
-      v-model="bottomValue"
-      :input-value="bottomActive"
-      grow
-      mandatory
-      background-color="primary"
-      dark
-      class="d-sm-flex d-lg-none"
-      :class="{ 'v-bottom-navigation--hidden': !bottomActive }"
-    >
-      <v-btn
-        v-for="item in bottomItems"
-        :key="item.title"
-        @click="handleItemClick(item.to)"
-      >
-        <span>{{ item.title }}</span>
-
-        <v-icon>
-          {{ currentIcon(item.icon, item.to) }}
-        </v-icon>
-      </v-btn>
-    </v-bottom-navigation>
-  </v-app> -->
+        <p v-if="!isDev" class="text-xs text-gray-600 dark:text-gray-400">
+          <a href="https://www.netlify.com/" target="_blank" class="hover:underline hover:text-indigo-600 dark:hover:text-gray-200">This site is powered by Netlify</a>
+          <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
+        </p>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
-import { bottomNavIsShowing } from '../util/appbar'
+import useAppInfo from '@/composables/useAppInfo'
+
+import { BookOpenIcon } from '@heroicons/vue/outline'
+
+import AppNavbar from '@/components/AppNavbar'
 
 export default {
   name: 'Dashboard',
 
-  data: () => ({
-    bottomItems: [
-      {
-        title: 'Início',
-        icon: 'mdi-home-outline',
-        to: '/dashboard/home'
-      },
-      {
-        title: 'Coleção',
-        icon: 'mdi-book-multiple-outline',
-        to: '/dashboard/collection'
-      },
-      {
-        title: 'Estatísticas',
-        icon: 'mdi-chart-box-outline',
-        to: '/dashboard/stats'
-      },
-      {
-        title: 'Mais',
-        icon: 'mdi-dots-horizontal'
-      }
-    ],
-    bottomValue: 0,
-    drawerItems: [
-      {
-        title: 'Início',
-        icon: 'mdi-home-outline',
-        to: '/dashboard/home'
-      },
-      {
-        title: 'Coleção',
-        icon: 'mdi-book-multiple-outline',
-        to: '/dashboard/collection'
-      },
-      {
-        title: 'Estatísticas',
-        icon: 'mdi-chart-box-outline',
-        to: '/dashboard/stats'
-      },
-      {
-        title: 'Ferramentas',
-        icon: 'mdi-toolbox-outline',
-        to: '/dashboard/tools'
-      },
-      {
-        title: 'Configurações',
-        icon: 'mdi-cog-outline',
-        to: '/dashboard/settings'
-      }
-    ],
-    mini: true,
-    selectedItem: 0
-  }),
-
-  computed: {
-    drawerModel: {
-      get: function () {
-        return this.drawer
-      },
-
-      set: function (value) {
-        this.updateDrawer(value && !bottomNavIsShowing())
-      }
-    },
-
-    ...mapState('auth', [
-      'signedIn',
-      'profileName',
-      'profileEmail',
-      'profileImageUrl'
-    ]),
-
-    ...mapState('sheet', ['loading']),
-    ...mapState('appbar', [
-      'backButton',
-      'bottomActive',
-      'drawer',
-      'icons'
-    ])
+  components: {
+    AppNavbar,
+    BookOpenIcon
   },
 
-  methods: {
-    currentIcon: function (icon, routePath) {
-      const active = this.$route.matched.find(r => r.path === routePath)
+  setup () {
+    const store = useStore()
+    const router = useRouter()
 
-      return active ? icon.replace('-outline', '') : icon
-    },
+    const isDev = ref(process.env.NODE_ENV === 'development')
 
-    handleBackButtonClick: function () {
-      this.$router.go(-1)
-      this.showDrawer()
-    },
+    const { appVersion, gitHash, gitHubUrl } = useAppInfo()
 
-    handleItemClick: function (to) {
-      if (this.$router.currentRoute.path !== (to || '/dashboard/home')) {
-        this.$router.push(to || '/dashboard/home')
+    const signedIn = computed(() => store.state.auth.signedIn)
+
+    const loadSheetData = async () => {
+      try {
+        await store.dispatch('sheet/loadSheetData')
+      } catch (e) {
+        router.replace({ name: 'Error', query: { em: e.message } })
       }
-    },
+    }
 
-    handleRouteChange: function () {
-      const path = this.$route.path
+    onMounted(loadSheetData)
 
-      if (path.includes('home')) {
-        this.bottomValue = 0
-      } else if (path.includes('collection')) {
-        this.bottomValue = 1
-      } else if (path.includes('stats')) {
-        this.bottomValue = 2
-      } else {
-        this.bottomValue = 3
-      }
-    },
-
-    ...mapActions('auth', ['signOut']),
-    ...mapActions('sheet', ['loadSheetData']),
-    ...mapMutations('appbar', ['updateDrawer', 'showDrawer'])
-  },
-
-  created: function () {
-    const currentPath = this.$router.currentRoute.path
-    const currentIndex = this.drawerItems
-      .findIndex(item => currentPath.includes('/dashboard/' + item.to))
-
-    this.selectedItem = currentIndex !== -1 ? currentIndex : 0
-  },
-
-  mounted: function () {
-    this.updateDrawer(!bottomNavIsShowing())
-    this.handleRouteChange()
-    this.loadSheetData()
-  },
-
-  watch: {
-    signedIn: function (newValue) {
+    watch(signedIn, newValue => {
       if (!newValue) {
-        this.$router.replace('/')
+        router.replace('/')
       }
-    },
+    })
 
-    '$route.path': function (newValue) {
-      this.handleRouteChange()
+    return {
+      appVersion,
+      gitHash,
+      gitHubUrl,
+      isDev,
+      loadSheetData,
+      signedIn
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.v-bottom-navigation.v-bottom-navigation--hidden {
-  transform: translateY(100%) !important;
-}
-</style>

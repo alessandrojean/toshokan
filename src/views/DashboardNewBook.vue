@@ -1,304 +1,481 @@
 <template>
-  <v-row class="mt-2">
-    <v-col md="8" offset-md="2">
-      <v-stepper v-model="step" alt-labels>
-        <v-stepper-header>
-          <v-stepper-step
-            :complete="step > 1"
-            step="1"
-          >
-            Pesquisa na CBL
-          </v-stepper-step>
+  <div class="flex flex-col">
+    <SimpleHeader class="shadow-none sm:shadow" title="Novo livro" />
 
-          <v-divider/>
-
-          <v-stepper-step
-            :complete="step > 2"
-            step="2"
-          >
-            Ficha
-          </v-stepper-step>
-
-          <v-divider/>
-
-          <v-stepper-step step="3">
-            Imagem de capa
-          </v-stepper-step>
-        </v-stepper-header>
-
-        <v-stepper-items>
-          <v-stepper-content step="1">
-            <v-row dense>
-              <v-col md="8" offset-md="2" class="text-center">
-                <v-img
-                  :src="require('../assets/undraw_book_lover_mkck.svg')"
-                  :aspect-ratio="1022/813"
-                  width="70%"
-                  class="my-10 mx-auto"
-                />
-
-                <v-autocomplete
-                  v-model="searchSelection"
-                  :items="searchResults"
-                  :loading="searching"
-                  :search-input.sync="searchQuery"
-                  :error-messages="searchError"
-                  hide-no-data
-                  cache-items
-                  label="ISBN 13 ou ISBN 10"
-                  outlined
-                  class="mt-1"
-                  prepend-inner-icon="mdi-book-search-outline"
-                  item-value="code"
-                  item-text="code"
-                >
-                  <template v-slot:item="{ item }">
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ item.title }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle>
-                        {{ item.imprint }}
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </template>
-                </v-autocomplete>
-
-                <v-divider role="presentation"/>
-
-                <v-btn
-                  text
-                  outlined
-                  color="primary"
-                  class="mt-7 mb-6"
-                  @click="step = 2"
-                >
-                  Preencher manualmente
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-stepper-content>
-
-          <v-stepper-content step="2">
-            <book-record ref="bookRecord" />
-
-            <div class="mt-4 mb-4 d-flex justify-space-between">
-              <v-btn
-                text
-                color="primary"
-                @click="step = 1"
-              >
-                Voltar
-              </v-btn>
-
-              <v-btn
-                color="primary"
-                :disabled="invalid"
-                @click="step = 3"
-              >
-                Continuar
-              </v-btn>
+    <div class="flex-1 flex items-start sm:items-center justify-center py-10">
+      <transition
+        mode="out-in"
+        leave-active-class="transition transform duration-200 ease-in"
+        leave-from-class="opacity-100 translate-x-0"
+        leave-to-class="opacity-0 -translate-x-2"
+        enter-active-class="transition transform duration-200 ease-out"
+        enter-from-class="opacity-0 translate-x-2"
+        enter-to-class="opacity-100 translate-x-0"
+      >
+        <div v-if="step === 1" class="relative sm:max-w-xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="px-4 py-5 space-y-6 sm:p-6">
+            <div>
+              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                Preenchimento automático
+              </h3>
+              <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Obtenha automaticamente os metadados do livro a partir de seu ISBN.
+              </p>
             </div>
-          </v-stepper-content>
+            <div class="flex flex-col items-end">
+              <label for="book-isbn" class="sr-only">ISBN</label>
+              <div class="group relative w-full">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
+                </div>
+                <input
+                  type="text"
+                  id="book-isbn"
+                  class="input text-lg pl-10 pr-16"
+                  placeholder="Pesquisar por ISBN-10 ou ISBN-13"
+                  v-model="isbnQuery"
+                  @keyup.enter.stop="search"
+                >
+                <div class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center">
+                  <span class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md">
+                    <span class="sr-only">Pressione </span>
+                    <kbd class="font-sans">Enter</kbd>
+                    <span class="sr-only"> para pesquisar</span>
+                  </span>
+                </div>
+              </div>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Mecanismo de pesquisa por
+                <span class="sr-only">CBL</span>
+                <img src="@/assets/cbl-logo.png" alt="Logo da CBL" class="cbl-logo" aria-hidden="true">
+              </p>
+            </div>
 
-          <v-stepper-content step="3">
-            <v-text-field
-              v-model="coverUrl"
-              :error-messages="coverUrlErrors"
-              label="Imagem de capa"
-              outlined
-              class="mt-2"
-              @input="$v.coverUrl.$touch()"
-              @blur="$v.coverUrl.$touch()"
-            />
-
-            <v-row
-              v-if="!$v.coverUrl.$invalid"
-              class="mt-2 mb-10"
+            <Alert
+              type="error"
+              :show="searchFailed"
+              title="Houve um erro durante a pesquisa"
             >
-              <v-col
-                lg="4"
-                offset-lg="4"
-                md="6"
-                offset-md="3"
-              >
-                <v-card>
-                  <v-custom-img
-                    :src="book.coverUrl"
-                    :aspect-ratio="2 / 3"
-                  />
-                </v-card>
-              </v-col>
-            </v-row>
+              <p>{{ searchError }}</p>
+            </Alert>
 
-            <div class="mt-4 mb-4 d-flex justify-space-between">
-              <v-btn
-                text
-                color="primary"
-                @click="step = 2"
-              >
-                Voltar
-              </v-btn>
+            <Alert
+              type="info"
+              :show="noResultsFound"
+            >
+              <p>Nenhum resultado encontrado.</p>
+            </Alert>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
+            <button
+              type="button"
+              class="button is-ghost -mr-4"
+              @click.stop="handleFillManually"
+            >
+              Preencher manualmente
+              <ChevronRightIcon class="is-right" aria-hidden="true" />
+            </button>
+          </div>
+          <LoadingIndicator :loading="searching">
+            <template v-slot:icon="{ cssClass }">
+              <SearchIcon :class="cssClass" />
+            </template>
+          </LoadingIndicator>
+        </div>
 
-              <v-btn
-                color="primary"
-                :disabled="$v.$invalid || invalid"
-                @click="handleFinishClick"
-              >
-                <v-icon left>mdi-check</v-icon>
-                Concluir
-              </v-btn>
+        <div v-else-if="step == 2" class="sm:max-w-2xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="px-4 py-5 space-y-6 sm:p-6">
+            <div>
+              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                Metadados do livro
+              </h3>
+              <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Estas informações serão cadastradas na planilha.
+              </p>
             </div>
-          </v-stepper-content>
-        </v-stepper-items>
-      </v-stepper>
-    </v-col>
-  </v-row>
+
+            <BookForm
+              ref="bookForm"
+              :book="book"
+              @update:book="Object.assign(book, $event)"
+            />
+          </div>
+
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+            <div>
+              <button
+                type="button"
+                class="button is-ghost -ml-4"
+                @click.stop="step = 1"
+                v-if="searchAvailable"
+              >
+                <ChevronLeftIcon aria-hidden="true" />
+                Voltar uma etapa
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="button is-primary"
+              @click.stop="handleSearchCover"
+            >
+              {{ book.codeType.includes('ISBN') ? 'Procurar capa' : 'Revisar' }}
+              <ChevronRightIcon class="is-right" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        <div v-else-if="step === 3" class="relative sm:max-w-2xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="px-4 py-5 space-y-6 sm:p-6">
+            <div>
+              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                Imagem de capa
+              </h3>
+              <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Escolha a imagem de capa do livro ou pule direto para a revisão.
+              </p>
+            </div>
+
+            <BookCoverSelector
+              custom
+              v-model:cover-url="book.coverUrl"
+              :book="book"
+              @update:finding="coverFinding = $event"
+            />
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+            <button
+              type="button"
+              class="button is-ghost -ml-4"
+              @click.stop="step = 2"
+            >
+              <ChevronLeftIcon aria-hidden="true" />
+              Voltar uma etapa
+            </button>
+
+            <button
+              type="button"
+              class="button is-primary"
+              @click.stop="step = 4"
+            >
+              Revisar
+              <ChevronRightIcon class="is-right" aria-hidden="true" />
+            </button>
+          </div>
+          <LoadingIndicator :loading="coverFinding">
+            <template v-slot:icon="{ cssClass }">
+              <SearchIcon :class="cssClass" />
+            </template>
+          </LoadingIndicator>
+        </div>
+
+        <TableInfo
+          v-else
+          class="sm:max-w-2xl w-full"
+          :info="bookInfo"
+          title="Informações do livro"
+          subtitle="Revise as informações antes de concluir o procedimento."
+        >
+          <template v-slot:footer>
+            <button
+              type="button"
+              class="button is-ghost -ml-4"
+              @click.stop="step = book.codeType.includes('ISBN') ? 3 : 2"
+            >
+              <ChevronLeftIcon aria-hidden="true" />
+              Voltar uma etapa
+            </button>
+
+            <button
+              type="button"
+              class="button is-primary"
+              @click.stop="handleInsertBook"
+            >
+              <CheckIcon aria-hidden="true" />
+              Concluir
+            </button>
+          </template>
+
+          <template v-slot:loading-indicator>
+            <LoadingIndicator :loading="inserting">
+              <template v-slot:icon="{ cssClass }">
+                <BookOpenIcon :class="cssClass" />
+              </template>
+            </LoadingIndicator>
+          </template>
+        </TableInfo>
+      </transition>
+    </div>
+  </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
-import { url } from 'vuelidate/lib/validators'
+import { computed, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
-import { searchByIsbn } from '../services/cbl'
-import { findCovers } from '../services/cover'
+import useBookInserter from '@/composables/useBookInserter'
+import useIsbnSearch, { useSearchAvailable } from '@/composables/useIsbnSearch'
 
-import BookRecord from '@/components/BookRecord'
-import VCustomImg from '@/components/VCustomImg'
+import {
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SearchIcon
+} from '@heroicons/vue/solid'
+
+import { BookOpenIcon } from '@heroicons/vue/outline'
+
+import Alert from '@/components/Alert'
+import BookCoverSelector from '@/components/BookCoverSelector'
+import BookForm from '@/components/BookForm'
+import LoadingIndicator from '@/components/LoadingIndicator'
+import SimpleHeader from '@/components/SimpleHeader'
+import TableInfo from '@/components/TableInfo'
 
 export default {
   name: 'DashboardNewBook',
 
   components: {
-    BookRecord,
-    VCustomImg
+    BookOpenIcon,
+    CheckIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    SearchIcon,
+    Alert,
+    BookCoverSelector,
+    BookForm,
+    LoadingIndicator,
+    SimpleHeader,
+    TableInfo
   },
 
-  data: () => ({
-    searchError: [],
-    searchSelection: null,
-    searchQuery: null,
-    searchResults: [],
-    searching: false,
-    step: 1
-  }),
-
-  validations: {
-    coverUrl: { url }
-  },
-
-  computed: {
-    coverUrl: {
-      get () {
-        return this.book.coverUrl
-      },
-      set (coverUrl) {
-        this.$store.commit('book/updateCoverUrl', coverUrl)
-      }
-    },
-
-    coverUrlErrors: function () {
-      const errors = []
-      if (!this.$v.coverUrl.$dirty) return errors
-      !this.$v.coverUrl.url && errors.push('Endereço inválido.')
-      return errors
-    },
-
-    ...mapState('book', ['book', 'invalid'])
-  },
-
-  methods: {
-    findCover: async function () {
-      if (this.book.coverUrl.length > 0) {
-        return
-      }
-
-      this.updateLoading(true)
-
-      const results = await findCovers(this.book)
-
-      if (results.length > 0) {
-        this.$store.commit('book/updateCoverUrl', results[0])
-      }
-
-      this.updateLoading(false)
-    },
-
-    handleFinishClick: function () {
-      this.insertBook(this.book)
-        .then(() => {
-          this.$router.replace('/dashboard/collection')
-          this.clearBook()
-        })
-    },
-
-    handleSearch: function (query) {
-      if (this.searching === true) {
-        return
-      }
-
-      this.searching = true
-
-      searchByIsbn(query)
-        .then(results => {
-          this.searchResults = results.slice(0, results.length)
-          this.searchError = []
-        })
-        .catch(err => {
-          this.searchError = [err.message || err]
-        })
-        .finally(() => (this.searching = false))
-    },
-
-    ...mapMutations('appbar', ['hideBottomNav', 'hideDrawer', 'updateIcons']),
-    ...mapMutations('sheet', ['updateLoading']),
-    ...mapMutations('book', ['clearBook']),
-    ...mapActions('sheet', ['insertBook'])
-  },
-
-  watch: {
-    searchSelection: function (newValue) {
-      if (newValue && newValue.length > 0) {
-        const cblBook = this.searchResults.find(b => b.code === newValue)
-
-        this.$store.commit('book/updateBook', cblBook)
-        this.step = 2
-      }
-    },
-
-    searchQuery: function (newValue) {
-      newValue &&
-        newValue.replace(/-/g, '') !== this.searchSelection &&
-        newValue.replace(/-/g, '').length >= 10 &&
-        this.handleSearch(newValue)
-    },
-
-    step: function (newValue) {
-      if (newValue === 1) {
-        this.searchSelection = null
-        this.searchError = []
-
-        this.clearBook()
-        this.$refs.bookRecord.reset()
-      } else if (newValue === 2) {
-        this.$refs.bookRecord.updateInvalid()
-      } else if (newValue === 3) {
-        this.findCover()
-      }
+  setup () {
+    const toDateInputValue = date => {
+      const local = new Date(date)
+      local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+      return local.toISOString().slice(0, 10)
     }
-  },
 
-  mounted: function () {
-    this.hideDrawer()
-    this.hideBottomNav()
-    this.updateIcons([])
+    const bookInitialState = {
+      authors: [],
+      authorsStr: '',
+      boughtAt: toDateInputValue(new Date()),
+      code: '',
+      codeType: '',
+      collection: '',
+      coverUrl: '',
+      format: '',
+      imprint: '',
+      labelPriceCurrency: 'BRL',
+      labelPriceValue: '',
+      paidPriceCurrency: 'BRL',
+      paidPriceValue: '',
+      store: '',
+      title: ''
+    }
+
+    const book = reactive({ ...bookInitialState })
+    const searchAvailable = useSearchAvailable()
+    const step = ref(searchAvailable.value ? 1 : 2)
+
+    const isbnSearchStep = useIsbnSearchStep(step, book, bookInitialState)
+    const bookFormStep = useBookFormStep(step, book)
+    const coverFinderStep = useCoverFinderStep()
+    const revisionStep = useRevisionStep(book)
+
+    watch(step, (newValue, oldValue) => {
+      if (oldValue === 3 && newValue === 2) {
+        book.coverUrl = ''
+      }
+    })
+
+    const router = useRouter()
+    const { inserting, insertBook } = useBookInserter(book)
+
+    async function handleInsertBook () {
+      const bookId = await insertBook()
+
+      router.replace({
+        name: 'BookDetails',
+        params: {
+          bookId
+        }
+      })
+    }
+
+    return {
+      book,
+      step,
+      handleInsertBook,
+      inserting,
+      ...isbnSearchStep,
+      ...bookFormStep,
+      ...coverFinderStep,
+      ...revisionStep
+    }
   }
+}
+
+function useIsbnSearchStep (step, book, bookInitialState) {
+  const isbnQuery = ref('')
+
+  const {
+    available: searchAvailable,
+    errorMessage: searchError,
+    failed: searchFailed,
+    noResultsFound,
+    result: searchResult,
+    search,
+    searching
+  } = useIsbnSearch(isbnQuery)
+
+  function handleFillManually () {
+    step.value = 2
+    Object.assign(book, bookInitialState)
+  }
+
+  watch(searchResult, newValue => {
+    Object.assign(book, newValue || {})
+
+    if (newValue) {
+      book.authorsStr = newValue.authors.join('; ')
+      step.value = 2
+    }
+  })
+
+  return {
+    isbnQuery,
+    searchAvailable,
+    searchError,
+    searchFailed,
+    noResultsFound,
+    searchResult,
+    search,
+    searching,
+    handleFillManually
+  }
+}
+
+function useBookFormStep (step, book) {
+  const bookForm = ref()
+
+  function handleSearchCover () {
+    const { error: hasError } = bookForm.value.touch(book)
+
+    if (!hasError) {
+      step.value = book.codeType.includes('ISBN') ? 3 : 4
+    }
+  }
+
+  return {
+    bookForm,
+    handleSearchCover
+  }
+}
+
+function useCoverFinderStep () {
+  const coverFinding = ref(false)
+
+  return { coverFinding }
+}
+
+function useRevisionStep (book) {
+  function formatPrice ({ value, currency }) {
+    const formatter = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: currency
+    })
+
+    return formatter.format(value.replace(',', '.'))
+  }
+
+  const boughtAt = computed(() => {
+    if (book.boughtAt && book.boughtAt.length > 0) {
+      return book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+    }
+
+    return 'Desconhecida'
+  })
+
+  const formattedLabelPrice = computed(() => {
+    return formatPrice({
+      value: book.labelPriceValue,
+      currency: book.labelPriceCurrency
+    })
+  })
+
+  const formattedPaidPrice = computed(() => {
+    return formatPrice({
+      value: book.paidPriceValue,
+      currency: book.paidPriceCurrency
+    })
+  })
+
+  const bookInfo = computed(() => {
+    return [
+      {
+        title: 'Identificação',
+        value: book.code,
+        property: 'code'
+      },
+      {
+        title: 'Título',
+        value: book.title,
+        property: 'title'
+      },
+      {
+        title: book.authors.length > 1 ? 'Autores' : 'Autor',
+        value: book.authors.join(', ').replace(/, ([^,]*)$/, ' e $1'),
+        property: 'authors'
+      },
+      {
+        title: 'Editora',
+        value: book.imprint,
+        property: 'imprint'
+      },
+      {
+        title: 'Coleção',
+        value: book.collection,
+        property: 'collection'
+      },
+      {
+        title: 'Formato',
+        value: book.format,
+        property: 'format'
+      },
+      {
+        title: 'Local da compra',
+        value: book.store,
+        property: 'store'
+      },
+      {
+        title: 'Preço de capa',
+        value: formattedLabelPrice.value,
+        property: 'labelPrice'
+      },
+      {
+        title: 'Preço pago',
+        value: formattedPaidPrice.value,
+        property: 'paidPrice'
+      },
+      {
+        title: 'Data da aquisição',
+        value: boughtAt.value,
+        property: 'boughtAt'
+      }
+    ]
+  })
+
+  return { bookInfo }
 }
 </script>
 
-<style lang="scss" scoped>
-// .v-stepper,
-// .v-stepper__header {
-//   box-shadow: none;
-// }
+<style scoped>
+.cbl-logo {
+  @apply inline-block h-3 align-text-bottom filter dark:invert dark:opacity-50;
+}
+
+div[id^="headlessui-radiogroup-option"] {
+  @apply focus:outline-none;
+}
 </style>

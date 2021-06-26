@@ -1,4 +1,10 @@
 export function convertIsbn13ToIsbn10 (isbn13) {
+  isbn13 = isbn13.replace(/-/g, '')
+
+  if (isbn13.length === 10) {
+    return isbn13
+  }
+
   const equalPart = isbn13.slice(3, -1)
   const sum = equalPart.split('')
     .map((d, i) => parseInt(d) * (i + 1))

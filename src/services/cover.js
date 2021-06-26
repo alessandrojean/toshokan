@@ -1,7 +1,7 @@
 import axios from 'axios'
 import slugify from 'slugify'
 
-import { convertIsbn13ToIsbn10 } from '../util/isbn'
+import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 
 async function directUrl (book) {
   if (this.condition && !this.condition(book)) {
@@ -67,6 +67,7 @@ async function oembed (book) {
 
 const AMAZON = {
   url: 'https://images-na.ssl-images-amazon.com/images/P/{value}.01._SCRM_SL700_.jpg',
+  condition: book => book.codeType.includes('ISBN'),
   property: 'code',
   propertyTransformer: isbn => {
     isbn = isbn.replace(/-/g, '')

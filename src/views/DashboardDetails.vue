@@ -1,681 +1,567 @@
 <template>
   <div>
-    <v-row
-      class="mb-0 pt-2 mb-1"
-      align="center"
-      v-if="book && !loading"
-    >
-      <v-col md="9" cols="12">
-        <v-breadcrumbs
-          :items="breadcrumbItems"
-          class="pa-0"
-        />
-      </v-col>
+    <BookHeader
+      :book="book"
+      :book-found="bookFound"
+      :image-has-error="imageHasError"
+      :image-loading="imageLoading"
+      :loading="loading"
+      :editing="editing || editingCover"
+      @click:edit="showEditForm"
+      @click:delete="deleteModalOpen = true"
+      @click:toggle-status="toggleStatus"
+      @click:toggle-favorite="toggleFavorite"
+      @click:update-cover="showCoverEditor"
+    />
 
-      <v-col
-        md="3"
-        cols="12"
-        class="d-flex justify-center justify-md-end align-center"
-      >
-        <v-btn
-          color="primary"
-          outlined
-          text
-          class="mr-1"
-          @click="deleteDialog = true"
-        >
-          <v-icon left>
-            mdi-delete-outline
-          </v-icon>
-          Excluir
-        </v-btn>
-
-        <v-btn
-          color="primary"
-          outlined
-          text
-          class="ml-1"
-          @click="handleEditClick"
-        >
-          <v-icon left>
-            mdi-pencil-outline
-          </v-icon>
-          Editar
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row class="mt-0">
-      <v-col md="4" v-if="book && !loading">
-        <v-card>
-          <v-custom-img
-            :src="book.coverUrl"
-            :aspect-ratio="2 / 2.5"
-          />
-
-          <v-list two-line>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-book-outline
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.titleParts[0] }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Volume {{ volume }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-barcode-scan
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.code }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ book.codeType }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-
-          <v-card-actions>
-            <v-spacer />
-
-            <v-btn
-              icon
-              color="primary"
-              :loading="favoriteLoading"
-              :title="book.favorite === 'Sim' ? 'Remover dos favoritos': 'Adicionar aos favoritos'"
-              @click="handleToggleFavoriteClick"
-            >
-              <v-icon>
-                {{ book.favorite === 'Sim' ? 'mdi-star' : 'mdi-star-outline' }}
-              </v-icon>
-            </v-btn>
-
-            <v-btn
-              icon
-              color="primary"
-              :loading="statusLoading"
-              :title="'Marcar como ' + (book.status === 'Lido' ? 'não lido' : 'lido')"
-              @click="handleToggleStatusClick"
-            >
-              <v-icon>
-                {{ book.status === 'Lido' ? 'mdi-book-check' : 'mdi-book-remove-outline' }}
-              </v-icon>
-            </v-btn>
-
-            <v-btn
-              icon
-              color="primary"
-              title="Editar a imagem de capa"
-              @click="showCoverDialog"
-            >
-              <v-icon>mdi-image-edit-outline</v-icon>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-
-      <v-col md="8" v-if="book && !loading">
-        <v-card>
-          <v-list two-line>
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-account-group-outline
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.authors.join(', ').replace(/, ([^,]*)$/, ' e $1') }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ book.authors.length === 1 ? 'Autor' : 'Autores' }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-office-building-outline
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.imprint }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Editora
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-ruler-square
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.format }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Formato
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-storefront-outline
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ book.store }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Local da compra
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-cash
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ formattedLabelPrice }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Preço de capa
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-list-item>
-              <v-list-item-action />
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ formattedPaidPrice }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Preço pago
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon color="primary">
-                  mdi-calendar-blank-outline
-                </v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ boughtAt }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Data da aquisição
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-dialog
-      v-model="editDialog"
-      max-width="700px"
-    >
-      <v-card>
-        <v-card-title>
-          Editar o item
-        </v-card-title>
-        <v-card-text>
-          <v-container class="pa-0 pt-6">
-            <book-record edit ref="bookRecord"></book-record>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-btn
-            color="primary"
-            text
-            @click.stop="handleCancelClick"
-          >
-            Cancelar
-          </v-btn>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            :disabled="invalid"
-            @click="handleSaveClick"
-          >
-            Salvar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog
-      v-model="deleteDialog"
-      max-width="290"
-    >
-      <v-card>
-        <v-card-title>
-          Excluir este item?
-        </v-card-title>
-
-        <v-card-text>
-          Esta operação não pode ser desfeita.
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer/>
-
-          <v-btn
-            color="primary"
-            text
-            @click="deleteDialog = false"
-          >
-            Cancelar
-          </v-btn>
-
-          <v-btn
-            color="primary"
-            text
-            @click="handleDeleteClick"
-          >
-            Excluir
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog
-      v-model="coverDialog"
-      max-width="700px"
-    >
-      <v-card>
-        <v-card-title>
-          Editar a imagem de capa
-        </v-card-title>
-
-        <v-card-text>
-          <v-container class="pa-0 pt-6">
-            <v-text-field
-              v-model="coverUrl"
-              :error-messages="coverUrlErrors"
-              label="Imagem de capa"
-              outlined
-              @input="$v.coverUrl.$touch()"
-              @blur="$v.coverUrl.$touch()"
+    <div class="max-w-5xl mx-auto py-6 px-5 md:px-8">
+      <div class="md:grid grid-cols-6 gap-6">
+        <div class="col-span-2">
+          <div class="w-full flex flex-col space-y-6">
+            <!-- Book image -->
+            <BookImage
+              :book="book"
+              :book-found="bookFound"
+              :image-has-error="imageHasError"
+              :image-loading="imageLoading"
+              :loading="loading"
             />
 
-            <v-row
-              v-if="!$v.coverUrl.$invalid"
-              class="mt-2 mb-10"
-            >
-              <v-col
-                lg="4"
-                offset-lg="4"
-                md="6"
-                offset-md="3"
+            <div class="hidden md:flex">
+              <div class="flex-1 space-y-1">
+                <div v-if="loading || !bookFound" class="animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
+                <h2 v-else class="text-lg font-title font-semibold leading-5 text-gray-900 dark:text-gray-200">
+                  {{ book.titleParts[0] }}
+                </h2>
+
+                <div v-if="loading || !bookFound" class="animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
+                <p v-else class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Volume {{ book.titleParts[1] ? '#' + book.titleParts[1] : 'único' }}
+                </p>
+              </div>
+              <HeartIcon v-if="bookFound && book.favorite === 'Sim'" class="ml-2 h-8 w-8 dark:text-gray-500" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-span-4">
+          <transition
+            mode="out-in"
+            leave-active-class="transition duration-300 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+            enter-active-class="transition duration-500 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+          >
+            <div v-if="!editing && !editingCover">
+              <BookNavigation
+                class="mb-6 md:hidden"
+                :next-book="nextBook"
+                :previous-book="previousBook"
+                :loading="loading || !bookFound"
+              />
+
+              <!-- Book information -->
+              <TableInfo
+                :info="bookInfo"
+                title="Informações do livro"
+                :loading="loading || !bookFound"
               >
-                <v-card>
-                  <v-custom-img
-                    :src="editingBook.coverUrl"
-                    :aspect-ratio="2 / 3"
-                  />
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
+                <template v-slot:paidPrice>
+                  <span
+                    v-if="discount !== null"
+                    :class="[
+                      discount > 100
+                        ? 'bg-red-100 text-red-800 dark:bg-transparent dark:text-red-500 dark:border dark:border-red-500'
+                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-400 dark:border dark:border-green-500',
+                      'px-2 py-0.5 text-xs rounded-full leading-5 font-semibold ml-2'
+                    ]"
+                  >
+                    {{ discount }}%
+                  </span>
+                </template>
+              </TableInfo>
 
-        <v-card-actions>
-          <v-btn
-            color="primary"
-            text
-            :loading="coverLoading"
-            @click.stop="handleCoverSearchClick"
-          >
-            Procurar
-          </v-btn>
+              <BookNavigation
+                class="mt-6"
+                :next-book="nextBook"
+                :previous-book="previousBook"
+                :loading="loading || !bookFound"
+              />
+            </div>
 
-          <v-spacer />
+            <div v-else-if="editing" class="w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+              <div class="px-4 py-5 space-y-6 sm:p-6">
+                <div>
+                  <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                    Metadados do livro
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Edite as informações necessárias na planilha.
+                  </p>
+                </div>
 
-          <v-btn
-            color="primary"
-            text
-            :disabled="coverLoading"
-            @click.stop="handleCoverCancelClick"
-          >
-            Cancelar
-          </v-btn>
+                <BookForm
+                  ref="editForm"
+                  :book="editingBook"
+                  @update:book="Object.assign(editingBook, $event)"
+                />
+              </div>
 
-          <v-btn
-            color="primary"
-            text
-            :disabled="$v.invalid || coverLoading"
-            @click="handleCoverSaveClick"
-          >
-            Salvar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+              <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+                <div>
+                  <button
+                    type="button"
+                    class="button is-ghost -ml-4"
+                    @click.stop="hideEditForm"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  class="button is-primary"
+                  @click.stop="handleEdit"
+                >
+                  <CheckIcon aria-hidden="true" />
+                  Concluir
+                </button>
+              </div>
+            </div>
+
+            <div v-else class="relative w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+              <div class="px-4 py-5 space-y-6 sm:p-6">
+                <div>
+                  <h3 class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Imagem de capa
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Escolha uma imagem de capa do livro obtida automaticamente.
+                  </p>
+                </div>
+
+                <BookCoverSelector
+                  custom
+                  v-model:cover-url="editingCoverUrl"
+                  :book="book"
+                  @update:finding="findingCovers = $event"
+                />
+              </div>
+              <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+                <button
+                  type="button"
+                  class="button is-ghost -ml-4"
+                  @click.stop="hideCoverEditor"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  class="button is-primary"
+                  @click.stop="handleCover"
+                >
+                  <CheckIcon aria-hidden="true" />
+                  Concluir
+                </button>
+              </div>
+
+              <LoadingIndicator :loading="findingCovers">
+                <template v-slot:icon="{ cssClass }">
+                  <SearchIcon :class="cssClass" />
+                </template>
+              </LoadingIndicator>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </div>
+
+    <BookDeleteModal
+      v-model:open="deleteModalOpen"
+      @click:delete="handleDelete"
+    />
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
-import { url } from 'vuelidate/lib/validators'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
 
-import { findCovers } from '../services/cover'
+import useBookDeleter from '@/composables/useBookDeleter'
+import useBookEditor from '@/composables/useBookEditor'
+import useBookFinder from '@/composables/useBookFinder'
+import useImageLoader from '@/composables/useImageLoader'
 
-import BookRecord from '@/components/BookRecord'
-import VCustomImg from '@/components/VCustomImg'
+import { CheckIcon, HeartIcon, SearchIcon } from '@heroicons/vue/solid'
+
+import BookCoverSelector from '@/components/BookCoverSelector'
+import BookDeleteModal from '@/components/BookDeleteModal'
+import BookForm from '@/components/BookForm'
+import BookHeader from '@/components/BookHeader'
+import BookImage from '@/components/BookImage'
+import BookNavigation from '@/components/BookNavigation'
+import LoadingIndicator from '@/components/LoadingIndicator'
+import TableInfo from '@/components/TableInfo'
 
 export default {
   name: 'DashboardDetails',
 
   components: {
-    BookRecord,
-    VCustomImg
+    BookCoverSelector,
+    BookDeleteModal,
+    BookForm,
+    BookHeader,
+    BookImage,
+    BookNavigation,
+    LoadingIndicator,
+    TableInfo,
+    CheckIcon,
+    HeartIcon,
+    SearchIcon
   },
 
-  data: () => ({
-    book: null,
-    breadcrumbItems: [
-      {
-        text: 'Coleção',
-        to: { name: 'collection' },
-        exact: true
-      }
-    ],
-    coverDialog: false,
-    coverLoading: false,
-    deleteDialog: false,
-    editDialog: false,
-    favoriteLoading: false,
-    statusLoading: false
-  }),
+  setup () {
+    const route = useRoute()
+    const router = useRouter()
+    const store = useStore()
 
-  validations: {
-    coverUrl: { url }
-  },
+    const bookId = computed(() => route.params.bookId)
 
-  computed: {
-    boughtAt () {
-      if (this.book.boughtAt.length > 0) {
-        return this.book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+    const {
+      book,
+      bookFound,
+      previousBook,
+      nextBook,
+      findTheBook
+    } = useBookFinder()
+
+    const coverUrl = computed(() => {
+      if (!book.value) {
+        return ''
       }
 
-      return 'Desconhecida'
-    },
-
-    coverUrl: {
-      get () {
-        return this.editingBook.coverUrl
-      },
-      set (coverUrl) {
-        this.$store.commit('book/updateCoverUrl', coverUrl)
-      }
-    },
-
-    coverUrlErrors: function () {
-      const errors = []
-      if (!this.$v.coverUrl.$dirty) return errors
-      !this.$v.coverUrl.url && errors.push('Endereço inválido.')
-      return errors
-    },
-
-    formattedLabelPrice () {
-      return this.formatPrice(this.book.labelPrice)
-    },
-
-    formattedPaidPrice () {
-      return this.formatPrice(this.book.paidPrice)
-    },
-
-    volume: function () {
-      return this.book.titleParts[1] ? '#' + this.book.titleParts[1] : 'único'
-    },
-
-    ...mapState('sheet', ['collection', 'loading']),
-    ...mapState('book', {
-      editingBook: 'book',
-      invalid: 'invalid'
+      return book.value.coverUrl || ''
     })
-  },
 
-  methods: {
-    formatPrice: function (price) {
-      const formatter = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: price.currency
-      })
+    const {
+      imageHasError,
+      imageLoading,
+      loadImage
+    } = useImageLoader(coverUrl)
 
-      return formatter.format(price.value.replace(',', '.'))
-    },
+    const loading = computed(() => store.state.sheet.loading)
 
-    handleCancelClick () {
-      this.editDialog = false
-
-      this.$nextTick(() => {
-        this.clearBook()
-        this.$refs.bookRecord.reset()
-      })
-    },
-
-    handleEditClick () {
-      this.updateBook(this.book)
-      this.editDialog = true
-
-      this.$nextTick(() => {
-        this.$refs.bookRecord.touch()
-      })
-    },
-
-    handleDeleteClick () {
-      this.deleteDialog = false
-
-      this.deleteBook(this.book)
-        .then(() => this.$router.replace({ name: 'collection' }))
-    },
-
-    handleSaveClick () {
-      this.editDialog = false
-      this.saveBook({ book: this.editingBook, oldBook: this.book })
-        .then(() => {
-          this.book = {
-            ...this.book,
-            ...this.editingBook,
-            labelPrice: {
-              ...this.book.labelPrice,
-              ...this.editingBook.labelPrice
-            },
-            paidPrice: {
-              ...this.book.paidPrice,
-              ...this.editingBook.paidPrice
-            }
-          }
-
-          this.breadcrumbItems[1].text = this.editingBook.collection
-          this.breadcrumbItems[1].to.query.collection = this.editingBook.collection
-
-          this.breadcrumbItems[2].text = this.editingBook.titleParts[0]
-          this.breadcrumbItems[2].to.query.collection = this.editingBook.collection
-          this.breadcrumbItems[2].to.query.search = this.editingBook.titleParts[0]
-
-          this.breadcrumbItems[3].text = 'Volume ' + this.volume
-
-          this.clearBook()
-        })
-    },
-
-    handleToggleFavoriteClick () {
-      this.favoriteLoading = true
-      this.updateBook(this.book)
-      this.updateFavorite(this.book.favorite === 'Sim' ? '' : 'Sim')
-      this.saveBook({ book: this.editingBook, oldBook: this.book, withoutLoading: true })
-        .then(() => {
-          this.book.favorite = this.editingBook.favorite
-          this.favoriteLoading = false
-          this.clearBook()
-        })
-    },
-
-    handleToggleStatusClick () {
-      this.statusLoading = true
-      this.updateBook(this.book)
-      this.updateStatus(this.book.status === 'Lido' ? 'Não lido' : 'Lido')
-      this.saveBook({ book: this.editingBook, oldBook: this.book, withoutLoading: true })
-        .then(() => {
-          this.book.status = this.editingBook.status
-          this.statusLoading = false
-          this.clearBook()
-        })
-    },
-
-    async handleCoverSearchClick () {
-      if (this.editingBook.coverUrl.length > 0) {
-        return
-      }
-
-      this.coverLoading = true
-
-      const results = await findCovers(this.book)
-
-      if (results.length > 0) {
-        this.$store.commit('book/updateCoverUrl', results[0])
-      }
-
-      this.coverLoading = false
-    },
-
-    handleCoverCancelClick () {
-      this.coverDialog = false
-      this.clearBook()
-    },
-
-    handleCoverSaveClick () {
-      this.coverDialog = false
-
-      this.saveBook({ book: this.editingBook, oldBook: this.book })
-        .then(() => {
-          this.book.coverUrl = this.editingBook.coverUrl
-          this.clearBook()
-        })
-    },
-
-    showCoverDialog () {
-      this.updateBook(this.book)
-
-      this.$nextTick(() => {
-        this.coverDialog = true
-      })
-    },
-
-    ...mapMutations('sheet', ['updateLoading']),
-    ...mapMutations('appbar', ['updateIcons']),
-    ...mapMutations('book', [
-      'clearBook',
-      'updateBook',
-      'updateFavorite',
-      'updateStatus'
-    ]),
-    ...mapActions('sheet', {
-      saveBook: 'updateBook',
-      deleteBook: 'deleteBook'
-    })
-  },
-
-  mounted: function () {
-    this.updateIcons([])
-    this.updateLoading(true)
-
-    const bookId = this.$route.params.bookId
-
-    const theBook = Object.entries(this.collection)
-      .flatMap(([collection, items]) => items)
-      .find(item => item.id === bookId)
-
-    this.updateLoading(false)
-
-    if (!theBook) {
-      this.$router.replace({ name: 'collection' })
-      return
+    const redirectToHome = () => {
+      router.replace({ name: 'DashboardHome' })
     }
 
-    this.book = { ...this.book, ...theBook }
-    this.breadcrumbItems = this.breadcrumbItems.concat([
-      {
-        text: theBook.collection,
-        to: { name: 'collection', query: { collection: theBook.collection } },
-        exact: true
-      },
-      {
-        text: theBook.titleParts[0],
-        to: {
-          name: 'collection',
-          query: {
-            collection: theBook.collection,
-            page: 1,
-            search: theBook.titleParts[0]
-          }
-        }
-      },
-      {
-        text: 'Volume ' + this.volume,
-        disabled: true
+    onMounted(() => {
+      if (!loading.value && bookId.value) {
+        findTheBook(bookId.value, redirectToHome)
       }
-    ])
+    })
+
+    watch(loading, newValue => {
+      if (!newValue && bookId.value) {
+        findTheBook(bookId.value, redirectToHome)
+      }
+    })
+
+    watch(bookId, newId => {
+      if (newId && !loading.value) {
+        findTheBook(newId, redirectToHome)
+      }
+    })
+
+    watch(bookFound, newValue => {
+      if (newValue) {
+        loadImage()
+      }
+    })
+
+    const info = useInfo(book, bookFound, bookId, loading)
+    const editor = useEditor(book, bookId, findTheBook, redirectToHome)
+    const deleter = useDeleter(book, router)
+    const coverEditor = useCoverEditor(book, editor.updateBook, findTheBook, redirectToHome)
+
+    return {
+      book,
+      bookFound,
+      loading,
+      nextBook,
+      previousBook,
+      imageHasError,
+      imageLoading,
+      ...info,
+      ...editor,
+      ...deleter,
+      ...coverEditor
+    }
+  }
+}
+
+function useInfo (book, bookFound, bookId, loading) {
+  function formatPrice ({ value, currency }) {
+    const formatter = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: currency
+    })
+
+    return formatter.format(value.replace(',', '.'))
+  }
+
+  function formatDate (date) {
+    if (typeof date === 'string' && date.length > 0) {
+      return date.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+    }
+
+    if (date instanceof Date) {
+      return date.toLocaleString('pt-BR')
+    }
+
+    return 'Desconhecida'
+  }
+
+  const boughtAt = computed(() => {
+    return book.value.boughtAt ? formatDate(book.value.boughtAt) : ''
+  })
+
+  const createdAt = computed(() => {
+    return book.value.createdAt ? formatDate(book.value.createdAt) : ''
+  })
+
+  const updatedAt = computed(() => {
+    return book.value.updatedAt ? formatDate(book.value.updatedAt) : ''
+  })
+
+  const formattedLabelPrice = computed(() => {
+    return book.value.labelPrice ? formatPrice(book.value.labelPrice) : ''
+  })
+
+  const formattedPaidPrice = computed(() => {
+    return book.value.paidPrice ? formatPrice(book.value.paidPrice) : ''
+  })
+
+  const discount = computed(() => {
+    if (loading.value || !bookFound.value) {
+      return null
+    }
+
+    const { labelPrice, paidPrice } = book.value
+
+    if (!labelPrice || !paidPrice) {
+      return null
+    }
+
+    if (labelPrice.value === paidPrice.value) {
+      return null
+    }
+
+    if (labelPrice.currency === paidPrice.currency) {
+      const labelValue = parseFloat(labelPrice.value.replace(',', '.'))
+      const paidValue = parseFloat(paidPrice.value.replace(',', '.'))
+
+      const discount = paidValue / labelValue
+
+      return Math.round((discount > 1.0 ? discount : 1.0 - discount) * 100.0)
+    }
+
+    return null
+  })
+
+  const bookInfo = computed(() => {
+    if (loading.value || !bookFound.value) {
+      return []
+    }
+
+    return [
+      {
+        title: book.value.codeType === 'N/A' ? 'Identificação' : book.value.codeType,
+        value: book.value.code,
+        property: 'code'
+      },
+      {
+        title: 'Título',
+        value: book.value.title,
+        property: 'title'
+      },
+      {
+        title: book.value.authors && book.value.authors.length > 1 ? 'Autores' : 'Autor',
+        value: (book.value.authors || []).join(', ').replace(/, ([^,]*)$/, ' e $1'),
+        property: 'authors'
+      },
+      {
+        title: 'Editora',
+        value: book.value.imprint,
+        property: 'imprint'
+      },
+      {
+        title: 'Coleção',
+        value: book.value.collection,
+        property: 'collection'
+      },
+      {
+        title: 'Formato',
+        value: book.value.format,
+        property: 'format'
+      },
+      {
+        title: 'Preço de capa',
+        value: formattedLabelPrice.value,
+        property: 'labelPrice'
+      },
+      {
+        title: 'Preço pago',
+        value: formattedPaidPrice.value,
+        property: 'paidPrice'
+      },
+      {
+        title: 'Local da compra',
+        value: book.value.store,
+        property: 'store'
+      },
+      {
+        title: 'Data de compra',
+        value: boughtAt.value,
+        property: 'boughtAt'
+      },
+      {
+        title: 'Data de criação',
+        value: createdAt.value,
+        property: 'createdAt'
+      },
+      {
+        title: 'Data de modificação',
+        value: updatedAt.value,
+        property: 'updatedAt'
+      }
+    ]
+  })
+
+  return {
+    bookInfo,
+    boughtAt,
+    discount,
+    formattedLabelPrice,
+    formattedPaidPrice
+  }
+}
+
+function useEditor (book, bookId, findTheBook, redirectToHome) {
+  const editing = ref(false)
+  const editForm = ref()
+  const editingBook = reactive(book.value || {})
+
+  const { updateBook } = useBookEditor(editingBook)
+
+  function hideEditForm () {
+    editForm.value.reset()
+    editing.value = false
+  }
+
+  function showEditForm () {
+    Object.assign(editingBook, book.value)
+    editing.value = true
+  }
+
+  async function handleEdit () {
+    const { error, book: editedBook } = editForm.value.touch(editingBook)
+
+    if (!error) {
+      hideEditForm()
+      await updateBook(editedBook)
+      findTheBook(editedBook.id, redirectToHome)
+    }
+  }
+
+  async function toggleStatus () {
+    await updateBook({
+      ...book.value,
+      status: book.value.status === 'Lido' ? 'Não lido' : 'Lido'
+    })
+
+    findTheBook(bookId.value, redirectToHome)
+  }
+
+  async function toggleFavorite () {
+    await updateBook({
+      ...book.value,
+      favorite: book.value.favorite === 'Sim' ? '' : 'Sim'
+    })
+
+    findTheBook(bookId.value, redirectToHome)
+  }
+
+  return {
+    editing,
+    editForm,
+    editingBook,
+    hideEditForm,
+    showEditForm,
+    handleEdit,
+    toggleStatus,
+    toggleFavorite,
+    updateBook
+  }
+}
+
+function useDeleter (book, router) {
+  const deleteModalOpen = ref(false)
+  const { deleteBook } = useBookDeleter(book)
+
+  async function handleDelete () {
+    await deleteBook()
+
+    router.replace({ name: 'DashboardCollection' })
+  }
+
+  return { deleteModalOpen, handleDelete }
+}
+
+function useCoverEditor (book, updateBook, findTheBook, redirectToHome) {
+  const editingCover = ref(false)
+  const editingCoverUrl = ref('')
+  const findingCovers = ref(false)
+
+  function hideCoverEditor () {
+    editingCover.value = false
+  }
+
+  function showCoverEditor () {
+    editingCoverUrl.value = book.value.coverUrl
+    editingCover.value = true
+  }
+
+  async function handleCover () {
+    hideCoverEditor()
+
+    await updateBook({
+      ...book.value,
+      coverUrl: editingCoverUrl.value
+    })
+
+    editingCoverUrl.value = ''
+
+    findTheBook(book.value.id, redirectToHome)
+  }
+
+  return {
+    editingCover,
+    editingCoverUrl,
+    findingCovers,
+    hideCoverEditor,
+    handleCover,
+    showCoverEditor
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+.book-image {
+  height: fit-content;
+}
 </style>
