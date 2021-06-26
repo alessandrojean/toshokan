@@ -4,7 +4,7 @@
     <h3 v-else class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
       Gasto mensal
     </h3>
-    <div class="aspect-w-16 aspect-h-6 sm:-mx-3">
+    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3">
       <transition
         mode="out-in"
         enter-active-class="transition duration-500 ease-out"

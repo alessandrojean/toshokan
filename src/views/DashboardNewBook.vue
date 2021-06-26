@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <SimpleHeader class="shadow-none sm:shadow" title="Novo livro" />
 
-    <div class="flex-1 flex items-start sm:items-center justify-center py-10">
+    <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5">
       <transition
         mode="out-in"
         leave-active-class="transition transform duration-200 ease-in"
@@ -12,7 +12,7 @@
         enter-from-class="opacity-0 translate-x-2"
         enter-to-class="opacity-100 translate-x-0"
       >
-        <div v-if="step === 1" class="relative sm:max-w-xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <div v-if="step === 1" class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -31,7 +31,7 @@
                 <input
                   type="text"
                   id="book-isbn"
-                  class="input text-lg pl-10 pr-16"
+                  class="input text-lg pl-10 md:pr-16"
                   placeholder="Pesquisar por ISBN-10 ou ISBN-13"
                   v-model="isbnQuery"
                   @keyup.enter.stop="search"
@@ -83,7 +83,7 @@
           </LoadingIndicator>
         </div>
 
-        <div v-else-if="step == 2" class="sm:max-w-2xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <div v-else-if="step == 2" class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -125,7 +125,7 @@
           </div>
         </div>
 
-        <div v-else-if="step === 3" class="relative sm:max-w-2xl w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <div v-else-if="step === 3" class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">

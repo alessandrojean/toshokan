@@ -3,12 +3,12 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
-          <div class="flex-shrink-0">
+          <router-link :to="{ name: 'DashboardHome' }" class="flex-shrink-0">
             <LibraryIcon class="h-10 w-10 text-indigo-500" />
-          </div>
+          </router-link>
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
-              <template v-for="item in navigation" :key="item.name">
+              <template v-for="item in desktopNavigation" :key="item.name">
                 <router-link
                   :to="{ name: item.name }"
                   class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -132,21 +132,25 @@
 
     <DisclosurePanel class="md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <router-link
+        <DisclosureButton
+          as="template"
           v-for="item in navigation"
           :key="item.name"
-          :to="{ name: item.name }"
-          class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
         >
-          {{ item.title }}
-        </router-link>
+          <router-link
+            :to="{ name: item.name }"
+            class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+          >
+            {{ item.title }}
+          </router-link>
+        </DisclosureButton>
       </div>
       <div class="pt-4 pb-3 border-t border-gray-700">
         <div class="flex items-center px-5">
           <div class="flex-shrink-0">
             <img class="h-10 w-10 rounded-full" :src="profileImageUrl" alt="" />
           </div>
-          <div class="ml-3">
+          <div class="ml-3 space-y-1">
             <div class="text-base font-medium leading-none text-white">
               {{ profileName }}
             </div>
@@ -156,16 +160,18 @@
           </div>
         </div>
         <div class="mt-3 px-2 space-y-1">
-          <router-link
-            :to="{ name: 'DashboardSettings' }"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
-          >
-            Configurações
-          </router-link>
+          <DisclosureButton as="template">
+            <router-link
+              :to="{ name: 'DashboardSettings' }"
+              class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+            >
+              Configurações
+            </router-link>
+          </DisclosureButton>
           <button
             type="button"
             @click.stop="signOut"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+            class="nav-mobile-link w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
           >
             Sair
           </button>
@@ -228,10 +234,15 @@ export default {
       { name: 'DashboardHome', title: 'Dashboard' },
       { name: 'DashboardCollection', title: 'Coleção' },
       { name: 'DashboardStats', title: 'Estatísticas' },
-      { name: 'DashboardWishlist', title: 'Lista de desejos' }
+      { name: 'DashboardWishlist', title: 'Lista de desejos' },
+      { name: 'DashboardSearch', title: 'Pesquisa', mobileOnly: true }
     ])
     const searchQuery = ref('')
     const searchNavbar = ref(null)
+
+    const desktopNavigation = computed(() => {
+      return navigation.value.filter(navItem => !navItem.mobileOnly)
+    })
 
     const profileEmail = computed(() => store.state.auth.profileEmail)
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
@@ -281,6 +292,7 @@ export default {
       handleSearch,
       open,
       navigation,
+      desktopNavigation,
       profileEmail,
       profileImageUrl,
       profileName,

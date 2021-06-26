@@ -91,7 +91,7 @@
               />
             </div>
 
-            <div v-else-if="editing" class="w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <div v-else-if="editing" class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
                   <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -131,7 +131,7 @@
               </div>
             </div>
 
-            <div v-else class="relative w-full sm:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <div v-else class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
                   <h3 class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">

@@ -39,10 +39,10 @@
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="button" class="button is-danger sm:ml-3 w-full sm:w-auto" @click="handleDelete">
+              <button type="button" class="button is-danger sm:ml-3 w-full sm:w-auto justify-center sm:justify-start" @click="handleDelete">
                 Deletar
               </button>
-              <button type="button" class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" @click="$emit('update:open', false)">
+              <button type="button" class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start" @click="$emit('update:open', false)">
                 Cancelar
               </button>
             </div>

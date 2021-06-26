@@ -27,7 +27,7 @@
           <p class="font-semibold dark:text-gray-100 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue">
             {{ value || '' }}
           </p>
-          <div v-else class="h-6 mt-1 bg-gray-500 dark:bg-gray-600 rounded w-36"></div>
+          <div v-else class="h-5 sm:h-6 mt-1 bg-gray-500 dark:bg-gray-600 rounded w-36"></div>
         </transition>
       </div>
     </div>

@@ -30,7 +30,7 @@
         <!-- Book title and info -->
         <div class="flex-1 min-w-0 flex flex-col items-center md:items-start">
           <div v-if="loading || !bookFound" class="animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
-          <h2 v-else class="truncate max-w-full text-2xl font-title font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:text-3xl sm:truncate">
+          <h2 v-else class="text-center md:text-left md:truncate max-w-full text-2xl font-title font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:text-3xl">
             {{ book.titleParts[0] }}
           </h2>
 
