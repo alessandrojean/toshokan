@@ -28,7 +28,7 @@
       <h2 v-else class="font-medium font-title text-xl mb-3 dark:text-gray-200">Visão geral</h2>
 
       <!-- Stats -->
-      <div class="grid grid-cols-2 gap-5 lg:grid-cols-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 lg:grid-cols-4">
         <StatCard
           title="Contagem"
           :value="count"

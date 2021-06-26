@@ -3,8 +3,8 @@
     <div class="animate-pulse flex items-center p-3 md:p-4">
       <div class="w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-500"></div>
       <div class="flex-1 space-y-2">
-        <div class="h-3 bg-gray-400 dark:bg-gray-500 rounded w-2/4"></div>
-        <div class="h-5 bg-gray-400 dark:bg-gray-500 rounded w-3/4"></div>
+        <div class="h-3 bg-gray-400 dark:bg-gray-500 rounded w-24"></div>
+        <div class="h-5 bg-gray-400 dark:bg-gray-500 rounded w-36"></div>
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
           <p class="font-semibold dark:text-gray-100 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue">
             {{ value || '' }}
           </p>
-          <div v-else class="h-6 mt-1 bg-gray-500 dark:bg-gray-600 rounded w-3/4"></div>
+          <div v-else class="h-6 mt-1 bg-gray-500 dark:bg-gray-600 rounded w-36"></div>
         </transition>
       </div>
     </div>
