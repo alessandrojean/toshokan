@@ -103,7 +103,7 @@ export default {
 }
 
 .jump-to:focus {
-  @apply w-auto h-auto px-3 py-2 left-2 top-2 bg-white text-indigo-600 font-medium;
+  @apply w-auto h-auto px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium;
   clip: unset;
 }
 </style>
