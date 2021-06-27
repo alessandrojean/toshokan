@@ -139,7 +139,8 @@
           </div>
           <input
             id="book-label-price"
-            type="text"
+            type="tel"
+            inputmode="decimal"
             :value="book.labelPriceValue"
             @input="handleInput('labelPriceValue', $event.target.value)"
             class="input pl-7 pr-12"
@@ -176,7 +177,8 @@
           </div>
           <input
             id="book-paid-price"
-            type="text"
+            type="tel"
+            inputmode="decimal"
             :value="book.paidPriceValue"
             @input="handleInput('paidPriceValue', $event.target.value)"
             class="input pl-7 pr-12"

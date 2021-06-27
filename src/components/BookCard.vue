@@ -21,6 +21,7 @@
     v-else
     :to="{ name: 'BookDetails', params: { bookId: book.id } }"
     class="group focus:outline-none"
+    ref="loadedCard"
   >
     <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-indigo-500 dark:group-focus-visible:ring-offset-gray-700">
       <transition
@@ -65,10 +66,10 @@
 </template>
 
 <script>
-import { computed, onMounted, toRefs, watch } from 'vue'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import useImageLoader from '@/composables/useImageLoader'
+import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
 import { HeartIcon, PhotographIcon } from '@heroicons/vue/solid'
 
@@ -99,11 +100,14 @@ export default {
         : ''
     })
 
+    const loadedCard = ref(null)
+
     const {
       imageHasError,
       imageLoading,
-      loadImage
-    } = useImageLoader(thumbnailUrl)
+      setupObserver,
+      observerCreated
+    } = useImageLazyLoader(thumbnailUrl, loadedCard)
 
     const volume = computed(() => {
       if (!book.value) {
@@ -117,13 +121,13 @@ export default {
 
     onMounted(() => {
       if (!loading.value && book.value) {
-        loadImage()
+        setupObserver()
       }
     })
 
     watch(loading, newValue => {
-      if (!newValue) {
-        loadImage()
+      if (!newValue && !observerCreated.value) {
+        setupObserver()
       }
     })
 
@@ -131,6 +135,7 @@ export default {
     const mode = computed(() => store.state.collection.gridMode)
 
     return {
+      loadedCard,
       imageHasError,
       imageLoading,
       thumbnailUrl,

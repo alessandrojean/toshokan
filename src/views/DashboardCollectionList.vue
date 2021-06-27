@@ -42,7 +42,7 @@
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto py-6 px-5 md:px-8">
+    <div class="max-w-7xl mx-auto py-6 px-5 md:px-8">
       <transition
         mode="out-in"
         leave-active-class="transition transform duration-200 ease-in"
@@ -70,7 +70,7 @@
           @page="handlePage"
         />
       </transition>
-    </main>
+    </div>
 
     <!-- Filters -->
     <CollectionFilters v-model:open="filterOpen" />
@@ -149,6 +149,12 @@ export default {
       store.commit('collection/updateCurrentPage', {
         page,
         totalResults: groupItems.value.length
+      })
+
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
       })
     }
 

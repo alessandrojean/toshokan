@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <SimpleHeader class="shadow-none sm:shadow" title="Novo livro" />
 
-    <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5">
+    <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5" ref="mainEl">
       <transition
         mode="out-in"
         leave-active-class="transition transform duration-200 ease-in"
@@ -29,7 +29,7 @@
                   <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
                 </div>
                 <input
-                  type="text"
+                  type="tel"
                   id="book-isbn"
                   class="input text-lg pl-10 md:pr-16"
                   placeholder="Pesquisar por ISBN-10 ou ISBN-13"
@@ -210,7 +210,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import useBookInserter from '@/composables/useBookInserter'
@@ -250,7 +250,9 @@ export default {
   },
 
   setup () {
-    const toDateInputValue = date => {
+    const mainEl = ref(null)
+
+    function toDateInputValue (date) {
       const local = new Date(date)
       local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
       return local.toISOString().slice(0, 10)
@@ -287,6 +289,8 @@ export default {
       if (oldValue === 3 && newValue === 2) {
         book.coverUrl = ''
       }
+
+      nextTick(() => mainEl.value.scrollIntoView({ behavior: 'smooth' }))
     })
 
     const router = useRouter()
@@ -304,6 +308,7 @@ export default {
     }
 
     return {
+      mainEl,
       book,
       step,
       handleInsertBook,

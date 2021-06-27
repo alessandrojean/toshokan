@@ -14,7 +14,7 @@
       @click:update-cover="showCoverEditor"
     />
 
-    <div class="max-w-5xl mx-auto py-6 px-5 md:px-8">
+    <div class="max-w-5xl mx-auto py-6 px-5 md:px-8" ref="mainEl">
       <div class="md:grid grid-cols-6 gap-6">
         <div class="col-span-2">
           <div class="w-full flex flex-col space-y-6">
@@ -229,6 +229,8 @@ export default {
     const router = useRouter()
     const store = useStore()
 
+    const mainEl = ref(null)
+
     const bookId = computed(() => route.params.bookId)
 
     const {
@@ -284,11 +286,12 @@ export default {
     })
 
     const info = useInfo(book, bookFound, bookId, loading)
-    const editor = useEditor(book, bookId, findTheBook, redirectToHome)
+    const editor = useEditor(book, bookId, findTheBook, redirectToHome, mainEl)
     const deleter = useDeleter(book, router)
-    const coverEditor = useCoverEditor(book, editor.updateBook, findTheBook, redirectToHome)
+    const coverEditor = useCoverEditor(book, editor.updateBook, findTheBook, redirectToHome, mainEl)
 
     return {
+      mainEl,
       book,
       bookFound,
       loading,
@@ -451,7 +454,7 @@ function useInfo (book, bookFound, bookId, loading) {
   }
 }
 
-function useEditor (book, bookId, findTheBook, redirectToHome) {
+function useEditor (book, bookId, findTheBook, redirectToHome, mainEl) {
   const editing = ref(false)
   const editForm = ref()
   const editingBook = reactive(book.value || {})
@@ -461,11 +464,13 @@ function useEditor (book, bookId, findTheBook, redirectToHome) {
   function hideEditForm () {
     editForm.value.reset()
     editing.value = false
+    window.scroll({ top: 0, left: 0, behavior: 'smooth' })
   }
 
   function showEditForm () {
     Object.assign(editingBook, book.value)
     editing.value = true
+    mainEl.value.scrollIntoView({ behavior: 'smooth' })
   }
 
   async function handleEdit () {
@@ -522,18 +527,20 @@ function useDeleter (book, router) {
   return { deleteModalOpen, handleDelete }
 }
 
-function useCoverEditor (book, updateBook, findTheBook, redirectToHome) {
+function useCoverEditor (book, updateBook, findTheBook, redirectToHome, mainEl) {
   const editingCover = ref(false)
   const editingCoverUrl = ref('')
   const findingCovers = ref(false)
 
   function hideCoverEditor () {
     editingCover.value = false
+    window.scroll({ top: 0, left: 0, behavior: 'smooth' })
   }
 
   function showCoverEditor () {
     editingCoverUrl.value = book.value.coverUrl
     editingCover.value = true
+    mainEl.value.scrollIntoView({ behavior: 'smooth' })
   }
 
   async function handleCover () {
