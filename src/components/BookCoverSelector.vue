@@ -1,44 +1,50 @@
 <template>
   <div class="space-y-6">
-    <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
-      <transition
-        mode="out-in"
-        leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-      >
-        <RadioGroup
-          v-if="results.length > 0"
-          :model-value="coverUrl"
-          @update:model-value="$emit('update:coverUrl', $event)"
+    <div>
+      <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
+        <transition
+          mode="out-in"
+          leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+          enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
         >
-          <RadioGroupLabel class="sr-only">Imagem de capa</RadioGroupLabel>
-          <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
-            <RadioGroupOption
-              class="focus:outline-none"
-              v-for="result of results"
-              :key="result"
-              :value="result"
-              v-slot="{ active, checked }"
-            >
-              <CoverOption
-                :active="active"
-                :checked="checked"
-                :cover-url="result"
-              />
-            </RadioGroupOption>
-          </div>
-        </RadioGroup>
+          <RadioGroup
+            v-if="results.length > 0"
+            :model-value="coverUrl"
+            @update:model-value="$emit('update:coverUrl', $event)"
+          >
+            <RadioGroupLabel class="sr-only">Imagem de capa</RadioGroupLabel>
+            <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
+              <RadioGroupOption
+                class="focus:outline-none"
+                v-for="result of results"
+                :key="result"
+                :value="result"
+                v-slot="{ active, checked }"
+              >
+                <CoverOption
+                  :active="active"
+                  :checked="checked"
+                  :cover-url="result"
+                />
+              </RadioGroupOption>
+            </div>
+          </RadioGroup>
 
-        <div v-else class="flex flex-col items-center p-3">
-          <EmojiSadIcon class="h-24 w-24 text-gray-300 dark:text-gray-500 mb-3" aria-hidden="true" />
-          <p class="font-semibold text-lg text-gray-500 dark:text-gray-400">Nenhuma capa encontrada</p>
-          <p v-if="custom" class="text-sm text-gray-500 dark:text-gray-400">Você pode adicionar uma personalizada abaixo.</p>
-        </div>
-      </transition>
+          <div v-else class="flex flex-col items-center p-3">
+            <EmojiSadIcon class="h-24 w-24 text-gray-300 dark:text-gray-500 mb-3" aria-hidden="true" />
+            <p class="font-semibold text-lg text-gray-500 dark:text-gray-400">Nenhuma capa encontrada</p>
+            <p v-if="custom" class="text-sm text-gray-500 dark:text-gray-400">Você pode adicionar uma personalizada abaixo.</p>
+          </div>
+        </transition>
+      </div>
+
+      <p class="mt-2 text-xs text-gray-400" aria-hidden="true">
+        As imagens são obtidas da Amazon e dos sites das editoras.
+      </p>
     </div>
 
     <template v-if="custom">
@@ -65,11 +71,11 @@
           >
           <button
             type="button"
-            class="button"
+            class="button is-icon-only px-2"
             @click="addNewImage"
           >
             <PlusIcon aria-hidden="true" />
-            Adicionar
+            <span class="sr-only">Adicionar</span>
           </button>
         </div>
       </div>

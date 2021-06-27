@@ -60,7 +60,7 @@
         :aria-invalid="v$.authorsStr.$invalid"
         required
       >
-      <p id="book-authors-hint" class="mt-1 text-xs text-gray-500" aria-hidden="true">
+      <p id="book-authors-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
         Separe os nomes utilizando o caractere de ponto-e-vírgula.
       </p>
       <p id="book-authors-error" class="sr-only" aria-hidden="true">
@@ -305,7 +305,7 @@
       </div>
     </div>
 
-    <p class="mt-1 text-xs text-gray-500" aria-hidden="true">
+    <p class="mt-1 text-xs text-gray-400" aria-hidden="true">
       Os campos marcados com
       <abbr title="Obrigatório" class="required">*</abbr>
       são obrigatórios.

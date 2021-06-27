@@ -28,7 +28,7 @@
       </div>
       <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" alt="">
     </transition>
-    <div v-if="checked" class="bg-gray-800 bg-opacity-60 absolute top-0 left-0 w-full h-full flex items-center justify-center flex-col">
+    <div v-if="checked" class="bg-indigo-600 bg-opacity-70 absolute top-0 left-0 w-full h-full flex items-center justify-center flex-col">
       <CheckCircleIcon class="h-8 w-8 text-white" />
     </div>
   </div>
