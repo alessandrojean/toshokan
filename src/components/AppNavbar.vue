@@ -1,22 +1,27 @@
 <template>
-  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
+  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }" aria-label="Menu principal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
-          <router-link :to="{ name: 'DashboardHome' }" class="flex-shrink-0">
-            <LibraryIcon class="h-10 w-10 text-indigo-500" />
+          <router-link
+            :to="{ name: 'DashboardHome' }"
+            class="flex-shrink-0 rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
+            aria-hidden="true"
+          >
+            <LibraryIcon class="h-10 w-10 text-indigo-500" aria-hidden="true" />
+            <span class="sr-only">Início</span>
           </router-link>
           <div class="hidden md:block">
-            <div class="ml-10 flex items-baseline space-x-4">
-              <template v-for="item in desktopNavigation" :key="item.name">
+            <ul class="ml-10 flex items-baseline space-x-4">
+              <li v-for="item in desktopNavigation" :key="item.name">
                 <router-link
                   :to="{ name: item.name }"
-                  class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
                 >
                   {{ item.title }}
                 </router-link>
-              </template>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="hidden md:block">
@@ -65,9 +70,9 @@
             <!-- Profile dropdown -->
             <Menu as="div" class="ml-3 relative">
               <div>
-                <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
                   <span class="sr-only">Abrir menu de usuário</span>
-                  <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="">
+                  <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="Foto de perfil">
                 </MenuButton>
               </div>
               <transition
@@ -80,12 +85,12 @@
               >
                 <MenuItems as="ul" class="absolute right-0 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 focus:outline-none">
                   <div class="pb-1">
-                    <MenuItem as="li" v-slot="{ active }">
+                    <MenuItem v-slot="{ active }">
                       <router-link
                         :to="{ name: 'DashboardSettings' }"
                         :class="[
                           active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                          'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200'
+                          'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
                         ]"
                       >
                         <CogIcon
@@ -97,12 +102,12 @@
                     </MenuItem>
                   </div>
                   <div class="pt-1">
-                    <MenuItem as="li" v-slot="{ active }">
+                    <MenuItem v-slot="{ active }">
                       <button
                         type="button"
                         :class="[
                           active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                          'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200'
+                          'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
                         ]"
                         @click.stop="signOut"
                       >

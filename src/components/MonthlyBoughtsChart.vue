@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2">
+  <section class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2">
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
     <h3 v-else class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
       Livros comprados
@@ -28,7 +28,7 @@
         </div>
       </transition>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>

@@ -125,11 +125,14 @@
                 >
                   <MenuItems as="ul" class="z-20 py-1 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
                     <div class="pb-1" v-if="isbn10">
-                      <MenuItem as="li" v-slot="{ active }">
+                      <MenuItem v-slot="{ active }">
                         <a
                           :href="'https://amazon.com.br/dp/' + isbn10"
                           target="_blank"
-                          :class="[active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200', 'flex items-center px-4 py-2.5 text-sm w-full']"
+                          :class="[
+                            active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                          ]"
                         >
                           <ExternalLinkIcon
                             :class="[
@@ -143,10 +146,13 @@
                       </MenuItem>
                     </div>
                     <div class="py-1">
-                      <MenuItem as="li" v-slot="{ active }">
+                      <MenuItem v-slot="{ active }">
                         <button
                           type="button"
-                          :class="[active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200', 'flex items-center px-4 py-2.5 text-sm w-full']"
+                          :class="[
+                            active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                          ]"
                           @click="$emit('click:updateCover', $event)"
                         >
                           <PhotographIcon
@@ -161,10 +167,13 @@
                       </MenuItem>
                     </div>
                     <div class="py-1">
-                      <MenuItem as="li" v-slot="{ active }">
+                      <MenuItem v-slot="{ active }">
                         <button
                           type="button"
-                          :class="[active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200', 'flex items-center px-4 py-2.5 text-sm w-full']"
+                          :class="[
+                            active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                          ]"
                           @click="$emit('click:toggleStatus', $event)"
                         >
                           <BookmarkIcon
@@ -177,10 +186,13 @@
                           Marcar como {{ book.status === 'Lido' ? 'não lido' : 'lido' }}
                         </button>
                       </MenuItem>
-                      <MenuItem as="li" v-slot="{ active }">
+                      <MenuItem v-slot="{ active }">
                         <button
                           type="button"
-                          :class="[active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200', 'flex items-center px-4 py-2.5 text-sm w-full']"
+                          :class="[
+                            active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                          ]"
                           @click="$emit('click:toggleFavorite', $event)"
                         >
                           <HeartIcon
@@ -195,10 +207,13 @@
                       </MenuItem>
                     </div>
                     <div class="pt-1">
-                      <MenuItem as="li" v-slot="{ active }">
+                      <MenuItem v-slot="{ active }">
                         <button
                           type="button"
-                          :class="[active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200', 'flex items-center px-4 py-2.5 text-sm w-full']"
+                          :class="[
+                            active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                          ]"
                           @click="$emit('click:delete', $event)"
                         >
                           <TrashIcon

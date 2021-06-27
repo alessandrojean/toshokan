@@ -1,5 +1,5 @@
 <template>
-  <main class="max-w-2xl mx-auto md:py-6 md:px-8">
+  <div class="max-w-2xl mx-auto md:py-6 md:px-8">
     <div class="md:mt-6 rounded-md shadow-md p-5 bg-white dark:bg-gray-800">
       <label for="search" class="sr-only">Buscar por</label>
       <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 -space-x-1">
@@ -48,7 +48,7 @@
         </router-link>
       </li>
     </ul>
-  </main>
+  </div>
 </template>
 
 <script>

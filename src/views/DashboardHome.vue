@@ -21,7 +21,7 @@
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto py-6 px-5 md:px-8">
+    <div class="max-w-7xl mx-auto py-6 px-5 md:px-8">
       <BetaWarning />
 
       <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
@@ -77,7 +77,7 @@
         :loading="loading"
         :last-added="lastAdded"
       />
-    </main>
+    </div>
   </div>
 </template>
 

@@ -47,7 +47,7 @@
           </p>
 
           <p v-if="!isDev" class="text-center text-xs text-gray-400 dark:text-gray-500 mt-1">
-            <a href="https://www.netlify.com/" target="_blank" class="hover:underline hover:text-indigo-600 dark:hover:text-gray-200">This site is powered by Netlify</a>
+            <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-indigo-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">This site is powered by Netlify</a>
             <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
           </p>
         </div>
