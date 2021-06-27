@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading" class="animate-pulse">
+  <div v-if="loading" class="motion-safe:animate-pulse">
     <div class="bg-gray-400 dark:bg-gray-600 shadow rounded-md aspect-w-2 aspect-h-3">
       <div class="w-full h-full flex justify-center items-center">
         <PhotographIcon
@@ -23,13 +23,13 @@
     class="group focus:outline-none"
     ref="loadedCard"
   >
-    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-indigo-500 dark:group-focus-visible:ring-offset-gray-700">
+    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-indigo-500 dark:group-focus-visible:ring-offset-gray-700">
       <transition
         mode="out-in"
-        leave-active-class="transition duration-200 ease-in"
+        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
-        enter-active-class="transition duration-200 ease-out"
+        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
       >
@@ -39,7 +39,7 @@
         >
           <PhotographIcon
             :class="[
-              imageLoading ? 'animate-pulse' : '',
+              imageLoading ? 'motion-safe:animate-pulse' : '',
               'w-10 h-10 text-gray-400 dark:text-gray-500'
             ]"
             aria-hidden="true"

@@ -34,22 +34,19 @@ const routes = [
         }
       },
       {
-        path: 'collection',
-        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/DashboardCollection.vue'),
-        meta: {
-          title: 'Coleção'
-        },
+        path: 'library',
+        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/DashboardLibrary.vue'),
         children: [
           {
             path: '',
-            name: 'DashboardCollection',
-            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/DashboardCollectionList.vue'),
+            name: 'DashboardLibrary',
+            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/DashboardLibraryExplorer.vue'),
             meta: {
-              title: 'Coleção'
+              title: 'Biblioteca'
             }
           },
           {
-            path: ':bookId',
+            path: 'book/:bookId',
             name: 'BookDetails',
             component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/DashboardDetails.vue'),
             meta: {

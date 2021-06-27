@@ -5,14 +5,14 @@
     <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5" ref="mainEl">
       <transition
         mode="out-in"
-        leave-active-class="transition transform duration-200 ease-in"
+        leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
         leave-from-class="opacity-100 translate-x-0"
         leave-to-class="opacity-0 -translate-x-2"
-        enter-active-class="transition transform duration-200 ease-out"
+        enter-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-out"
         enter-from-class="opacity-0 translate-x-2"
         enter-to-class="opacity-100 translate-x-0"
       >
-        <div v-if="step === 1" class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section v-if="step === 1" class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -29,10 +29,11 @@
                   <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
                 </div>
                 <input
-                  type="tel"
+                  type="text"
+                  inputmode="numeric"
                   id="book-isbn"
                   class="input text-lg pl-10 md:pr-16"
-                  placeholder="Pesquisar por ISBN-10 ou ISBN-13"
+                  placeholder="Pesquisar por ISBN"
                   v-model="isbnQuery"
                   @keyup.enter.stop="search"
                 >
@@ -81,9 +82,9 @@
               <SearchIcon :class="cssClass" />
             </template>
           </LoadingIndicator>
-        </div>
+        </section>
 
-        <div v-else-if="step == 2" class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section v-else-if="step == 2" class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -123,9 +124,9 @@
               <ChevronRightIcon class="is-right" aria-hidden="true" />
             </button>
           </div>
-        </div>
+        </section>
 
-        <div v-else-if="step === 3" class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section v-else-if="step === 3" class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -167,7 +168,7 @@
               <SearchIcon :class="cssClass" />
             </template>
           </LoadingIndicator>
-        </div>
+        </section>
 
         <TableInfo
           v-else
@@ -326,6 +327,7 @@ function useIsbnSearchStep (step, book, bookInitialState) {
 
   const {
     available: searchAvailable,
+    clear: clearSearch,
     errorMessage: searchError,
     failed: searchFailed,
     noResultsFound,
@@ -335,6 +337,8 @@ function useIsbnSearchStep (step, book, bookInitialState) {
   } = useIsbnSearch(isbnQuery)
 
   function handleFillManually () {
+    clearSearch()
+    isbnQuery.value = ''
     step.value = 2
     Object.assign(book, bookInitialState)
   }

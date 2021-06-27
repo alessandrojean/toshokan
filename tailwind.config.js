@@ -30,7 +30,9 @@ module.exports = {
   ],
   variants: {
     extend: {
+      animation: ['motion-safe'],
       backgroundColor: ['even', 'odd', 'active', 'disabled'],
+      backgroundImage: ['dark'],
       borderColor: ['disabled'],
       borderWidth: ['dark'],
       cursor: ['disabled'],
@@ -44,6 +46,8 @@ module.exports = {
       ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
       ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
       textColor: ['group-focus-within', 'group-disabled'],
+      transform: ['motion-reduce'],
+      transitionProperty: ['motion-safe', 'motion-reduce'],
       zIndex: ['focus-visible']
     }
   },

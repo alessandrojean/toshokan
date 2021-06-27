@@ -8,13 +8,37 @@
       :open="open"
     >
       <div class="absolute inset-0 overflow-hidden">
-        <TransitionChild as="template" enter="ease-in-out duration-500" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-500" leave-from="opacity-100" leave-to="opacity-0">
+        <TransitionChild
+          as="template"
+          enter="motion-reduce:transition-none ease-in-out duration-500"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="motion-reduce:transition-none ease-in-out duration-500"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
           <DialogOverlay class="absolute inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity" />
         </TransitionChild>
         <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
-          <TransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700" enter-from="translate-x-full" enter-to="translate-x-0" leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0" leave-to="translate-x-full">
+          <TransitionChild
+            as="template"
+            enter="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
+            enter-from="translate-x-full"
+            enter-to="translate-x-0"
+            leave="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
+            leave-from="translate-x-0"
+            leave-to="translate-x-full"
+          >
             <div class="relative w-screen max-w-md">
-              <TransitionChild as="template" enter="ease-in-out duration-500" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-500" leave-from="opacity-100" leave-to="opacity-0">
+              <TransitionChild
+                as="template"
+                enter="motion-reduce:transition-none ease-in-out duration-500"
+                enter-from="opacity-0"
+                enter-to="opacity-100"
+                leave="motion-reduce:transition-none ease-in-out duration-500"
+                leave-from="opacity-100"
+                leave-to="opacity-0"
+              >
                 <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
                   <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" @click="$emit('update:open', false)">
                     <span class="sr-only">Fechar painel</span>
@@ -40,7 +64,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center'
+                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             <TableIcon aria-hidden="true" />
@@ -51,7 +75,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center'
+                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             <ViewGridIcon aria-hidden="true" />
@@ -73,7 +97,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center'
+                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             Compacto
@@ -83,7 +107,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center'
+                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             Confortável
@@ -95,7 +119,7 @@
 
                   <div class="w-full relative">
                     <label for="group" class="label">
-                      Grupo
+                      Coleção
                     </label>
                     <select
                       name="group"
@@ -125,7 +149,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center'
+                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             <SortAscendingIcon aria-hidden="true" />
@@ -136,7 +160,7 @@
                           <div
                             :class="[
                               checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center'
+                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
                             <SortDescendingIcon aria-hidden="true" />
@@ -166,6 +190,15 @@
                       </option>
                     </select>
                   </div>
+                </div>
+
+                <div class="block md:hidden w-full px-4 sm:px-6">
+                  <button
+                    type="button"
+                    class="button is-primary w-full justify-center text-base sm:text-sm"
+                  >
+                    Fechar filtros
+                  </button>
                 </div>
               </div>
             </div>
@@ -200,7 +233,7 @@ import {
 } from '@heroicons/vue/solid'
 
 export default {
-  name: 'CollectionFilters',
+  name: 'LibraryFilters',
 
   components: {
     SortAscendingIcon,

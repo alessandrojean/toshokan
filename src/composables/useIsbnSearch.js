@@ -18,7 +18,14 @@ export default function useIsbnSearch (isbnRef) {
 
   const failed = computed(() => errorMessage.value.length > 0)
 
-  const search = async () => {
+  function clear () {
+    noResultsFound.value = false
+    result.value = undefined
+    searching.value = false
+    errorMessage.value = false
+  }
+
+  async function search () {
     if (isbnRef.value.length === 0) {
       return
     }
@@ -42,6 +49,7 @@ export default function useIsbnSearch (isbnRef) {
 
   return {
     available,
+    clear,
     errorMessage,
     failed,
     noResultsFound,

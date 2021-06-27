@@ -4,7 +4,7 @@
       <div class="col-span-3 sm:col-span-1">
         <label for="book-code" class="label">
           Identificação
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
           id="book-code"
@@ -13,14 +13,20 @@
           @input="handleInput('code', $event.target.value)"
           class="input"
           placeholder="ex. 9788583621508"
+          required
+          aria-describedby="book-code-error"
+          :aria-invalid="v$.code.$invalid"
         >
+        <p id="book-code-error" class="sr-only" aria-hidden="true">
+          {{ v$.code.$error ? v$.code.$errors[0].$message : '' }}
+        </p>
       </div>
     </div>
 
     <div>
       <label for="book-title" class="label">
         Título
-        <abbr title="Obrigatório" class="required">*</abbr>
+        <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-title"
@@ -29,13 +35,19 @@
         @input="handleInput('title', $event.target.value)"
         class="input"
         placeholder="ex. A Nova Ilha do Tesouro"
+        required
+        aria-describedby="book-title-error"
+        :aria-invalid="v$.title.$invalid"
       >
+      <p id="book-title-error" class="sr-only" aria-hidden="true">
+        {{ v$.title.$error ? v$.title.$errors[0].$message : '' }}
+      </p>
     </div>
 
     <div>
       <label for="book-authors" class="label">
         Autores
-        <abbr title="Obrigatório" class="required">*</abbr>
+        <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-authors"
@@ -44,9 +56,15 @@
         @input="handleInput('authorsStr', $event.target.value)"
         class="input"
         placeholder="ex. Osamu Tezuka"
+        aria-describedby="book-authors-hint book-authors-error"
+        :aria-invalid="v$.authorsStr.$invalid"
+        required
       >
-      <p class="mt-1 text-xs text-gray-500">
+      <p id="book-authors-hint" class="mt-1 text-xs text-gray-500" aria-hidden="true">
         Separe os nomes utilizando o caractere de ponto-e-vírgula.
+      </p>
+      <p id="book-authors-error" class="sr-only" aria-hidden="true">
+        {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
       </p>
     </div>
 
@@ -54,7 +72,7 @@
       <div class="col-span-2 sm:col-span-1">
         <label for="book-imprint" class="label">
           Editora
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -65,6 +83,9 @@
             class="input pr-9"
             placeholder="ex. NewPOP"
             list="imprints"
+            required
+            aria-describedby="book-imprint-error"
+            :aria-invalid="v$.imprint.$invalid"
           >
           <datalist id="imprints">
             <option
@@ -79,12 +100,15 @@
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
+        <p id="book-imprint-error" class="sr-only" aria-hidden="true">
+          {{ v$.imprint.$error ? v$.imprint.$errors[0].$message : '' }}
+        </p>
       </div>
 
       <div class="col-span-2 sm:col-span-1">
         <label for="book-collection" class="label">
           Coleção
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -95,6 +119,9 @@
             class="input pr-9"
             placeholder="ex. Mangás"
             list="collections"
+            required
+            aria-describedby="book-collection-error"
+            :aria-invalid="v$.collection.$invalid"
           >
           <datalist id="collections">
             <option
@@ -109,6 +136,9 @@
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
+        <p id="book-collection-error" class="sr-only" aria-hidden="true">
+          {{ v$.collection.$error ? v$.collection.$errors[0].$message : '' }}
+        </p>
       </div>
     </div>
 
@@ -116,7 +146,7 @@
       <div class="col-span-3 sm:col-span-1">
         <label for="book-format" class="label">
           Formato
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
           id="book-format"
@@ -125,26 +155,35 @@
           @input="handleInput('format', $event.target.value)"
           class="input"
           placeholder="ex. 15 x 21"
+          required
+          aria-describedby="book-format-error"
+          :aria-invalid="v$.format.$invalid"
         >
+        <p id="book-format-error" class="sr-only" aria-hidden="true">
+          {{ v$.format.$error ? v$.format.$errors[0].$message : '' }}
+        </p>
       </div>
 
       <div class="col-span-3 sm:col-span-1">
         <label for="book-label-price" class="label">
           Preço de capa
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
           </div>
           <input
             id="book-label-price"
-            type="tel"
+            type="text"
             inputmode="decimal"
             :value="book.labelPriceValue"
             @input="handleInput('labelPriceValue', $event.target.value)"
             class="input pl-7 pr-12"
             placeholder="ex. 26,90"
+            required
+            aria-describedby="book-label-price-error"
+            :aria-invalid="v$.labelPriceValue.$invalid"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-label-price-currency" class="sr-only">Moeda</label>
@@ -152,6 +191,7 @@
               id="book-label-price-currency"
               class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('labelPriceCurrency', $event.target.value)"
+              required
             >
               <option
                 v-for="currency of currencies"
@@ -164,25 +204,31 @@
             </select>
           </div>
         </div>
+        <p id="book-label-price-error" class="sr-only" aria-hidden="true">
+          {{ v$.labelPriceValue.$error ? v$.labelPriceValue.$errors[0].$message : '' }}
+        </p>
       </div>
 
       <div class="col-span-3 sm:col-span-1">
         <label for="book-paid-price" class="label">
           Preço pago
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
           </div>
           <input
             id="book-paid-price"
-            type="tel"
+            type="text"
             inputmode="decimal"
             :value="book.paidPriceValue"
             @input="handleInput('paidPriceValue', $event.target.value)"
             class="input pl-7 pr-12"
             placeholder="ex. 22,90"
+            required
+            aria-describedby="book-paid-price-error"
+            :aria-invalid="v$.paidPriceValue.$invalid"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-paid-price-currency" class="sr-only">Moeda</label>
@@ -190,6 +236,7 @@
               id="book-paid-price-currency"
               class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('paidPriceCurrency', $event.target.value)"
+              required
             >
               <option
                 v-for="currency of currencies"
@@ -202,6 +249,9 @@
             </select>
           </div>
         </div>
+        <p id="book-paid-price-error" class="sr-only" aria-hidden="true">
+          {{ v$.paidPriceValue.$error ? v$.paidPriceValue.$errors[0].$message : '' }}
+        </p>
       </div>
     </div>
 
@@ -209,7 +259,7 @@
       <div class="col-span-2 sm:col-span-1">
         <label for="book-store" class="label">
           Loja
-          <abbr title="Obrigatório" class="required">*</abbr>
+          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -220,6 +270,9 @@
             class="input pr-8"
             placeholder="ex. Amazon"
             list="stores"
+            required
+            aria-describedby="book-store-error"
+            :aria-invalid="v$.store.$invalid"
           >
           <datalist id="stores">
             <option
@@ -234,6 +287,9 @@
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
+        <p id="book-store-error" class="sr-only" aria-hidden="true">
+          {{ v$.store.$error ? v$.store.$errors[0].$message : '' }}
+        </p>
       </div>
 
       <div class="col-span-2 sm:col-span-1">
@@ -249,10 +305,17 @@
       </div>
     </div>
 
+    <p class="mt-1 text-xs text-gray-500" aria-hidden="true">
+      Os campos marcados com
+      <abbr title="Obrigatório" class="required">*</abbr>
+      são obrigatórios.
+    </p>
+
     <Alert
       type="error"
       :show="v$.$error"
       :title="`O formulário dos metadados do livro possui ${v$.$errors.length} ${v$.$errors.length === 1 ? 'erro' : 'erros'}`"
+      aria-hidden="true"
     >
       <ul class="list-disc list-inside space-y-1">
         <li

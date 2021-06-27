@@ -29,12 +29,12 @@
 
             <div class="hidden md:flex">
               <div class="flex-1 space-y-1">
-                <div v-if="loading || !bookFound" class="animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
+                <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
                 <h2 v-else class="text-lg font-title font-semibold leading-5 text-gray-900 dark:text-gray-200">
                   {{ book.titleParts[0] }}
                 </h2>
 
-                <div v-if="loading || !bookFound" class="animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
+                <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
                 <p v-else class="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Volume {{ book.titleParts[1] ? '#' + book.titleParts[1] : 'único' }}
                 </p>
@@ -47,10 +47,10 @@
         <div class="col-span-4">
           <transition
             mode="out-in"
-            leave-active-class="transition duration-300 ease-in"
+            leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
-            enter-active-class="transition duration-500 ease-out"
+            enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
           >
@@ -91,7 +91,7 @@
               />
             </div>
 
-            <div v-else-if="editing" class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <section v-else-if="editing" class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
                   <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
@@ -129,9 +129,9 @@
                   Concluir
                 </button>
               </div>
-            </div>
+            </section>
 
-            <div v-else class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <section v-else class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
                   <h3 class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
@@ -173,7 +173,7 @@
                   <SearchIcon :class="cssClass" />
                 </template>
               </LoadingIndicator>
-            </div>
+            </section>
           </transition>
         </div>
       </div>

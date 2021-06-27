@@ -1,5 +1,5 @@
 <template>
-  <div class="animate-pulse bg-gray-50 shadow rounded-md dark:bg-gray-700 w-full h-96" v-if="loading"></div>
+  <div class="motion-safe:animate-pulse bg-gray-50 shadow rounded-md dark:bg-gray-700 w-full h-96" v-if="loading"></div>
   <div class="relative bg-white shadow overflow-hidden rounded-md dark:bg-gray-800" v-else>
     <div class="px-4 py-5 sm:px-6">
       <h3 class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">

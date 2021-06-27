@@ -1,9 +1,9 @@
 <template>
   <transition
-    leave-active-class="transition duration-200 ease-in"
+    leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
-    enter-active-class="transition duration-200 ease-out"
+    enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
     enter-from-class="opacity-0"
     enter-to-class="opacity-100"
   >
@@ -12,7 +12,7 @@
       class="flex justify-center items-center absolute left-0 top-0 w-full h-full bg-opacity-75 bg-white dark:bg-gray-800"
       v-if="loading"
     >
-      <slot name="icon" css-class="animate-pulse h-10 w-10 mx-auto text-indigo-500" />
+      <slot name="icon" css-class="motion-safe:animate-pulse h-10 w-10 mx-auto text-indigo-500" />
     </div>
   </transition>
 </template>

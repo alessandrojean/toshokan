@@ -1,21 +1,21 @@
 <template>
   <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2">
-    <div v-if="loading" class="animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
+    <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
     <h3 v-else class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
       Gasto mensal
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3">
       <transition
         mode="out-in"
-        enter-active-class="transition duration-500 ease-out"
+        enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100 "
-        leave-active-class="transition duration-300 ease-in"
+        leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
         <div v-if="loading" class="flex items-center justify-center">
-          <ChartBarIcon class="animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
+          <ChartBarIcon class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
         </div>
         <div v-else>
           <ApexChart
@@ -38,6 +38,7 @@ import { useStore } from 'vuex'
 import colors from 'tailwindcss/colors'
 
 import useDarkMode from '@/composables/useDarkMode'
+import useMotionSafe from '@/composables/useMotionSafe'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -74,10 +75,14 @@ export default {
     }
 
     const { darkMode } = useDarkMode()
+    const { motionSafe } = useMotionSafe()
 
     const expenses = computed(() => ({
       options: {
         chart: {
+          animations: {
+            enabled: motionSafe.value
+          },
           id: 'monthly-expenses',
           locales: [ptBr],
           defaultLocale: 'pt-br',

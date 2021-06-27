@@ -22,10 +22,10 @@
         <div class="hidden md:block">
           <div class="ml-4 flex items-center md:ml-6">
             <transition
-              leave-active-class="transition duration-200 ease-in"
+              leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
               leave-from-class="opacity-100"
               leave-to-class="opacity-0"
-              enter-active-class="transition duration-200 ease-out"
+              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
             >
@@ -71,10 +71,10 @@
                 </MenuButton>
               </div>
               <transition
-                enter-active-class="transition duration-100 ease-out"
+                enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
                 enter-from-class="transform scale-95 opacity-0"
                 enter-to-class="transform scale-100 opacity-100"
-                leave-active-class="transition duration-75 ease-in"
+                leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
                 leave-from-class="transform scale-100 opacity-100"
                 leave-to-class="transform scale-95 opacity-0"
               >
@@ -232,7 +232,7 @@ export default {
     const open = ref(false)
     const navigation = ref([
       { name: 'DashboardHome', title: 'Dashboard' },
-      { name: 'DashboardCollection', title: 'Coleção' },
+      { name: 'DashboardLibrary', title: 'Biblioteca' },
       { name: 'DashboardStats', title: 'Estatísticas' },
       { name: 'DashboardWishlist', title: 'Lista de desejos' },
       { name: 'DashboardSearch', title: 'Pesquisa', mobileOnly: true }

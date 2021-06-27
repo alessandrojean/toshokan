@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: 'DashboardCollection'
+  name: 'DashboardLibrary'
 }
 </script>
