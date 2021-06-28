@@ -21,8 +21,13 @@
     @apply block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-gray-300;
   }
 
-  ::-webkit-calendar-picker-indicator {
-    @apply hidden;
+  input::-webkit-calendar-picker-indicator,
+  input:hover::-webkit-calendar-picker-indicator,
+  input:focus::-webkit-calendar-picker-indicator {
+    display: none;
+    width: 0px;
+    height: 0px;
+    opacity: 0;
   }
 
   .select {

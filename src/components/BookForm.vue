@@ -1,7 +1,7 @@
 <template>
   <form
     role="form"
-    aria-label="Formulário dos metadados do livro"
+    aria-label="Metadados do livro"
     class="space-y-6"
   >
     <div class="grid grid-cols-3 gap-6">
@@ -319,7 +319,6 @@
       type="error"
       :show="v$.$error"
       :title="`O formulário dos metadados do livro possui ${v$.$errors.length} ${v$.$errors.length === 1 ? 'erro' : 'erros'}`"
-      aria-hidden="true"
     >
       <ul class="list-disc list-inside space-y-1">
         <li

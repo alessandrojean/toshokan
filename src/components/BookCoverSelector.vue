@@ -1,7 +1,7 @@
 <template>
   <form
     role="form"
-    aria-label="Formulário da imagem de capa do livro"
+    aria-label="Imagem de capa do livro"
     class="space-y-6"
   >
     <div>

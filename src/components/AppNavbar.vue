@@ -41,7 +41,9 @@
                 aria-labelledby="search-form-title"
                 @submit.prevent="handleSearch"
               >
-                <p class="sr-only" id="search-form-title">Formulário de pesquisa</p>
+                <p class="sr-only" id="search-form-title" aria-hidden="true">
+                  Pesquisa na coleção
+                </p>
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                   <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
                 </div>
@@ -54,6 +56,7 @@
                   placeholder="Pesquisar na coleção"
                   v-model="searchQuery"
                   @keyup.enter.stop="handleSearch"
+                  aria-describedby="navbar-search-enter-hint"
                 >
                 <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
                   <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
@@ -65,7 +68,7 @@
                     <kbd class="font-sans">K</kbd>
                     <span class="sr-only"> para focar</span>
                   </span>
-                  <span class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
+                  <span id="navbar-search-enter-hint" class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
                     <span class="sr-only">Pressione </span>
                     <kbd class="font-sans">Enter</kbd>
                     <span class="sr-only"> para pesquisar</span>
@@ -81,7 +84,7 @@
             <!-- Profile dropdown -->
             <Menu as="div" class="ml-3 relative">
               <div>
-                <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
+                <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
                   <span class="sr-only">Abrir menu de usuário</span>
                   <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="Foto de perfil">
                 </MenuButton>

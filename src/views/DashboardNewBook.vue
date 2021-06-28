@@ -29,7 +29,7 @@
             </div>
             <form
               role="form"
-              aria-label="Formulário de pesquisa na CBL"
+              aria-label="Pesquisa na CBL"
               class="flex flex-col items-end"
             >
               <label for="book-isbn" class="sr-only">ISBN</label>

@@ -54,7 +54,7 @@
                 </div>
                 <form
                   role="form"
-                  aria-label="Formulário de filtros"
+                  aria-label="Filtros"
                   class="mt-6 space-y-6 relative flex-1 px-4 sm:px-6"
                 >
                   <div>
@@ -200,6 +200,7 @@
                   <button
                     type="button"
                     class="button is-primary w-full justify-center text-base sm:text-sm"
+                    @click="$emit('update:open', false)"
                   >
                     Fechar filtros
                   </button>
