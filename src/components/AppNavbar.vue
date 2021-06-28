@@ -1,5 +1,5 @@
 <template>
-  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }" aria-label="Menu principal">
+  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center">
@@ -11,7 +11,7 @@
             <LibraryIcon class="h-10 w-10 text-indigo-500" aria-hidden="true" />
             <span class="sr-only">Início</span>
           </router-link>
-          <div class="hidden md:block">
+          <div class="hidden md:block" role="navigation" aria-label="Menu principal">
             <ul class="ml-10 flex items-baseline space-x-4">
               <li v-for="item in desktopNavigation" :key="item.name">
                 <router-link
@@ -34,9 +34,16 @@
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
             >
-              <div class="relative hidden md:block mr-2 group" v-if="showSearch">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
+              <form
+                role="form"
+                class="relative hidden md:block mr-2 group"
+                v-if="showSearch"
+                aria-labelledby="search-form-title"
+                @submit.prevent="handleSearch"
+              >
+                <p class="sr-only" id="search-form-title">Formulário de pesquisa</p>
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+                  <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
                 </div>
                 <label for="search-navbar" class="sr-only">Buscar por</label>
                 <input
@@ -64,7 +71,11 @@
                     <span class="sr-only"> para pesquisar</span>
                   </span>
                 </div>
-              </div>
+
+                <button type="submit" class="sr-only">
+                  Pesquisar
+                </button>
+              </form>
             </transition>
 
             <!-- Profile dropdown -->
@@ -93,10 +104,9 @@
                           'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
                         ]"
                       >
-                        <CogIcon
-                          class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300"
-                          aria-hidden="true"
-                        />
+                        <span aria-hidden="true">
+                          <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                        </span>
                         Configurações
                       </router-link>
                     </MenuItem>
@@ -111,10 +121,9 @@
                         ]"
                         @click.stop="signOut"
                       >
-                        <LogoutIcon
-                          class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
-                          aria-hidden="true"
-                        />
+                        <span aria-hidden="true">
+                          <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
+                        </span>
                         Sair
                       </button>
                     </MenuItem>

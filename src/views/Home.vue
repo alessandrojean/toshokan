@@ -1,15 +1,18 @@
 <template>
- <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+ <main role="main" class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-xs w-full space-y-8">
-      <div>
-        <BookOpenIcon class="h-14 w-14 mx-auto text-indigo-500" aria-hidden="true" />
-        <h2 class="mt-6 font-title text-center text-3xl font-bold text-gray-900 dark:text-gray-200">
+      <header>
+        <span aria-hidden="true">
+          <BookOpenIcon class="h-14 w-14 mx-auto text-indigo-500" aria-hidden="true" />
+        </span>
+        <h1 class="mt-6 font-title text-center text-3xl font-bold text-gray-900 dark:text-gray-200">
           Autentique-se
-        </h2>
-        <p class="mt-1 text-center text-sm text-gray-600 dark:text-gray-400">
+          <span class="sr-only">para obter acesso ao Toshokan</span>
+        </h1>
+        <p aria-hidden="true" class="mt-1 text-center text-sm text-gray-600 dark:text-gray-400">
           para obter acesso ao Toshokan
         </p>
-      </div>
+      </header>
       <div class="mt-8 space-y-8 flex flex-col items-center">
         <button
           type="button"
@@ -17,8 +20,7 @@
           @click.stop="handleSignIn"
           :disabled="!started"
         >
-          <div class="icon is-on-left is-google-icon">
-            <!-- <LockClosedIcon aria-hidden="true"/> -->
+          <div class="icon is-on-left is-google-icon" aria-hidden="true">
             <span class="bg-white p-2 rounded -mx-2">
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
                 <g>
@@ -34,13 +36,22 @@
           Entrar com Google
         </button>
 
-        <div class="flex flex-col items-center space-y-1 text-sm text-black dark:text-gray-400">
-          <a href="#" class="utility-link">Instruções de uso</a>
-          <!-- <a href="#" class="utility-link">Termos de uso</a> -->
-          <a href="#" class="utility-link">Política de privacidade</a>
-        </div>
+        <nav
+          role="navigation"
+          aria-label="Links úteis"
+          class="text-sm text-black dark:text-gray-400"
+        >
+          <ul class="flex flex-col items-center space-y-1">
+            <li>
+              <a href="#" class="utility-link">Instruções de uso</a>
+            </li>
+            <li>
+              <a href="#" class="utility-link">Política de privacidade</a>
+            </li>
+          </ul>
+        </nav>
 
-        <div>
+        <footer role="contentinfo">
           <p class="text-center text-gray-400 text-sm dark:text-gray-500">
             Toshokan v{{ appVersion }}
             <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-indigo-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
@@ -50,10 +61,10 @@
             <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-indigo-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">This site is powered by Netlify</a>
             <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
           </p>
-        </div>
+        </footer>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>

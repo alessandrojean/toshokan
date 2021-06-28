@@ -49,7 +49,10 @@
         <EyeIcon class="text-gray-500" v-if="!showValue" />
         <EyeOffIcon class="text-gray-500" v-else />
       </transition>
-      <span class="sr-only">{{ !showValue ? 'Mostrar valor' : 'Ocultar valor' }}</span>
+      <span class="sr-only">
+        {{ !showValue ? 'Mostrar valor de ' : 'Ocultar valor de ' }}
+        {{ title }}
+      </span>
     </button>
   </div>
 </template>

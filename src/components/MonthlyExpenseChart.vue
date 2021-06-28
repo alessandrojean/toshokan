@@ -1,10 +1,13 @@
 <template>
-  <section class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2">
+  <section
+    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2"
+    :aria-labelledby="!loading ? 'monthly-expense-title' : ''"
+  >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+    <h3 v-else id="monthly-expense-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
       Gasto mensal
     </h3>
-    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3">
+    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico do gasto mensal">
       <transition
         mode="out-in"
         enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"

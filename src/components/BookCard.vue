@@ -22,6 +22,7 @@
     :to="{ name: 'BookDetails', params: { bookId: book.id } }"
     class="group focus:outline-none"
     ref="loadedCard"
+    :title="book.title"
   >
     <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-indigo-500 dark:group-focus-visible:ring-offset-gray-700">
       <transition
@@ -45,7 +46,7 @@
             aria-hidden="true"
           />
         </div>
-        <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" alt="">
+        <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" alt="Capa do livro">
       </transition>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">

@@ -12,21 +12,24 @@
     </div>
   </div>
 
-  <div v-else-if="lastAdded.length > 0">
-    <h2 class="font-medium font-title text-xl mt-8 mb-3 dark:text-gray-200">
+  <section v-else-if="lastAdded.length > 0" aria-labelledby="last-added-title">
+    <h2 id="last-added-title" class="font-medium font-title text-xl mt-8 mb-3 dark:text-gray-200">
       Últimos adicionados
     </h2>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
-      <BookCard
+    <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
+      <li
         v-for="(book, bookIdx) in lastAdded"
         :key="book.id"
-        :book="book"
-        :loading="loading"
-        :class="bookIdx === lastAdded.length - 1 ? 'md:hidden lg:block' : ''"
-      />
-    </div>
-  </div>
+      >
+        <BookCard
+          :book="book"
+          :loading="loading"
+          :class="bookIdx === lastAdded.length - 1 ? 'md:hidden lg:block' : ''"
+        />
+      </li>
+    </ul>
+  </section>
 </template>
 
 <script>

@@ -4,6 +4,8 @@
       loading || !bookFound ? 'motion-safe:animate-pulse' : '',
       'book-image hidden md:block bg-white dark:bg-gray-700 shadow overflow-hidden sm:rounded-lg'
     ]"
+    role="img"
+    aria-label="Imagem de capa do livro"
   >
     <div class="aspect-w-2 aspect-h-3">
       <transition

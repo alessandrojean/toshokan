@@ -12,6 +12,7 @@
               Biblioteca
             </h1>
             <p class="text-gray-500 dark:text-gray-400">
+              <span class="sr-only">Coleção atual:</span>
               {{ group }}
             </p>
           </template>
@@ -27,14 +28,18 @@
               class="button"
               @click.stop="filterOpen = true"
             >
-              <FilterIcon aria-hidden="true" />
+              <span aria-hidden="true">
+                <FilterIcon aria-hidden="true" />
+              </span>
               Filtrar
             </button>
             <router-link
               :to="{ name: 'DashboardNewBook' }"
               class="button is-primary"
             >
-              <PlusIcon aria-hidden="true" />
+              <span aria-hidden="true">
+                <PlusIcon aria-hidden="true" />
+              </span>
               Novo livro
             </router-link>
           </template>
@@ -42,7 +47,14 @@
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto py-6 px-5 md:px-8">
+    <section
+      class="max-w-7xl mx-auto py-6 px-5 md:px-8"
+      aria-labelledby="results-title"
+    >
+      <h2 id="results-title" class="sr-only">
+        Items da coleção {{ group }}
+      </h2>
+
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
@@ -70,7 +82,7 @@
           @page="handlePage"
         />
       </transition>
-    </div>
+    </section>
 
     <!-- Filters -->
     <LibraryFilters v-model:open="filterOpen" />

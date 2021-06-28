@@ -110,24 +110,35 @@
     </div>
 
     <div class="-mx-5 md:-mx-8 lg:mx-0 bg-white px-4 py-4 lg:py-3 flex items-center justify-between lg:rounded-b-lg shadow sm:px-6 dark:bg-gray-800">
-      <div class="flex-1 flex justify-between sm:hidden">
-        <button
-          type="button"
-          class="button"
-          :disabled="!paginationInfo.has_previous_page"
-          @click.stop="handlePage(paginationInfo.current_page - 1)"
-        >
-          Anterior
-        </button>
-        <button
-          type="button"
-          class="button"
-          :disabled="!paginationInfo.has_next_page"
-          @click.stop="handlePage(paginationInfo.current_page + 1)"
-        >
-          Próximo
-        </button>
-      </div>
+      <nav
+        role="navigation"
+        aria-label="Paginação do conteúdo"
+        class="flex-1 sm:hidden"
+      >
+        <ul class="flex justify-between">
+          <li>
+            <button
+              type="button"
+              class="button"
+              :disabled="!paginationInfo.has_previous_page"
+              @click.stop="handlePage(paginationInfo.current_page - 1)"
+            >
+              Anterior
+            </button>
+          </li>
+
+          <li>
+            <button
+              type="button"
+              class="button"
+              :disabled="!paginationInfo.has_next_page"
+              @click.stop="handlePage(paginationInfo.current_page + 1)"
+            >
+              Próximo
+            </button>
+          </li>
+        </ul>
+      </nav>
       <div class="hidden sm:flex-1 sm:flex sm:flex-col lg:flex-row sm:items-center sm:justify-between">
         <p class="mb-4 lg:mb-0 text-sm text-gray-700 dark:text-gray-400">
           Mostrando página

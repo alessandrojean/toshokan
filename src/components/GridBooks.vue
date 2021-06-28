@@ -23,26 +23,41 @@
           </p>
         </div>
 
-        <div class="w-full flex justify-center space-x-4 sm:hidden">
-          <button
-            type="button"
-            class="button"
-            :disabled="!paginationInfo.has_previous_page"
-            @click.stop="handlePage(paginationInfo.current_page - 1)"
-          >
-            <ChevronLeftIcon aria-hidden="true" />
-            Anterior
-          </button>
-          <button
-            type="button"
-            class="button"
-            :disabled="!paginationInfo.has_next_page"
-            @click.stop="handlePage(paginationInfo.current_page + 1)"
-          >
-            Próximo
-            <ChevronRightIcon class="is-right" aria-hidden="true" />
-          </button>
-        </div>
+        <nav
+          role="navigation"
+          aria-label="Paginação do conteúdo"
+          class="w-full sm:hidden"
+        >
+          <ul class="flex justify-center space-x-4">
+            <li>
+              <button
+                type="button"
+                class="button"
+                :disabled="!paginationInfo.has_previous_page"
+                @click.stop="handlePage(paginationInfo.current_page - 1)"
+              >
+                <span aria-hidden="true">
+                  <ChevronLeftIcon aria-hidden="true" />
+                </span>
+                Anterior
+              </button>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                class="button"
+                :disabled="!paginationInfo.has_next_page"
+                @click.stop="handlePage(paginationInfo.current_page + 1)"
+              >
+                Próximo
+                <span aria-hidden="true">
+                  <ChevronRightIcon class="is-right" aria-hidden="true" />
+                </span>
+              </button>
+            </li>
+          </ul>
+        </nav>
 
         <div class="hidden sm:block">
           <Paginator
@@ -52,14 +67,17 @@
           />
         </div>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
-        <BookCard
+      <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
+        <li
           v-for="book in items"
           :key="book.id"
-          :book="book"
-          :loading="loading"
-        />
-      </div>
+        >
+          <BookCard
+            :book="book"
+            :loading="loading"
+          />
+        </li>
+      </ul>
       <div class="mt-6 bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0">
@@ -73,26 +91,41 @@
           </p>
         </div>
 
-        <div class="w-full flex justify-center space-x-4 sm:hidden">
-          <button
-            type="button"
-            class="button"
-            :disabled="!paginationInfo.has_previous_page"
-            @click.stop="handlePage(paginationInfo.current_page - 1)"
-          >
-            <ChevronLeftIcon aria-hidden="true" />
-            Anterior
-          </button>
-          <button
-            type="button"
-            class="button"
-            :disabled="!paginationInfo.has_next_page"
-            @click.stop="handlePage(paginationInfo.current_page + 1)"
-          >
-            Próximo
-            <ChevronRightIcon class="is-right" aria-hidden="true" />
-          </button>
-        </div>
+        <nav
+          role="navigation"
+          aria-label="Paginação do conteúdo"
+          class="w-full sm:hidden"
+        >
+          <ul class="flex justify-center space-x-4">
+            <li>
+              <button
+                type="button"
+                class="button"
+                :disabled="!paginationInfo.has_previous_page"
+                @click.stop="handlePage(paginationInfo.current_page - 1)"
+              >
+                <span aria-hidden="true">
+                  <ChevronLeftIcon aria-hidden="true" />
+                </span>
+                Anterior
+              </button>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                class="button"
+                :disabled="!paginationInfo.has_next_page"
+                @click.stop="handlePage(paginationInfo.current_page + 1)"
+              >
+                Próximo
+                <span aria-hidden="true">
+                  <ChevronRightIcon class="is-right" aria-hidden="true" />
+                </span>
+              </button>
+            </li>
+          </ul>
+        </nav>
 
         <div class="hidden sm:block">
           <Paginator

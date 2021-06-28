@@ -34,42 +34,58 @@
             {{ book.titleParts[0] }}
           </h2>
 
-          <div class="mt-1 flex flex-col items-center sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
+          <ul class="mt-1 flex flex-col items-center sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
               <!-- Book volume -->
-            <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
-            <div v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <BookOpenIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+            <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></li>
+            <li v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <span aria-hidden="true">
+                <BookOpenIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+              </span>
               Volume {{ volume }}
-            </div>
+            </li>
 
             <!-- Book authors -->
-            <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
-            <div v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+            <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></li>
+            <li v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <span aria-hidden="true">
+                <UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+              </span>
+              <span class="sr-only">
+                {{ book.authors.length === 1 ? 'Autor: ' : 'Autores: ' }}
+              </span>
               {{ bookAuthors }}
-            </div>
+            </li>
 
             <!-- Book status -->
-            <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
-            <div v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <BookmarkOutlineIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+            <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36"></li>
+            <li v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <span aria-hidden="true">
+                <BookmarkOutlineIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+              </span>
+              <span class="sr-only">Estado: </span>
               {{ book.status }}
-            </div>
+            </li>
 
             <!-- Book collection -->
-            <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 hidden sm:block md:hidden"></div>
-            <div v-else class="mt-2 items-center text-sm text-gray-500 dark:text-gray-400 hidden sm:flex md:hidden">
-              <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+            <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 hidden sm:block md:hidden"></li>
+            <li v-else class="mt-2 items-center text-sm text-gray-500 dark:text-gray-400 hidden sm:flex md:hidden">
+              <span aria-hidden="true">
+                <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+              </span>
+              <span class="sr-only">Coleção: </span>
               {{ book.collection }}
-            </div>
+            </li>
 
             <!-- Book store -->
-            <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 mb-1 hidden sm:block md:hidden"></div>
-            <div v-else class="mt-2 items-center text-sm text-gray-500 dark:text-gray-400 hidden sm:flex md:hidden">
-              <LocationMarkerIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+            <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 mb-1 hidden sm:block md:hidden"></li>
+            <li v-else class="mt-2 items-center text-sm text-gray-500 dark:text-gray-400 hidden sm:flex md:hidden">
+              <span aria-hidden="true">
+                <LocationMarkerIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
+              </span>
+              <span class="sr-only">Loja da compra: </span>
               {{ book.store }}
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
         <!-- Book actions -->
@@ -94,7 +110,9 @@
                 @click.stop="$emit('click:edit', $event)"
                 v-if="!editing"
               >
-                <PencilIcon aria-hidden="true" />
+                <span aria-hidden="true">
+                  <PencilIcon aria-hidden="true" />
+                </span>
                 Editar
               </button>
             </transition>
@@ -111,7 +129,9 @@
                 <div>
                   <MenuButton class="inline-flex justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-700 focus-visible:ring-indigo-500 active:bg-gray-100 dark:active:bg-gray-500 motion-safe:transition-shadow">
                     Opções
-                    <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+                    <span aria-hidden="true">
+                      <ChevronDownIcon class="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+                    </span>
                   </MenuButton>
                 </div>
 
@@ -134,13 +154,15 @@
                             'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
                           ]"
                         >
-                          <ExternalLinkIcon
-                            :class="[
-                              active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                              'w-5 h-5 inline-block mr-3'
-                            ]"
-                            aria-hidden="true"
-                          />
+                          <span aria-hidden="true">
+                            <ExternalLinkIcon
+                              :class="[
+                                active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
+                                'w-5 h-5 inline-block mr-3'
+                              ]"
+                              aria-hidden="true"
+                            />
+                          </span>
                           Abrir na Amazon
                         </a>
                       </MenuItem>
@@ -155,13 +177,15 @@
                           ]"
                           @click="$emit('click:updateCover', $event)"
                         >
-                          <PhotographIcon
-                            :class="[
-                              active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                              'w-5 h-5 inline-block mr-3'
-                            ]"
-                            aria-hidden="true"
-                          />
+                          <span aria-hidden="true">
+                            <PhotographIcon
+                              :class="[
+                                active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
+                                'w-5 h-5 inline-block mr-3'
+                              ]"
+                              aria-hidden="true"
+                            />
+                          </span>
                           Alterar capa
                         </button>
                       </MenuItem>
@@ -176,13 +200,15 @@
                           ]"
                           @click="$emit('click:toggleStatus', $event)"
                         >
-                          <BookmarkIcon
-                            :class="[
-                              active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                              'w-5 h-5 inline-block mr-3'
-                            ]"
-                            aria-hidden="true"
-                          />
+                          <span aria-hidden="true">
+                            <BookmarkIcon
+                              :class="[
+                                active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
+                                'w-5 h-5 inline-block mr-3'
+                              ]"
+                              aria-hidden="true"
+                            />
+                          </span>
                           Marcar como {{ book.status === 'Lido' ? 'não lido' : 'lido' }}
                         </button>
                       </MenuItem>
@@ -195,13 +221,15 @@
                           ]"
                           @click="$emit('click:toggleFavorite', $event)"
                         >
-                          <HeartIcon
-                            :class="[
-                              active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                              'w-5 h-5 inline-block mr-3'
-                            ]"
-                            aria-hidden="true"
-                          />
+                          <span aria-hidden="true">
+                            <HeartIcon
+                              :class="[
+                                active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
+                                'w-5 h-5 inline-block mr-3'
+                              ]"
+                              aria-hidden="true"
+                            />
+                          </span>
                           {{ book.favorite === 'Sim' ? 'Remover dos' : 'Adicionar aos' }} favoritos
                         </button>
                       </MenuItem>
@@ -216,13 +244,15 @@
                           ]"
                           @click="$emit('click:delete', $event)"
                         >
-                          <TrashIcon
-                            :class="[
-                              active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                              'w-5 h-5 inline-block mr-3'
-                            ]"
-                            aria-hidden="true"
-                          />
+                          <span aria-hidden="true">
+                            <TrashIcon
+                              :class="[
+                                active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
+                                'w-5 h-5 inline-block mr-3'
+                              ]"
+                              aria-hidden="true"
+                            />
+                          </span>
                           Deletar
                         </button>
                       </MenuItem>

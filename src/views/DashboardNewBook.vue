@@ -12,20 +12,29 @@
         enter-from-class="opacity-0 translate-x-2"
         enter-to-class="opacity-100 translate-x-0"
       >
-        <section v-if="step === 1" class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section
+          v-if="step === 1"
+          class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          aria-labelledby="step-1-title"
+        >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
-              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+              <h3 id="step-1-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                 Preenchimento automático
+                <span class="sr-only">a partir do ISBN</span>
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Obtenha automaticamente os metadados do livro a partir de seu ISBN.
               </p>
             </div>
-            <div class="flex flex-col items-end">
+            <form
+              role="form"
+              aria-label="Formulário de pesquisa na CBL"
+              class="flex flex-col items-end"
+            >
               <label for="book-isbn" class="sr-only">ISBN</label>
               <div class="group relative w-full">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                   <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
                 </div>
                 <input
@@ -50,7 +59,7 @@
                 <span class="sr-only">CBL</span>
                 <img src="@/assets/cbl-logo.png" alt="Logo da CBL" class="cbl-logo" aria-hidden="true">
               </p>
-            </div>
+            </form>
 
             <Alert
               type="error"
@@ -84,10 +93,14 @@
           </LoadingIndicator>
         </section>
 
-        <section v-else-if="step == 2" class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section
+          v-else-if="step == 2"
+          class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          aria-labelledby="step-2-title"
+        >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
-              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+              <h3 id="step-2-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                 Metadados do livro
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -126,10 +139,14 @@
           </div>
         </section>
 
-        <section v-else-if="step === 3" class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+        <section
+          v-else-if="step === 3"
+          class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          aria-labelledby="step-3-title"
+        >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
-              <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+              <h3 id="step-3-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                 Imagem de capa
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">

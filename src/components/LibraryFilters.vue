@@ -3,7 +3,7 @@
     <Dialog
       as="div"
       static
-      class="fixed inset-0 overflow-hidden"
+      class="fixed inset-0 overflow-hidden z-20"
       @close="$emit('update:open', false)"
       :open="open"
     >
@@ -52,7 +52,11 @@
                     Filtros
                   </DialogTitle>
                 </div>
-                <div class="mt-6 space-y-6 relative flex-1 px-4 sm:px-6">
+                <form
+                  role="form"
+                  aria-label="Formulário de filtros"
+                  class="mt-6 space-y-6 relative flex-1 px-4 sm:px-6"
+                >
                   <div>
                     <RadioGroup v-model="viewMode">
                       <RadioGroupLabel class="label">
@@ -117,7 +121,7 @@
                     </RadioGroup>
                   </div>
 
-                  <div class="w-full relative">
+                  <div>
                     <label for="group" class="label">
                       Coleção
                     </label>
@@ -190,7 +194,7 @@
                       </option>
                     </select>
                   </div>
-                </div>
+                </form>
 
                 <div class="block md:hidden w-full px-4 sm:px-6">
                   <button

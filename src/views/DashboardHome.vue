@@ -14,7 +14,9 @@
             :to="{ name: 'DashboardNewBook' }"
             class="button is-primary"
           >
-            <PlusIcon aria-hidden="true" />
+            <span aria-hidden="true">
+              <PlusIcon aria-hidden="true" />
+            </span>
             Novo livro
           </router-link>
         </div>
@@ -24,53 +26,62 @@
     <div class="max-w-7xl mx-auto py-6 px-5 md:px-8">
       <BetaWarning />
 
-      <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
-      <h2 v-else class="font-medium font-title text-xl mb-3 dark:text-gray-200">Visão geral</h2>
+      <section :aria-labelledby="loading? '' : 'overview-title'">
+        <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
+        <h2 v-else id="overview-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">Visão geral</h2>
 
-      <!-- Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 lg:grid-cols-4">
-        <StatCard
-          title="Contagem"
-          :value="count"
-          :loading="loading"
-        >
-          <template v-slot:icon="{ cssClass }">
-            <BookOpenIcon :class="cssClass" />
-          </template>
-        </StatCard>
+        <ul class="sr-only" v-if="!loading">
+          <li>Contagem: {{ count + (count.length === 1 ? ' item' : ' items') }}</li>
+          <li>Leitura: {{ stats.status?.percent }}</li>
+          <li>Gasto total: {{ stats.money?.totalSpentPaid }}</li>
+          <li>Economia total: {{ stats.money?.saved }}</li>
+        </ul>
 
-        <StatCard
-          title="Leitura"
-          :value="stats.status?.percent"
-          :loading="loading"
-        >
-          <template v-slot:icon="{ cssClass }">
-            <BookmarkIcon :class="cssClass" />
-          </template>
-        </StatCard>
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 lg:grid-cols-4" aria-hidden="true">
+          <StatCard
+            title="Contagem"
+            :value="count"
+            :loading="loading"
+          >
+            <template v-slot:icon="{ cssClass }">
+              <BookOpenIcon :class="cssClass" />
+            </template>
+          </StatCard>
 
-        <StatCard
-          title="Gasto total"
-          :value="stats.money?.totalSpentPaid"
-          :loading="loading"
-          :sensitive="true"
-        >
-          <template v-slot:icon="{ cssClass }">
-            <CurrencyDollarIcon :class="cssClass" />
-          </template>
-        </StatCard>
+          <StatCard
+            title="Leitura"
+            :value="stats.status?.percent"
+            :loading="loading"
+          >
+            <template v-slot:icon="{ cssClass }">
+              <BookmarkIcon :class="cssClass" />
+            </template>
+          </StatCard>
 
-        <StatCard
-          title="Economia total"
-          :value="stats.money?.saved"
-          :loading="loading"
-          :sensitive="true"
-        >
-          <template v-slot:icon="{ cssClass }">
-            <EmojiHappyIcon :class="cssClass" />
-          </template>
-        </StatCard>
-      </div>
+          <StatCard
+            title="Gasto total"
+            :value="stats.money?.totalSpentPaid"
+            :loading="loading"
+            :sensitive="true"
+          >
+            <template v-slot:icon="{ cssClass }">
+              <CurrencyDollarIcon :class="cssClass" />
+            </template>
+          </StatCard>
+
+          <StatCard
+            title="Economia total"
+            :value="stats.money?.saved"
+            :loading="loading"
+            :sensitive="true"
+          >
+            <template v-slot:icon="{ cssClass }">
+              <EmojiHappyIcon :class="cssClass" />
+            </template>
+          </StatCard>
+        </div>
+      </section>
 
       <!-- Last added books -->
       <LastAddedBooks

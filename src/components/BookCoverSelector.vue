@@ -1,5 +1,9 @@
 <template>
-  <div class="space-y-6">
+  <form
+    role="form"
+    aria-label="Formulário da imagem de capa do livro"
+    class="space-y-6"
+  >
     <div>
       <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
         <transition
@@ -96,7 +100,7 @@
         </ul>
       </Alert>
     </template>
-  </div>
+  </form>
 </template>
 
 <script>

@@ -1,8 +1,12 @@
 <template>
   <div class="motion-safe:animate-pulse bg-gray-50 shadow rounded-md dark:bg-gray-700 w-full h-96" v-if="loading"></div>
-  <div class="relative bg-white shadow overflow-hidden rounded-md dark:bg-gray-800" v-else>
+  <section
+    v-else
+    class="relative bg-white shadow overflow-hidden rounded-md dark:bg-gray-800"
+    aria-labelledby="table-info-title"
+  >
     <div class="px-4 py-5 sm:px-6">
-      <h3 class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">
+      <h3 id="table-info-title" class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">
         {{ title }}
       </h3>
       <p v-if="subtitle && subtitle.length > 0" class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -30,7 +34,7 @@
       <slot name="footer"></slot>
     </div>
     <slot name="loading-indicator"></slot>
-  </div>
+  </section>
 </template>
 
 <script>

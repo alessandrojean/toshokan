@@ -1,53 +1,85 @@
 <template>
-  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Paginação">
-    <button
-      type="button"
-      class="pag-button is-left"
-      @click.stop="$emit('page', 1)"
-      :disabled="!paginationInfo.has_previous_page"
-    >
-      <span class="sr-only">Primeira página</span>
-      <ChevronDoubleLeftIcon class="h-5 w-5" aria-hidden="true" />
-    </button>
-    <button
-      type="button"
-      class="pag-button"
-      @click.stop="$emit('page', paginationInfo.previous_page)"
-      :disabled="!paginationInfo.has_previous_page"
-    >
-      <span class="sr-only">Página anterior</span>
-      <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-    </button>
-    <button
-      v-for="pageIdx in links"
-      :key="pageIdx"
-      type="button"
-      :class="[
-        paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page ? 'is-current' : '',
-        'pag-button is-number'
-      ]"
-      @click.stop="$emit('page', paginationInfo.first_page + pageIdx - 1)"
-    >
-      {{ paginationInfo.first_page + pageIdx - 1 }}
-    </button>
-    <button
-      type="button"
-      class="pag-button"
-      @click.stop="$emit('page', paginationInfo.next_page)"
-      :disabled="!paginationInfo.has_next_page"
-    >
-      <span class="sr-only">Próxima página</span>
-      <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
-    </button>
-    <button
-      type="button"
-      class="pag-button is-right"
-      @click.stop="$emit('page', paginationInfo.total_pages)"
-      :disabled="!paginationInfo.has_next_page"
-    >
-      <span class="sr-only">Última página</span>
-      <ChevronDoubleRightIcon class="h-5 w-5" aria-hidden="true" />
-    </button>
+  <nav
+    role="navigation"
+    class="relative rounded-md shadow-sm"
+    aria-label="Paginação dos conteúdos"
+  >
+    <ul class="z-0 inline-flex -space-x-px">
+      <li>
+        <button
+          type="button"
+          class="pag-button is-left"
+          @click.stop="$emit('page', 1)"
+          :disabled="!paginationInfo.has_previous_page"
+        >
+          <span class="sr-only">Primeira página</span>
+          <span aria-hidden="true">
+            <ChevronDoubleLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </span>
+        </button>
+      </li>
+
+      <li>
+        <button
+          type="button"
+          class="pag-button"
+          @click.stop="$emit('page', paginationInfo.previous_page)"
+          :disabled="!paginationInfo.has_previous_page"
+        >
+          <span class="sr-only">Página anterior</span>
+          <span aria-hidden="true">
+            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </span>
+        </button>
+      </li>
+
+      <li
+        v-for="pageIdx in links"
+        :key="pageIdx"
+      >
+        <button
+          type="button"
+          :class="[
+            paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page ? 'is-current' : '',
+            'pag-button is-number'
+          ]"
+          :aria-current="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page"
+          @click.stop="$emit('page', paginationInfo.first_page + pageIdx - 1)"
+        >
+          <span class="sr-only" v-if="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page">Página atual, </span>
+          <span class="sr-only">Ir para a página </span>
+          {{ paginationInfo.first_page + pageIdx - 1 }}
+        </button>
+      </li>
+
+      <li>
+        <button
+          type="button"
+          class="pag-button"
+          @click.stop="$emit('page', paginationInfo.next_page)"
+          :disabled="!paginationInfo.has_next_page"
+        >
+          <span class="sr-only">Próxima página</span>
+          <span aria-hidden="true">
+            <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+          </span>
+        </button>
+      </li>
+
+      <li>
+        <button
+          type="button"
+          class="pag-button is-right"
+          @click.stop="$emit('page', paginationInfo.total_pages)"
+          :disabled="!paginationInfo.has_next_page"
+        >
+          <span class="sr-only">Última página</span>
+          <span aria-hidden="true">
+            <ChevronDoubleRightIcon class="h-5 w-5" aria-hidden="true" />
+          </span>
+        </button>
+      </li>
+    </ul>
   </nav>
 </template>
 

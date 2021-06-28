@@ -91,10 +91,14 @@
               />
             </div>
 
-            <section v-else-if="editing" class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <section
+              v-else-if="editing"
+              class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+              aria-labelledby="book-metadata-title"
+            >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
-                  <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                  <h3 id="book-metadata-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                     Metadados do livro
                   </h3>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -110,15 +114,13 @@
               </div>
 
               <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
-                <div>
-                  <button
-                    type="button"
-                    class="button is-ghost -ml-4"
-                    @click.stop="hideEditForm"
-                  >
-                    Cancelar
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  class="button is-ghost -ml-4"
+                  @click.stop="hideEditForm"
+                >
+                  Cancelar
+                </button>
 
                 <button
                   type="button"
@@ -131,10 +133,14 @@
               </div>
             </section>
 
-            <section v-else class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800">
+            <section
+              v-else
+              class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+              aria-labelledby="cover-image-title"
+            >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
-                  <h3 class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  <h3 id="cover-image-title" class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
                     Imagem de capa
                   </h3>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
