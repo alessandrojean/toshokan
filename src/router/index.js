@@ -96,6 +96,13 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/:pathMatch(.*)',
+    component: () => import(/* webpackChunkName: "page-not-found" */ '../views/PageNotFound.vue'),
+    meta: {
+      title: 'Página não encontrada'
+    }
   }
 ]
 

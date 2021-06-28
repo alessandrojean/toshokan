@@ -3,23 +3,42 @@ import { nanoid } from 'nanoid'
 import { IMPRINT_REPLACEMENTS } from '../services/cbl'
 import { isbn as validateIsbn, issn as validateIssn } from '../util/validators'
 
+const Columns = {
+  ID: 0,
+  CODE: 1,
+  COLLECTION: 2,
+  TITLE: 3,
+  AUTHORS: 4,
+  IMPRINT: 5,
+  FORMAT: 6,
+  STATUS: 7,
+  LABEL_PRICE: 8,
+  PAID_PRICE: 9,
+  STORE: 10,
+  COVER_URL: 11,
+  BOUGHT_AT: 12,
+  FAVORITE: 13,
+  CREATED_AT: 14,
+  UPDATED_AT: 15
+}
+
 export function parseBook (value, index) {
-  const labelPrice = value[8].split(' ')
-  const paidPrice = value[9].split(' ')
+  const labelPrice = value[Columns.LABEL_PRICE].split(' ')
+  const paidPrice = value[Columns.PAID_PRICE].split(' ')
 
   return {
     sheetLocation: `Coleção!B${index + 5}`,
-    id: value[0],
-    code: value[1],
-    codeType: getCodeType(value[1]),
-    collection: value[2],
-    title: value[3],
-    titleParts: splitTitle(value[3]),
-    authors: value[4].split(/;\s+/g),
-    authorsStr: value[4],
-    imprint: value[5],
-    format: value[6].replace(/\./g, ','),
-    status: value[7],
+    id: value[Columns.ID],
+    code: value[Columns.CODE],
+    codeType: getCodeType(value[Columns.CODE]),
+    collection: value[Columns.COLLECTION],
+    title: value[Columns.TITLE],
+    titleParts: splitTitle(value[Columns.TITLE]),
+    authors: value[Columns.AUTHORS].split(/;\s+/g),
+    authorsStr: value[Columns.AUTHORS],
+    imprint: value[Columns.IMPRINT],
+    format: value[Columns.FORMAT].replace(/\./g, ','),
+    status: value[Columns.STATUS],
     labelPrice: {
       currency: labelPrice[0],
       value: labelPrice[1].replace('.', ',') || '0,0'
@@ -32,12 +51,12 @@ export function parseBook (value, index) {
     labelPriceValue: labelPrice[1].replace('.', ',') || '0,0',
     paidPriceCurrency: paidPrice[0],
     paidPriceValue: paidPrice[1].replace('.', ',') || '0,0',
-    store: value[10],
-    coverUrl: value[11],
-    boughtAt: value[12].split('/').reverse().join('-'),
-    favorite: value[13],
-    createdAt: new Date(value[14].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
-    updatedAt: new Date(value[15].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
+    store: value[Columns.STORE],
+    coverUrl: value[Columns.COVER_URL],
+    boughtAt: value[Columns.BOUGHT_AT].split('/').reverse().join('-'),
+    favorite: value[Columns.FAVORITE],
+    createdAt: new Date(value[Columns.CREATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
+    updatedAt: new Date(value[Columns.UPDATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
   }
 }
 
