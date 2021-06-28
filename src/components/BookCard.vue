@@ -46,7 +46,7 @@
             aria-hidden="true"
           />
         </div>
-        <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" alt="Capa do livro">
+        <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" aria-hidden="true">
       </transition>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">

@@ -527,7 +527,7 @@ function useDeleter (book, router) {
   async function handleDelete () {
     await deleteBook()
 
-    router.replace({ name: 'DashboardCollection' })
+    router.replace({ name: 'DashboardLibrary' })
   }
 
   return { deleteModalOpen, handleDelete }

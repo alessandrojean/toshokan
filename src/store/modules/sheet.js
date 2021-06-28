@@ -21,6 +21,9 @@ const getters = {
     return function (name) {
       return state.collections[name]
     }
+  },
+  sheetIsEmpty: function (state) {
+    return state.stats.count === 0
   }
 }
 

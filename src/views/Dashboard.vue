@@ -1,8 +1,16 @@
 <template>
   <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col">
-    <a href="#main-content" class="jump-to">
-      Pular para o conteúdo principal
+    <a href="#main-content" class="jump-to" ref="jumpToMain">
+      Pular para o conteúdo
     </a>
+
+    <a href="#main-menu-desktop" class="jump-to hidden md:block">
+      Pular para a navegação principal
+    </a>
+
+    <p class="sr-only" aria-live="polite">
+      {{ navigationHelpText }}
+    </p>
 
     <AppNavbar />
 
@@ -33,9 +41,13 @@
           <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm hover:text-indigo-500 hover:underline dark:hover:text-gray-200 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
         </p>
 
-        <p v-if="!isDev" class="text-xs text-gray-600 dark:text-gray-400">
+        <p v-if="!isDev" class="text-xs text-gray-600 dark:text-gray-400" lang="en">
           <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-indigo-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-indigo-500">This site is powered by Netlify</a>
           <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
+        </p>
+
+        <p v-else class="text-xs text-gray-600 dark:text-gray-400">
+          Ambiente de desenvolvimento
         </p>
       </div>
     </footer>
@@ -43,9 +55,9 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import useAppInfo from '@/composables/useAppInfo'
 
@@ -63,6 +75,7 @@ export default {
 
   setup () {
     const store = useStore()
+    const route = useRoute()
     const router = useRouter()
 
     const isDev = ref(process.env.NODE_ENV === 'development')
@@ -75,7 +88,8 @@ export default {
       try {
         await store.dispatch('sheet/loadSheetData')
       } catch (e) {
-        router.replace({ name: 'Error', query: { em: e.message } })
+        store.commit('updateCriticalError', e)
+        router.replace({ name: 'Error' })
       }
     }
 
@@ -87,13 +101,35 @@ export default {
       }
     })
 
+    const jumpToMain = ref(null)
+    const navigationHelpText = ref('')
+
+    function focusOnJumpLink () {
+      if (jumpToMain.value) {
+        jumpToMain.value.focus()
+      }
+    }
+
+    function changeNavigationHelpText (pageTitle) {
+      navigationHelpText.value = `Página alterada para ${pageTitle}.`
+    }
+
+    watch(route, to => {
+      nextTick(() => {
+        changeNavigationHelpText(to.meta.title)
+        focusOnJumpLink()
+      })
+    })
+
     return {
       appVersion,
       gitHash,
       gitHubUrl,
       isDev,
       loadSheetData,
-      signedIn
+      signedIn,
+      jumpToMain,
+      navigationHelpText
     }
   }
 }
@@ -104,8 +140,8 @@ export default {
   @apply sr-only;
 }
 
-.jump-to:focus {
-  @apply w-auto h-auto px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium;
+.jump-to:focus-visible {
+  @apply w-auto h-auto fixed px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-indigo-600;
   clip: unset;
 }
 </style>

@@ -7,6 +7,7 @@
   >
     <div class="px-4 py-5 sm:px-6">
       <h3 id="table-info-title" class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">
+        <slot name="step-indicator"></slot>
         {{ title }}
       </h3>
       <p v-if="subtitle && subtitle.length > 0" class="mt-1 text-sm text-gray-600 dark:text-gray-400">

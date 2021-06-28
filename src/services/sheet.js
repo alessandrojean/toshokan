@@ -3,9 +3,16 @@ import uniqBy from 'lodash.uniqby'
 
 import { bookCompare, formatBook, parseBook } from '@/model/Book'
 
+const SHEET_FILE_NAME = 'Toshokan'
+const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
+
 export async function findSheetId () {
+  // Use a development only sheet to prevent issues during tests.
+  const fileName = SHEET_FILE_NAME +
+    (process.env.NODE_ENV === 'development' ? '-dev' : '')
+
   const response = await window.gapi.client.drive.files.list({
-    q: 'name=\'Toshokan\' and mimeType=\'application/vnd.google-apps.spreadsheet\'',
+    q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
     orderBy: 'starred'
   })
 
@@ -59,7 +66,7 @@ export async function getSheetData (sheetId) {
   const collection = groupBy(books, 'collection')
 
   const stats = {
-    count: response.result.valueRanges[1].values[0][0],
+    count: parseInt(response.result.valueRanges[1].values[0][0]),
     money: {
       totalSpentLabel: response.result.valueRanges[2].values[0][0],
       totalSpentPaid: response.result.valueRanges[2].values[1][0],
@@ -71,7 +78,7 @@ export async function getSheetData (sheetId) {
       unread: response.result.valueRanges[3].values[1][0],
       percent: response.result.valueRanges[3].values[2][0]
     },
-    monthly: response.result.valueRanges[4].values
+    monthly: (response.result.valueRanges[4].values || [])
       .slice(0, 10)
       .reverse()
       .map(row => ({
@@ -79,13 +86,13 @@ export async function getSheetData (sheetId) {
         totalSpent: row[1],
         count: row[2]
       })),
-    authors: response.result.valueRanges[5].values
+    authors: (response.result.valueRanges[5].values || [])
       .slice(0, 10)
       .map(row => ({ name: row[0], count: row[1] })),
-    series: response.result.valueRanges[6].values
+    series: (response.result.valueRanges[6].values || [])
       .slice(0, 10)
       .map(row => ({ name: row[0], count: row[1] })),
-    imprints: response.result.valueRanges[7].values
+    imprints: (response.result.valueRanges[7].values || [])
       .slice(0, 10)
       .map(row => ({ name: row[0], count: row[1] })),
     itemsByCollection: Object.entries(collection)

@@ -1,6 +1,10 @@
 <template>
   <div class="flex flex-col">
-    <SimpleHeader class="shadow-none sm:shadow" title="Novo livro" />
+    <SimpleHeader
+      class="shadow-none sm:shadow"
+      title="Novo livro"
+      :subtitle="stepText"
+    />
 
     <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5" ref="mainEl">
       <transition
@@ -14,12 +18,14 @@
       >
         <section
           v-if="step === 1"
-          class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-1-title"
+          tabindex="-1"
         >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 id="step-1-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <span class="sr-only">Etapa 1 de 4: </span>
                 Preenchimento automático
                 <span class="sr-only">a partir do ISBN</span>
               </h3>
@@ -31,8 +37,9 @@
               role="form"
               aria-label="Pesquisa na CBL"
               class="flex flex-col items-end"
+              @submit.prevent="search"
             >
-              <label for="book-isbn" class="sr-only">ISBN</label>
+              <label for="book-isbn" id="isbn-search-label" class="sr-only">ISBN para pesquisa</label>
               <div class="group relative w-full">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                   <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
@@ -44,21 +51,25 @@
                   class="input text-lg pl-10 md:pr-16"
                   placeholder="Pesquisar por ISBN"
                   v-model="isbnQuery"
-                  @keyup.enter.stop="search"
+                  @keyup.enter.prevent="search"
+                  aria-labelledby="isbn-search-label search-provider-info"
                 >
-                <div class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center">
+                <p class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
                   <span class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md">
                     <span class="sr-only">Pressione </span>
                     <kbd class="font-sans">Enter</kbd>
                     <span class="sr-only"> para pesquisar</span>
                   </span>
-                </div>
+                </p>
               </div>
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              <p id="search-provider-info" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 Mecanismo de pesquisa por
                 <span class="sr-only">CBL</span>
-                <img src="@/assets/cbl-logo.png" alt="Logo da CBL" class="cbl-logo" aria-hidden="true">
+                <img src="@/assets/cbl-logo.png" alt="" class="cbl-logo" aria-hidden="true">
               </p>
+              <button type="submit" class="sr-only">
+                Pesquisar
+              </button>
             </form>
 
             <Alert
@@ -95,12 +106,16 @@
 
         <section
           v-else-if="step == 2"
-          class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-2-title"
+          tabindex="-1"
         >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 id="step-2-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <span class="sr-only">
+                  Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+                </span>
                 Metadados do livro
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -141,12 +156,16 @@
 
         <section
           v-else-if="step === 3"
-          class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+          class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-3-title"
+          tabindex="-1"
         >
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 id="step-3-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <span class="sr-only">
+                  Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+                </span>
                 Imagem de capa
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -189,11 +208,17 @@
 
         <TableInfo
           v-else
-          class="sm:max-w-2xl w-full"
+          class="sm:max-w-2xl w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           :info="bookInfo"
           title="Informações do livro"
           subtitle="Revise as informações antes de concluir o procedimento."
+          tabindex="-1"
         >
+          <template v-slot:step-indicator>
+            <span class="sr-only">
+              Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+            </span>
+          </template>
           <template v-slot:footer>
             <button
               type="button"
@@ -224,6 +249,12 @@
         </TableInfo>
       </transition>
     </div>
+
+    <BookCreatedModal
+      v-model:open="createdModalOpen"
+      @click:new="handleModalNew"
+      @click:view="handleModalView"
+    />
   </div>
 </template>
 
@@ -245,6 +276,7 @@ import { BookOpenIcon } from '@heroicons/vue/outline'
 
 import Alert from '@/components/Alert'
 import BookCoverSelector from '@/components/BookCoverSelector'
+import BookCreatedModal from '@/components/BookCreatedModal'
 import BookForm from '@/components/BookForm'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import SimpleHeader from '@/components/SimpleHeader'
@@ -254,6 +286,7 @@ export default {
   name: 'DashboardNewBook',
 
   components: {
+    BookCreatedModal,
     BookOpenIcon,
     CheckIcon,
     ChevronLeftIcon,
@@ -298,6 +331,12 @@ export default {
     const searchAvailable = useSearchAvailable()
     const step = ref(searchAvailable.value ? 1 : 2)
 
+    const stepText = computed(() => {
+      const currentStep = searchAvailable.value ? step.value : step.value - 1
+      const totalSteps = searchAvailable.value ? 4 : 3
+      return `Etapa ${currentStep} de ${totalSteps}`
+    })
+
     const isbnSearchStep = useIsbnSearchStep(step, book, bookInitialState)
     const bookFormStep = useBookFormStep(step, book)
     const coverFinderStep = useCoverFinderStep()
@@ -308,29 +347,53 @@ export default {
         book.coverUrl = ''
       }
 
-      nextTick(() => mainEl.value.scrollIntoView({ behavior: 'smooth' }))
+      nextTick(() => {
+        mainEl.value.scrollIntoView({ behavior: 'smooth' })
+
+        setTimeout(() => { mainEl.value.children[0].focus() }, 500)
+      })
     })
 
     const router = useRouter()
     const { inserting, insertBook } = useBookInserter(book)
 
-    async function handleInsertBook () {
-      const bookId = await insertBook()
+    const createdModalOpen = ref(false)
+    const bookId = ref(null)
 
+    function handleModalNew () {
+      bookId.value = null
+      Object.assign(book, bookInitialState)
+      isbnSearchStep.clearSearch()
+      isbnSearchStep.isbnQuery.value = ''
+      step.value = searchAvailable.value ? 1 : 2
+    }
+
+    function handleModalView () {
       router.replace({
         name: 'BookDetails',
         params: {
-          bookId
+          bookId: bookId.value
         }
       })
     }
 
+    async function handleInsertBook () {
+      bookId.value = await insertBook()
+
+      createdModalOpen.value = true
+    }
+
     return {
       mainEl,
+      searchAvailable,
       book,
       step,
+      stepText,
       handleInsertBook,
       inserting,
+      createdModalOpen,
+      handleModalNew,
+      handleModalView,
       ...isbnSearchStep,
       ...bookFormStep,
       ...coverFinderStep,
@@ -370,6 +433,7 @@ function useIsbnSearchStep (step, book, bookInitialState) {
   })
 
   return {
+    clearSearch,
     isbnQuery,
     searchAvailable,
     searchError,

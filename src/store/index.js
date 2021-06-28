@@ -6,8 +6,20 @@ import sheet from './modules/sheet'
 
 export default createStore({
   state: {
+    criticalError: null
+  },
+  getters: {
+    hasCriticalError (state) {
+      return state.criticalError !== null
+    }
   },
   mutations: {
+    clearCriticalError (state) {
+      state.criticalError = null
+    },
+    updateCriticalError (state, error) {
+      state.criticalError = error
+    }
   },
   actions: {
   },

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
       <div class="max-w-7xl mx-auto lg:flex lg:items-center lg:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 items-center">
@@ -8,7 +8,7 @@
             <div class="motion-safe:animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
           </template>
           <template v-else>
-            <h1 class="text-3xl font-title font-bold text-gray-900 dark:text-gray-100">
+            <h1 class="text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
               Biblioteca
             </h1>
             <p class="text-gray-500 dark:text-gray-400">
@@ -27,6 +27,7 @@
               type="button"
               class="button"
               @click.stop="filterOpen = true"
+              v-if="!sheetIsEmpty"
             >
               <span aria-hidden="true">
                 <FilterIcon aria-hidden="true" />
@@ -47,45 +48,78 @@
       </div>
     </header>
 
-    <section
-      class="max-w-7xl mx-auto py-6 px-5 md:px-8"
-      aria-labelledby="results-title"
-    >
-      <h2 id="results-title" class="sr-only">
-        Items da coleção {{ group }}
-      </h2>
-
-      <transition
-        mode="out-in"
-        leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
-        leave-from-class="opacity-100 translate-x-0"
-        leave-to-class="opacity-0 translate-x-2"
-        enter-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-out"
-        enter-from-class="opacity-0 -translate-x-2"
-        enter-to-class="opacity-100 translate-x-0"
+    <div class="flex-1">
+      <section
+        class="h-full max-w-7xl mx-auto py-6 px-5 md:px-8"
+        aria-labelledby="results-title"
+        v-if="!sheetIsEmpty"
       >
-        <TableBooks
-          v-if="viewMode === 'table' && results.length > 0"
-          :items="results"
-          :pagination-info="paginationInfo"
-          :sort-direction="sortDirection"
-          :sort-property="sortProperty"
-          @page="handlePage"
-        />
+        <h2 id="results-title" class="sr-only">
+          Itens da coleção {{ group }}
+        </h2>
 
-        <GridBooks
-          v-else
-          :items="results"
-          :pagination-info="paginationInfo"
-          :skeleton-items="18"
-          :loading="loading"
-          @page="handlePage"
-        />
-      </transition>
-    </section>
+        <transition
+          mode="out-in"
+          leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
+          leave-from-class="opacity-100 translate-x-0"
+          leave-to-class="opacity-0 translate-x-2"
+          enter-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-x-2"
+          enter-to-class="opacity-100 translate-x-0"
+        >
+          <TableBooks
+            v-if="viewMode === 'table' && results.length > 0"
+            :items="results"
+            :pagination-info="paginationInfo"
+            :sort-direction="sortDirection"
+            :sort-property="sortProperty"
+            @page="handlePage"
+          />
+
+          <GridBooks
+            v-else
+            :items="results"
+            :pagination-info="paginationInfo"
+            :skeleton-items="18"
+            :loading="loading"
+            @page="handlePage"
+          />
+        </transition>
+      </section>
+
+      <!-- Empty collection -->
+      <section
+        v-if="sheetIsEmpty"
+        aria-labelledby="empty-sheet-title"
+        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+      >
+        <span aria-hidden="true">
+          <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
+        </span>
+        <h2
+          id="empty-sheet-title"
+          class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
+        >
+          Sua biblioteca está vazia
+        </h2>
+        <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
+          Adicione um primeiro livro para começar a organizar
+          melhor suas coleções e poder visualizar as estatísticas mensais.
+        </p>
+        <router-link
+          :to="{ name: 'DashboardNewBook' }"
+          class="button is-primary text-lg"
+        >
+          <span aria-hidden="true">
+            <PlusIcon aria-hidden="true" />
+          </span>
+          Novo livro
+        </router-link>
+      </section>
+    </div>
 
     <!-- Filters -->
-    <LibraryFilters v-model:open="filterOpen" />
+    <LibraryFilters v-model:open="filterOpen" v-if="!sheetIsEmpty" />
   </div>
 </template>
 
@@ -100,6 +134,8 @@ import {
   PlusIcon
 } from '@heroicons/vue/solid'
 
+import { ExclamationCircleIcon } from '@heroicons/vue/outline'
+
 import GridBooks from '@/components/GridBooks'
 import LibraryFilters from '@/components/LibraryFilters'
 import TableBooks from '@/components/TableBooks'
@@ -111,6 +147,7 @@ export default {
     GridBooks,
     LibraryFilters,
     TableBooks,
+    ExclamationCircleIcon,
     FilterIcon,
     PlusIcon
   },
@@ -119,6 +156,8 @@ export default {
     const store = useStore()
 
     const filterOpen = ref(false)
+
+    const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
 
     const currentPage = computed(() => store.state.collection.currentPage)
     const group = computed(() => store.state.collection.group)
@@ -174,6 +213,7 @@ export default {
 
     return {
       filterOpen,
+      sheetIsEmpty,
       group,
       groupItems,
       handlePage,

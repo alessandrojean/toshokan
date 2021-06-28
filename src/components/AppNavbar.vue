@@ -6,14 +6,17 @@
           <router-link
             :to="{ name: 'DashboardHome' }"
             class="flex-shrink-0 rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
-            aria-hidden="true"
           >
             <LibraryIcon class="h-10 w-10 text-indigo-500" aria-hidden="true" />
             <span class="sr-only">Início</span>
           </router-link>
-          <div class="hidden md:block" role="navigation" aria-label="Menu principal">
+          <div class="hidden md:block" role="navigation" aria-label="Menu principal" id="main-menu-desktop">
             <ul class="ml-10 flex items-baseline space-x-4">
-              <li v-for="item in desktopNavigation" :key="item.name">
+              <li
+                v-for="item in desktopNavigation"
+                :key="item.name"
+                :lang="item.lang || ''"
+              >
                 <router-link
                   :to="{ name: item.name }"
                   class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
@@ -148,7 +151,7 @@
     </div>
 
     <DisclosurePanel class="md:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3" id="main-menu-mobile">
         <DisclosureButton
           as="template"
           v-for="item in navigation"
@@ -157,6 +160,7 @@
           <router-link
             :to="{ name: item.name }"
             class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+            :lang="item.lang || ''"
           >
             {{ item.title }}
           </router-link>
@@ -248,7 +252,7 @@ export default {
 
     const open = ref(false)
     const navigation = ref([
-      { name: 'DashboardHome', title: 'Dashboard' },
+      { name: 'DashboardHome', title: 'Dashboard', lang: 'en' },
       { name: 'DashboardLibrary', title: 'Biblioteca' },
       { name: 'DashboardStats', title: 'Estatísticas' },
       { name: 'DashboardWishlist', title: 'Lista de desejos' },

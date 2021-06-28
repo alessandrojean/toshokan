@@ -10,7 +10,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
+      <div v-if="paginationInfo.total_pages > 1" class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0">
             Página
@@ -78,7 +78,7 @@
           />
         </li>
       </ul>
-      <div class="mt-6 bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
+      <div v-if="paginationInfo.total_pages > 1" class="mt-6 bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0">
             Página

@@ -19,7 +19,7 @@
           placeholder="ex. 9788583621508"
           required
           aria-describedby="book-code-error"
-          :aria-invalid="v$.code.$invalid"
+          :aria-invalid="v$.code.$error"
         >
         <p id="book-code-error" class="sr-only" aria-hidden="true">
           {{ v$.code.$error ? v$.code.$errors[0].$message : '' }}
@@ -41,7 +41,7 @@
         placeholder="ex. A Nova Ilha do Tesouro"
         required
         aria-describedby="book-title-error"
-        :aria-invalid="v$.title.$invalid"
+        :aria-invalid="v$.title.$error"
       >
       <p id="book-title-error" class="sr-only" aria-hidden="true">
         {{ v$.title.$error ? v$.title.$errors[0].$message : '' }}
@@ -61,7 +61,7 @@
         class="input"
         placeholder="ex. Osamu Tezuka"
         aria-describedby="book-authors-hint book-authors-error"
-        :aria-invalid="v$.authorsStr.$invalid"
+        :aria-invalid="v$.authorsStr.$error"
         required
       >
       <p id="book-authors-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
@@ -89,7 +89,7 @@
             list="imprints"
             required
             aria-describedby="book-imprint-error"
-            :aria-invalid="v$.imprint.$invalid"
+            :aria-invalid="v$.imprint.$error"
           >
           <datalist id="imprints">
             <option
@@ -125,7 +125,7 @@
             list="collections"
             required
             aria-describedby="book-collection-error"
-            :aria-invalid="v$.collection.$invalid"
+            :aria-invalid="v$.collection.$error"
           >
           <datalist id="collections">
             <option
@@ -161,7 +161,7 @@
           placeholder="ex. 15 x 21"
           required
           aria-describedby="book-format-error"
-          :aria-invalid="v$.format.$invalid"
+          :aria-invalid="v$.format.$error"
         >
         <p id="book-format-error" class="sr-only" aria-hidden="true">
           {{ v$.format.$error ? v$.format.$errors[0].$message : '' }}
@@ -187,7 +187,7 @@
             placeholder="ex. 26,90"
             required
             aria-describedby="book-label-price-error"
-            :aria-invalid="v$.labelPriceValue.$invalid"
+            :aria-invalid="v$.labelPriceValue.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-label-price-currency" class="sr-only">Moeda</label>
@@ -232,7 +232,7 @@
             placeholder="ex. 22,90"
             required
             aria-describedby="book-paid-price-error"
-            :aria-invalid="v$.paidPriceValue.$invalid"
+            :aria-invalid="v$.paidPriceValue.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-paid-price-currency" class="sr-only">Moeda</label>
@@ -276,7 +276,7 @@
             list="stores"
             required
             aria-describedby="book-store-error"
-            :aria-invalid="v$.store.$invalid"
+            :aria-invalid="v$.store.$error"
           >
           <datalist id="stores">
             <option

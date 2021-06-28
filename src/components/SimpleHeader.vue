@@ -5,6 +5,9 @@
       <h1 v-else class="text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
         {{ title }}
       </h1>
+      <p class="text-gray-500 dark:text-gray-400" v-if="subtitle">
+        {{ subtitle }}
+      </p>
     </div>
   </header>
 </template>
@@ -15,6 +18,7 @@ export default {
 
   props: {
     loading: Boolean,
+    subtitle: String,
     title: {
       type: String,
       required: true
