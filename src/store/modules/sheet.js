@@ -1,5 +1,5 @@
 import { findSheetId, getSheetData } from '@/services/sheet'
-import { bookCompare, formatBook } from '@/model/Book'
+import { bookCompare } from '@/model/Book'
 
 const state = () => ({
   collection: {},
@@ -71,27 +71,6 @@ const actions = {
       },
       { root: true }
     )
-  },
-
-  bulkInsert: function ({ commit, dispatch, state }, books) {
-    commit('updateLoading', true)
-
-    return window.gapi.client.sheets.spreadsheets.values
-      .append({
-        spreadsheetId: state.sheetId,
-        range: 'Coleção!B5',
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS',
-        values: books.map(formatBook)
-      })
-      .then(
-        () => dispatch('loadSheetData'),
-        response => {
-          // eslint-disable-next-line no-console
-          console.error(response)
-          commit('updateLoading', false)
-        }
-      )
   }
 }
 

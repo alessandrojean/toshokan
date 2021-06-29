@@ -79,7 +79,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     :class="[
-                      book.status === 'Lido'
+                      book.status === BookStatus.READ
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-500 dark:border dark:border-green-500'
                         : 'bg-red-100 text-red-800 dark:bg-transparent dark:text-red-400 dark:border dark:border-red-400',
                       'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
@@ -164,6 +164,9 @@ import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/vue/outline'
 
 import Paginator from './Paginator.vue'
 
+import { BookStatus as BaseBookStatus } from '@/model/Book'
+import { computed } from 'vue-demi'
+
 const dateFormatter = new Intl.DateTimeFormat('pt-BR')
 
 export default {
@@ -182,22 +185,33 @@ export default {
     sortDirection: String
   },
 
-  methods: {
-    formatDate: function (date) {
-      return dateFormatter.format(date)
-    },
+  emits: ['page'],
 
-    formatPrice: function (price) {
+  setup (_, context) {
+    const BookStatus = computed(() => BaseBookStatus)
+
+    function formatDate (date) {
+      return dateFormatter.format(date)
+    }
+
+    function formatPrice ({ currency, value }) {
       const formatter = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
-        currency: price.currency
+        currency: currency
       })
 
-      return formatter.format(price.value.replace(',', '.'))
-    },
+      return formatter.format(value.replace(',', '.'))
+    }
 
-    handlePage: function (page) {
-      this.$emit('page', page)
+    function handlePage (page) {
+      context.emit('page', page)
+    }
+
+    return {
+      BookStatus,
+      formatDate,
+      formatPrice,
+      handlePage
     }
   }
 }

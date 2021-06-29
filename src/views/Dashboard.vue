@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col">
+  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col pb-16 md:pb-0">
     <a href="#main-content" class="jump-to" ref="jumpToMain">
       Pular para o conteúdo
     </a>
@@ -13,6 +13,8 @@
     </p>
 
     <AppNavbar />
+
+    <MobileNavbar />
 
     <main class="flex-1 flex" role="main" id="main-content">
       <router-view v-slot="{ Component }" >
@@ -64,12 +66,14 @@ import useAppInfo from '@/composables/useAppInfo'
 import { BookOpenIcon } from '@heroicons/vue/outline'
 
 import AppNavbar from '@/components/AppNavbar'
+import MobileNavbar from '@/components/MobileNavbar'
 
 export default {
   name: 'Dashboard',
 
   components: {
     AppNavbar,
+    MobileNavbar,
     BookOpenIcon
   },
 
@@ -141,7 +145,7 @@ export default {
 }
 
 .jump-to:focus-visible {
-  @apply w-auto h-auto fixed px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-indigo-600;
+  @apply w-auto h-auto fixed z-10 px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-indigo-600;
   clip: unset;
 }
 </style>

@@ -1,14 +1,14 @@
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto lg:flex lg:items-center lg:justify-between py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 items-center">
           <template v-if="loading">
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
             <div class="motion-safe:animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
           </template>
           <template v-else>
-            <h1 class="text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
+            <h1 class="text-2xl md:text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
               Biblioteca
             </h1>
             <p class="text-gray-500 dark:text-gray-400">
@@ -17,7 +17,7 @@
             </p>
           </template>
         </div>
-        <div class="flex mt-5 lg:mt-0 lg:ml-4 space-x-4">
+        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <template v-if="loading">
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28"></div>
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
@@ -91,7 +91,7 @@
       <section
         v-if="sheetIsEmpty"
         aria-labelledby="empty-sheet-title"
-        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
       >
         <span aria-hidden="true">
           <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />

@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-2xl mx-auto md:py-6 md:px-8">
-    <div class="md:mt-6 rounded-md shadow-md p-5 bg-white dark:bg-gray-800">
+  <div class="md:max-w-2xl mx-auto md:py-6 md:px-8">
+    <div class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800">
       <label for="search" class="sr-only">Buscar por</label>
       <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 -space-x-1">
         <div class="relative flex-1">

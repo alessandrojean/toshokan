@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <!-- <SimpleHeader title="Dashboard" :loading="loading" /> -->
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto lg:flex lg:items-center lg:justify-between py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
           <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
           <div>
@@ -14,7 +14,7 @@
             </p>
           </div>
         </div>
-        <div class="flex mt-5 lg:mt-0 lg:ml-4">
+        <div class="flex mt-5 md:mt-0 md:ml-4">
           <router-link
             :to="{ name: 'DashboardNewBook' }"
             class="button is-primary"
@@ -105,7 +105,7 @@
         <section
           v-if="sheetIsEmpty && !loading"
           aria-labelledby="empty-sheet-title"
-          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
         >
           <span aria-hidden="true">
             <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />

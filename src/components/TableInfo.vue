@@ -5,7 +5,7 @@
     class="relative bg-white shadow overflow-hidden rounded-md dark:bg-gray-800"
     aria-labelledby="table-info-title"
   >
-    <div class="px-4 py-5 sm:px-6">
+    <div class="px-6 py-5">
       <h3 id="table-info-title" class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">
         <slot name="step-indicator"></slot>
         {{ title }}
@@ -19,7 +19,7 @@
         <div
           v-for="infoLine in info"
           :key="infoLine.title"
-          class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-700 dark:even:bg-gray-700 px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6"
+          class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-700 dark:even:bg-gray-700 px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4"
         >
           <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
             {{ infoLine.title }}

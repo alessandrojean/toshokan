@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div class="bg-white dark:bg-gray-800 md:bg-transparent">
     <BookHeader
       :book="book"
       :book-found="bookFound"
+      :next-book="nextBook"
+      :previous-book="previousBook"
       :image-has-error="imageHasError"
       :image-loading="imageLoading"
       :loading="loading"
@@ -14,7 +16,7 @@
       @click:update-cover="showCoverEditor"
     />
 
-    <div class="max-w-5xl mx-auto py-6 px-5 md:px-8" ref="mainEl">
+    <div class="max-w-5xl mx-auto md:py-6 md:px-6 lg:px-8" ref="mainEl">
       <div class="md:grid grid-cols-6 gap-6">
         <div class="col-span-2">
           <div class="w-full flex flex-col space-y-6">
@@ -39,7 +41,7 @@
                   Volume {{ book.titleParts[1] ? '#' + book.titleParts[1] : 'único' }}
                 </p>
               </div>
-              <HeartIcon v-if="bookFound && book.favorite === 'Sim'" class="ml-2 h-8 w-8 dark:text-gray-500" aria-hidden="true" />
+              <HeartIcon v-if="isFavorite" class="ml-2 h-8 w-8 dark:text-gray-500" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -55,18 +57,12 @@
             enter-to-class="opacity-100"
           >
             <div v-if="!editing && !editingCover">
-              <BookNavigation
-                class="mb-6 md:hidden"
-                :next-book="nextBook"
-                :previous-book="previousBook"
-                :loading="loading || !bookFound"
-              />
-
               <!-- Book information -->
               <TableInfo
                 :info="bookInfo"
                 title="Informações do livro"
                 :loading="loading || !bookFound"
+                class="shadow-none md:shadow rounded-b-none md:rounded-b-md"
               >
                 <template v-slot:paidPrice>
                   <span
@@ -84,7 +80,7 @@
               </TableInfo>
 
               <BookNavigation
-                class="mt-6"
+                class="mt-6 hidden md:grid"
                 :next-book="nextBook"
                 :previous-book="previousBook"
                 :loading="loading || !bookFound"
@@ -93,10 +89,10 @@
 
             <section
               v-else-if="editing"
-              class="w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+              class="w-full md:rounded-md bg-white md:shadow-md overflow-hidden dark:bg-gray-800"
               aria-labelledby="book-metadata-title"
             >
-              <div class="px-4 py-5 space-y-6 sm:p-6">
+              <div class="px-6 py-5 space-y-6 sm:py-6">
                 <div>
                   <h3 id="book-metadata-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                     Metadados do livro
@@ -113,7 +109,7 @@
                 />
               </div>
 
-              <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-600 px-6 py-5 sm:py-3 flex justify-between">
                 <button
                   type="button"
                   class="button is-ghost -ml-4"
@@ -135,10 +131,10 @@
 
             <section
               v-else
-              class="relative w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800"
+              class="relative w-full md:rounded-md bg-white md:shadow-md overflow-hidden dark:bg-gray-800"
               aria-labelledby="cover-image-title"
             >
-              <div class="px-4 py-5 space-y-6 sm:p-6">
+              <div class="px-6 py-5 space-y-6 sm:py-6">
                 <div>
                   <h3 id="cover-image-title" class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
                     Imagem de capa
@@ -155,7 +151,7 @@
                   @update:finding="findingCovers = $event"
                 />
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-600 px-6 py-5 sm:py-3 flex justify-between">
                 <button
                   type="button"
                   class="button is-ghost -ml-4"
@@ -212,6 +208,8 @@ import BookImage from '@/components/BookImage'
 import BookNavigation from '@/components/BookNavigation'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import TableInfo from '@/components/TableInfo'
+
+import { BookFavorite, BookStatus } from '@/model/Book'
 
 export default {
   name: 'DashboardDetails',
@@ -336,7 +334,9 @@ function useInfo (book, bookFound, bookId, loading) {
   }
 
   const boughtAt = computed(() => {
-    return book.value.boughtAt ? formatDate(book.value.boughtAt) : ''
+    return book.value.boughtAt
+      ? formatDate(book.value.boughtAt)
+      : 'Desconhecido'
   })
 
   const createdAt = computed(() => {
@@ -451,12 +451,21 @@ function useInfo (book, bookFound, bookId, loading) {
     ]
   })
 
+  const isFavorite = computed(() => {
+    if (loading.value || !bookFound.value) {
+      return false
+    }
+
+    return book.value.favorite === BookFavorite.ACTIVE
+  })
+
   return {
     bookInfo,
     boughtAt,
     discount,
     formattedLabelPrice,
-    formattedPaidPrice
+    formattedPaidPrice,
+    isFavorite
   }
 }
 
@@ -492,7 +501,8 @@ function useEditor (book, bookId, findTheBook, redirectToHome, mainEl) {
   async function toggleStatus () {
     await updateBook({
       ...book.value,
-      status: book.value.status === 'Lido' ? 'Não lido' : 'Lido'
+      status: book.value.status === BookStatus.READ
+        ? BookStatus.UNREAD : BookStatus.READ
     })
 
     findTheBook(bookId.value, redirectToHome)
@@ -501,7 +511,8 @@ function useEditor (book, bookId, findTheBook, redirectToHome, mainEl) {
   async function toggleFavorite () {
     await updateBook({
       ...book.value,
-      favorite: book.value.favorite === 'Sim' ? '' : 'Sim'
+      favorite: book.value.favorite === BookFavorite.ACTIVE
+        ? BookFavorite.INACTIVE : BookFavorite.ACTIVE
     })
 
     findTheBook(bookId.value, redirectToHome)

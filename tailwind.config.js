@@ -9,7 +9,11 @@ module.exports = {
       mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       title: ['Poppins', ...defaultTheme.fontFamily.sans]
     },
-    extend: {}
+    extend: {
+      boxShadow: {
+        top: '0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)'
+      }
+    }
   },
   variantOrder: [
     'first',
@@ -35,11 +39,14 @@ module.exports = {
       backgroundImage: ['dark'],
       borderColor: ['disabled'],
       borderWidth: ['dark'],
+      boxShadow: ['dark'],
       cursor: ['disabled'],
       display: ['group-focus-within'],
       invert: ['dark'],
+      margin: ['dark'],
       opacity: ['disabled', 'dark'],
       outline: ['focus-visible'],
+      padding: ['dark'],
       placeholderColor: ['hover'],
       ringColor: ['group-focus-visible', 'focus-visible'],
       ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],

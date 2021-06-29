@@ -22,7 +22,7 @@
       <section
         v-if="sheetIsEmpty"
         aria-labelledby="empty-sheet-title"
-        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
       >
         <span aria-hidden="true">
           <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
@@ -52,7 +52,7 @@
       <section
         v-if="tooEarly"
         aria-labelledby="too-early-title"
-        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
       >
         <span aria-hidden="true">
           <PresentationChartLineIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />

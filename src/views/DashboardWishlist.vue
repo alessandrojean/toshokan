@@ -7,7 +7,7 @@
         <!-- In progress -->
         <section
           aria-labelledby="in-progress-title"
-          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col"
+          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
         >
           <span aria-hidden="true">
             <PuzzleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />

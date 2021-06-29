@@ -54,7 +54,7 @@
         <span class="font-medium text-xs">Volume {{ volume }}</span>
       </div>
 
-      <div v-if="book.favorite === 'Sim'" class="absolute top-1.5 right-1.5 ml-auto w-7 h-7 flex items-center justify-center bg-gray-800 bg-opacity-70 rounded-full" aria-hidden="true">
+      <div v-if="isFavorite" class="absolute top-1.5 right-1.5 ml-auto w-7 h-7 flex items-center justify-center bg-gray-800 bg-opacity-70 rounded-full" aria-hidden="true">
         <HeartIcon class="w-5 h-5 text-red-500" />
       </div>
     </div>
@@ -73,6 +73,8 @@ import { useStore } from 'vuex'
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
 import { HeartIcon, PhotographIcon } from '@heroicons/vue/solid'
+
+import { BookFavorite } from '@/model/Book'
 
 export default {
   name: 'BookCard',
@@ -94,6 +96,8 @@ export default {
 
   setup (props) {
     const { book, loading } = toRefs(props)
+
+    const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
 
     const thumbnailUrl = computed(() => {
       return book.value
@@ -136,6 +140,7 @@ export default {
     const mode = computed(() => store.state.collection.gridMode)
 
     return {
+      isFavorite,
       loadedCard,
       imageHasError,
       imageLoading,

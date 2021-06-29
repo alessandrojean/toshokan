@@ -1,25 +1,37 @@
 <template>
-  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
+  <nav
+    :class="[
+      isTransparent ? 'dark:bg-opacity-0 md:dark:bg-opacity-100' : '',
+      'bg-gray-800 motion-safe:transition-opacity duration-400'
+    ]"
+  >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center">
+      <div class="relative flex items-center justify-between h-16">
+        <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
-            class="flex-shrink-0 rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
+            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
           >
-            <LibraryIcon class="h-10 w-10 text-indigo-500" aria-hidden="true" />
+            <span aria-hidden="true">
+              <LibraryIcon class="h-9 w-9 text-indigo-500" aria-hidden="true" />
+            </span>
             <span class="sr-only">Início</span>
+            <span class="text-gray-200 font-title font-semibold text-xl ml-3 md:hidden lg:block" aria-hidden="true">
+              Toshokan
+            </span>
           </router-link>
-          <div class="hidden md:block" role="navigation" aria-label="Menu principal" id="main-menu-desktop">
-            <ul class="ml-10 flex items-baseline space-x-4">
+
+          <div class="hidden md:block md:ml-6" role="navigation" aria-label="Menu principal" id="main-menu-desktop">
+            <ul class="flex space-x-4">
               <li
                 v-for="item in desktopNavigation"
                 :key="item.name"
                 :lang="item.lang || ''"
+                class="self-stretch"
               >
                 <router-link
                   :to="{ name: item.name }"
-                  class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
+                  class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
                 >
                   {{ item.title }}
                 </router-link>
@@ -27,179 +39,133 @@
             </ul>
           </div>
         </div>
-        <div class="hidden md:block">
-          <div class="ml-4 flex items-center md:ml-6">
-            <transition
-              leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-              leave-from-class="opacity-100"
-              leave-to-class="opacity-0"
-              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-              enter-from-class="opacity-0"
-              enter-to-class="opacity-100"
+
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
+          <!-- Search link -->
+          <router-link
+            v-if="showSearch"
+            :to="{ name: 'DashboardSearch' }"
+            class="hidden md:block lg:hidden bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
+          >
+            <span class="sr-only">Pesquisar na coleção</span>
+            <span aria-hidden="true">
+              <SearchIcon class="h-6 w-6" />
+            </span>
+          </router-link>
+
+          <!-- Search form -->
+          <transition
+            leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+            enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+          >
+            <form
+              role="form"
+              class="relative hidden lg:block mr-2 group"
+              v-if="showSearch"
+              aria-labelledby="search-form-title"
+              @submit.prevent="handleSearch"
             >
-              <form
-                role="form"
-                class="relative hidden md:block mr-2 group"
-                v-if="showSearch"
-                aria-labelledby="search-form-title"
-                @submit.prevent="handleSearch"
-              >
-                <p class="sr-only" id="search-form-title" aria-hidden="true">
-                  Pesquisa na coleção
-                </p>
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-                  <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
-                </div>
-                <label for="search-navbar" class="sr-only">Buscar por</label>
-                <input
-                  ref="searchNavbar"
-                  id="search-navbar"
-                  type="text"
-                  class="focus:outline-none focus:ring-indigo-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
-                  placeholder="Pesquisar na coleção"
-                  v-model="searchQuery"
-                  @keyup.enter.stop="handleSearch"
-                  aria-describedby="navbar-search-enter-hint"
-                >
-                <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
-                  <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                    <span class="sr-only">Pressione </span>
-                    <kbd class="font-sans">
-                      <abbr title="Control" class="no-underline">Ctrl </abbr>
-                    </kbd>
-                    <span class="sr-only"> mais </span>
-                    <kbd class="font-sans">K</kbd>
-                    <span class="sr-only"> para focar</span>
-                  </span>
-                  <span id="navbar-search-enter-hint" class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                    <span class="sr-only">Pressione </span>
-                    <kbd class="font-sans">Enter</kbd>
-                    <span class="sr-only"> para pesquisar</span>
-                  </span>
-                </div>
-
-                <button type="submit" class="sr-only">
-                  Pesquisar
-                </button>
-              </form>
-            </transition>
-
-            <!-- Profile dropdown -->
-            <Menu as="div" class="ml-3 relative">
-              <div>
-                <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
-                  <span class="sr-only">Abrir menu de usuário</span>
-                  <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="Foto de perfil">
-                </MenuButton>
+              <p class="sr-only" id="search-form-title" aria-hidden="true">
+                Pesquisa na coleção
+              </p>
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+                <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
               </div>
-              <transition
-                enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
-                enter-from-class="transform scale-95 opacity-0"
-                enter-to-class="transform scale-100 opacity-100"
-                leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
-                leave-from-class="transform scale-100 opacity-100"
-                leave-to-class="transform scale-95 opacity-0"
+              <label for="search-navbar" class="sr-only">Buscar por</label>
+              <input
+                ref="searchNavbar"
+                id="search-navbar"
+                type="text"
+                class="focus:outline-none focus:ring-indigo-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
+                placeholder="Pesquisar na coleção"
+                v-model="searchQuery"
+                @keyup.enter.stop="handleSearch"
+                aria-describedby="navbar-search-enter-hint"
               >
-                <MenuItems as="ul" class="absolute right-0 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 focus:outline-none">
-                  <div class="pb-1">
-                    <MenuItem v-slot="{ active }">
-                      <router-link
-                        :to="{ name: 'DashboardSettings' }"
-                        :class="[
-                          active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                          'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
-                        ]"
-                      >
-                        <span aria-hidden="true">
-                          <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        </span>
-                        Configurações
-                      </router-link>
-                    </MenuItem>
-                  </div>
-                  <div class="pt-1">
-                    <MenuItem v-slot="{ active }">
-                      <button
-                        type="button"
-                        :class="[
-                          active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                          'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
-                        ]"
-                        @click.stop="signOut"
-                      >
-                        <span aria-hidden="true">
-                          <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
-                        </span>
-                        Sair
-                      </button>
-                    </MenuItem>
-                  </div>
-                </MenuItems>
-              </transition>
-            </Menu>
-          </div>
-        </div>
-        <div class="mr-2 flex md:hidden">
-          <!-- Mobile menu button -->
-          <DisclosureButton class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-            <span class="sr-only">Abrir o menu principal</span>
-            <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
-            <XIcon v-else class="block h-6 w-6" aria-hidden="true" />
-          </DisclosureButton>
+              <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
+                <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
+                  <span class="sr-only">Pressione </span>
+                  <kbd class="font-sans">
+                    <abbr title="Control" class="no-underline">Ctrl </abbr>
+                  </kbd>
+                  <span class="sr-only"> mais </span>
+                  <kbd class="font-sans">K</kbd>
+                  <span class="sr-only"> para focar</span>
+                </span>
+                <span id="navbar-search-enter-hint" class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
+                  <span class="sr-only">Pressione </span>
+                  <kbd class="font-sans">Enter</kbd>
+                  <span class="sr-only"> para pesquisar</span>
+                </span>
+              </div>
+
+              <button type="submit" class="sr-only">
+                Pesquisar
+              </button>
+            </form>
+          </transition>
+
+          <!-- Profile dropdown -->
+          <Menu as="div" class="ml-3 relative">
+            <div>
+              <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
+                <span class="sr-only">Abrir menu de usuário</span>
+                <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="Foto de perfil">
+              </MenuButton>
+            </div>
+            <transition
+              enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
+              enter-from-class="transform scale-95 opacity-0"
+              enter-to-class="transform scale-100 opacity-100"
+              leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
+              leave-from-class="transform scale-100 opacity-100"
+              leave-to-class="transform scale-95 opacity-0"
+            >
+              <MenuItems as="ul" class="absolute right-0 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 focus:outline-none">
+                <div class="pb-1">
+                  <MenuItem v-slot="{ active }">
+                    <router-link
+                      :to="{ name: 'DashboardSettings' }"
+                      :class="[
+                        active ? 'bg-gray-100 dark:bg-gray-600' : '',
+                        'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                      ]"
+                    >
+                      <span aria-hidden="true">
+                        <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                      </span>
+                      Configurações
+                    </router-link>
+                  </MenuItem>
+                </div>
+                <div class="pt-1">
+                  <MenuItem v-slot="{ active }">
+                    <button
+                      type="button"
+                      :class="[
+                        active ? 'bg-gray-100 dark:bg-gray-600' : '',
+                        'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                      ]"
+                      @click.stop="signOut"
+                    >
+                      <span aria-hidden="true">
+                        <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
+                      </span>
+                      Sair
+                    </button>
+                  </MenuItem>
+                </div>
+              </MenuItems>
+            </transition>
+          </Menu>
         </div>
       </div>
     </div>
-
-    <DisclosurePanel class="md:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3" id="main-menu-mobile">
-        <DisclosureButton
-          as="template"
-          v-for="item in navigation"
-          :key="item.name"
-        >
-          <router-link
-            :to="{ name: item.name }"
-            class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-            :lang="item.lang || ''"
-          >
-            {{ item.title }}
-          </router-link>
-        </DisclosureButton>
-      </div>
-      <div class="pt-4 pb-3 border-t border-gray-700">
-        <div class="flex items-center px-5">
-          <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="profileImageUrl" alt="" />
-          </div>
-          <div class="ml-3 space-y-1">
-            <div class="text-base font-medium leading-none text-white">
-              {{ profileName }}
-            </div>
-            <div class="text-sm font-medium leading-none text-gray-400">
-              {{ profileEmail }}
-            </div>
-          </div>
-        </div>
-        <div class="mt-3 px-2 space-y-1">
-          <DisclosureButton as="template">
-            <router-link
-              :to="{ name: 'DashboardSettings' }"
-              class="nav-mobile-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Configurações
-            </router-link>
-          </DisclosureButton>
-          <button
-            type="button"
-            @click.stop="signOut"
-            class="nav-mobile-link w-full text-left text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            Sair
-          </button>
-        </div>
-      </div>
-    </DisclosurePanel>
-  </Disclosure>
+  </nav>
 </template>
 
 <script>
@@ -208,9 +174,6 @@ import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 
 import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
   Menu,
   MenuButton,
   MenuItem,
@@ -221,18 +184,13 @@ import {
   CogIcon,
   LibraryIcon,
   LogoutIcon,
-  MenuIcon,
-  SearchIcon,
-  XIcon
+  SearchIcon
 } from '@heroicons/vue/solid'
 
 export default {
   name: 'AppNavbar',
 
   components: {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
     Menu,
     MenuButton,
     MenuItem,
@@ -240,9 +198,7 @@ export default {
     CogIcon,
     LibraryIcon,
     LogoutIcon,
-    MenuIcon,
-    SearchIcon,
-    XIcon
+    SearchIcon
   },
 
   setup () {
@@ -255,8 +211,7 @@ export default {
       { name: 'DashboardHome', title: 'Dashboard', lang: 'en' },
       { name: 'DashboardLibrary', title: 'Biblioteca' },
       { name: 'DashboardStats', title: 'Estatísticas' },
-      { name: 'DashboardWishlist', title: 'Lista de desejos' },
-      { name: 'DashboardSearch', title: 'Pesquisa', mobileOnly: true }
+      { name: 'DashboardWishlist', title: 'Lista de desejos' }
     ])
     const searchQuery = ref('')
     const searchNavbar = ref(null)
@@ -309,6 +264,10 @@ export default {
       document.removeEventListener('keydown', handleKeyDown)
     })
 
+    const isTransparent = computed(() => {
+      return route.name === 'BookDetails'
+    })
+
     return {
       handleSearch,
       open,
@@ -320,7 +279,8 @@ export default {
       searchNavbar,
       searchQuery,
       showSearch,
-      signOut
+      signOut,
+      isTransparent
     }
   }
 }

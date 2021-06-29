@@ -22,6 +22,16 @@ const Columns = {
   UPDATED_AT: 15
 }
 
+export const BookStatus = {
+  READ: 'Lido',
+  UNREAD: 'Não lido'
+}
+
+export const BookFavorite = {
+  ACTIVE: 'Sim',
+  INACTIVE: ''
+}
+
 export function parseBook (value, index) {
   const labelPrice = value[Columns.LABEL_PRICE].split(' ')
   const paidPrice = value[Columns.PAID_PRICE].split(' ')
@@ -91,7 +101,7 @@ export function formatBook (book) {
           ' × ' + formatFormatter.format(p2.replace(',', '.'))
       }
     ),
-    book.status || 'Não lido',
+    book.status || BookStatus.UNREAD,
     book.labelPrice.currency + ' ' +
       priceFormatter.format(book.labelPrice.value.replace(',', '.')),
     book.paidPrice.currency + ' ' +
