@@ -4,17 +4,33 @@
       <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 items-center">
           <template v-if="loading">
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
-            <div class="motion-safe:animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
+            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"></div>
+            <div class="flex space-x-2">
+              <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
+              <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
+            </div>
           </template>
           <template v-else>
             <h1 class="text-2xl md:text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
               Biblioteca
             </h1>
-            <p class="text-gray-500 dark:text-gray-400">
-              <span class="sr-only">Coleção atual:</span>
-              {{ group }}
-            </p>
+            <ul class="mt-1 flex flex-col items-start sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
+              <li class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
+                <span aria-hidden="true">
+                  <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                </span>
+                <span class="sr-only">Coleção atual: </span>
+                {{ group }}
+              </li>
+
+              <li class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
+                <span aria-hidden="true">
+                  <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                </span>
+                <span class="sr-only">Ordenando por: </span>
+                {{ sortPropertyName }}
+              </li>
+            </ul>
           </template>
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
@@ -130,8 +146,10 @@ import { useStore } from 'vuex'
 import orderBy from 'lodash.orderby'
 
 import {
+  ArchiveIcon,
   FilterIcon,
-  PlusIcon
+  PlusIcon,
+  SwitchVerticalIcon
 } from '@heroicons/vue/solid'
 
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
@@ -147,9 +165,11 @@ export default {
     GridBooks,
     LibraryFilters,
     TableBooks,
+    ArchiveIcon,
     ExclamationCircleIcon,
     FilterIcon,
-    PlusIcon
+    PlusIcon,
+    SwitchVerticalIcon
   },
 
   setup () {
@@ -166,6 +186,16 @@ export default {
     const sortProperty = computed(() => store.state.collection.sortBy)
     const sortDirection = computed(() => store.state.collection.sortDirection)
     const viewMode = computed(() => store.state.collection.viewMode)
+
+    const sortPropertyNames = {
+      title: 'Título',
+      imprint: 'Editora',
+      status: 'Estado',
+      'paidPrice.value': 'Preço pago',
+      createdAt: 'Data de criação'
+    }
+
+    const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
 
     const groupItems = computed(() => {
       return store.state.sheet.collection[store.state.collection.group] || []
@@ -222,6 +252,7 @@ export default {
       results,
       sortDirection,
       sortProperty,
+      sortPropertyName,
       viewMode
     }
   }

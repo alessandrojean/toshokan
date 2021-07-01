@@ -1,139 +1,241 @@
 <template>
- <main role="main" class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-xs w-full space-y-8">
-      <header>
-        <span aria-hidden="true">
-          <BookOpenIcon class="h-14 w-14 mx-auto text-indigo-500" aria-hidden="true" />
-        </span>
-        <h1 class="mt-6 font-title text-center text-3xl font-bold text-gray-900 dark:text-gray-200">
-          Autentique-se
-          <span class="sr-only">para obter acesso ao Toshokan</span>
-        </h1>
-        <p aria-hidden="true" class="mt-1 text-center text-sm text-gray-600 dark:text-gray-400">
-          para obter acesso ao Toshokan
-        </p>
-      </header>
-      <div class="mt-8 space-y-8 flex flex-col items-center">
-        <button
-          type="button"
-          class="button is-primary justify-center pl-14 text-lg"
-          @click.stop="handleSignIn"
-          :disabled="!started"
-        >
-          <div class="icon is-on-left is-google-icon" aria-hidden="true">
-            <span class="bg-white p-2 rounded -mx-2">
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true">
-                <g>
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                  <path fill="none" d="M0 0h48v48H0z"></path>
-                </g>
-              </svg>
-            </span>
+  <div class="bg-gray-50 dark:bg-gray-900">
+    <HomeHeader />
+
+    <main class="max-w-7xl mx-auto pb-16 px-6 lg:px-8 space-y-16" id="main-content">
+      <section class="w-full">
+        <div class="flex flex-col items-center pt-24 space-y-24">
+          <div class="space-y-8">
+            <h2 class="text-gray-800 dark:text-gray-100 font-bold font-title text-center text-5xl">
+              Gerencie sua planilha da<br>
+              <span class="text-indigo-600 dark:text-indigo-500">coleção de mangás</span>
+            </h2>
+            <p class="w-full text-gray-500 dark:text-gray-400 text-center max-w-2xl text-lg">
+              Visualize os dados e estatísticas em uma interface limpa e moderna,
+              com recursos que permitem uma rápida criação de novos itens.
+            </p>
           </div>
-          Entrar com Google
-        </button>
+          <figure class="w-full flex justify-center">
+            <img class="border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg" src="@/assets/home/screenshot-library.png" alt="">
+          </figure>
+        </div>
+      </section>
 
-        <nav
-          role="navigation"
-          aria-label="Links úteis"
-          class="text-sm text-black dark:text-gray-400"
-        >
-          <ul class="flex flex-col items-center space-y-1">
-            <li>
-              <a href="#" class="utility-link">Instruções de uso</a>
-            </li>
-            <li>
-              <a href="#" class="utility-link">Política de privacidade</a>
-            </li>
-          </ul>
-        </nav>
+      <section class="features">
+        <h2>O intuito é facilitar o controle da coleção.</h2>
 
-        <footer role="contentinfo">
-          <p class="text-center text-gray-600 text-sm dark:text-gray-500">
-            Toshokan v{{ appVersion }}
-            <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-indigo-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
+        <div class="features-grid">
+          <div class="feature">
+            <span class="icon" aria-hidden="true">
+              <SearchIcon />
+            </span>
+            <h3>Adicione novos livros por ISBN</h3>
+            <p>
+              Preenchimento automático dos metadados
+              através da pesquisa de ISBN-13.
+            </p>
+          </div>
+
+          <div class="feature">
+            <span class="icon" aria-hidden="true">
+              <PhotographIcon />
+            </span>
+            <h3>Imagens de capa automáticas</h3>
+            <p>
+              Escolha dentre uma das opções encontradas ou adicione
+              uma nova imagem personalizada.
+            </p>
+          </div>
+
+          <div class="feature">
+            <span class="icon" aria-hidden="true">
+              <SparklesIcon />
+            </span>
+            <h3>Tenha controle sobre seus dados</h3>
+            <p>
+              A planilha é um arquivo do Google Sheets que fica armazenado
+              em seu Google Drive.
+            </p>
+          </div>
+
+          <div class="feature">
+            <span class="icon" aria-hidden="true">
+              <ChipIcon />
+            </span>
+            <h3>Site de código-aberto</h3>
+            <p>
+              Qualquer um pode navegar pelo código e contribuir
+              através do repositório no GitHub.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="functionality">
+        <figure>
+          <img src="@/assets/home/screenshot-metadata.png" alt="">
+        </figure>
+
+        <div class="functionality-description">
+          <span class="icon" aria-hidden="true">
+            <DatabaseIcon />
+          </span>
+          <h2>
+            Ideal para também gerenciar a sua coleção de quadrinhos e livros
+          </h2>
+          <p>
+            Apesar do Toshokan ser inicialmente criado com a intenção
+            de gerenciar mangás, a planilha é versátil para também suportar
+            outras mídias impressas, como os quadrinhos e livros.
           </p>
-
-          <p v-if="!isDev" class="text-center text-xs text-gray-600 dark:text-gray-500 mt-1" lang="en">
-            <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-indigo-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">This site is powered by Netlify</a>
-            <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
+          <p>
+            Ao preencher a ficha catalográfica de cada item, você permite
+            com que filtros possam ser utilizados na coleção para uma
+            melhor organização do conteúdo cadastrado na planilha.
           </p>
+        </div>
+      </section>
 
-          <p v-else class="text-center text-xs text-gray-600 dark:text-gray-500 mt-1">
-            Ambiente de desenvolvimento
-          </p>
-        </footer>
-      </div>
-    </div>
-  </main>
+      <section class="cta">
+        <h2>
+          Pronto para começar?
+        </h2>
+        <div class="space-x-4">
+          <router-link
+            :to="{ name: 'Instructions' }"
+            class="button is-primary"
+            v-if="signedIn"
+          >
+            <span lang="en">Dashboard</span>
+          </router-link>
+          <SignInWithGoogleButton class="is-cta" />
+          <router-link
+            :to="{ name: 'Instructions' }"
+            class="button is-secondary"
+          >
+            Instruções de uso
+          </router-link>
+        </div>
+      </section>
+    </main>
+
+    <HomeFooter />
+  </div>
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 
-import { BookOpenIcon } from '@heroicons/vue/outline'
+import {
+  ChipIcon,
+  DatabaseIcon,
+  PhotographIcon,
+  SearchIcon,
+  SparklesIcon
+} from '@heroicons/vue/outline'
 
-import useAppInfo from '@/composables/useAppInfo'
+import HomeFooter from '@/components/HomeFooter'
+import HomeHeader from '@/components/HomeHeader'
+import SignInWithGoogleButton from '@/components/SignInWithGoogleButton'
 
 export default {
-  name: 'Home',
-
   components: {
-    BookOpenIcon
+    HomeFooter,
+    HomeHeader,
+    SignInWithGoogleButton,
+    ChipIcon,
+    DatabaseIcon,
+    PhotographIcon,
+    SearchIcon,
+    SparklesIcon
   },
 
   setup () {
     const store = useStore()
-    const router = useRouter()
-
-    const isDev = ref(process.env.NODE_ENV === 'development')
-
-    const { appVersion, gitHash, gitHubUrl } = useAppInfo()
-
-    const started = computed(() => store.state.auth.started)
     const signedIn = computed(() => store.state.auth.signedIn)
 
-    const redirectToDashboard = () => {
-      if (signedIn.value) {
-        router.replace('/dashboard/home')
-      }
-    }
-
-    const handleSignIn = async () => {
-      await store.dispatch('auth/signIn')
-      router.replace('/dashboard/home')
-    }
-
-    onMounted(redirectToDashboard)
-
-    watch(signedIn, redirectToDashboard)
-
-    return {
-      appVersion,
-      gitHash,
-      gitHubUrl,
-      handleSignIn,
-      isDev,
-      started,
-      signedIn
-    }
+    return { signedIn }
   }
 }
 </script>
 
 <style scoped>
-@layer components {
-  .utility-link {
-    @apply rounded-sm hover:text-indigo-600 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500;
-  }
+.features {
+  @apply grid grid-cols-3 gap-12 py-6;
+}
 
-  .button .icon.is-google-icon svg {
-    @apply mx-0;
-  }
+.features h2 {
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl;
+}
+
+.features-grid {
+  @apply col-span-3 md:col-span-2 inline-grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-2 gap-12;
+}
+
+.feature {
+  @apply space-y-4;
+}
+
+.feature h3 {
+  @apply text-gray-800 dark:text-gray-100 font-semibold font-title text-lg;
+}
+
+.feature p {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.functionality-description .icon,
+.feature .icon {
+  @apply w-12 h-12 bg-indigo-500 inline-flex justify-center items-center rounded-md;
+}
+
+.functionality-description .icon svg,
+.feature .icon svg {
+  @apply w-6 h-6 text-white;
+}
+
+.functionality {
+  @apply py-6 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 overflow-x-hidden;
+}
+
+.functionality-description {
+  @apply flex flex-col space-y-4 justify-center row-start-1 row-end-2 md:row-auto;
+}
+
+.functionality-description .icon {
+  @apply hidden lg:flex;
+}
+
+.functionality-description h2 {
+  @apply text-gray-800 dark:text-gray-100 font-title font-bold text-2xl;
+}
+
+.functionality-description p {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.functionality figure {
+  @apply px-6 md:pl-0 md:pr-8;
+}
+
+.functionality figure img {
+  @apply shadow-lg rounded-lg border border-gray-200 dark:border-gray-600;
+}
+
+.cta {
+  @apply flex flex-col items-center space-y-6;
+}
+
+.cta h2 {
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl;
+}
+
+.cta .button {
+  @apply py-3 px-5 font-medium text-base shadow-md;
+}
+
+.cta .button.is-secondary {
+  @apply text-indigo-500 dark:text-gray-100;
 }
 </style>

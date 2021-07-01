@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+  <main class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8" id="main-content">
     <div class="max-w-2xl w-full space-y-8">
       <header role="alert">
         <span aria-hidden="true">

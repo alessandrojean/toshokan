@@ -1,35 +1,15 @@
 <template>
-  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col pb-16 md:pb-0">
-    <a href="#main-content" class="jump-to" ref="jumpToMain">
-      Pular para o conteúdo
-    </a>
-
+  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col pb-16 sm:pb-0 sm:pl-16 md:pl-0">
     <a href="#main-menu-desktop" class="jump-to hidden md:block">
       Pular para a navegação principal
     </a>
-
-    <p class="sr-only" aria-live="polite">
-      {{ navigationHelpText }}
-    </p>
 
     <AppNavbar />
 
     <MobileNavbar />
 
     <main class="flex-1 flex" role="main" id="main-content">
-      <router-view v-slot="{ Component }" >
-        <transition
-          mode="out-in"
-          enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100 "
-          leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-        >
-          <component :is="Component" class="w-full" />
-        </transition>
-      </router-view>
+      <router-view class="w-full" />
     </main>
 
     <footer class="bg-white dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-6 lg:px-8" role="contentinfo">
@@ -57,9 +37,9 @@
 </template>
 
 <script>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 import useAppInfo from '@/composables/useAppInfo'
 
@@ -79,7 +59,6 @@ export default {
 
   setup () {
     const store = useStore()
-    const route = useRoute()
     const router = useRouter()
 
     const isDev = ref(process.env.NODE_ENV === 'development')
@@ -87,13 +66,16 @@ export default {
     const { appVersion, gitHash, gitHubUrl } = useAppInfo()
 
     const signedIn = computed(() => store.state.auth.signedIn)
+    const loadedOnce = computed(() => store.state.sheet.loadedOnce)
 
     const loadSheetData = async () => {
-      try {
-        await store.dispatch('sheet/loadSheetData')
-      } catch (e) {
-        store.commit('updateCriticalError', e)
-        router.replace({ name: 'Error' })
+      if (!loadedOnce.value) {
+        try {
+          await store.dispatch('sheet/loadSheetData')
+        } catch (e) {
+          store.commit('updateCriticalError', e)
+          router.replace({ name: 'Error' })
+        }
       }
     }
 
@@ -105,47 +87,14 @@ export default {
       }
     })
 
-    const jumpToMain = ref(null)
-    const navigationHelpText = ref('')
-
-    function focusOnJumpLink () {
-      if (jumpToMain.value) {
-        jumpToMain.value.focus()
-      }
-    }
-
-    function changeNavigationHelpText (pageTitle) {
-      navigationHelpText.value = `Página alterada para ${pageTitle}.`
-    }
-
-    watch(route, to => {
-      nextTick(() => {
-        changeNavigationHelpText(to.meta.title)
-        focusOnJumpLink()
-      })
-    })
-
     return {
       appVersion,
       gitHash,
       gitHubUrl,
       isDev,
       loadSheetData,
-      signedIn,
-      jumpToMain,
-      navigationHelpText
+      signedIn
     }
   }
 }
 </script>
-
-<style scoped>
-.jump-to {
-  @apply sr-only;
-}
-
-.jump-to:focus-visible {
-  @apply w-auto h-auto fixed z-10 px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-indigo-600;
-  clip: unset;
-}
-</style>

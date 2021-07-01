@@ -9,14 +9,14 @@
       <div class="relative flex items-center justify-between h-16">
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
-            :to="{ name: 'DashboardHome' }"
+            :to="{ name: 'Home' }"
             class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
           >
-            <span aria-hidden="true">
+            <span aria-hidden="true" class="sm:hidden md:block">
               <LibraryIcon class="h-9 w-9 text-indigo-500" aria-hidden="true" />
             </span>
             <span class="sr-only">Início</span>
-            <span class="text-gray-200 font-title font-semibold text-xl ml-3 md:hidden lg:block" aria-hidden="true">
+            <span class="text-gray-200 font-title font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
               Toshokan
             </span>
           </router-link>
@@ -210,8 +210,7 @@ export default {
     const navigation = ref([
       { name: 'DashboardHome', title: 'Dashboard', lang: 'en' },
       { name: 'DashboardLibrary', title: 'Biblioteca' },
-      { name: 'DashboardStats', title: 'Estatísticas' },
-      { name: 'DashboardWishlist', title: 'Lista de desejos' }
+      { name: 'DashboardStats', title: 'Estatísticas' }
     ])
     const searchQuery = ref('')
     const searchNavbar = ref(null)

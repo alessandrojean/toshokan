@@ -48,7 +48,7 @@
 
           <!-- Stats -->
           <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-5 lg:grid-cols-4"
+            class="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:grid-cols-4"
             aria-hidden="true"
           >
             <StatCard

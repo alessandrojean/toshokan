@@ -4,8 +4,8 @@
     aria-label="Metadados do livro"
     class="space-y-6"
   >
-    <div class="grid grid-cols-3 gap-6">
-      <div class="col-span-3 sm:col-span-1">
+    <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
+      <div class="col-span-7 sm:col-span-5 md:col-span-1">
         <label for="book-code" class="label">
           Identificação
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -72,8 +72,8 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-2 gap-6">
-      <div class="col-span-2 sm:col-span-1">
+    <div class="grid grid-cols-12 sm:grid-cols-2 gap-6">
+      <div class="col-span-12 sm:col-span-1">
         <label for="book-imprint" class="label">
           Editora
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -109,7 +109,7 @@
         </p>
       </div>
 
-      <div class="col-span-2 sm:col-span-1">
+      <div class="col-span-12 sm:col-span-1">
         <label for="book-collection" class="label">
           Coleção
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -146,8 +146,8 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-6">
-      <div class="col-span-3 sm:col-span-1">
+    <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
+      <div class="col-span-7 sm:col-span-4 md:col-span-1">
         <label for="book-format" class="label">
           Formato
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -168,7 +168,9 @@
         </p>
       </div>
 
-      <div class="col-span-3 sm:col-span-1">
+      <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
+
+      <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-label-price" class="label">
           Preço de capa
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -213,7 +215,9 @@
         </p>
       </div>
 
-      <div class="col-span-3 sm:col-span-1">
+      <div aria-hidden="true" class="sm:hidden col-span-3"></div>
+
+      <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-paid-price" class="label">
           Preço pago
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -259,8 +263,8 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-6">
-      <div class="col-span-2 sm:col-span-1">
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 sm:col-span-6">
         <label for="book-store" class="label">
           Loja
           <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
@@ -296,7 +300,7 @@
         </p>
       </div>
 
-      <div class="col-span-2 sm:col-span-1">
+      <div class="col-span-7 sm:col-span-5 md:col-span-6">
         <label for="book-bought-at" class="label">Data de entrada</label>
         <input
           id="book-bought-at"

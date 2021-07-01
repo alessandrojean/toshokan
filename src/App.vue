@@ -16,12 +16,31 @@
       </span>
     </div>
   </transition>
-  <router-view/>
+  <a href="#main-content" class="jump-to" ref="jumpToMain">
+    Pular para o conteúdo
+  </a>
+  <p class="sr-only" aria-live="polite" aria-hidden="true">
+    {{ navigationHelpText }}
+  </p>
+  <router-view v-slot="{ Component }">
+    <transition
+      mode="out-in"
+      enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100 "
+      leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 
@@ -35,8 +54,33 @@ export default {
 
     const authStarted = computed(() => store.state.auth.started)
 
+    const route = useRoute()
+    const jumpToMain = ref(null)
+    const navigationHelpText = ref('')
+
+    function focusOnJumpLink () {
+      if (jumpToMain.value) {
+        jumpToMain.value.focus()
+      }
+    }
+
+    function changeNavigationHelpText (pageTitle) {
+      navigationHelpText.value = `Página alterada para ${pageTitle}.`
+    }
+
+    watch(() => route.fullPath, () => {
+      nextTick(() => {
+        setTimeout(() => {
+          changeNavigationHelpText(route.meta.title)
+          focusOnJumpLink()
+        }, 500)
+      })
+    })
+
     return {
-      authStarted
+      authStarted,
+      jumpToMain,
+      navigationHelpText
     }
   }
 }

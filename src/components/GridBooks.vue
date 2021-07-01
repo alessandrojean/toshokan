@@ -162,10 +162,12 @@ export default {
     skeletonItems: Number
   },
 
-  methods: {
-    handlePage: function (page) {
-      this.$emit('page', page)
+  setup (_, context) {
+    function handlePage (page) {
+      context.emit('page', page)
     }
+
+    return { handlePage }
   }
 }
 </script>

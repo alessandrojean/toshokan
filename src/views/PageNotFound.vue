@@ -1,5 +1,5 @@
 <template>
- <main class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+ <main class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8" id="main-content">
     <div class="max-w-sm w-full space-y-8">
       <header>
         <span aria-hidden="true">
@@ -13,7 +13,10 @@
         </p>
       </header>
       <div class="w-full flex justify-center">
-        <router-link to="/" class="button is-primary text-lg">
+        <router-link
+          :to="{ name: signedIn ? 'DashboardHome' : 'Home' }"
+          class="button is-primary text-lg"
+        >
           <span aria-hidden="true">
             <HomeIcon />
           </span>
@@ -31,6 +34,9 @@
 </template>
 
 <script>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
 import useAppInfo from '@/composables/useAppInfo'
 
 import { HomeIcon } from '@heroicons/vue/solid'
@@ -47,10 +53,14 @@ export default {
   setup () {
     const { appVersion, gitHash, gitHubUrl } = useAppInfo()
 
+    const store = useStore()
+    const signedIn = computed(() => store.state.auth.signedIn)
+
     return {
       appVersion,
       gitHash,
-      gitHubUrl
+      gitHubUrl,
+      signedIn
     }
   }
 }

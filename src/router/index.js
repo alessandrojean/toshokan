@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store'
 
 import Home from '@/views/Home'
+import SignIn from '@/views/SignIn'
 
 const routes = [
   {
@@ -14,6 +15,14 @@ const routes = [
     }
   },
   {
+    path: '/sign-in',
+    name: 'SignIn',
+    component: SignIn,
+    meta: {
+      title: 'Autentique-se'
+    }
+  },
+  {
     path: '/error',
     name: 'Error',
     component: () => import(/* webpackChunkName: "error" */ '../views/Error.vue'),
@@ -22,25 +31,63 @@ const routes = [
     }
   },
   {
+    path: '/about',
+    component: () => import(/* webpackChunkName: "about" */ '../views/about/Index.vue'),
+    children: [
+      {
+        path: 'accessibility',
+        name: 'Accessibility',
+        component: () => import(/* webpackChunkName: "about-a11y" */ '../views/about/Accessibility.vue'),
+        meta: {
+          title: 'Acessibilidade'
+        }
+      },
+      {
+        path: 'instructions',
+        name: 'Instructions',
+        component: () => import(/* webpackChunkName: "about-instructions" */ '../views/about/Instructions.vue'),
+        meta: {
+          title: 'Instruções de uso'
+        }
+      },
+      {
+        path: 'privacy-police',
+        name: 'PrivacyPolicy',
+        component: () => import(/* webpackChunkName: "about-pp" */ '../views/about/PrivacyPolicy.vue'),
+        meta: {
+          title: 'Política de Privacidade'
+        }
+      },
+      {
+        path: 'terms-of-use',
+        name: 'TermsOfUse',
+        component: () => import(/* webpackChunkName: "about-tou" */ '../views/about/TermsOfUse.vue'),
+        meta: {
+          title: 'Termos de Uso'
+        }
+      }
+    ]
+  },
+  {
     path: '/dashboard',
-    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
+    component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard/Index.vue'),
     children: [
       {
         path: 'home',
         name: 'DashboardHome',
-        component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/DashboardHome.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/dashboard/Home.vue'),
         meta: {
-          title: 'Início'
+          title: 'Dashboard'
         }
       },
       {
         path: 'library',
-        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/DashboardLibrary.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/dashboard/library/Index.vue'),
         children: [
           {
             path: '',
             name: 'DashboardLibrary',
-            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/DashboardLibraryExplorer.vue'),
+            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/dashboard/library/Explorer.vue'),
             meta: {
               title: 'Biblioteca'
             }
@@ -48,25 +95,25 @@ const routes = [
           {
             path: 'book/:bookId',
             name: 'BookDetails',
-            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/DashboardDetails.vue'),
+            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/BookDetails.vue'),
             meta: {
               title: 'Detalhes'
+            }
+          },
+          {
+            path: 'new',
+            name: 'DashboardNewBook',
+            component: () => import(/* webpackChunkName: "dashboard-new-book" */ '../views/dashboard/library/NewBook.vue'),
+            meta: {
+              title: 'Novo livro'
             }
           }
         ]
       },
       {
-        path: 'new',
-        name: 'DashboardNewBook',
-        component: () => import(/* webpackChunkName: "dashboard-new-book" */ '../views/DashboardNewBook.vue'),
-        meta: {
-          title: 'Novo livro'
-        }
-      },
-      {
         path: 'search',
         name: 'DashboardSearch',
-        component: () => import(/* webpackChunkName: "dashboard-search" */ '../views/DashboardSearch.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-search" */ '../views/dashboard/Search.vue'),
         meta: {
           title: 'Busca'
         }
@@ -74,7 +121,7 @@ const routes = [
       {
         path: 'stats',
         name: 'DashboardStats',
-        component: () => import(/* webpackChunkName: "dashboard-stats" */ '../views/DashboardStats.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-stats" */ '../views/dashboard/Stats.vue'),
         meta: {
           title: 'Estatísticas'
         }
@@ -82,17 +129,9 @@ const routes = [
       {
         path: 'settings',
         name: 'DashboardSettings',
-        component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/DashboardSettings.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/dashboard/Settings.vue'),
         meta: {
           title: 'Configurações'
-        }
-      },
-      {
-        path: 'wishlist',
-        name: 'DashboardWishlist',
-        component: () => import(/* webpackChunkName: "dashboard-wishlist" */ '../views/DashboardWishlist.vue'),
-        meta: {
-          title: 'Lista de desejos'
         }
       }
     ]
@@ -128,7 +167,7 @@ router.beforeEach((to, from, next) => {
 /**
  * Check if user is signed in in dashboard routes.
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.fullPath.includes('/dashboard')) {
     if (store.getters['auth/isStarted'] && store.getters['auth/isSignedIn']) {
       next()
@@ -136,9 +175,15 @@ router.beforeEach((to, from, next) => {
     }
 
     if (!store.getters['auth/isStarted']) {
-      store.dispatch('auth/initApp')
-        .then(isSignedIn => next(isSignedIn ? undefined : '/'))
-        .catch(() => next('/'))
+      let isSignedIn
+
+      try {
+        isSignedIn = await store.dispatch('auth/initApp')
+      } catch (e) {
+        isSignedIn = false
+      } finally {
+        next(isSignedIn ? undefined : '/sign-in')
+      }
 
       return
     }
@@ -148,9 +193,12 @@ router.beforeEach((to, from, next) => {
   }
 
   if (!store.getters['auth/isStarted']) {
-    store.dispatch('auth/initApp')
-      .then(isSignedIn => next(isSignedIn ? '/dashboard/home' : undefined))
-      .catch(() => next('/'))
+    try {
+      const isSignedIn = await store.dispatch('auth/initApp')
+      next(isSignedIn && to.path === '/sign-in' ? '/dashboard/home' : undefined)
+    } catch (e) {
+      next('/sign-in')
+    }
 
     return
   }

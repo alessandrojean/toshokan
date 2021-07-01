@@ -6,6 +6,7 @@ const state = () => ({
   current: '',
   display: (localStorage && localStorage.getItem('DISPLAY_MODE')) || 'grid',
   lastAdded: [],
+  loadedOnce: false,
   loading: true,
   sheetId: undefined,
   imprints: [],
@@ -117,6 +118,7 @@ const mutations = {
   },
   updateLoading: function (state, loading) {
     state.loading = loading
+    state.loadedOnce = true
   },
   updateSheetId: function (state, sheetId) {
     state.sheetId = sheetId

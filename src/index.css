@@ -9,6 +9,15 @@
 }
 
 @layer components {
+  .jump-to {
+    @apply sr-only;
+  }
+  
+  .jump-to:focus-visible {
+    @apply w-auto h-auto fixed z-10 px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-indigo-600;
+    clip: unset;
+  }
+
   abbr.required {
     @apply no-underline;
   }
@@ -92,5 +101,9 @@
 
   .button .icon.is-on-left {
     @apply absolute left-0 inset-y-0 flex items-center pl-3 mx-0;
+  }
+
+  .button .icon.is-google-icon svg {
+    @apply mx-0;
   }
 }
