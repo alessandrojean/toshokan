@@ -100,7 +100,7 @@
         <h2>
           Pronto para começar?
         </h2>
-        <div class="space-x-4">
+        <div class="button-wrapper">
           <router-link
             :to="{ name: 'Instructions' }"
             class="button is-primary"
@@ -228,11 +228,15 @@ export default {
 }
 
 .cta h2 {
-  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl;
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl text-center;
+}
+
+.cta .button-wrapper {
+  @apply flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4;
 }
 
 .cta .button {
-  @apply py-3 px-5 font-medium text-base shadow-md;
+  @apply py-3 px-5 font-medium text-base shadow-md justify-center;
 }
 
 .cta .button.is-secondary {

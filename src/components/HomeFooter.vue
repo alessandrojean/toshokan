@@ -65,7 +65,7 @@ export default {
 }
 
 .footer nav ul {
-  @apply flex space-x-8 font-medium text-gray-500 dark:text-gray-400;
+  @apply flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 font-medium text-gray-500 dark:text-gray-400 text-center;
 }
 
 .footer p {

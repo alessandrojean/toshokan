@@ -25,7 +25,7 @@
         >
           <span lang="en">Dashboard</span>
         </router-link>
-        <SignInWithGoogleButton />
+        <SignInWithGoogleButton collapse />
       </div>
     </div>
   </header>

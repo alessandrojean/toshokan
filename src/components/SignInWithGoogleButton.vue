@@ -11,7 +11,7 @@
         <GoogleIcon />
       </span>
     </div>
-    Entrar com Google
+    <span>Entrar</span><span :class="collapse ? 'hidden md:block' : ''">&nbsp;com Google</span>
   </button>
 </template>
 
@@ -25,6 +25,10 @@ import GoogleIcon from '@/components/icons/GoogleIcon'
 export default {
   components: {
     GoogleIcon
+  },
+
+  props: {
+    collapse: Boolean
   },
 
   setup () {
