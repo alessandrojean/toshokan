@@ -12,7 +12,7 @@
       <div class="flex flex-col flex-1 truncate">
         <p class="font-semibold text-sm max-w-full truncate hidden sm:block dark:text-gray-100">{{ previousBook.titleParts[0] }}</p>
         <p class="text-current text-sm font-medium sm:font-normal sm:text-gray-500 sm:text-xs sm:dark:text-gray-400 dark:text-gray-200">
-          Volume {{ previousBook.titleParts[1] ? '#' + previousBook.titleParts[1] : 'único' }}
+          {{ volumeText(previousBook) }}
         </p>
       </div>
     </router-link>
@@ -29,7 +29,7 @@
       <div class="flex flex-col items-end flex-1 truncate">
         <p class="font-semibold text-sm max-w-full truncate hidden sm:block dark:text-gray-100">{{ nextBook.titleParts[0] }}</p>
         <p class="text-current text-sm font-medium sm:font-normal sm:text-gray-500 sm:text-xs sm:dark:text-gray-400 dark:text-gray-200">
-          Volume {{ nextBook.titleParts[1] ? '#' + nextBook.titleParts[1] : 'único' }}
+          {{ volumeText(nextBook) }}
         </p>
       </div>
       <span aria-hidden="true">
@@ -41,6 +41,7 @@
 
 <script>
 import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
 
@@ -66,7 +67,18 @@ export default {
         (nextBook.value && Object.keys(nextBook.value).length > 0)
     })
 
-    return { showNavigation }
+    const { t } = useI18n()
+
+    function volumeText (item) {
+      const isSingle = item.titleParts[1] === undefined
+
+      return t(
+        isSingle ? 'book.single' : 'book.volume',
+        isSingle ? undefined : { number: item.titleParts[1] }
+      )
+    }
+
+    return { showNavigation, volumeText }
   }
 }
 </script>

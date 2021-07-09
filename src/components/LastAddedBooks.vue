@@ -14,7 +14,7 @@
 
   <section v-else-if="lastAdded.length > 0" aria-labelledby="last-added-title">
     <h2 id="last-added-title" class="font-medium font-title text-xl mt-8 mb-3 dark:text-gray-200">
-      Últimos adicionados
+      {{ t('dashboard.home.lastAdded') }}
     </h2>
 
     <ul
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 import BookCard from '@/components/BookCard'
 
 export default {
@@ -52,6 +54,12 @@ export default {
       required: true
     },
     loading: Boolean
+  },
+
+  setup () {
+    const { t } = useI18n()
+
+    return { t }
   }
 }
 </script>

@@ -11,7 +11,12 @@ const state = () => ({
   sheetId: undefined,
   imprints: [],
   stores: [],
-  stats: {}
+  stats: {},
+  timeZone: {
+    name: 'America/Sao_Paulo',
+    offset: -3,
+    offsetStr: '-03:00'
+  }
 })
 
 const getters = {
@@ -37,7 +42,7 @@ const actions = {
     return sheetId
   },
 
-  loadSheetData: async function ({ commit, dispatch, statee }) {
+  loadSheetData: async function ({ commit, dispatch, state }) {
     commit('updateLoading', true)
 
     let sheetId = state.sheetId
@@ -53,6 +58,7 @@ const actions = {
     commit('updateImprints', sheetData.imprints)
     commit('updateStores', sheetData.stores)
     commit('updateStats', sheetData.stats)
+    commit('updateTimeZone', sheetData.timeZone)
 
     commit('updateLoading', false)
 
@@ -131,6 +137,12 @@ const mutations = {
   },
   updateStats: function (state, stats) {
     state.stats = { ...state.stats, ...stats }
+  },
+  updateTimeZone: function (state, timeZone) {
+    state.timeZone = { ...state.timeZone, ...timeZone }
+  },
+  resetLoadedOnce: function (state) {
+    state.loadedOnce = false
   }
 }
 

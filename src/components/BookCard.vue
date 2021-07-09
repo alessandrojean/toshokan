@@ -51,7 +51,7 @@
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
         <span class="font-semibold font-title text-sm truncate max-w-full">{{ book.titleParts[0] }}</span>
-        <span class="font-medium text-xs">Volume {{ volume }}</span>
+        <span class="font-medium text-xs">{{ volume }}</span>
       </div>
 
       <div v-if="isFavorite" class="absolute top-1.5 right-1.5 ml-auto w-7 h-7 flex items-center justify-center bg-gray-800 bg-opacity-70 rounded-full" aria-hidden="true">
@@ -61,7 +61,7 @@
 
     <div v-if="mode === 'comfortable'" class="mt-3 mb-4">
       <p class="text-sm font-title font-semibold truncate text-gray-900 dark:text-gray-200">{{ book.titleParts[0] }}</p>
-      <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">Volume {{ volume }}</p>
+      <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">{{ volume }}</p>
     </div>
   </router-link>
 </template>
@@ -69,6 +69,7 @@
 <script>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
@@ -96,6 +97,7 @@ export default {
 
   setup (props) {
     const { book, loading } = toRefs(props)
+    const { t } = useI18n()
 
     const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
 
@@ -119,9 +121,12 @@ export default {
         return ''
       }
 
-      return book.value.titleParts[1]
-        ? '#' + book.value.titleParts[1]
-        : 'único'
+      const isSingle = book.value.titleParts[1] === undefined
+
+      return t(
+        isSingle ? 'book.single' : 'book.volume',
+        isSingle ? undefined : { number: book.value.titleParts[1] }
+      )
     })
 
     onMounted(() => {

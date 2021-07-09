@@ -50,8 +50,7 @@
         <EyeOffIcon class="text-gray-500" v-else />
       </transition>
       <span class="sr-only">
-        {{ !showValue ? 'Mostrar valor de ' : 'Ocultar valor de ' }}
-        {{ title }}
+        {{ t(`dashboard.home.overview.${!showValue ? 'showValue' : 'hideValue'}`, { title }) }}
       </span>
     </button>
   </div>
@@ -59,6 +58,7 @@
 
 <script>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { EyeIcon, EyeOffIcon } from '@heroicons/vue/solid'
 
@@ -88,7 +88,9 @@ export default {
   setup (props) {
     const showValue = ref(!props.sensitive)
 
-    return { showValue }
+    const { t } = useI18n()
+
+    return { showValue, t }
   }
 }
 </script>

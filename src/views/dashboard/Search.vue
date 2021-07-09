@@ -1,7 +1,9 @@
 <template>
   <div class="md:max-w-2xl mx-auto md:py-6 md:px-8">
     <div class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800">
-      <label for="search" class="sr-only">Buscar por</label>
+      <label for="search" class="sr-only">
+        {{ t('dashboard.search.label') }}
+      </label>
       <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 -space-x-1">
         <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -12,7 +14,7 @@
             type="text"
             name="search"
             id="search"
-            placeholder="O quê você deseja buscar?"
+            :placeholder="t('dashboard.search.placeholder')"
             v-model="searchQuery"
             class="input text-lg pl-10"
           >
@@ -41,7 +43,7 @@
               {{ result.item.titleParts[0] }}
             </span>
             <span class="text-xs text-gray-500 dark:text-gray-400">
-              Volume {{ result.item.titleParts[1] ? '#' + result.item.titleParts[1] : 'único' }}
+              {{ volumeText(result.item) }}
             </span>
           </div>
           <ChevronRightIcon class="w-6 h-6 text-gray-400 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-gray-200" aria-hidden="true" />
@@ -55,6 +57,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import useDebouncedRef from '@/composables/useDebouncedRef'
 
@@ -106,10 +109,23 @@ export default {
       }
     })
 
+    const { t } = useI18n()
+
+    function volumeText (item) {
+      const isSingle = item.titleParts[1] === undefined
+
+      return t(
+        isSingle ? 'book.single' : 'book.volume',
+        isSingle ? undefined : { number: item.titleParts[1] }
+      )
+    }
+
     return {
       searchInput,
       searchQuery,
-      searchResults
+      searchResults,
+      t,
+      volumeText
     }
   }
 }

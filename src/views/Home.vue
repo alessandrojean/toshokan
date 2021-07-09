@@ -7,12 +7,13 @@
         <div class="flex flex-col items-center pt-24 space-y-24">
           <div class="space-y-8">
             <h2 class="text-gray-800 dark:text-gray-100 font-bold font-title text-center text-5xl">
-              Gerencie sua planilha da<br>
-              <span class="text-indigo-600 dark:text-indigo-500">coleção de mangás</span>
+              {{ t('home.leading1') }}<br>
+              <span class="text-indigo-600 dark:text-indigo-500">
+                {{ t('home.leading2') }}
+              </span>
             </h2>
             <p class="w-full text-gray-500 dark:text-gray-400 text-center max-w-2xl text-lg">
-              Visualize os dados e estatísticas em uma interface limpa e moderna,
-              com recursos que permitem uma rápida criação de novos itens.
+              {{ t('home.shortDescription') }}
             </p>
           </div>
           <figure class="w-full flex justify-center">
@@ -22,51 +23,39 @@
       </section>
 
       <section class="features">
-        <h2>O intuito é facilitar o controle da coleção.</h2>
+        <h2>{{ t('home.features.title') }}</h2>
 
         <div class="features-grid">
           <div class="feature">
             <span class="icon" aria-hidden="true">
               <SearchIcon />
             </span>
-            <h3>Adicione novos livros por ISBN</h3>
-            <p>
-              Preenchimento automático dos metadados
-              através da pesquisa de ISBN-13.
-            </p>
+            <h3>{{ t('home.features.isbn.title') }}</h3>
+            <p>{{ t('home.features.isbn.description') }}</p>
           </div>
 
           <div class="feature">
             <span class="icon" aria-hidden="true">
               <PhotographIcon />
             </span>
-            <h3>Imagens de capa automáticas</h3>
-            <p>
-              Escolha dentre uma das opções encontradas ou adicione
-              uma nova imagem personalizada.
-            </p>
+            <h3>{{ t('home.features.cover.title') }}</h3>
+            <p>{{ t('home.features.cover.description') }}</p>
           </div>
 
           <div class="feature">
             <span class="icon" aria-hidden="true">
               <SparklesIcon />
             </span>
-            <h3>Tenha controle sobre seus dados</h3>
-            <p>
-              A planilha é um arquivo do Google Sheets que fica armazenado
-              em seu Google Drive.
-            </p>
+            <h3>{{ t('home.features.data.title') }}</h3>
+            <p>{{ t('home.features.data.description') }}</p>
           </div>
 
           <div class="feature">
             <span class="icon" aria-hidden="true">
               <ChipIcon />
             </span>
-            <h3>Site de código-aberto</h3>
-            <p>
-              Qualquer um pode navegar pelo código e contribuir
-              através do repositório no GitHub.
-            </p>
+            <h3>{{ t('home.features.openSource.title') }}</h3>
+            <p>{{ t('home.features.openSource.description') }}</p>
           </div>
         </div>
       </section>
@@ -81,39 +70,29 @@
             <DatabaseIcon />
           </span>
           <h2>
-            Ideal para também gerenciar a sua coleção de quadrinhos e livros
+            {{ t('home.collection.title') }}
           </h2>
-          <p>
-            Apesar do Toshokan ser inicialmente criado com a intenção
-            de gerenciar mangás, a planilha é versátil para também suportar
-            outras mídias impressas, como os quadrinhos e livros.
-          </p>
-          <p>
-            Ao preencher a ficha catalográfica de cada item, você permite
-            com que filtros possam ser utilizados na coleção para uma
-            melhor organização do conteúdo cadastrado na planilha.
-          </p>
+          <p>{{ t('home.collection.description').split('\n\n')[0] }}</p>
+          <p>{{ t('home.collection.description').split('\n\n')[1] }}</p>
         </div>
       </section>
 
       <section class="cta">
-        <h2>
-          Pronto para começar?
-        </h2>
+        <h2>{{ t('home.cta.title') }}</h2>
         <div class="button-wrapper">
           <router-link
-            :to="{ name: 'Instructions' }"
+            :to="{ name: 'DashboardHome' }"
             class="button is-primary"
             v-if="signedIn"
           >
-            <span lang="en">Dashboard</span>
+            {{ t('home.cta.dashboard') }}
           </router-link>
           <SignInWithGoogleButton class="is-cta" />
           <router-link
             :to="{ name: 'Instructions' }"
             class="button is-secondary"
           >
-            Instruções de uso
+            {{ t('home.cta.instructions') }}
           </router-link>
         </div>
       </section>
@@ -126,6 +105,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import {
   ChipIcon,
@@ -155,7 +135,9 @@ export default {
     const store = useStore()
     const signedIn = computed(() => store.state.auth.signedIn)
 
-    return { signedIn }
+    const { t } = useI18n()
+
+    return { signedIn, t }
   }
 }
 </script>

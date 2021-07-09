@@ -6,11 +6,11 @@
           <LibraryIcon class="h-14 w-14 mx-auto text-indigo-500" aria-hidden="true" />
         </span>
         <h1 class="mt-6 font-title text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Autentique-se
-          <span class="sr-only">para obter acesso ao Toshokan</span>
+          {{ t('signIn.title') }}
+          <span class="sr-only">{{ t('signIn.titleSr') }}</span>
         </h1>
         <p aria-hidden="true" class="mt-1 text-center text-sm text-gray-600 dark:text-gray-300">
-          para obter acesso ao dashboard
+          {{ t('signIn.subTitle') }}
         </p>
       </header>
       <div class="mt-8 space-y-8 flex flex-col items-center">
@@ -28,7 +28,7 @@
                   :to="{ name: 'Accessibility' }"
                   class="utility-link"
                 >
-                  Acessibilidade
+                  {{ t('footer.links.a11y') }}
                 </router-link>
               </li>
               <li>
@@ -36,7 +36,7 @@
                   :to="{ name: 'Instructions' }"
                   class="utility-link"
                 >
-                  Instruções de uso
+                  {{ t('footer.links.instructions') }}
                 </router-link>
               </li>
               <li>
@@ -44,7 +44,7 @@
                   :to="{ name: 'PrivacyPolicy' }"
                   class="utility-link"
                 >
-                  Política de Privacidade
+                  {{ t('footer.links.privacyPolicy') }}
                 </router-link>
               </li>
               <li>
@@ -52,14 +52,14 @@
                   :to="{ name: 'TermsOfUse' }"
                   class="utility-link"
                 >
-                  Termos de Uso
+                  {{ t('footer.links.termsOfUse') }}
                 </router-link>
               </li>
             </ul>
           </nav>
 
           <p class="text-center text-gray-600 text-sm dark:text-gray-400">
-            Toshokan v{{ appVersion }}
+            {{ t('footer.version', { version: appVersion }) }}
             <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-indigo-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
           </p>
 
@@ -69,7 +69,7 @@
           </p>
 
           <p v-else class="text-center text-xs text-gray-600 dark:text-gray-400 mt-1">
-            Ambiente de desenvolvimento
+            {{ t('footer.dev') }}
           </p>
         </footer>
       </div>
@@ -81,6 +81,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
@@ -117,13 +118,16 @@ export default {
 
     watch(signedIn, redirectToDashboard)
 
+    const { t } = useI18n()
+
     return {
       appVersion,
       gitHash,
       gitHubUrl,
       isDev,
       started,
-      signedIn
+      signedIn,
+      t
     }
   }
 }

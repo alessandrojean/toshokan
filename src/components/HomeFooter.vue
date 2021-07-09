@@ -1,25 +1,49 @@
 <template>
   <footer class="footer">
+    <div>
+      <label for="locale" class="sr-only">
+        {{ t('dashboard.settings.appearence.locale.label') }}
+      </label>
+      <div class="relative group">
+        <span aria-hidden="true" class="absolute inset-y-0 left-0 pl-3 flex items-center">
+          <TranslateIcon class="w-5 h-5 text-gray-500 dark:text-gray-400 group-focus-within:text-gray-700 dark:group-focus-within:text-gray-200" />
+        </span>
+        <select
+          class="select w-52 pl-10 h-auto"
+          id="locale"
+          v-model="locale"
+        >
+          <option
+            v-for="loc in availableLocales"
+            :key="loc"
+            :value="loc"
+          >
+            {{ t('app.localeName', null, { locale: loc }) }}
+          </option>
+        </select>
+      </div>
+    </div>
+
     <nav>
       <ul>
         <li>
           <router-link :to="{ name: 'Accessibility' }">
-            Acessibilidade
+            {{ t('footer.links.a11y') }}
           </router-link>
         </li>
         <li>
           <router-link :to="{ name: 'Instructions' }">
-            Instruções de uso
+            {{ t('footer.links.instructions') }}
           </router-link>
         </li>
         <li>
           <router-link :to="{ name: 'PrivacyPolicy' }">
-            Política de Privacidade
+            {{ t('footer.links.privacyPolicy') }}
           </router-link>
         </li>
         <li>
           <router-link :to="{ name: 'TermsOfUse' }">
-            Termos de Uso
+            {{ t('footer.links.termsOfUse' )}}
           </router-link>
         </li>
       </ul>
@@ -27,12 +51,12 @@
 
     <div class="text-center">
       <p>
-        Toshokan v{{ appVersion }}
+        {{ t('footer.version', { version: appVersion }) }}
         (<a :href="gitHubUrl" target="_blank">{{ gitHash }}</a>)
       </p>
 
       <p v-if="isDev">
-        Ambiente de desenvolvimento
+        {{ t('footer.dev') }}
       </p>
     </div>
   </footer>
@@ -40,20 +64,30 @@
 
 <script>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import useAppInfo from '@/composables/useAppInfo'
 
+import { TranslateIcon } from '@heroicons/vue/solid'
+
 export default {
+  components: { TranslateIcon },
+
   setup () {
     const { appVersion, gitHash, gitHubUrl } = useAppInfo()
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
+    const { t, locale, availableLocales } = useI18n({ useScope: 'global' })
+
     return {
       appVersion,
       gitHash,
       gitHubUrl,
-      isDev
+      isDev,
+      t,
+      locale,
+      availableLocales
     }
   }
 }

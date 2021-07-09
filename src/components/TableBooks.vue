@@ -8,7 +8,7 @@
               <tr>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'title' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    Livro
+                    {{ t('book.book') }}
                   </span>
                   <template v-if="sortProperty === 'title'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
@@ -17,7 +17,7 @@
                 </th>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'imprint' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    Editora
+                    {{ t('book.properties.imprint') }}
                   </span>
                   <template v-if="sortProperty === 'imprint'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
@@ -26,7 +26,7 @@
                 </th>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'status' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    Estado
+                    {{ t('book.properties.status') }}
                   </span>
                   <template v-if="sortProperty === 'status'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
@@ -35,7 +35,7 @@
                 </th>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'paidPrice.value' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    Preço pago
+                    {{ t('book.properties.paidPrice') }}
                   </span>
                   <template v-if="sortProperty === 'paidPrice.value'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
@@ -44,7 +44,7 @@
                 </th>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'createdAt' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    Criação
+                    {{ t('book.properties.createdAt') }}
                   </span>
                   <template v-if="sortProperty === 'createdAt'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
@@ -52,7 +52,9 @@
                   </template>
                 </th>
                 <th scope="col" class="relative px-6 py-3">
-                  <span class="sr-only">Ações</span>
+                  <span class="sr-only">
+                    {{ t('dashboard.library.items.tableColumns.actions') }}
+                  </span>
                 </th>
               </tr>
             </thead>
@@ -68,7 +70,7 @@
                         {{ book.titleParts[0] }}
                       </div>
                       <div class="text-sm text-gray-500 dark:text-gray-400">
-                        Volume {{ book.titleParts[1] ? '#' + book.titleParts[1] : 'único' }}
+                        {{ volumeText(book) }}
                       </div>
                     </div>
                   </div>
@@ -85,7 +87,7 @@
                       'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
                     ]"
                   >
-                    {{ book.status }}
+                    {{ t(`book.${book.status.toLowerCase()}`) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -99,7 +101,7 @@
                     :to="{ name: 'BookDetails', params: { bookId: book.id } }"
                     class="button is-ghost bg-transparent hover:underline -mr-4"
                   >
-                    Visualizar
+                    {{ t('dashboard.library.items.view') }}
                   </router-link>
                 </td>
               </tr>
@@ -123,7 +125,7 @@
               :disabled="!paginationInfo.has_previous_page"
               @click.stop="handlePage(paginationInfo.current_page - 1)"
             >
-              Anterior
+              {{ t('pagination.previous') }}
             </button>
           </li>
 
@@ -134,21 +136,21 @@
               :disabled="!paginationInfo.has_next_page"
               @click.stop="handlePage(paginationInfo.current_page + 1)"
             >
-              Próximo
+              {{ t('pagination.next') }}
             </button>
           </li>
         </ul>
       </nav>
       <div class="hidden sm:flex-1 sm:flex sm:flex-col lg:flex-row sm:items-center sm:justify-between">
-        <p class="mb-4 lg:mb-0 text-sm text-gray-700 dark:text-gray-400">
-          Mostrando página
+        <i18n-t
+          keypath="pagination.text"
+          tag="p"
+          class="mb-4 lg:mb-0 text-sm text-gray-700 dark:text-gray-400"
+        >
           <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-          de
           <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-          de
           <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
-          resultados
-        </p>
+        </i18n-t>
         <Paginator
           v-if="paginationInfo.total_pages > 1"
           :pagination-info="paginationInfo"
@@ -160,14 +162,15 @@
 </template>
 
 <script>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+
 import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/vue/outline'
 
 import Paginator from './Paginator.vue'
 
 import { BookStatus as BaseBookStatus } from '@/model/Book'
-import { computed } from 'vue-demi'
-
-const dateFormatter = new Intl.DateTimeFormat('pt-BR')
 
 export default {
   name: 'TableBooks',
@@ -188,30 +191,41 @@ export default {
   emits: ['page'],
 
   setup (_, context) {
+    const { t, n, d } = useI18n()
+    const store = useStore()
+
+    const timeZone = computed(() => store.state.sheet.timeZone)
+
     const BookStatus = computed(() => BaseBookStatus)
 
     function formatDate (date) {
-      return dateFormatter.format(date)
+      return d(date, 'long', { timeZone: timeZone.value.name })
     }
 
     function formatPrice ({ currency, value }) {
-      const formatter = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: currency
-      })
-
-      return formatter.format(value.replace(',', '.'))
+      return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
     }
 
     function handlePage (page) {
       context.emit('page', page)
     }
 
+    function volumeText (item) {
+      const isSingle = item.titleParts[1] === undefined
+
+      return t(
+        isSingle ? 'book.single' : 'book.volume',
+        isSingle ? undefined : { number: item.titleParts[1] }
+      )
+    }
+
     return {
       BookStatus,
       formatDate,
       formatPrice,
-      handlePage
+      handlePage,
+      t,
+      volumeText
     }
   }
 }

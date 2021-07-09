@@ -39,7 +39,8 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   HomeIcon,
@@ -55,11 +56,13 @@ export default {
   components: { LibraryIconSolid },
 
   setup () {
-    const items = ref([
-      { to: 'DashboardHome', title: 'Dashboard', lang: 'en', icon: HomeIcon },
-      { to: 'DashboardLibrary', title: 'Biblioteca', icon: LibraryIcon },
-      { to: 'DashboardSearch', title: 'Pesquisa', icon: SearchIcon },
-      { to: 'DashboardStats', title: 'Estatísticas', icon: PresentationChartLineIcon }
+    const { t } = useI18n()
+
+    const items = computed(() => [
+      { to: 'DashboardHome', title: t('dashboard.home.title'), icon: HomeIcon },
+      { to: 'DashboardLibrary', title: t('dashboard.library.title'), icon: LibraryIcon },
+      { to: 'DashboardSearch', title: t('dashboard.search.title'), icon: SearchIcon },
+      { to: 'DashboardStats', title: t('dashboard.stats.title'), icon: PresentationChartLineIcon }
     ])
 
     return { items }

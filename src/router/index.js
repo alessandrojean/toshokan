@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import store from '../store'
+import i18n from '../i18n'
 
 import Home from '@/views/Home'
 import SignIn from '@/views/SignIn'
+
+const { t } = i18n.global
 
 const routes = [
   {
@@ -11,7 +14,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'Início'
+      title: () => t('app.routes.home')
     }
   },
   {
@@ -19,7 +22,7 @@ const routes = [
     name: 'SignIn',
     component: SignIn,
     meta: {
-      title: 'Autentique-se'
+      title: () => t('app.routes.signIn')
     }
   },
   {
@@ -27,7 +30,7 @@ const routes = [
     name: 'Error',
     component: () => import(/* webpackChunkName: "error" */ '../views/Error.vue'),
     meta: {
-      title: 'Erro crítico'
+      title: () => t('app.routes.error')
     }
   },
   {
@@ -39,7 +42,7 @@ const routes = [
         name: 'Accessibility',
         component: () => import(/* webpackChunkName: "about-a11y" */ '../views/about/Accessibility.vue'),
         meta: {
-          title: 'Acessibilidade'
+          title: () => t('app.routes.about.a11y')
         }
       },
       {
@@ -47,7 +50,7 @@ const routes = [
         name: 'Instructions',
         component: () => import(/* webpackChunkName: "about-instructions" */ '../views/about/Instructions.vue'),
         meta: {
-          title: 'Instruções de uso'
+          title: () => t('app.routes.about.instructions')
         }
       },
       {
@@ -55,7 +58,7 @@ const routes = [
         name: 'PrivacyPolicy',
         component: () => import(/* webpackChunkName: "about-pp" */ '../views/about/PrivacyPolicy.vue'),
         meta: {
-          title: 'Política de Privacidade'
+          title: () => t('app.routes.about.privacyPolicy')
         }
       },
       {
@@ -63,7 +66,7 @@ const routes = [
         name: 'TermsOfUse',
         component: () => import(/* webpackChunkName: "about-tou" */ '../views/about/TermsOfUse.vue'),
         meta: {
-          title: 'Termos de Uso'
+          title: () => t('app.routes.about.termsOfUse')
         }
       }
     ]
@@ -77,7 +80,7 @@ const routes = [
         name: 'DashboardHome',
         component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/dashboard/Home.vue'),
         meta: {
-          title: 'Dashboard'
+          title: () => t('app.routes.dashboard.home')
         }
       },
       {
@@ -89,7 +92,7 @@ const routes = [
             name: 'DashboardLibrary',
             component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/dashboard/library/Explorer.vue'),
             meta: {
-              title: 'Biblioteca'
+              title: () => t('app.routes.dashboard.library')
             }
           },
           {
@@ -97,7 +100,7 @@ const routes = [
             name: 'BookDetails',
             component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/BookDetails.vue'),
             meta: {
-              title: 'Detalhes'
+              title: () => t('app.routes.dashboard.details')
             }
           },
           {
@@ -105,7 +108,7 @@ const routes = [
             name: 'DashboardNewBook',
             component: () => import(/* webpackChunkName: "dashboard-new-book" */ '../views/dashboard/library/NewBook.vue'),
             meta: {
-              title: 'Novo livro'
+              title: () => t('app.routes.dashboard.newBook')
             }
           }
         ]
@@ -115,7 +118,7 @@ const routes = [
         name: 'DashboardSearch',
         component: () => import(/* webpackChunkName: "dashboard-search" */ '../views/dashboard/Search.vue'),
         meta: {
-          title: 'Busca'
+          title: () => t('app.routes.dashboard.search')
         }
       },
       {
@@ -123,7 +126,7 @@ const routes = [
         name: 'DashboardStats',
         component: () => import(/* webpackChunkName: "dashboard-stats" */ '../views/dashboard/Stats.vue'),
         meta: {
-          title: 'Estatísticas'
+          title: () => t('app.routes.dashboard.stats')
         }
       },
       {
@@ -131,7 +134,7 @@ const routes = [
         name: 'DashboardSettings',
         component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/dashboard/Settings.vue'),
         meta: {
-          title: 'Configurações'
+          title: () => t('app.routes.dashboard.settings')
         }
       }
     ]
@@ -140,7 +143,7 @@ const routes = [
     path: '/:pathMatch(.*)',
     component: () => import(/* webpackChunkName: "page-not-found" */ '../views/PageNotFound.vue'),
     meta: {
-      title: 'Página não encontrada'
+      title: () => t('app.routes.notFound')
     }
   }
 ]
@@ -160,7 +163,7 @@ const router = createRouter({
  * Replace page title.
  */
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title + ' | ' + process.env.VUE_APP_TITLE
+  document.title = to.meta.title() + ' | ' + t('app.name')
   next()
 })
 

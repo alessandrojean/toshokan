@@ -15,9 +15,9 @@
             <span aria-hidden="true" class="sm:hidden md:block">
               <LibraryIcon class="h-9 w-9 text-indigo-500" aria-hidden="true" />
             </span>
-            <span class="sr-only">Início</span>
+            <span class="sr-only">{{ t('dashboard.header.links.start') }}</span>
             <span class="text-gray-200 font-title font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
-              Toshokan
+              {{ t('app.name') }}
             </span>
           </router-link>
 
@@ -47,7 +47,7 @@
             :to="{ name: 'DashboardSearch' }"
             class="hidden md:block lg:hidden bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
           >
-            <span class="sr-only">Pesquisar na coleção</span>
+            <span class="sr-only">{{ t('dashboard.header.search.link') }}</span>
             <span aria-hidden="true">
               <SearchIcon class="h-6 w-6" />
             </span>
@@ -70,41 +70,43 @@
               @submit.prevent="handleSearch"
             >
               <p class="sr-only" id="search-form-title" aria-hidden="true">
-                Pesquisa na coleção
+                {{ t('dashboard.header.search.title') }}
               </p>
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                 <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
               </div>
-              <label for="search-navbar" class="sr-only">Buscar por</label>
+              <label for="search-navbar" class="sr-only">
+                {{ t('dashboard.header.search.label' )}}
+              </label>
               <input
                 ref="searchNavbar"
                 id="search-navbar"
                 type="text"
                 class="focus:outline-none focus:ring-indigo-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
-                placeholder="Pesquisar na coleção"
+                :placeholder="t('dashboard.header.search.placeholder')"
                 v-model="searchQuery"
                 @keyup.enter.stop="handleSearch"
                 aria-describedby="navbar-search-enter-hint"
               >
               <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
                 <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                  <span class="sr-only">Pressione </span>
+                  <span class="sr-only">{{ t('dashboard.header.search.press') }} </span>
                   <kbd class="font-sans">
-                    <abbr title="Control" class="no-underline">Ctrl </abbr>
+                    <abbr title="Control" class="no-underline">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
                   </kbd>
-                  <span class="sr-only"> mais </span>
+                  <span class="sr-only"> {{ t('dashboard.header.search.plus') }} </span>
                   <kbd class="font-sans">K</kbd>
-                  <span class="sr-only"> para focar</span>
+                  <span class="sr-only"> {{ t('dashboard.header.search.toFocus') }}</span>
                 </span>
                 <span id="navbar-search-enter-hint" class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                  <span class="sr-only">Pressione </span>
-                  <kbd class="font-sans">Enter</kbd>
-                  <span class="sr-only"> para pesquisar</span>
+                  <span class="sr-only">{{ t('dashboard.header.search.press') }} </span>
+                  <kbd class="font-sans">{{ t('dashboard.header.search.enter') }}</kbd>
+                  <span class="sr-only"> {{ t('dashboard.header.search.toSearch') }}</span>
                 </span>
               </div>
 
               <button type="submit" class="sr-only">
-                Pesquisar
+                {{ t('dashboard.header.search.search' )}}
               </button>
             </form>
           </transition>
@@ -113,8 +115,8 @@
           <Menu as="div" class="ml-3 relative">
             <div>
               <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
-                <span class="sr-only">Abrir menu de usuário</span>
-                <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="Foto de perfil">
+                <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>
+                <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="">
               </MenuButton>
             </div>
             <transition
@@ -138,7 +140,7 @@
                       <span aria-hidden="true">
                         <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
                       </span>
-                      Configurações
+                      {{ t('dashboard.header.menu.settings') }}
                     </router-link>
                   </MenuItem>
                 </div>
@@ -155,7 +157,7 @@
                       <span aria-hidden="true">
                         <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
                       </span>
-                      Sair
+                      {{ t('dashboard.header.menu.signOut') }}
                     </button>
                   </MenuItem>
                 </div>
@@ -172,6 +174,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import {
   Menu,
@@ -206,11 +209,22 @@ export default {
     const route = useRoute()
     const router = useRouter()
 
+    const { t } = useI18n({ useScope: 'global' })
+
     const open = ref(false)
-    const navigation = ref([
-      { name: 'DashboardHome', title: 'Dashboard', lang: 'en' },
-      { name: 'DashboardLibrary', title: 'Biblioteca' },
-      { name: 'DashboardStats', title: 'Estatísticas' }
+    const navigation = computed(() => [
+      {
+        name: 'DashboardHome',
+        title: t('dashboard.header.links.dashboard')
+      },
+      {
+        name: 'DashboardLibrary',
+        title: t('dashboard.header.links.library')
+      },
+      {
+        name: 'DashboardStats',
+        title: t('dashboard.header.links.statistics')
+      }
     ])
     const searchQuery = ref('')
     const searchNavbar = ref(null)
@@ -279,7 +293,8 @@ export default {
       searchQuery,
       showSearch,
       signOut,
-      isTransparent
+      isTransparent,
+      t
     }
   }
 }

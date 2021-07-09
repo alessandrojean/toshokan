@@ -41,7 +41,7 @@
               >
                 <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
                   <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" @click="$emit('update:open', false)">
-                    <span class="sr-only">Fechar painel</span>
+                    <span class="sr-only">{{ t('dashboard.library.filters.close') }}</span>
                     <XIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
@@ -49,7 +49,7 @@
               <div class="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800">
                 <div class="px-4 sm:px-6">
                   <DialogTitle class="text-lg font-title font-medium text-gray-900 dark:text-gray-100">
-                    Filtros
+                    {{ t('dashboard.library.filters.title') }}
                   </DialogTitle>
                 </div>
                 <form
@@ -60,7 +60,7 @@
                   <div>
                     <RadioGroup v-model="viewMode">
                       <RadioGroupLabel class="label">
-                        Modo de visualização
+                        {{ t('dashboard.library.filters.viewMode.label' )}}
                       </RadioGroupLabel>
 
                       <div class="flex -space-x-px">
@@ -72,7 +72,7 @@
                             ]"
                           >
                             <TableIcon aria-hidden="true" />
-                            Tabela
+                            {{ t('dashboard.library.filters.viewMode.table') }}
                           </div>
                         </RadioGroupOption>
                         <RadioGroupOption as="template" value="grid" v-slot="{ checked }">
@@ -83,7 +83,7 @@
                             ]"
                           >
                             <ViewGridIcon aria-hidden="true" />
-                            Grade
+                            {{ t('dashboard.library.filters.viewMode.grid') }}
                           </div>
                         </RadioGroupOption>
                       </div>
@@ -93,7 +93,7 @@
                   <div v-if="viewMode === 'grid'">
                     <RadioGroup v-model="gridMode">
                       <RadioGroupLabel class="label">
-                        Modo da grade
+                        {{ t('dashboard.library.filters.gridMode.label') }}
                       </RadioGroupLabel>
 
                       <div class="flex -space-x-px">
@@ -104,7 +104,7 @@
                               'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
-                            Compacto
+                            {{ t('dashboard.library.filters.gridMode.compact') }}
                           </div>
                         </RadioGroupOption>
                         <RadioGroupOption as="template" value="comfortable" v-slot="{ checked }">
@@ -114,7 +114,7 @@
                               'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
-                            Confortável
+                            {{ t('dashboard.library.filters.gridMode.comfortable') }}
                           </div>
                         </RadioGroupOption>
                       </div>
@@ -123,7 +123,7 @@
 
                   <div>
                     <label for="group" class="label">
-                      Coleção
+                      {{ t('dashboard.library.filters.collection') }}
                     </label>
                     <select
                       name="group"
@@ -145,7 +145,7 @@
                   <div>
                     <RadioGroup v-model="sortDirection">
                       <RadioGroupLabel class="label">
-                        Sentido
+                        {{ t('dashboard.library.filters.sortDirection.label') }}
                       </RadioGroupLabel>
 
                       <div class="flex -space-x-px">
@@ -156,8 +156,10 @@
                               'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
-                            <SortAscendingIcon aria-hidden="true" />
-                            Crescente
+                            <span aria-hidden="true">
+                              <SortAscendingIcon aria-hidden="true" />
+                            </span>
+                            {{ t('dashboard.library.filters.sortDirection.asc') }}
                           </div>
                         </RadioGroupOption>
                         <RadioGroupOption as="template" value="desc" v-slot="{ checked }">
@@ -167,8 +169,10 @@
                               'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
                             ]"
                           >
-                            <SortDescendingIcon aria-hidden="true" />
-                            Decrescente
+                            <span aria-hidden="true">
+                              <SortDescendingIcon aria-hidden="true" />
+                            </span>
+                            {{ t('dashboard.library.filters.sortDirection.desc') }}
                           </div>
                         </RadioGroupOption>
                       </div>
@@ -177,7 +181,7 @@
 
                   <div>
                     <label for="sort-by" class="label">
-                      Ordenar por
+                      {{ t('dashboard.library.filters.sortBy') }}
                     </label>
                     <select
                       name="sort-by"
@@ -202,7 +206,7 @@
                     class="button is-primary w-full justify-center text-base sm:text-sm"
                     @click="$emit('update:open', false)"
                   >
-                    Fechar filtros
+                    {{ t('dashboard.library.filters.closeMobile') }}
                   </button>
                 </div>
               </div>
@@ -217,6 +221,7 @@
 <script>
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import {
   Dialog,
@@ -264,16 +269,17 @@ export default {
 
   setup () {
     const store = useStore()
+    const { t } = useI18n()
 
     const gridMode = ref(store.state.collection.gridMode)
     const viewMode = ref(store.state.collection.viewMode)
 
     const sortProperties = ref([
-      { attr: 'title', title: 'Título' },
-      { attr: 'imprint', title: 'Editora' },
-      { attr: 'status', title: 'Estado' },
-      { attr: 'paidPrice.value', title: 'Preço pago' },
-      { attr: 'createdAt', title: 'Data de criação' }
+      { attr: 'title', title: t('book.properties.title') },
+      { attr: 'imprint', title: t('book.properties.imprint') },
+      { attr: 'status', title: t('book.properties.status') },
+      { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
+      { attr: 'createdAt', title: t('book.properties.createdAt') }
     ])
 
     const collections = computed(() => store.getters['sheet/collections'])
@@ -327,7 +333,8 @@ export default {
       sortProperty,
       sortDirection,
       sortProperties,
-      viewMode
+      viewMode,
+      t
     }
   }
 }

@@ -5,7 +5,7 @@
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
     <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-      Livros comprados
+      {{ t('dashboard.stats.booksBought') }}
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico de livros comprados por mês">
       <transition
@@ -37,6 +37,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import colors from 'tailwindcss/colors'
 
@@ -46,8 +47,6 @@ import useMotionSafe from '@/composables/useMotionSafe'
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
 import VueApexCharts from 'vue3-apexcharts'
-
-const ptBr = require('apexcharts/dist/locales/pt-br.json')
 
 export default {
   components: {
@@ -61,15 +60,18 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
-    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-
-    function parseDate (value) {
-      const parts = value.split('. / ')
-      return new Date(`${parts[1]}-${months.indexOf(parts[0]) + 1}`).toISOString()
-    }
+    const { t, locale } = useI18n()
 
     const { darkMode } = useDarkMode()
     const { motionSafe } = useMotionSafe()
+
+    const localeStr = computed(() => {
+      return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
+    })
+
+    const apexLocale = computed(() => {
+      return require('apexcharts/dist/locales/' + localeStr.value + '.json')
+    })
 
     const itemsBought = computed(() => ({
       options: {
@@ -78,8 +80,8 @@ export default {
             enabled: motionSafe.value
           },
           id: 'monthly-boughts',
-          locales: [ptBr],
-          defaultLocale: 'pt-br',
+          locales: [apexLocale.value],
+          defaultLocale: localeStr.value,
           toolbar: { show: false },
           zoom: { enabled: false }
         },
@@ -88,7 +90,7 @@ export default {
         grid: {
           borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
         },
-        labels: stats.value.monthly.map(m => parseDate(m.month)),
+        labels: (stats.value.monthly || []).map(m => m.month.toISOString()),
         tooltip: { enabled: false },
         xaxis: {
           labels: {
@@ -118,19 +120,13 @@ export default {
       },
       series: [
         {
-          name: 'Livros comprados',
-          data: stats.value.monthly.map(m => {
-            return parseInt(
-              m.count
-                .replace(/\./g, '')
-                .replace(',', '.')
-            )
-          })
+          name: t('dashboard.stats.booksBought'),
+          data: (stats.value.monthly || []).map(m => m.count)
         }
       ]
     }))
 
-    return { loading, itemsBought }
+    return { loading, itemsBought, t }
   }
 }
 </script>

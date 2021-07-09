@@ -33,25 +33,28 @@
                 </div>
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <DialogTitle as="h3" class="text-lg leading-6 font-title font-medium text-gray-900 dark:text-gray-100">
-                    {{ t('book.deleteModal.title') }}
+                    {{ t('auth.google.disconnectModal.title') }}
                   </DialogTitle>
                   <div class="mt-2 space-y-4 text-gray-500 dark:text-gray-400 text-sm">
                     <p>
-                      {{ t('book.deleteModal.message1') }}
+                      {{ t('auth.google.disconnectModal.message1') }}
                     </p>
                     <p>
-                      {{ t('book.deleteModal.message2') }}
+                      {{ t('auth.google.disconnectModal.message2') }}
+                    </p>
+                    <p>
+                      {{ t('auth.google.disconnectModal.message3') }}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="button" class="button is-danger sm:ml-3 w-full sm:w-auto justify-center sm:justify-start" @click="handleDelete">
-                {{ t('book.deleteModal.delete') }}
+              <button type="button" class="button is-danger sm:ml-3 w-full sm:w-auto justify-center sm:justify-start" @click="handleDisconnect">
+                {{ t('auth.google.disconnectModal.disconnect') }}
               </button>
               <button type="button" class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start" @click="$emit('update:open', false)">
-                {{ t('book.deleteModal.cancel') }}
+                {{ t('auth.google.disconnectModal.cancel') }}
               </button>
             </div>
           </div>
@@ -90,17 +93,17 @@ export default {
     open: Boolean
   },
 
-  emits: ['update:open', 'click:delete'],
+  emits: ['update:open', 'click:disconnect'],
 
   setup (_, context) {
-    function handleDelete (event) {
+    function handleDisconnect (event) {
       context.emit('update:open', false)
-      context.emit('click:delete', event)
+      context.emit('click:disconnect', event)
     }
 
     const { t } = useI18n()
 
-    return { handleDelete, t }
+    return { handleDisconnect, t }
   }
 }
 </script>

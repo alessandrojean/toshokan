@@ -17,7 +17,7 @@
     </div>
   </transition>
   <a href="#main-content" class="jump-to" ref="jumpToMain">
-    Pular para o conteúdo
+    {{ t('a11y.jumpToMain') }}
   </a>
   <p class="sr-only" aria-live="polite" aria-hidden="true">
     {{ navigationHelpText }}
@@ -41,6 +41,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 
@@ -51,6 +52,7 @@ export default {
 
   setup () {
     const store = useStore()
+    const { t, locale } = useI18n({ useScope: 'global' })
 
     const authStarted = computed(() => store.state.auth.started)
 
@@ -65,22 +67,30 @@ export default {
     }
 
     function changeNavigationHelpText (pageTitle) {
-      navigationHelpText.value = `Página alterada para ${pageTitle}.`
+      navigationHelpText.value = t('a11y.pageChanged', { pageTitle })
     }
 
     watch(() => route.fullPath, () => {
       nextTick(() => {
         setTimeout(() => {
-          changeNavigationHelpText(route.meta.title)
+          changeNavigationHelpText(route.meta.title())
           focusOnJumpLink()
         }, 500)
       })
     })
 
+    watch(locale, newLocale => {
+      document.title = route.meta.title() + ' | ' + t('app.name')
+      document.documentElement.lang = newLocale
+      localStorage.setItem('locale', newLocale)
+      store.commit('sheet/resetLoadedOnce')
+    })
+
     return {
       authStarted,
       jumpToMain,
-      navigationHelpText
+      navigationHelpText,
+      t
     }
   }
 }

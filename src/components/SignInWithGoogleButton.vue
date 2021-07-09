@@ -11,7 +11,7 @@
         <GoogleIcon />
       </span>
     </div>
-    <span>Entrar</span><span :class="collapse ? 'hidden md:block' : ''">&nbsp;com Google</span>
+    <span>{{ t('auth.google.signIn') }}</span><span :class="collapse ? 'hidden md:block' : ''">&nbsp;{{ t('auth.google.withGoogle') }}</span>
   </button>
 </template>
 
@@ -19,6 +19,7 @@
 import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import GoogleIcon from '@/components/icons/GoogleIcon'
 
@@ -51,10 +52,13 @@ export default {
 
     watch(signedIn, redirectToDashboard)
 
+    const { t } = useI18n()
+
     return {
       signedIn,
       started,
-      handleSignIn
+      handleSignIn,
+      t
     }
   }
 }

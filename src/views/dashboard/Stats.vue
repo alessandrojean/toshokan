@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col">
-    <SimpleHeader title="Estatísticas" :loading="loading" />
+    <SimpleHeader :title="t('dashboard.stats.title')" :loading="loading" />
 
     <div class="flex-1">
       <div v-if="!sheetIsEmpty && !tooEarly" class="h-full flex flex-col max-w-7xl w-full mx-auto py-6 px-6 lg:px-8 space-y-6">
@@ -14,7 +14,9 @@
           <span aria-hidden="true">
             <DotsHorizontalIcon class="w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
           </span>
-          <p class="text-lg text-gray-400 dark:text-gray-600">Mais estatísticas em breve.</p>
+          <p class="text-lg text-gray-400 dark:text-gray-600">
+            {{ t('dashboard.stats.moreSoon') }}
+          </p>
         </div>
       </div>
 
@@ -31,11 +33,10 @@
           id="empty-sheet-title"
           class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
         >
-          Você ainda não possui nenhum livro
+          {{ t('dashboard.stats.empty.title') }}
         </h2>
         <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-          Adicione pelo menos um livro para que possamos começar a
-          realizar os cálculos das estatísticas de sua biblioteca.
+          {{ t('dashboard.stats.empty.description' )}}
         </p>
         <router-link
           :to="{ name: 'DashboardNewBook' }"
@@ -44,7 +45,7 @@
           <span aria-hidden="true">
             <PlusIcon aria-hidden="true" />
           </span>
-          Novo livro
+          {{ t('dashboard.stats.empty.action') }}
         </router-link>
       </section>
 
@@ -61,11 +62,10 @@
           id="too-early-title"
           class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
         >
-          Ainda é cedo para exibir as estatísticas
+          {{ t('dashboard.stats.tooEarly.title') }}
         </h2>
         <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-          As estatísticas serão exibidas após o cadastro de pelo menos
-          dois meses de compras de livros na biblioteca.
+          {{ t('dashboard.stats.tooEarly.description') }}
         </p>
       </section>
     </div>
@@ -75,6 +75,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import { DotsHorizontalIcon, PlusIcon } from '@heroicons/vue/solid'
 import {
@@ -106,7 +107,9 @@ export default {
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
     const tooEarly = computed(() => store.state.sheet.stats.monthly?.length === 1)
 
-    return { loading, sheetIsEmpty, tooEarly }
+    const { t } = useI18n()
+
+    return { loading, sheetIsEmpty, tooEarly, t }
   }
 }
 </script>

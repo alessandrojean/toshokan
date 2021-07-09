@@ -12,14 +12,16 @@
           </template>
           <template v-else>
             <h1 class="text-2xl md:text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
-              Biblioteca
+              {{ t('dashboard.library.title') }}
             </h1>
             <ul class="mt-1 flex flex-col items-start sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
               <li class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
                 <span aria-hidden="true">
                   <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
                 </span>
-                <span class="sr-only">Coleção atual: </span>
+                <span class="sr-only">
+                  {{ t('dashboard.library.currentCollection') }}
+                </span>
                 {{ group }}
               </li>
 
@@ -27,7 +29,9 @@
                 <span aria-hidden="true">
                   <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
                 </span>
-                <span class="sr-only">Ordenando por: </span>
+                <span class="sr-only">
+                  {{ t('dashboard.library.sortingBy') }}
+                </span>
                 {{ sortPropertyName }}
               </li>
             </ul>
@@ -48,7 +52,7 @@
               <span aria-hidden="true">
                 <FilterIcon aria-hidden="true" />
               </span>
-              Filtrar
+              {{ t('dashboard.library.filter') }}
             </button>
             <router-link
               :to="{ name: 'DashboardNewBook' }"
@@ -57,7 +61,7 @@
               <span aria-hidden="true">
                 <PlusIcon aria-hidden="true" />
               </span>
-              Novo livro
+              {{ t('dashboard.library.newBook') }}
             </router-link>
           </template>
         </div>
@@ -71,7 +75,7 @@
         v-if="!sheetIsEmpty"
       >
         <h2 id="results-title" class="sr-only">
-          Itens da coleção {{ group }}
+          {{ t('dashboard.library.items.current', { group }) }}
         </h2>
 
         <transition
@@ -116,11 +120,10 @@
           id="empty-sheet-title"
           class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
         >
-          Sua biblioteca está vazia
+          {{ t('dashboard.library.empty.title') }}
         </h2>
         <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-          Adicione um primeiro livro para começar a organizar
-          melhor suas coleções e poder visualizar as estatísticas mensais.
+          {{ t('dashboard.library.empty.description') }}
         </p>
         <router-link
           :to="{ name: 'DashboardNewBook' }"
@@ -129,7 +132,7 @@
           <span aria-hidden="true">
             <PlusIcon aria-hidden="true" />
           </span>
-          Novo livro
+          {{ t('dashboard.library.newBook') }}
         </router-link>
       </section>
     </div>
@@ -142,6 +145,7 @@
 <script>
 import { computed, nextTick, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import orderBy from 'lodash.orderby'
 
@@ -174,6 +178,7 @@ export default {
 
   setup () {
     const store = useStore()
+    const { t } = useI18n()
 
     const filterOpen = ref(false)
 
@@ -188,11 +193,11 @@ export default {
     const viewMode = computed(() => store.state.collection.viewMode)
 
     const sortPropertyNames = {
-      title: 'Título',
-      imprint: 'Editora',
-      status: 'Estado',
-      'paidPrice.value': 'Preço pago',
-      createdAt: 'Data de criação'
+      title: t('book.properties.title'),
+      imprint: t('book.properties.imprint'),
+      status: t('book.properties.status'),
+      'paidPrice.value': t('book.properties.paidPrice'),
+      createdAt: t('book.properties.createdAt')
     }
 
     const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
@@ -253,7 +258,8 @@ export default {
       sortDirection,
       sortProperty,
       sortPropertyName,
-      viewMode
+      viewMode,
+      t
     }
   }
 }

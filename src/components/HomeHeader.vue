@@ -7,7 +7,7 @@
             <LibraryIcon class="h-9 w-9 text-indigo-500" />
           </span>
           <span class="text-gray-800 dark:text-gray-200 font-title font-semibold text-xl ml-3" aria-hidden="true">
-            Toshokan
+            {{ t('app.name') }}
           </span>
         </h1>
         <div class="flex-1 hidden md:block md:ml-6">
@@ -15,7 +15,7 @@
             :to="{ name: 'Instructions' }"
             class="button is-ghost"
           >
-            Instruções de uso
+            {{ t('home.header.instructions') }}
           </router-link>
         </div>
         <router-link
@@ -23,7 +23,7 @@
           class="button is-primary"
           v-if="signedIn"
         >
-          <span lang="en">Dashboard</span>
+          {{ t('home.header.dashboard') }}
         </router-link>
         <SignInWithGoogleButton collapse />
       </div>
@@ -34,6 +34,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
@@ -49,7 +50,9 @@ export default {
     const store = useStore()
     const signedIn = computed(() => store.state.auth.signedIn)
 
-    return { signedIn }
+    const { t } = useI18n()
+
+    return { signedIn, t }
   }
 }
 </script>

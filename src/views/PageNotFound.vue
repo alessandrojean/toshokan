@@ -6,10 +6,10 @@
           <ExclamationCircleIcon class="h-12 w-12 mx-auto text-red-500" aria-hidden="true" />
         </span>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-200">
-          Página não encontrada
+          {{ t('pageNotFound.title') }}
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-          O conteúdo procurado não foi localizado.
+          {{ t('pageNotFound.description') }}
         </p>
       </header>
       <div class="w-full flex justify-center">
@@ -20,12 +20,12 @@
           <span aria-hidden="true">
             <HomeIcon />
           </span>
-          Voltar para o início
+          {{ t('pageNotFound.goBack') }}
         </router-link>
       </div>
       <footer class="mt-8 space-y-8 flex flex-col items-center">
         <p class="font-mono text-gray-400 text-xs dark:text-gray-500">
-          Toshokan v{{ appVersion }}
+          {{ t('footer.version', { version: appVersion }) }}
           (<a :href="gitHubUrl" target="_blank" class="hover:text-indigo-500 hover:underline dark:hover:text-gray-200">{{ gitHash }}</a>)
         </p>
       </footer>
@@ -36,6 +36,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import useAppInfo from '@/composables/useAppInfo'
 
@@ -56,11 +57,14 @@ export default {
     const store = useStore()
     const signedIn = computed(() => store.state.auth.signedIn)
 
+    const { t } = useI18n()
+
     return {
       appVersion,
       gitHash,
       gitHubUrl,
-      signedIn
+      signedIn,
+      t
     }
   }
 }

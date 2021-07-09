@@ -47,6 +47,9 @@ export default {
     },
     signOut: function () {
       return window.gapi.auth2.getAuthInstance().signOut()
+    },
+    disconnect: function () {
+      window.gapi.auth2.getAuthInstance().disconnect()
     }
   },
   mutations: {

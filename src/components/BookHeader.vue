@@ -15,7 +15,7 @@
               <ChevronLeftIcon class="w-8 h-8 text-gray-400" />
             </span>
             <span class="sr-only">
-              Volume {{ previousBook.titleParts[1] ? '#' + previousBook.titleParts[1] : 'único' }}
+              {{ volume }}
             </span>
           </router-link>
 
@@ -62,7 +62,7 @@
               <ChevronRightIcon class="w-8 h-8 text-gray-400" />
             </span>
             <span class="sr-only">
-              Volume {{ nextBook.titleParts[1] ? '#' + nextBook.titleParts[1] : 'único' }}
+              {{ volume }}
             </span>
           </router-link>
         </div>
@@ -75,7 +75,7 @@
           <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-44 mb-1"></div>
           <nav v-else class="mb-2 md:mb-1 text-sm font-medium text-gray-500 dark:text-gray-300">
             <ul class="flex space-x-1 md:space-x-3 items-center">
-              <li>Biblioteca</li>
+              <li>{{ t('dashboard.details.header.library') }}</li>
               <li aria-hidden="true">
                 <ChevronRightIcon class="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </li>
@@ -97,7 +97,7 @@
               <span aria-hidden="true">
                 <BookOpenIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
-              Volume {{ volume }}
+              {{ volume }}
             </li>
 
             <!-- Book authors -->
@@ -107,7 +107,7 @@
                 <UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
               <span class="sr-only">
-                {{ book.authors.length === 1 ? 'Autor: ' : 'Autores: ' }}
+                {{ t('dashboard.details.header.author', book.authors.length) }}
               </span>
               {{ bookAuthors }}
             </li>
@@ -118,8 +118,10 @@
               <span aria-hidden="true">
                 <BookmarkIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
-              <span class="sr-only">Estado: </span>
-              {{ book.status }}
+              <span class="sr-only">
+                {{ t('dashboard.details.header.status') }}
+              </span>
+              {{ t(`book.${book.status.toLowerCase()}`) }}
             </li>
 
             <!-- Book collection -->
@@ -128,7 +130,9 @@
               <span aria-hidden="true">
                 <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
-              <span class="sr-only">Coleção: </span>
+              <span class="sr-only">
+                {{ t('dashboard.details.header.collection') }}
+              </span>
               {{ book.collection }}
             </li>
 
@@ -138,7 +142,9 @@
               <span aria-hidden="true">
                 <LocationMarkerIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
-              <span class="sr-only">Loja da compra: </span>
+              <span class="sr-only">
+                {{ t('dashboard.details.header.store') }}
+              </span>
               {{ book.store }}
             </li>
           </ul>
@@ -168,7 +174,7 @@
                 <span aria-hidden="true">
                   <PencilIcon aria-hidden="true" />
                 </span>
-                Editar
+                {{ t('dashboard.details.header.edit') }}
               </button>
             </transition>
 
@@ -186,7 +192,7 @@
                     class="button"
                     :disabled="editing"
                   >
-                    Opções
+                    {{ t('dashboard.details.header.options.title') }}
                     <span aria-hidden="true">
                       <ChevronDownIcon class="is-right" aria-hidden="true" />
                     </span>
@@ -221,7 +227,7 @@
                               aria-hidden="true"
                             />
                           </span>
-                          Abrir na Amazon
+                          {{ t('dashboard.details.header.options.amazon') }}
                         </a>
                       </MenuItem>
                     </div>
@@ -244,7 +250,7 @@
                               aria-hidden="true"
                             />
                           </span>
-                          Alterar capa
+                          {{ t('dashboard.details.header.options.updateCover') }}
                         </button>
                       </MenuItem>
                     </div>
@@ -267,7 +273,7 @@
                               aria-hidden="true"
                             />
                           </span>
-                          Marcar como {{ isRead ? 'não lido' : 'lido' }}
+                          {{ t('dashboard.details.header.options.markAs', { status: t(isRead ? 'book.unread' : 'book.read') }) }}
                         </button>
                       </MenuItem>
                       <MenuItem v-slot="{ active }">
@@ -288,7 +294,7 @@
                               aria-hidden="true"
                             />
                           </span>
-                          {{ isFavorite ? 'Remover dos' : 'Adicionar aos' }} favoritos
+                          {{ t(`dashboard.details.header.options.${isFavorite ? 'removeFromFavorites' : 'addToFavorites' }`) }}
                         </button>
                       </MenuItem>
                     </div>
@@ -311,7 +317,7 @@
                               aria-hidden="true"
                             />
                           </span>
-                          Deletar
+                          {{ t('dashboard.details.header.options.delete')}}
                         </button>
                       </MenuItem>
                     </div>
@@ -356,6 +362,7 @@ import {
   MenuItems,
   MenuItem
 } from '@headlessui/vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'BookHeader',
@@ -401,6 +408,7 @@ export default {
 
   setup (props) {
     const { book } = toRefs(props)
+    const { t } = useI18n()
 
     const isbn10 = computed(() => {
       if (!book.value.codeType.includes('ISBN')) {
@@ -413,33 +421,63 @@ export default {
     const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
     const isRead = computed(() => book.value.status === BookStatus.READ)
 
-    const volume = computed(() => {
-      if (!book.value.titleParts) {
-        return ''
-      }
-
-      return book.value.titleParts[1] ? '#' + book.value.titleParts[1] : 'único'
-    })
-
     const bookAuthors = computed(() => {
       if (!book.value.authors) {
         return ''
       }
 
+      const separator = t('dashboard.details.header.authorSeparator')
+
       if (book.value.authors.length > 3) {
         const firstThree = book.value.authors
           .slice(0, 3)
-          .join(', ')
+          .join(separator)
 
-        return `${firstThree} e mais ${book.value.authors.length - 3}`
+        return t(
+          'dashboard.details.header.authorListIncomplete',
+          { authors: firstThree, number: book.value.authors.length - 3 }
+        )
       }
 
-      return book.value.authors.join(', ').replace(/, ([^,]*)$/, ' e $1')
+      if (book.value.authors.length === 2) {
+        const firstOnes = book.value.authors.slice(-1).join(separator)
+
+        return t(
+          'dashboard.details.header.authorListComplete',
+          {
+            authors: firstOnes,
+            lastAuthor: book.value.authors[book.value.authors.length - 1]
+          }
+        )
+      }
+
+      return book.value.authors[0]
     })
 
     const coverExpanded = ref(false)
 
-    return { bookAuthors, isFavorite, isRead, isbn10, volume, coverExpanded }
+    const volume = computed(() => {
+      if (!book.value) {
+        return ''
+      }
+
+      const isSingle = book.value.titleParts[1] === undefined
+
+      return t(
+        isSingle ? 'book.single' : 'book.volume',
+        isSingle ? undefined : { number: book.value.titleParts[1] }
+      )
+    })
+
+    return {
+      bookAuthors,
+      isFavorite,
+      isRead,
+      isbn10,
+      coverExpanded,
+      volume,
+      t
+    }
   }
 }
 </script>

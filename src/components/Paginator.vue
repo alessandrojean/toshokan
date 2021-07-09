@@ -12,7 +12,7 @@
           @click.stop="$emit('page', 1)"
           :disabled="!paginationInfo.has_previous_page"
         >
-          <span class="sr-only">Primeira página</span>
+          <span class="sr-only">{{ t('pagination.firstPage') }}</span>
           <span aria-hidden="true">
             <ChevronDoubleLeftIcon class="h-5 w-5" aria-hidden="true" />
           </span>
@@ -26,7 +26,7 @@
           @click.stop="$emit('page', paginationInfo.previous_page)"
           :disabled="!paginationInfo.has_previous_page"
         >
-          <span class="sr-only">Página anterior</span>
+          <span class="sr-only">{{ t('pagination.previousPage') }}</span>
           <span aria-hidden="true">
             <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
           </span>
@@ -46,8 +46,8 @@
           :aria-current="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page"
           @click.stop="$emit('page', paginationInfo.first_page + pageIdx - 1)"
         >
-          <span class="sr-only" v-if="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page">Página atual, </span>
-          <span class="sr-only">Ir para a página </span>
+          <span class="sr-only" v-if="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page">{{ t('pagination.current') }}</span>
+          <span class="sr-only">{{ t('pagination.goToPage') }}</span>
           {{ paginationInfo.first_page + pageIdx - 1 }}
         </button>
       </li>
@@ -59,7 +59,7 @@
           @click.stop="$emit('page', paginationInfo.next_page)"
           :disabled="!paginationInfo.has_next_page"
         >
-          <span class="sr-only">Próxima página</span>
+          <span class="sr-only">{{ t('pagination.nextPage') }}</span>
           <span aria-hidden="true">
             <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
           </span>
@@ -73,7 +73,7 @@
           @click.stop="$emit('page', paginationInfo.total_pages)"
           :disabled="!paginationInfo.has_next_page"
         >
-          <span class="sr-only">Última página</span>
+          <span class="sr-only">{{ t('pagination.lastPage') }}</span>
           <span aria-hidden="true">
             <ChevronDoubleRightIcon class="h-5 w-5" aria-hidden="true" />
           </span>
@@ -84,6 +84,9 @@
 </template>
 
 <script>
+import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
@@ -105,10 +108,16 @@ export default {
     paginationInfo: Object
   },
 
-  computed: {
-    links: function () {
-      return this.paginationInfo.last_page + 1 - this.paginationInfo.first_page
-    }
+  setup (props) {
+    const { paginationInfo } = toRefs(props)
+
+    const links = computed(() => {
+      return paginationInfo.value.last_page + 1 - paginationInfo.value.first_page
+    })
+
+    const { t } = useI18n()
+
+    return { links, t }
   }
 }
 </script>

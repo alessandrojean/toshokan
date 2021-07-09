@@ -5,7 +5,7 @@
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
     <h3 v-else id="monthly-expense-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-      Gasto mensal
+      {{ t('dashboard.stats.monthlyExpense') }}
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico do gasto mensal">
       <transition
@@ -37,6 +37,7 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import colors from 'tailwindcss/colors'
 
@@ -46,8 +47,6 @@ import useMotionSafe from '@/composables/useMotionSafe'
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
 import VueApexCharts from 'vue3-apexcharts'
-
-const ptBr = require('apexcharts/dist/locales/pt-br.json')
 
 export default {
   components: {
@@ -61,24 +60,18 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
-    function formatPrice (value) {
-      const formatter = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-      })
-
-      return formatter.format(value)
-    }
-
-    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-
-    function parseDate (value) {
-      const parts = value.split('. / ')
-      return new Date(`${parts[1]}-${months.indexOf(parts[0]) + 1}`).toISOString()
-    }
+    const { n, t, locale } = useI18n()
 
     const { darkMode } = useDarkMode()
     const { motionSafe } = useMotionSafe()
+
+    const localeStr = computed(() => {
+      return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
+    })
+
+    const apexLocale = computed(() => {
+      return require('apexcharts/dist/locales/' + localeStr.value + '.json')
+    })
 
     const expenses = computed(() => ({
       options: {
@@ -87,8 +80,8 @@ export default {
             enabled: motionSafe.value
           },
           id: 'monthly-expenses',
-          locales: [ptBr],
-          defaultLocale: 'pt-br',
+          locales: [apexLocale.value],
+          defaultLocale: localeStr.value,
           toolbar: { show: false },
           zoom: { enabled: false }
         },
@@ -98,7 +91,7 @@ export default {
           borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
         },
         stroke: { curve: 'smooth' },
-        labels: stats.value.monthly.map(m => parseDate(m.month)),
+        labels: (stats.value.monthly || []).map(m => m.month.toISOString()),
         tooltip: {
           theme: darkMode.value ? 'dark' : 'light',
           x: { format: 'MMMMM/yyyy' }
@@ -114,7 +107,11 @@ export default {
         },
         yaxis: {
           labels: {
-            formatter: value => formatPrice(value),
+            formatter: value => {
+              return n(value, 'currency', {
+                currency: stats.value.money?.currency || 'USD'
+              })
+            },
             style: {
               colors: darkMode.value ? colors.gray[400] : colors.gray[500]
             }
@@ -123,20 +120,13 @@ export default {
       },
       series: [
         {
-          name: 'Gasto mensal',
-          data: stats.value.monthly.map(m => {
-            return parseFloat(
-              m.totalSpent
-                .replace('R$ ', '')
-                .replace(/\./g, '')
-                .replace(',', '.')
-            )
-          })
+          name: t('dashboard.stats.monthlyExpense'),
+          data: (stats.value.monthly || []).map(m => m.totalSpent)
         }
       ]
     }))
 
-    return { loading, expenses }
+    return { loading, expenses, t }
   }
 }
 </script>

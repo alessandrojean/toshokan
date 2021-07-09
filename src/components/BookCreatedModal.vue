@@ -33,11 +33,11 @@
                 </div>
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <DialogTitle as="h3" class="text-lg leading-6 font-title font-medium text-gray-900 dark:text-gray-100">
-                    Livro adicionado com sucesso
+                    {{ t('book.createdModal.title') }}
                   </DialogTitle>
-                  <div class="mt-2 space-y-1 text-gray-500 dark:text-gray-400 text-sm">
+                  <div class="mt-2 space-y-4 text-gray-500 dark:text-gray-400 text-sm">
                     <p>
-                      Os metadados do livro foram inseridos na planilha.
+                      {{ t('book.createdModal.message') }}
                     </p>
                   </div>
                 </div>
@@ -49,14 +49,14 @@
                 class="button is-primary sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
                 @click="handleView"
               >
-                Visualizar
+                {{ t('book.createdModal.view') }}
               </button>
               <button
                 type="button"
                 class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start"
                 @click="handleNew"
               >
-                Novo livro
+                {{ t('book.createdModal.newBook') }}
               </button>
             </div>
           </div>
@@ -67,6 +67,8 @@
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
+
 import { CheckIcon } from '@heroicons/vue/outline'
 
 import {
@@ -106,7 +108,9 @@ export default {
       context.emit('click:view', event)
     }
 
-    return { handleNew, handleView }
+    const { t } = useI18n()
+
+    return { handleNew, handleView, t }
   }
 }
 </script>

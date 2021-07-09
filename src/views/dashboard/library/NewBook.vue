@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <SimpleHeader
       class="shadow-none sm:shadow"
-      title="Novo livro"
+      :title="t('dashboard.newBook.title')"
       :subtitle="stepText"
     />
 
@@ -25,21 +25,23 @@
           <div class="px-4 py-5 space-y-6 sm:p-6">
             <div>
               <h3 id="step-1-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-                <span class="sr-only">Etapa 1 de 4: </span>
-                Preenchimento automático
-                <span class="sr-only">a partir do ISBN</span>
+                <span class="sr-only">{{ t('dashboard.newBook.step', [1, 4]) }}: </span>
+                {{ t('dashboard.newBook.autoFill.title') }}
+                <span class="sr-only">{{ t('dashboard.newBook.autoFill.titleSr') }}</span>
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Obtenha automaticamente os metadados do livro a partir de seu ISBN.
+                {{ t('dashboard.newBook.autoFill.description') }}
               </p>
             </div>
             <form
               role="form"
-              aria-label="Pesquisa na CBL"
+              :aria-label="t('dashboard.newBook.autoFill.ariaLabel')"
               class="flex flex-col items-end"
               @submit.prevent="search"
             >
-              <label for="book-isbn" id="isbn-search-label" class="sr-only">ISBN para pesquisa</label>
+              <label for="book-isbn" id="isbn-search-label" class="sr-only">
+                {{ t('dashboard.newBook.autoFill.label' )}}
+              </label>
               <div class="group relative w-full">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
                   <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
@@ -49,33 +51,37 @@
                   inputmode="numeric"
                   id="book-isbn"
                   class="input text-lg pl-10 md:pr-16"
-                  placeholder="Pesquisar por ISBN"
+                  :placeholder="t('dashboard.newBook.autoFill.placeholder')"
                   v-model="isbnQuery"
                   @keyup.enter.prevent="search"
                   aria-labelledby="isbn-search-label search-provider-info"
                 >
                 <p class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
                   <span class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md">
-                    <span class="sr-only">Pressione </span>
-                    <kbd class="font-sans">Enter</kbd>
-                    <span class="sr-only"> para pesquisar</span>
+                    <span class="sr-only">{{ t('dashboard.newBook.autoFill.press') }} </span>
+                    <kbd class="font-sans">{{ t('dashboard.newBook.autoFill.enter') }}</kbd>
+                    <span class="sr-only"> {{ t('dashboard.newBook.autoFill.toSearch') }}</span>
                   </span>
                 </p>
               </div>
-              <p id="search-provider-info" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Mecanismo de pesquisa por
-                <span class="sr-only">CBL</span>
+              <i18n-t
+                keypath="dashboard.newBook.autoFill.searchPowered"
+                tag="p"
+                id="search-provider-info"
+                class="mt-2 text-xs text-gray-500 dark:text-gray-400"
+              >
+                <span class="sr-only">{{ t('dashboard.newBook.autoFill.cbl') }}</span>
                 <img src="@/assets/cbl-logo.png" alt="" class="cbl-logo" aria-hidden="true">
-              </p>
+              </i18n-t>
               <button type="submit" class="sr-only">
-                Pesquisar
+                {{ t('dashboard.newBook.autoFill.search') }}
               </button>
             </form>
 
             <Alert
               type="error"
               :show="searchFailed"
-              title="Houve um erro durante a pesquisa"
+              :title="t('dashboard.newBook.autoFill.error')"
             >
               <p>{{ searchError }}</p>
             </Alert>
@@ -84,7 +90,7 @@
               type="info"
               :show="noResultsFound"
             >
-              <p>Nenhum resultado encontrado.</p>
+              <p>{{ t('dashboard.newBook.autoFill.noResults') }}</p>
             </Alert>
           </div>
           <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
@@ -93,8 +99,10 @@
               class="button is-ghost -mr-4"
               @click.stop="handleFillManually"
             >
-              Preencher manualmente
-              <ChevronRightIcon class="is-right" aria-hidden="true" />
+              {{ t('dashboard.newBook.autoFill.fillManually') }}
+              <span aria-hidden="true">
+                <ChevronRightIcon class="is-right" aria-hidden="true" />
+              </span>
             </button>
           </div>
           <LoadingIndicator :loading="searching">
@@ -114,12 +122,12 @@
             <div>
               <h3 id="step-2-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                 <span class="sr-only">
-                  Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+                  {{ t('dashboard.newBook.step', [searchAvailable ? step : step - 1, searchAvailable ? 4 : 3]) }}
                 </span>
-                Metadados do livro
+                {{ t('dashboard.newBook.metadata.title') }}
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Estas informações serão cadastradas na planilha.
+                {{ t('dashboard.newBook.metadata.description') }}
               </p>
             </div>
 
@@ -138,8 +146,10 @@
                 @click.stop="step = 1"
                 v-if="searchAvailable"
               >
-                <ChevronLeftIcon aria-hidden="true" />
-                Voltar uma etapa
+                <span aria-hidden="true">
+                  <ChevronLeftIcon aria-hidden="true" />
+                </span>
+                {{ t('dashboard.newBook.goBack') }}
               </button>
             </div>
 
@@ -148,8 +158,10 @@
               class="button is-primary"
               @click.stop="handleSearchCover"
             >
-              {{ book.codeType.includes('ISBN') ? 'Procurar capa' : 'Revisar' }}
-              <ChevronRightIcon class="is-right" aria-hidden="true" />
+              {{ t(`dashboard.newBook.metadata.${book.codeType.includes('ISBN') ? 'findCover' : 'review'}`) }}
+              <span aria-hidden="true">
+                <ChevronRightIcon class="is-right" aria-hidden="true" />
+              </span>
             </button>
           </div>
         </section>
@@ -164,12 +176,12 @@
             <div>
               <h3 id="step-3-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
                 <span class="sr-only">
-                  Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+                  {{ t('dashboard.newBook.step', [searchAvailable ? step : step - 1, searchAvailable ? 4 : 3]) }}
                 </span>
-                Imagem de capa
+                {{ t('dashboard.newBook.cover.title') }}
               </h3>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Escolha a imagem de capa do livro ou pule direto para a revisão.
+                {{ t('dashboard.newBook.cover.description') }}
               </p>
             </div>
 
@@ -186,8 +198,10 @@
               class="button is-ghost -ml-4"
               @click.stop="step = 2"
             >
-              <ChevronLeftIcon aria-hidden="true" />
-              Voltar uma etapa
+              <span aria-hidden="true">
+                <ChevronLeftIcon aria-hidden="true" />
+              </span>
+              {{ t('dashboard.newBook.goBack') }}
             </button>
 
             <button
@@ -195,8 +209,10 @@
               class="button is-primary"
               @click.stop="step = 4"
             >
-              Revisar
-              <ChevronRightIcon class="is-right" aria-hidden="true" />
+              {{ t('dashboard.newBook.cover.review') }}
+              <span aria-hidden="true">
+                <ChevronRightIcon class="is-right" aria-hidden="true" />
+              </span>
             </button>
           </div>
           <LoadingIndicator :loading="coverFinding">
@@ -210,13 +226,13 @@
           v-else
           class="sm:max-w-2xl w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           :info="bookInfo"
-          title="Informações do livro"
-          subtitle="Revise as informações antes de concluir o procedimento."
+          :title="t('dashboard.newBook.review.title')"
+          :subtitle="t('dashboard.newBook.review.description')"
           tabindex="-1"
         >
           <template v-slot:step-indicator>
             <span class="sr-only">
-              Etapa {{ searchAvailable ? step : step - 1 }} de {{ searchAvailable ? 4 : 3 }}
+              {{ t('dashboard.newBook.step', [searchAvailable ? step : step - 1, searchAvailable ? 4 : 3]) }}
             </span>
           </template>
           <template v-slot:footer>
@@ -225,8 +241,10 @@
               class="button is-ghost -ml-4"
               @click.stop="step = book.codeType.includes('ISBN') ? 3 : 2"
             >
-              <ChevronLeftIcon aria-hidden="true" />
-              Voltar uma etapa
+              <span aria-hidden="true">
+                <ChevronLeftIcon aria-hidden="true" />
+              </span>
+              {{ t('dashboard.newBook.goBack') }}
             </button>
 
             <button
@@ -234,8 +252,10 @@
               class="button is-primary"
               @click.stop="handleInsertBook"
             >
-              <CheckIcon aria-hidden="true" />
-              Concluir
+              <span aria-hidden="true">
+                <CheckIcon aria-hidden="true" />
+              </span>
+              {{ t('dashboard.newBook.review.finish') }}
             </button>
           </template>
 
@@ -261,6 +281,8 @@
 <script>
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import useBookInserter from '@/composables/useBookInserter'
 import useIsbnSearch, { useSearchAvailable } from '@/composables/useIsbnSearch'
@@ -302,6 +324,7 @@ export default {
 
   setup () {
     const mainEl = ref(null)
+    const { t } = useI18n({ useScope: 'global' })
 
     function toDateInputValue (date) {
       const local = new Date(date)
@@ -334,7 +357,8 @@ export default {
     const stepText = computed(() => {
       const currentStep = searchAvailable.value ? step.value : step.value - 1
       const totalSteps = searchAvailable.value ? 4 : 3
-      return `Etapa ${currentStep} de ${totalSteps}`
+
+      return t('dashboard.newBook.step', [currentStep, totalSteps])
     })
 
     const isbnSearchStep = useIsbnSearchStep(step, book, bookInitialState)
@@ -397,7 +421,8 @@ export default {
       ...isbnSearchStep,
       ...bookFormStep,
       ...coverFinderStep,
-      ...revisionStep
+      ...revisionStep,
+      t
     }
   }
 }
@@ -470,21 +495,25 @@ function useCoverFinderStep () {
 }
 
 function useRevisionStep (book) {
-  function formatPrice ({ value, currency }) {
-    const formatter = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency
-    })
+  const { t, d, n } = useI18n({ useScope: 'global' })
+  const store = useStore()
 
-    return formatter.format(value.replace(',', '.'))
+  const timeZone = computed(() => store.state.sheet.timeZone)
+
+  function formatPrice ({ value, currency }) {
+    return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
   }
 
   const boughtAt = computed(() => {
     if (book.boughtAt && book.boughtAt.length > 0) {
-      return book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+      return d(
+        new Date(`${book.boughtAt}T00:00:00.000${timeZone.value.offsetStr}`),
+        'short',
+        { timeZone: timeZone.value.name }
+      )
     }
 
-    return 'Desconhecida'
+    return t('dashboard.newBook.review.dateUnknown')
   })
 
   const formattedLabelPrice = computed(() => {
@@ -502,54 +531,69 @@ function useRevisionStep (book) {
   })
 
   const bookInfo = computed(() => {
+    const separator = t('dashboard.details.header.authorSeparator')
+    let authors = (book.authors || []).join(separator)
+
+    if (book.authors && book.authors.length >= 2) {
+      const firstAuthors = book.authors.slice(0, -1).join(separator)
+
+      authors = t(
+        'dashboard.details.header.authorListComplete',
+        {
+          authors: firstAuthors,
+          lastAuthor: book.authors[book.authors.length - 1]
+        }
+      )
+    }
+
     return [
       {
-        title: 'Identificação',
+        title: t('book.properties.id'),
         value: book.code,
         property: 'code'
       },
       {
-        title: 'Título',
+        title: t('book.properties.title'),
         value: book.title,
         property: 'title'
       },
       {
-        title: book.authors.length > 1 ? 'Autores' : 'Autor',
-        value: book.authors.join(', ').replace(/, ([^,]*)$/, ' e $1'),
+        title: t('book.properties.author', book.authors.length),
+        value: authors,
         property: 'authors'
       },
       {
-        title: 'Editora',
+        title: t('book.properties.imprint'),
         value: book.imprint,
         property: 'imprint'
       },
       {
-        title: 'Coleção',
+        title: t('book.properties.collection'),
         value: book.collection,
         property: 'collection'
       },
       {
-        title: 'Formato',
+        title: t('book.properties.format'),
         value: book.format,
         property: 'format'
       },
       {
-        title: 'Local da compra',
+        title: t('book.properties.store'),
         value: book.store,
         property: 'store'
       },
       {
-        title: 'Preço de capa',
+        title: t('book.properties.labelPrice'),
         value: formattedLabelPrice.value,
         property: 'labelPrice'
       },
       {
-        title: 'Preço pago',
+        title: t('book.properties.paidPrice'),
         value: formattedPaidPrice.value,
         property: 'paidPrice'
       },
       {
-        title: 'Data da aquisição',
+        title: t('book.properties.boughtAt'),
         value: boughtAt.value,
         property: 'boughtAt'
       }

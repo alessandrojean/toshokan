@@ -10,11 +10,10 @@
         </span>
         <p class="ml-3 font-medium text-white truncate">
           <span class="md:hidden">
-            Serviço atualmente em beta!
+            {{ t('dashboard.home.beta.short') }}
           </span>
           <span class="hidden md:inline">
-            Este serviço está atualmente em beta,
-            é possível que você encontre alguns bugs.
+            {{ t('dashboard.home.beta.full') }}
           </span>
         </p>
       </div>
@@ -24,7 +23,7 @@
           class="-mr-1 flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
           @click.stop="handleDismiss"
         >
-           <span class="sr-only">Fechar</span>
+           <span class="sr-only">{{ t('dashboard.home.beta.close') }}</span>
            <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
         </button>
       </div>
@@ -33,6 +32,9 @@
 </template>
 
 <script>
+import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import { SpeakerphoneIcon, XIcon } from '@heroicons/vue/outline'
 
 export default {
@@ -43,21 +45,27 @@ export default {
     XIcon
   },
 
-  data: () => ({
-    hideBetaWarning: true
-  }),
+  setup () {
+    const hideBetaWarning = ref(true)
 
-  methods: {
-    handleDismiss: function () {
-      this.hideBetaWarning = true
+    function handleDismiss () {
+      hideBetaWarning.value = true
       window.localStorage.setItem('hide_beta_warning', 'true')
     }
-  },
 
-  mounted () {
-    const hideFromStorage = window.localStorage.getItem('hide_beta_warning')
+    onMounted(() => {
+      const hideFromStorage = window.localStorage.getItem('hide_beta_warning')
 
-    this.hideBetaWarning = hideFromStorage !== null
+      hideBetaWarning.value = hideFromStorage !== null
+    })
+
+    const { t } = useI18n()
+
+    return {
+      hideBetaWarning,
+      handleDismiss,
+      t
+    }
   }
 }
 </script>

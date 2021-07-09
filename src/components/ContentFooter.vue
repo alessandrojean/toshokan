@@ -1,20 +1,17 @@
 <template>
   <footer class="content-footer">
-    <p>Toshokan v{{ appVersion }}</p>
-    <p>Última atualização feita em {{ date }} às {{ time }}.</p>
+    <p>{{ t('footer.version', { version: appVersion }) }}</p>
+    <p>{{ t('footer.lastUpdate', [d(date, 'long')]) }}</p>
   </footer>
 </template>
 
 <script>
 import useAppInfo from '@/composables/useAppInfo'
+import { useI18n } from 'vue-i18n'
 
 export default {
   props: {
     date: {
-      type: String,
-      required: true
-    },
-    time: {
       type: String,
       required: true
     }
@@ -22,8 +19,9 @@ export default {
 
   setup () {
     const { appVersion } = useAppInfo()
+    const { t, d } = useI18n()
 
-    return { appVersion }
+    return { appVersion, t, d }
   }
 }
 </script>

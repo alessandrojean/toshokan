@@ -7,8 +7,8 @@
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
       <div class="col-span-7 sm:col-span-5 md:col-span-1">
         <label for="book-code" class="label">
-          Identificação
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.id') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
           id="book-code"
@@ -16,7 +16,7 @@
           :value="book.code"
           @input="handleInput('code', $event.target.value)"
           class="input"
-          placeholder="ex. 9788583621508"
+          :placeholder="t('book.form.example.placeholder', [t('book.form.example.id')])"
           required
           aria-describedby="book-code-error"
           :aria-invalid="v$.code.$error"
@@ -29,8 +29,8 @@
 
     <div>
       <label for="book-title" class="label">
-        Título
-        <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+        {{ t('book.properties.title') }}
+        <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-title"
@@ -38,7 +38,7 @@
         :value="book.title"
         @input="handleInput('title', $event.target.value)"
         class="input"
-        placeholder="ex. A Nova Ilha do Tesouro"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.title')])"
         required
         aria-describedby="book-title-error"
         :aria-invalid="v$.title.$error"
@@ -50,8 +50,8 @@
 
     <div>
       <label for="book-authors" class="label">
-        Autores
-        <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+        {{ t('book.properties.authors') }}
+        <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-authors"
@@ -59,13 +59,13 @@
         :value="book.authorsStr"
         @input="handleInput('authorsStr', $event.target.value)"
         class="input"
-        placeholder="ex. Osamu Tezuka"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.authors')])"
         aria-describedby="book-authors-hint book-authors-error"
         :aria-invalid="v$.authorsStr.$error"
         required
       >
       <p id="book-authors-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
-        Separe os nomes utilizando o caractere de ponto-e-vírgula.
+        {{ t('book.form.authorsHint') }}
       </p>
       <p id="book-authors-error" class="sr-only" aria-hidden="true">
         {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
@@ -75,8 +75,8 @@
     <div class="grid grid-cols-12 sm:grid-cols-2 gap-6">
       <div class="col-span-12 sm:col-span-1">
         <label for="book-imprint" class="label">
-          Editora
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.imprint') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -85,7 +85,7 @@
             :value="book.imprint"
             @input="handleInput('imprint', $event.target.value)"
             class="input pr-9"
-            placeholder="ex. NewPOP"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.imprint')])"
             list="imprints"
             required
             aria-describedby="book-imprint-error"
@@ -100,7 +100,7 @@
               {{ imprint }}
             </option>
           </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
@@ -111,8 +111,8 @@
 
       <div class="col-span-12 sm:col-span-1">
         <label for="book-collection" class="label">
-          Coleção
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.collection') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -121,7 +121,7 @@
             :value="book.collection"
             @input="handleInput('collection', $event.target.value)"
             class="input pr-9"
-            placeholder="ex. Mangás"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.collection')])"
             list="collections"
             required
             aria-describedby="book-collection-error"
@@ -136,7 +136,7 @@
               {{ collection }}
             </option>
           </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
@@ -149,8 +149,8 @@
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
       <div class="col-span-7 sm:col-span-4 md:col-span-1">
         <label for="book-format" class="label">
-          Formato
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.format') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
           id="book-format"
@@ -158,7 +158,7 @@
           :value="book.format"
           @input="handleInput('format', $event.target.value)"
           class="input"
-          placeholder="ex. 15 x 21"
+          :placeholder="t('book.form.example.placeholder', [t('book.form.example.format')])"
           required
           aria-describedby="book-format-error"
           :aria-invalid="v$.format.$error"
@@ -172,8 +172,8 @@
 
       <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-label-price" class="label">
-          Preço de capa
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.labelPrice') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -186,13 +186,15 @@
             :value="book.labelPriceValue"
             @input="handleInput('labelPriceValue', $event.target.value)"
             class="input pl-7 pr-12"
-            placeholder="ex. 26,90"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
             required
             aria-describedby="book-label-price-error"
             :aria-invalid="v$.labelPriceValue.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
-            <label for="book-label-price-currency" class="sr-only">Moeda</label>
+            <label for="book-label-price-currency" class="sr-only">
+              {{ t('book.properties.currency') }}
+            </label>
             <select
               id="book-label-price-currency"
               class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
@@ -219,8 +221,8 @@
 
       <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-paid-price" class="label">
-          Preço pago
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.paidPrice') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -233,13 +235,15 @@
             :value="book.paidPriceValue"
             @input="handleInput('paidPriceValue', $event.target.value)"
             class="input pl-7 pr-12"
-            placeholder="ex. 22,90"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
             required
             aria-describedby="book-paid-price-error"
             :aria-invalid="v$.paidPriceValue.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
-            <label for="book-paid-price-currency" class="sr-only">Moeda</label>
+            <label for="book-paid-price-currency" class="sr-only">
+              {{ t('book.properties.currency') }}
+            </label>
             <select
               id="book-paid-price-currency"
               class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
@@ -266,8 +270,8 @@
     <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 sm:col-span-6">
         <label for="book-store" class="label">
-          Loja
-          <abbr title="Obrigatório" class="required" aria-hidden="true">*</abbr>
+          {{ t('book.properties.store') }}
+          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -276,7 +280,7 @@
             :value="book.store"
             @input="handleInput('store', $event.target.value)"
             class="input pr-8"
-            placeholder="ex. Amazon"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.store')])"
             list="stores"
             required
             aria-describedby="book-store-error"
@@ -291,7 +295,7 @@
               {{ store }}
             </option>
           </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
@@ -301,28 +305,38 @@
       </div>
 
       <div class="col-span-7 sm:col-span-5 md:col-span-6">
-        <label for="book-bought-at" class="label">Data de entrada</label>
+        <label for="book-bought-at" class="label">
+          {{ t('book.properties.boughtAt') }}
+        </label>
         <input
           id="book-bought-at"
           type="date"
           :value="book.boughtAt"
           @input="handleInput('boughtAt', $event.target.value)"
           class="input"
-          placeholder="ex. 18/02/2021"
+          :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
         >
       </div>
     </div>
 
-    <p class="mt-1 text-xs text-gray-400" aria-hidden="true">
-      Os campos marcados com
-      <abbr title="Obrigatório" class="required">*</abbr>
-      são obrigatórios.
-    </p>
+    <i18n-t
+      keypath="book.form.requiredHint"
+      tag="p"
+      class="mt-1 text-xs text-gray-400"
+      aria-hidden="true"
+    >
+      <abbr :title="t('book.form.required')" class="required">*</abbr>
+    </i18n-t>
 
     <Alert
       type="error"
       :show="v$.$error"
-      :title="`O formulário dos metadados do livro possui ${v$.$errors.length} ${v$.$errors.length === 1 ? 'erro' : 'erros'}`"
+      :title="
+        t(
+          'book.form.error.title',
+          { errorsCount: t('book.form.error.count', v$.$errors.length) }
+        )
+      "
     >
       <ul class="list-disc list-inside space-y-1">
         <li
@@ -340,6 +354,7 @@
 <script>
 import { computed, reactive, ref, toRefs } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
@@ -373,12 +388,22 @@ export default {
   setup (props, context) {
     const { book } = toRefs(props)
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
+    const { t } = useI18n()
 
     const bookState = reactive({ ...book.value })
 
-    const messageRequired = helpers.withMessage('Campo não preenchido.', required)
-    const messageFormat = helpers.withMessage('Valor inválido.', format)
-    const messageDecimalComma = helpers.withMessage('Número inválido.', decimalComma(2))
+    const messageRequired = helpers.withMessage(
+      t('book.form.blankField'),
+      required
+    )
+    const messageFormat = helpers.withMessage(
+      t('book.form.invalidValue'),
+      format
+    )
+    const messageDecimalComma = helpers.withMessage(
+      t('book.form.invalidNumber'),
+      decimalComma(2)
+    )
 
     const rules = {
       code: { messageRequired },
@@ -392,17 +417,17 @@ export default {
       store: { messageRequired }
     }
 
-    const propertyNames = ref({
-      code: 'Código',
-      title: 'Título',
-      authorsStr: 'Autores',
-      imprint: 'Editora',
-      collection: 'Coleção',
-      labelPriceValue: 'Preço de capa',
-      paidPriceValue: 'Preço pago',
-      format: 'Formato',
-      store: 'Loja'
-    })
+    const propertyNames = computed(() => ({
+      code: t('book.properties.id'),
+      title: t('book.properties.title'),
+      authorsStr: t('book.properties.authors'),
+      imprint: t('book.properties.imprint'),
+      collection: t('book.properties.collection'),
+      labelPriceValue: t('book.properties.labelPrice'),
+      paidPriceValue: t('book.properties.paidPrice'),
+      format: t('book.properties.format'),
+      store: t('book.properties.store')
+    }))
 
     const v$ = useVuelidate(rules, bookState)
 
@@ -450,12 +475,9 @@ export default {
       reset,
       imprintOptions,
       storeOptions,
-      collectionOptions
+      collectionOptions,
+      t
     }
   }
 }
 </script>
-
-<style>
-
-</style>

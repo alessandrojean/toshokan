@@ -38,7 +38,7 @@
 
                 <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-4 bg-gray-400 dark:bg-gray-600 rounded w-36"></div>
                 <p v-else class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Volume {{ book.titleParts[1] ? '#' + book.titleParts[1] : 'único' }}
+                  {{ volume }}
                 </p>
               </div>
               <HeartIcon v-if="isFavorite" class="ml-2 h-8 w-8 dark:text-gray-500" aria-hidden="true" />
@@ -60,7 +60,7 @@
               <!-- Book information -->
               <TableInfo
                 :info="bookInfo"
-                title="Informações do livro"
+                :title="t('dashboard.details.info.title')"
                 :loading="loading || !bookFound"
                 class="shadow-none md:shadow rounded-b-none md:rounded-b-md"
               >
@@ -68,13 +68,13 @@
                   <span
                     v-if="discount !== null"
                     :class="[
-                      discount > 100
+                      discount > 1
                         ? 'bg-red-100 text-red-800 dark:bg-transparent dark:text-red-500 dark:border dark:border-red-500'
                         : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-400 dark:border dark:border-green-500',
                       'px-2 py-0.5 text-xs rounded-full leading-5 font-semibold ml-2'
                     ]"
                   >
-                    {{ discount }}%
+                    {{ n(discount, 'percent') }}
                   </span>
                 </template>
               </TableInfo>
@@ -95,10 +95,10 @@
               <div class="px-6 py-5 space-y-6 sm:py-6">
                 <div>
                   <h3 id="book-metadata-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-                    Metadados do livro
+                    {{ t('dashboard.details.editForm.title') }}
                   </h3>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Edite as informações necessárias na planilha.
+                    {{ t('dashboard.details.editForm.description') }}
                   </p>
                 </div>
 
@@ -115,7 +115,7 @@
                   class="button is-ghost -ml-4"
                   @click.stop="hideEditForm"
                 >
-                  Cancelar
+                  {{ t('dashboard.details.editForm.cancel') }}
                 </button>
 
                 <button
@@ -124,7 +124,7 @@
                   @click.stop="handleEdit"
                 >
                   <CheckIcon aria-hidden="true" />
-                  Concluir
+                  {{ t('dashboard.details.editForm.finish') }}
                 </button>
               </div>
             </section>
@@ -137,10 +137,10 @@
               <div class="px-6 py-5 space-y-6 sm:py-6">
                 <div>
                   <h3 id="cover-image-title" class="text-lg font-title font-medium leading-6 text-gray-900 dark:text-gray-100">
-                    Imagem de capa
+                    {{ t('dashboard.details.coverForm.title') }}
                   </h3>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Escolha uma imagem de capa do livro obtida automaticamente.
+                    {{ t('dashboard.details.coverForm.description') }}
                   </p>
                 </div>
 
@@ -157,7 +157,7 @@
                   class="button is-ghost -ml-4"
                   @click.stop="hideCoverEditor"
                 >
-                  Cancelar
+                  {{ t('dashboard.details.coverForm.cancel') }}
                 </button>
 
                 <button
@@ -166,7 +166,7 @@
                   @click.stop="handleCover"
                 >
                   <CheckIcon aria-hidden="true" />
-                  Concluir
+                  {{ t('dashboard.details.coverForm.finish') }}
                 </button>
               </div>
 
@@ -192,6 +192,7 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import useBookDeleter from '@/composables/useBookDeleter'
 import useBookEditor from '@/composables/useBookEditor'
@@ -294,6 +295,8 @@ export default {
     const deleter = useDeleter(book, router)
     const coverEditor = useCoverEditor(book, editor.updateBook, findTheBook, redirectToHome, mainEl)
 
+    const { t, n } = useI18n()
+
     return {
       mainEl,
       book,
@@ -306,45 +309,53 @@ export default {
       ...info,
       ...editor,
       ...deleter,
-      ...coverEditor
+      ...coverEditor,
+      t,
+      n
     }
   }
 }
 
 function useInfo (book, bookFound, bookId, loading) {
-  function formatPrice ({ value, currency }) {
-    const formatter = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency
-    })
+  const { t, d, n } = useI18n()
+  const store = useStore()
 
-    return formatter.format(value.replace(',', '.'))
+  const timeZone = computed(() => store.state.sheet.timeZone)
+
+  function formatPrice ({ value, currency }) {
+    return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
   }
 
-  function formatDate (date) {
+  function formatDate (date, format = 'short') {
     if (typeof date === 'string' && date.length > 0) {
-      return date.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1')
+      return d(
+        new Date(`${date}T00:00:00.000${timeZone.value.offsetStr}`),
+        format,
+        { timeZone: timeZone.value.name }
+      )
     }
 
     if (date instanceof Date) {
-      return date.toLocaleString('pt-BR')
+      return d(date, format, { timeZone: timeZone.value.name })
     }
 
-    return 'Desconhecida'
+    return t('dashboard.details.info.dateUnknown')
   }
 
   const boughtAt = computed(() => {
     return book.value.boughtAt
       ? formatDate(book.value.boughtAt)
-      : 'Desconhecido'
+      : t('dashboard.details.info.dateUnknown')
   })
 
   const createdAt = computed(() => {
-    return book.value.createdAt ? formatDate(book.value.createdAt) : ''
+    return book.value.createdAt
+      ? formatDate(book.value.createdAt, 'long') : ''
   })
 
   const updatedAt = computed(() => {
-    return book.value.updatedAt ? formatDate(book.value.updatedAt) : ''
+    return book.value.updatedAt
+      ? formatDate(book.value.updatedAt, 'long') : ''
   })
 
   const formattedLabelPrice = computed(() => {
@@ -376,7 +387,7 @@ function useInfo (book, bookFound, bookId, loading) {
 
       const discount = paidValue / labelValue
 
-      return Math.round((discount > 1.0 ? discount : 1.0 - discount) * 100.0)
+      return discount > 1.0 ? discount : 1.0 - discount
     }
 
     return null
@@ -387,64 +398,82 @@ function useInfo (book, bookFound, bookId, loading) {
       return []
     }
 
+    const separator = t('dashboard.details.header.authorSeparator')
+    let authors = (book.value.authors || []).join(separator)
+
+    if (book.value.authors && book.value.authors.length >= 2) {
+      const firstAuthors = (book.value.authors || [])
+        .slice(0, -1)
+        .join(separator)
+
+      authors = t(
+        'dashboard.details.header.authorListComplete',
+        {
+          authors: firstAuthors,
+          lastAuthor: book.value.authors[book.value.authors.length - 1]
+        }
+      )
+    }
+
     return [
       {
-        title: book.value.codeType === 'N/A' ? 'Identificação' : book.value.codeType,
+        title: book.value.codeType === 'N/A'
+          ? t('book.properties.id') : book.value.codeType,
         value: book.value.code,
         property: 'code'
       },
       {
-        title: 'Título',
+        title: t('book.properties.title'),
         value: book.value.title,
         property: 'title'
       },
       {
-        title: book.value.authors && book.value.authors.length > 1 ? 'Autores' : 'Autor',
-        value: (book.value.authors || []).join(', ').replace(/, ([^,]*)$/, ' e $1'),
+        title: t('book.properties.author', (book.value.authors || []).length),
+        value: authors,
         property: 'authors'
       },
       {
-        title: 'Editora',
+        title: t('book.properties.imprint'),
         value: book.value.imprint,
         property: 'imprint'
       },
       {
-        title: 'Coleção',
+        title: t('book.properties.collection'),
         value: book.value.collection,
         property: 'collection'
       },
       {
-        title: 'Formato',
+        title: t('book.properties.format'),
         value: book.value.format,
         property: 'format'
       },
       {
-        title: 'Preço de capa',
+        title: t('book.properties.labelPrice'),
         value: formattedLabelPrice.value,
         property: 'labelPrice'
       },
       {
-        title: 'Preço pago',
+        title: t('book.properties.paidPrice'),
         value: formattedPaidPrice.value,
         property: 'paidPrice'
       },
       {
-        title: 'Local da compra',
+        title: t('book.properties.store'),
         value: book.value.store,
         property: 'store'
       },
       {
-        title: 'Data de compra',
+        title: t('book.properties.boughtAt'),
         value: boughtAt.value,
         property: 'boughtAt'
       },
       {
-        title: 'Data de criação',
+        title: t('book.properties.createdAt'),
         value: createdAt.value,
         property: 'createdAt'
       },
       {
-        title: 'Data de modificação',
+        title: t('book.properties.updatedAt'),
         value: updatedAt.value,
         property: 'updatedAt'
       }
@@ -459,13 +488,27 @@ function useInfo (book, bookFound, bookId, loading) {
     return book.value.favorite === BookFavorite.ACTIVE
   })
 
+  const volume = computed(() => {
+    if (!book.value) {
+      return ''
+    }
+
+    const isSingle = book.value.titleParts[1] === undefined
+
+    return t(
+      isSingle ? 'book.single' : 'book.volume',
+      isSingle ? undefined : { number: book.value.titleParts[1] }
+    )
+  })
+
   return {
     bookInfo,
     boughtAt,
     discount,
     formattedLabelPrice,
     formattedPaidPrice,
-    isFavorite
+    isFavorite,
+    volume
   }
 }
 

@@ -20,7 +20,9 @@
             :model-value="coverUrl"
             @update:model-value="$emit('update:coverUrl', $event)"
           >
-            <RadioGroupLabel class="sr-only">Imagem de capa</RadioGroupLabel>
+            <RadioGroupLabel class="sr-only">
+              {{ t('book.coverSelector.label') }}
+            </RadioGroupLabel>
             <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
               <RadioGroupOption
                 class="focus:outline-none"
@@ -40,30 +42,34 @@
 
           <div v-else class="flex flex-col items-center p-3">
             <EmojiSadIcon class="h-24 w-24 text-gray-300 dark:text-gray-500 mb-3" aria-hidden="true" />
-            <p class="font-semibold text-lg text-gray-500 dark:text-gray-400">Nenhuma capa encontrada</p>
-            <p v-if="custom" class="text-sm text-gray-500 dark:text-gray-400">Você pode adicionar uma personalizada abaixo.</p>
+            <p class="font-semibold text-lg text-gray-500 dark:text-gray-400">
+              {{ t('book.coverSelector.empty.title') }}
+            </p>
+            <p v-if="custom" class="text-sm text-gray-500 dark:text-gray-400">
+              {{ t('book.coverSelector.empty.description') }}
+            </p>
           </div>
         </transition>
       </div>
 
       <p class="mt-2 text-xs text-gray-400" aria-hidden="true">
-        As imagens são obtidas da Amazon e dos sites das editoras.
+        {{ t('book.coverSelector.about') }}
       </p>
     </div>
 
     <template v-if="custom">
       <div class="border-t border-gray-200 dark:border-gray-600 pt-4">
         <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-          Imagem personalizada
+          {{ t('book.coverSelector.custom.title') }}
         </h3>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-          Você também pode adicionar uma nova imagem nas opções.
+          {{ t('book.coverSelector.custom.description') }}
         </p>
       </div>
 
       <div>
         <label for="cover-url" class="label">
-          URL da Imagem
+          {{ t('book.coverSelector.custom.label') }}
         </label>
         <div class="flex space-x-2">
           <input
@@ -71,7 +77,7 @@
             type="url"
             class="input"
             v-model="state.customUrl"
-            placeholder="Insira uma URL personalizada"
+            :placeholder="t('book.coverSelector.custom.placeholder')"
           >
           <button
             type="button"
@@ -79,7 +85,9 @@
             @click="addNewImage"
           >
             <PlusIcon aria-hidden="true" />
-            <span class="sr-only">Adicionar</span>
+            <span class="sr-only">
+              {{ t('book.coverSelector.custom.add') }}
+            </span>
           </button>
         </div>
       </div>
@@ -87,14 +95,16 @@
       <Alert
         type="error"
         :show="v$.$error"
-        title="Há um erro no formulário de imagem personalizada"
+        :title="t('book.coverSelector.custom.error')"
       >
         <ul class="list-disc list-inside space-y-1">
           <li
             v-for="error of v$.$errors"
             :key="error.$uid"
           >
-            <span class="font-medium">URL da Imagem:</span>
+            <span class="font-medium">
+              {{ t('book.coverSelector.custom.label') }}:
+            </span>
             {{ error.$message }}
           </li>
         </ul>
@@ -105,6 +115,7 @@
 
 <script>
 import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import useVuelidate from '@vuelidate/core'
 import { helpers, required, url } from '@vuelidate/validators'
@@ -149,6 +160,7 @@ export default {
 
   setup (props, context) {
     const { book, coverUrl } = toRefs(props)
+    const { t } = useI18n()
 
     const {
       clearResults,
@@ -169,8 +181,8 @@ export default {
 
     const rules = {
       customUrl: {
-        required: helpers.withMessage('Campo não preenchido.', required),
-        url: helpers.withMessage('Formato da URL inválido.', url)
+        required: helpers.withMessage(t('book.coverSelector.blankField'), required),
+        url: helpers.withMessage(t('book.coverSelector.invalidUrl'), url)
       }
     }
 
@@ -208,7 +220,8 @@ export default {
       results,
       state,
       v$,
-      addNewImage
+      addNewImage,
+      t
     }
   }
 }

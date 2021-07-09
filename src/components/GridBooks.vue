@@ -12,15 +12,15 @@
     <template v-else>
       <div v-if="paginationInfo.total_pages > 1" class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
         <div>
-          <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0">
-            Página
+          <i18n-t
+            keypath="pagination.text"
+            tag="p"
+            class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0"
+          >
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-            de
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-            de
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
-            resultados
-          </p>
+          </i18n-t>
         </div>
 
         <nav
@@ -39,7 +39,7 @@
                 <span aria-hidden="true">
                   <ChevronLeftIcon aria-hidden="true" />
                 </span>
-                Anterior
+                {{ t('pagination.previous') }}
               </button>
             </li>
 
@@ -50,7 +50,7 @@
                 :disabled="!paginationInfo.has_next_page"
                 @click.stop="handlePage(paginationInfo.current_page + 1)"
               >
-                Próximo
+                {{ t('pagination.next') }}
                 <span aria-hidden="true">
                   <ChevronRightIcon class="is-right" aria-hidden="true" />
                 </span>
@@ -80,15 +80,15 @@
       </ul>
       <div v-if="paginationInfo.total_pages > 1" class="mt-6 bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 flex flex-col md:flex-row md:justify-between items-center">
         <div>
-          <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0">
-            Página
+          <i18n-t
+            keypath="pagination.text"
+            tag="p"
+            class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0"
+          >
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-            de
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-            de
             <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
-            resultados
-          </p>
+          </i18n-t>
         </div>
 
         <nav
@@ -107,7 +107,7 @@
                 <span aria-hidden="true">
                   <ChevronLeftIcon aria-hidden="true" />
                 </span>
-                Anterior
+                {{ t('pagination.previous') }}
               </button>
             </li>
 
@@ -118,7 +118,7 @@
                 :disabled="!paginationInfo.has_next_page"
                 @click.stop="handlePage(paginationInfo.current_page + 1)"
               >
-                Próximo
+                {{ t('pagination.next') }}
                 <span aria-hidden="true">
                   <ChevronRightIcon class="is-right" aria-hidden="true" />
                 </span>
@@ -141,6 +141,7 @@
 
 <script>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
+import { useI18n } from 'vue-i18n'
 
 import BookCard from './BookCard.vue'
 import Paginator from './Paginator.vue'
@@ -167,7 +168,9 @@ export default {
       context.emit('page', page)
     }
 
-    return { handlePage }
+    const { t } = useI18n()
+
+    return { handlePage, t }
   }
 }
 </script>

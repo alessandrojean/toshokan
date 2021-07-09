@@ -3,6 +3,8 @@ import axios from 'axios'
 import { parseBookFromCbl } from '../model/Book'
 import { isbn as validateIsbn } from '../util/validators'
 
+import i18n from '../i18n'
+
 const cbl = axios.create({
   baseURL: 'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
   headers: {
@@ -56,10 +58,12 @@ function createSearchPayload (query, dataOptions) {
 }
 
 export async function search (query = '', options) {
+  const { t } = i18n.global
+
   const queryKey = process.env.VUE_APP_CBL_QUERY_KEY
 
   if (!queryKey) {
-    throw new Error('Chave de consulta inexistente.')
+    throw new Error(t('isbn.keyMissing'))
   }
 
   const dataPayload = createSearchPayload(query, options.dataOptions)
@@ -69,13 +73,15 @@ export async function search (query = '', options) {
 
     return response.data.value.map(parseBookFromCbl)
   } catch (e) {
-    throw new Error('Houve um erro durante a pesquisa.')
+    throw new Error(t('isbn.searchError'))
   }
 }
 
 export async function searchByIsbn (isbn) {
+  const { t } = i18n.global
+
   if (!validateIsbn(isbn)) {
-    throw new Error('O ISBN informado é inválido.')
+    throw new Error(t('isbn.invalid'))
   }
 
   const searchResults = await search(isbn.replace(/-/g, ''), {

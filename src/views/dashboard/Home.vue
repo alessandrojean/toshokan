@@ -7,10 +7,10 @@
           <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
           <div>
             <h1 class="text-2xl font-semibold font-title text-gray-900 dark:text-gray-100">
-              Olá, {{ profileName }}!
+              {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
             <p v-if="isDev" class="text-sm text-gray-600 dark:text-gray-400">
-              Ambiente de desenvolvimento
+              {{ t('footer.dev') }}
             </p>
           </div>
         </div>
@@ -22,7 +22,7 @@
             <span aria-hidden="true">
               <PlusIcon aria-hidden="true" />
             </span>
-            Novo livro
+            {{ t('dashboard.home.newBook') }}
           </router-link>
         </div>
       </div>
@@ -37,13 +37,26 @@
           :aria-labelledby="loading? '' : 'overview-title'"
         >
           <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
-          <h2 v-else id="overview-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">Visão geral</h2>
+          <h2 v-else id="overview-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">
+            {{ t('dashboard.home.overview.title') }}
+          </h2>
 
           <ul class="sr-only" v-if="!loading">
-            <li>Contagem: {{ countFormatted + (countFormatted.length === 1 ? ' item' : ' items') }}</li>
-            <li>Leitura: {{ stats.status?.percent }}</li>
-            <li>Gasto total: {{ stats.money?.totalSpentPaid }}</li>
-            <li>Economia total: {{ stats.money?.saved }}</li>
+            <li>
+              {{ t('dashboard.home.overview.stats.count') }}:
+              {{ t('dashboard.home.overview.item', stats.count, { n: n(stats.count, 'integer') }) }}
+            </li>
+            <li>
+              {{ t('dashboard.home.overview.stats.read') }}:
+              {{ n(stats.status?.percent || 0.0, 'percent') }}
+            </li>
+            <li>
+              {{ t('dashboard.home.overview.stats.totalExpense') }}:
+              {{ n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money.currency }) }}
+            </li>
+            <li>
+              {{ t('dashboard.home.overview.stats.totalSavings') }}:
+              {{ n(stats.money?.saved || 0.0, 'currency', { currency: stats.money.currency }) }}</li>
           </ul>
 
           <!-- Stats -->
@@ -52,8 +65,8 @@
             aria-hidden="true"
           >
             <StatCard
-              title="Contagem"
-              :value="countFormatted"
+              :title="t('dashboard.home.overview.stats.count')"
+              :value="n(stats.count || 0.0, 'integer')"
               :loading="loading"
             >
               <template v-slot:icon="{ cssClass }">
@@ -62,8 +75,8 @@
             </StatCard>
 
             <StatCard
-              title="Leitura"
-              :value="stats.status?.percent"
+              :title="t('dashboard.home.overview.stats.read')"
+              :value="n(stats.status?.percent || 0.0, 'percent')"
               :loading="loading"
             >
               <template v-slot:icon="{ cssClass }">
@@ -72,8 +85,8 @@
             </StatCard>
 
             <StatCard
-              title="Gasto total"
-              :value="stats.money?.totalSpentPaid"
+              :title="t('dashboard.home.overview.stats.totalExpense')"
+              :value="n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
               :loading="loading"
               :sensitive="true"
             >
@@ -83,8 +96,8 @@
             </StatCard>
 
             <StatCard
-              title="Economia total"
-              :value="stats.money?.saved"
+              :title="t('dashboard.home.overview.stats.totalSavings')"
+              :value="n(stats.money?.saved || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
               :loading="loading"
               :sensitive="true"
             >
@@ -114,11 +127,10 @@
             id="empty-sheet-title"
             class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
           >
-            Você ainda não possui nenhum livro
+            {{ t('dashboard.home.empty.title') }}
           </h2>
           <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-            Adicione pelo menos um livro para que as informações
-            possam ser calculadas e disponibilizadas nesta página.
+            {{ t('dashboard.home.empty.description') }}
           </p>
           <router-link
             :to="{ name: 'DashboardNewBook' }"
@@ -128,7 +140,7 @@
             <span aria-hidden="true">
               <PlusIcon aria-hidden="true" />
             </span>
-            Novo livro
+            {{ t('dashboard.home.newBook') }}
           </router-link>
         </section>
       </div>
@@ -139,6 +151,7 @@
 <script>
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import {
   BookOpenIcon,
@@ -153,8 +166,6 @@ import { PlusIcon } from '@heroicons/vue/solid'
 import BetaWarning from '@/components/BetaWarning'
 import LastAddedBooks from '@/components/LastAddedBooks'
 import StatCard from '@/components/StatCard'
-
-const formatter = new Intl.NumberFormat('pt-BR')
 
 export default {
   name: 'DashboardHome',
@@ -173,13 +184,9 @@ export default {
 
   setup () {
     const store = useStore()
+    const { n, t } = useI18n()
 
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
-
-    const countFormatted = computed(() => {
-      const statsCount = store.state.sheet.stats.count
-      return statsCount ? formatter.format(statsCount) : ''
-    })
 
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
@@ -191,13 +198,14 @@ export default {
 
     return {
       sheetIsEmpty,
-      countFormatted,
       lastAdded,
       loading,
       profileImageUrl,
       profileName,
       stats,
-      isDev
+      isDev,
+      n,
+      t
     }
   }
 }

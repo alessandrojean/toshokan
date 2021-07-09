@@ -2,7 +2,7 @@ import { helpers } from '@vuelidate/validators'
 
 export function decimalComma (digits) {
   return helpers.regex(
-    new RegExp(`^\\d+(\\,\\d{1,${digits}})?$`)
+    new RegExp(`^\\d+([\\,\\.]\\d{1,${digits}})?$`)
   )
 }
 

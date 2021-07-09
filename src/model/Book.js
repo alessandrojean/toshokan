@@ -3,6 +3,10 @@ import { nanoid } from 'nanoid'
 import { IMPRINT_REPLACEMENTS } from '../services/cbl'
 import { isbn as validateIsbn, issn as validateIssn } from '../util/validators'
 
+import i18n from '../i18n'
+
+const { d, n, locale } = i18n.global
+
 const Columns = {
   ID: 0,
   CODE: 1,
@@ -23,12 +27,12 @@ const Columns = {
 }
 
 export const BookStatus = {
-  READ: 'Lido',
-  UNREAD: 'Não lido'
+  READ: 'READ',
+  UNREAD: 'UNREAD'
 }
 
 export const BookFavorite = {
-  ACTIVE: 'Sim',
+  ACTIVE: 'YES',
   INACTIVE: ''
 }
 
@@ -37,7 +41,7 @@ export function parseBook (value, index) {
   const paidPrice = value[Columns.PAID_PRICE].split(' ')
 
   return {
-    sheetLocation: `Coleção!B${index + 5}`,
+    sheetLocation: `Collection!B${index + 5}`,
     id: value[Columns.ID],
     code: value[Columns.CODE],
     codeType: getCodeType(value[Columns.CODE]),
@@ -47,44 +51,30 @@ export function parseBook (value, index) {
     authors: value[Columns.AUTHORS].split(/;\s+/g),
     authorsStr: value[Columns.AUTHORS],
     imprint: value[Columns.IMPRINT],
-    format: value[Columns.FORMAT].replace(/\./g, ','),
+    format: value[Columns.FORMAT].split(' × ')
+      .map(measure => n(parseFloat(measure), 'format'))
+      .join(' × '),
     status: value[Columns.STATUS],
     labelPrice: {
       currency: labelPrice[0],
-      value: labelPrice[1].replace('.', ',') || '0,0'
+      value: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal')
     },
     paidPrice: {
       currency: paidPrice[0],
-      value: paidPrice[1].replace('.', ',') || '0,0'
+      value: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal')
     },
     labelPriceCurrency: labelPrice[0],
-    labelPriceValue: labelPrice[1].replace('.', ',') || '0,0',
+    labelPriceValue: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal'),
     paidPriceCurrency: paidPrice[0],
-    paidPriceValue: paidPrice[1].replace('.', ',') || '0,0',
+    paidPriceValue: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal'),
     store: value[Columns.STORE],
     coverUrl: value[Columns.COVER_URL],
-    boughtAt: value[Columns.BOUGHT_AT].split('/').reverse().join('-'),
+    boughtAt: value[Columns.BOUGHT_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$1-$2'),
     favorite: value[Columns.FAVORITE],
-    createdAt: new Date(value[Columns.CREATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1')),
-    updatedAt: new Date(value[Columns.UPDATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'))
+    createdAt: new Date(value[Columns.CREATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$1-$2')),
+    updatedAt: new Date(value[Columns.UPDATED_AT].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$1-$2'))
   }
 }
-
-const formatFormatter = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-  useGrouping: false
-})
-
-const priceFormatter = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 2,
-  useGrouping: false
-})
-
-const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-  dateStyle: 'short',
-  timeStyle: 'medium'
-})
 
 export function formatBook (book) {
   return [
@@ -97,21 +87,21 @@ export function formatBook (book) {
     book.format.replace(
       /^(\d+(?:(?:\.|,)\d{1,2})?) (?:x|×) (\d+(?:(?:\.|,)\d{1,2})?)$/,
       (m, p1, p2) => {
-        return formatFormatter.format(p1.replace(',', '.')) +
-          ' × ' + formatFormatter.format(p2.replace(',', '.'))
+        return n(parseFloat(p1.replace(',', '.')), 'format', 'en-US') +
+          ' × ' + n(parseFloat(p2.replace(',', '.')), 'format', 'en-US')
       }
     ),
     book.status || BookStatus.UNREAD,
     book.labelPrice.currency + ' ' +
-      priceFormatter.format(book.labelPrice.value.replace(',', '.')),
+      n(parseFloat(book.labelPrice.value.replace(',', '.')), 'decimal', 'en-US'),
     book.paidPrice.currency + ' ' +
-      priceFormatter.format(book.paidPrice.value.replace(',', '.')),
+      n(parseFloat(book.paidPrice.value.replace(',', '.')), 'decimal', 'en-US'),
     book.store,
     book.coverUrl || '',
-    book.boughtAt ? book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1') : '',
-    book.favorite || '',
-    dateFormatter.format(book.createdAt || new Date()),
-    dateFormatter.format(new Date())
+    book.boughtAt ? book.boughtAt.replace(/(\d{4})-(\d{2})-(\d{2})/, '$2/$3/$1') : '',
+    book.favorite || BookFavorite.INACTIVE,
+    d(book.createdAt || new Date(), 'sheet', 'en-US').replace(',', ''),
+    d(new Date(), 'sheet', 'en-US').replace(',', '')
   ]
 }
 
@@ -153,15 +143,16 @@ export function parseBookFromCbl (cblBook) {
     imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
     format: cblBook.Dimensao
       ? cblBook.Dimensao.replace(/(\d{2})(\d)?x(\d{2})(\d)?$/, (m, p1, p2, p3, p4) => {
-        return p1 + (p2 ? ',' + p2 : '') + ' x ' + p3 + (p4 ? ',' + p4 : '')
+        return n(parseFloat(p1 + (p2 ? '.' + p2 : '')), 'format') + ' x ' +
+          n(parseFloat(p3 + (p4 ? '.' + p4 : '')), 'format')
       })
       : ''
   }
 }
 
 export function bookCompare (a, b) {
-  return a.collection.localeCompare(b.collection) ||
-    a.titleParts[0].localeCompare(b.titleParts[0]) ||
-    a.imprint.localeCompare(b.imprint) ||
-    (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01')
+  return a.collection.localeCompare(b.collection, locale.value) ||
+    a.titleParts[0].localeCompare(b.titleParts[0], locale.value) ||
+    a.imprint.localeCompare(b.imprint, locale.value) ||
+    (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01', locale.value)
 }
