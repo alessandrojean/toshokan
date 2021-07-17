@@ -85,14 +85,14 @@
                 class="focus:outline-none focus:ring-indigo-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
                 :placeholder="t('dashboard.header.search.placeholder')"
                 v-model="searchQuery"
-                @keyup.enter.stop="handleSearch"
                 aria-describedby="navbar-search-enter-hint"
               >
               <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
                 <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
                   <span class="sr-only">{{ t('dashboard.header.search.press') }} </span>
                   <kbd class="font-sans">
-                    <abbr title="Control" class="no-underline">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
+                    <abbr title="Control" class="no-underline" v-if="!isMac">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
+                    <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
                   </kbd>
                   <span class="sr-only"> {{ t('dashboard.header.search.plus') }} </span>
                   <kbd class="font-sans">K</kbd>
@@ -254,6 +254,8 @@ export default {
 
     const signOut = () => store.dispatch('auth/signOut')
 
+    const isMac = ref(navigator.platform.toLowerCase().indexOf('mac') > -1)
+
     // Focus on search input by pressing Ctrl + K
     const focusOnSearch = () => {
       nextTick(() => {
@@ -261,8 +263,11 @@ export default {
       })
     }
 
+    /**
+     * @param {KeyboardEvent} event
+     */
     const handleKeyDown = event => {
-      if (event.ctrlKey && event.key === 'k' && showSearch.value) {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k' && showSearch.value) {
         event.stopPropagation()
         event.preventDefault()
         focusOnSearch()
@@ -289,6 +294,7 @@ export default {
       profileEmail,
       profileImageUrl,
       profileName,
+      isMac,
       searchNavbar,
       searchQuery,
       showSearch,

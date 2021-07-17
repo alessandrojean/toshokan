@@ -331,23 +331,27 @@ function useTabs () {
   }
 
   const keys = {
-    end: 35,
-    home: 36,
-    up: 38,
-    down: 40,
-    enter: 13,
-    space: 32
+    end: 'End',
+    home: 'Home',
+    up: 'ArrowUp',
+    down: 'ArrowDown',
+    enter: 'Enter',
+    space: ' '
   }
 
   const direction = {
-    37: -1,
-    38: -1,
-    39: 1,
-    40: 1
+    ArrowLeft: -1,
+    ArrowUp: -1,
+    ArrowRight: 1,
+    ArrowDown: 1
   }
 
+  /**
+   * @param {KeyboardEvent} event
+   * @param {number} tabIdx
+   */
   function handleTabKeydown (event, tabIdx) {
-    const key = event.keyCode
+    const key = event.key
 
     switch (key) {
       case keys.end:
@@ -365,8 +369,12 @@ function useTabs () {
     }
   }
 
+  /**
+   * @param {KeyboardEvent} event
+   * @param {number} tabIdx
+   */
   function handleTabKeyup (event, tabIdx) {
-    const key = event.keyCode
+    const key = event.key
 
     switch (key) {
       case keys.enter:
@@ -376,8 +384,12 @@ function useTabs () {
     }
   }
 
+  /**
+   * @param {KeyboardEvent} event
+   * @param {number} tabIdx
+   */
   function determineOrientation (event, tabIdx) {
-    const key = event.keyCode
+    const key = event.key
 
     if (key === keys.up || key === keys.down) {
       event.preventDefault()
@@ -385,8 +397,12 @@ function useTabs () {
     }
   }
 
+  /**
+   * @param {KeyboardEvent} event
+   * @param {number} tabIdx
+   */
   function switchTabOnArrowPress (event, tabIdx) {
-    const pressed = event.keyCode
+    const pressed = event.key
 
     if (direction[pressed] && tabIdx !== undefined) {
       if (tabRefs.value[tabIdx + direction[pressed]]) {

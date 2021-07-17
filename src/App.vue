@@ -59,10 +59,12 @@ export default {
     const route = useRoute()
     const jumpToMain = ref(null)
     const navigationHelpText = ref('')
+    const appStarted = ref(false)
 
     function focusOnJumpLink () {
-      if (jumpToMain.value) {
+      if (jumpToMain.value && appStarted.value) {
         jumpToMain.value.focus()
+        appStarted.value = true
       }
     }
 

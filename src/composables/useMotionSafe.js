@@ -3,8 +3,11 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 export default function useMotionSafe () {
   const motionSafe = ref(window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches)
 
-  function handleChange (e) {
-    motionSafe.value = e.matches
+  /**
+   * @param {MediaQueryListEvent} event
+   */
+  function handleChange (event) {
+    motionSafe.value = event.matches
   }
 
   if (window.matchMedia) {

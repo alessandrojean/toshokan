@@ -270,7 +270,7 @@ export default {
         author: 'Autor: | Autores:',
         authorListIncomplete: '{authors} e mais {number}',
         authorListComplete: '{authors} e {lastAuthor}',
-        authorSeparator: ',',
+        authorSeparator: ', ',
         status: 'Estado: ',
         collection: 'Coleção: ',
         store: 'Loja da compra: ',

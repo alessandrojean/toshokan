@@ -3,8 +3,11 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 export default function useDarkMode () {
   const darkMode = ref(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-  function handleChange (e) {
-    darkMode.value = e.matches
+  /**
+   * @param {MediaQueryListEvent} event
+   */
+  function handleChange (event) {
+    darkMode.value = event.matches
   }
 
   if (window.matchMedia) {

@@ -439,8 +439,8 @@ export default {
         )
       }
 
-      if (book.value.authors.length === 2) {
-        const firstOnes = book.value.authors.slice(-1).join(separator)
+      if (book.value.authors.length >= 2 && book.value.authors.length <= 3) {
+        const firstOnes = book.value.authors.slice(0, -1).join(separator)
 
         return t(
           'dashboard.details.header.authorListComplete',
