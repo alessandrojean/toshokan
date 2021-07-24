@@ -445,6 +445,13 @@ export default {
             The language will also be used for number and date formatting.
           `
         },
+        theme: {
+          label: 'Theme',
+          description: 'Define the current theme of the application.',
+          system: 'Follow system',
+          light: 'Light',
+          dark: 'Dark'
+        },
         viewMode: {
           label: 'Display mode',
           description: `

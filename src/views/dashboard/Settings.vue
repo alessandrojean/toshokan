@@ -93,6 +93,31 @@
                   </div>
                   <div class="preference">
                     <div class="preference-description">
+                      <label for="theme">
+                        {{ t('dashboard.settings.appearence.theme.label') }}
+                      </label>
+                      <p>
+                        {{ t('dashboard.settings.appearence.theme.description') }}
+                      </p>
+                    </div>
+                    <select
+                      class="select w-44 h-auto"
+                      id="theme"
+                      @change="updateSetting('appearence.theme', $event.target.value)"
+                    >
+                      <option value="system" :selected="'system' === settings.appearence.theme">
+                        {{ t('dashboard.settings.appearence.theme.system') }}
+                      </option>
+                      <option value="light" :selected="'light' === settings.appearence.theme">
+                        {{ t('dashboard.settings.appearence.theme.light') }}
+                      </option>
+                      <option value="dark" :selected="'dark' === settings.appearence.theme">
+                        {{ t('dashboard.settings.appearence.theme.dark') }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="preference">
+                    <div class="preference-description">
                       <label for="view-mode">
                         {{ t('dashboard.settings.appearence.viewMode.label') }}
                       </label>
@@ -251,6 +276,7 @@ export default {
     const settings = reactive({
       appearence: {
         locale: locale.value,
+        theme: store.state.theme,
         viewMode: store.state.collection.viewMode,
         gridMode: store.state.collection.gridMode
       }
@@ -267,6 +293,7 @@ export default {
         store.dispatch('sheet/loadSheetData')
       }
 
+      store.commit('updateTheme', settings.appearence.theme)
       store.commit('collection/updateViewMode', settings.appearence.viewMode)
       store.commit('collection/updateGridMode', settings.appearence.gridMode)
     }

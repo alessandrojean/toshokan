@@ -21,10 +21,10 @@
           :key="infoLine.title"
           class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-700 dark:even:bg-gray-700 px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4"
         >
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
+          <dt class="text-sm font-semibold md:font-medium text-gray-500 dark:text-gray-100">
             {{ infoLine.title }}
           </dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-gray-200 sm:mt-0 sm:col-span-2">
+          <dd class="mt-1 text-sm text-gray-900 dark:text-gray-300 sm:mt-0 sm:col-span-2">
             {{ infoLine.value }}
             <slot v-if="infoLine.property" :name="infoLine.property"></slot>
           </dd>

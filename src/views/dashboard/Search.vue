@@ -1,6 +1,6 @@
 <template>
   <div class="md:max-w-2xl mx-auto md:py-6 md:px-8">
-    <div class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800">
+    <form class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800">
       <label for="search" class="sr-only">
         {{ t('dashboard.search.label') }}
       </label>
@@ -20,10 +20,10 @@
           >
         </div>
       </div>
-    </div>
+    </form>
 
     <ul
-      class="md:mt-6 md:rounded-md shadow-md divide-y bg-white dark:bg-gray-700 dark:divide-gray-600 darkdark:bg-gray-800"
+      class="md:mt-6 md:rounded-md shadow-md border-t md:border-t-0 border-gray-200 dark:border-gray-700 divide-y bg-white dark:bg-gray-800 dark:divide-gray-700 darkdark:bg-gray-800"
       v-if="searchResults.length > 0"
     >
       <li
@@ -31,23 +31,7 @@
         :key="result.item.id"
         class="result"
       >
-        <router-link
-          :to="{ name: 'BookDetails', params: { bookId: result.item.id } }"
-          class="group p-5 flex items-center hover:bg-gray-50 dark:hover:bg-gray-600 has-ring-focus"
-        >
-          <div class="mr-4 w-12">
-            <img :src="result.item.coverUrl" class="w-12 h-12 object-cover rounded">
-          </div>
-          <div class="flex-1 flex flex-col">
-            <span class="text-sm font-medium dark:text-gray-100">
-              {{ result.item.titleParts[0] }}
-            </span>
-            <span class="text-xs text-gray-500 dark:text-gray-400">
-              {{ volumeText(result.item) }}
-            </span>
-          </div>
-          <ChevronRightIcon class="w-6 h-6 text-gray-400 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-gray-200" aria-hidden="true" />
-        </router-link>
+        <SearchItem :result="result" />
       </li>
     </ul>
   </div>
@@ -61,17 +45,16 @@ import { useI18n } from 'vue-i18n'
 
 import useDebouncedRef from '@/composables/useDebouncedRef'
 
-import {
-  ChevronRightIcon,
-  SearchIcon
-} from '@heroicons/vue/solid'
+import { SearchIcon } from '@heroicons/vue/solid'
+
+import SearchItem from '@/components/SearchItem'
 
 export default {
   name: 'DashboardSearch',
 
   components: {
-    ChevronRightIcon,
-    SearchIcon
+    SearchIcon,
+    SearchItem
   },
 
   setup () {
@@ -111,21 +94,11 @@ export default {
 
     const { t } = useI18n()
 
-    function volumeText (item) {
-      const isSingle = item.titleParts[1] === undefined
-
-      return t(
-        isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: item.titleParts[1] }
-      )
-    }
-
     return {
       searchInput,
       searchQuery,
       searchResults,
-      t,
-      volumeText
+      t
     }
   }
 }

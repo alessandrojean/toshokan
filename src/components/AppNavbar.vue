@@ -9,7 +9,7 @@
       <div class="relative flex items-center justify-between h-16">
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
-            :to="{ name: 'Home' }"
+            :to="{ name: 'DashboardHome' }"
             class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
@@ -112,13 +112,27 @@
           </transition>
 
           <!-- Profile dropdown -->
-          <Menu as="div" class="ml-3 relative">
+          <Menu as="div" class="ml-3 md:relative" v-slot="{ open }">
             <div>
               <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
                 <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>
                 <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="">
               </MenuButton>
             </div>
+            <transition
+              enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <div
+                v-if="open"
+                aria-hidden="true"
+                class="md:hidden fixed z-30 inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity"
+              />
+            </transition>
             <transition
               enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
               enter-from-class="transform scale-95 opacity-0"
@@ -127,7 +141,7 @@
               leave-from-class="transform scale-100 opacity-100"
               leave-to-class="transform scale-95 opacity-0"
             >
-              <MenuItems as="ul" class="absolute right-0 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10 focus:outline-none">
+              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="pb-1">
                   <MenuItem v-slot="{ active }">
                     <router-link

@@ -24,7 +24,7 @@
       </router-view>
     </main>
 
-    <footer class="bg-white dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-6 lg:px-8" role="contentinfo">
+    <footer class="hidden sm:block bg-white dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-6 lg:px-8" role="contentinfo">
       <div class="max-w-7xl mx-auto text-center space-y-2">
         <span aria-hidden="true">
           <BookOpenIcon class="h-8 w-8 mx-auto text-gray-400 dark:text-gray-600" aria-hidden="true" />

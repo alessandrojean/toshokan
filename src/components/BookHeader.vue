@@ -186,18 +186,40 @@
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
             >
-              <Menu as="div" class="relative inline-block text-left">
+              <Menu
+                as="div"
+                class="md:relative inline-block text-left"
+                v-slot="{ open }"
+              >
                 <div>
                   <MenuButton
                     class="button"
                     :disabled="editing"
                   >
+                    <span aria-hidden="true" class="md:hidden">
+                      <DotsHorizontalIcon />
+                    </span>
                     {{ t('dashboard.details.header.options.title') }}
-                    <span aria-hidden="true">
+                    <span aria-hidden="true" class="hidden sm:inline-block">
                       <ChevronDownIcon class="is-right" aria-hidden="true" />
                     </span>
                   </MenuButton>
                 </div>
+
+                <transition
+                  enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
+                  enter-from-class="opacity-0"
+                  enter-to-class="opacity-100"
+                  leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+                  leave-from-class="opacity-100"
+                  leave-to-class="opacity-0"
+                >
+                  <div
+                    v-if="open"
+                    aria-hidden="true"
+                    class="md:hidden fixed z-20 inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity"
+                  />
+                </transition>
 
                 <transition
                   enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
@@ -207,7 +229,7 @@
                   leave-from-class="transform motion-reduce:transform-none opacity-100 scale-100"
                   leave-to-class="transform opacity-0 scale-95"
                 >
-                  <MenuItems as="ul" class="z-10 py-1 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
+                  <MenuItems as="ul" class="z-30 py-1 origin-bottom md:origin-top-right fixed md:absolute left-8 md:left-auto bottom-8 md:bottom-auto inset-x-0 md:w-56 right-8 md:right-0 mt-2 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
                     <div class="pb-1" v-if="isbn10">
                       <MenuItem v-slot="{ active }">
                         <a
@@ -347,6 +369,7 @@ import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  DotsHorizontalIcon,
   ExternalLinkIcon,
   HeartIcon,
   LocationMarkerIcon,
@@ -374,6 +397,7 @@ export default {
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
+    DotsHorizontalIcon,
     ExternalLinkIcon,
     HeartIcon,
     LocationMarkerIcon,

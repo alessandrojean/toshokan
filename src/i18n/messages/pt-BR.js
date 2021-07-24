@@ -446,6 +446,13 @@ export default {
             O local também será utilizado para a formatação de números e datas.
           `
         },
+        theme: {
+          label: 'Tema',
+          description: 'Defina o tema atual da aplicação.',
+          system: 'Seguir o sistema',
+          light: 'Claro',
+          dark: 'Escuro'
+        },
         viewMode: {
           label: 'Modo de visualização',
           description: `

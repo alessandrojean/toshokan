@@ -1,7 +1,11 @@
 import { nanoid } from 'nanoid'
 
 import { IMPRINT_REPLACEMENTS } from '../services/cbl'
-import { isbn as validateIsbn, issn as validateIssn } from '../util/validators'
+import {
+  ean as validateEan,
+  isbn as validateIsbn,
+  issn as validateIssn
+} from '../util/validators'
 
 import i18n from '../i18n'
 
@@ -113,16 +117,16 @@ export function splitTitle (title) {
 export function getCodeType (code) {
   code = code.replace(/-/g, '')
 
-  if (code.match(/^789/)) {
-    return 'EAN-13'
-  }
-
   if (validateIsbn(code)) {
     return 'ISBN-' + code.length
   }
 
   if (validateIssn(code)) {
     return 'ISSN'
+  }
+
+  if (validateEan(code)) {
+    return 'EAN-13'
   }
 
   return code !== 'N/A' ? 'ID' : 'N/A'
@@ -137,8 +141,8 @@ export function parseBookFromCbl (cblBook) {
     title: cblBook.Title.trim()
       .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
       .replace(/#(\d{1})$/, '#0$1'),
-    authors: cblBook.Profissoes && cblBook.Profissoes.length === cblBook.Authors.length
-      ? cblBook.Authors.filter((a, i) => allowedRoles.includes(cblBook.Profissoes[i]))
+    authors: cblBook.Profissoes && cblBook.Profissoes.length >= cblBook.Authors.length
+      ? cblBook.Authors.filter((_, i) => allowedRoles.includes(cblBook.Profissoes[i]))
       : cblBook.Authors,
     imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
     format: cblBook.Dimensao

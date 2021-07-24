@@ -6,7 +6,7 @@
       :subtitle="stepText"
     />
 
-    <div class="flex-1 flex items-start sm:items-center justify-center py-10 px-5" ref="mainEl">
+    <div class="flex-1 flex items-start sm:items-center justify-center py-5 md:py-10 px-5" ref="mainEl">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"

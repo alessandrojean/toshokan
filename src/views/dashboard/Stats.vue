@@ -10,7 +10,7 @@
         </div>
 
         <!-- More charts soon -->
-        <div v-if="!loading" class="h-96 md:h-auto md:flex-1 flex flex-col items-center justify-center border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+        <div v-if="!loading" class="h-96 md:h-auto md:flex-1 hidden md:flex flex-col items-center justify-center border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
           <span aria-hidden="true">
             <DotsHorizontalIcon class="w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
           </span>
