@@ -3,9 +3,9 @@
     <SimpleHeader :title="t('dashboard.settings.title')" />
 
     <div class="flex-1">
-      <div class="max-w-7xl mx-auto py-6 px-5 md:px-8 md:grid grid-cols-4 gap-6">
+      <div class="max-w-7xl mx-auto md:py-6 md:px-8 md:grid grid-cols-4 gap-6">
         <aside
-          class="flex flex-col space-y-2 mb-4 md:mb-0"
+          class="flex flex-col space-y-2 mb-4 md:mb-0 pt-4 px-5 md:pt-0 md:px-0"
           role="tablist"
           :aria-label="t('dashboard.settings.title')"
           aria-orientation="vertical"
@@ -50,7 +50,7 @@
               aria-labelledby="appearence-button"
               :hidden="currentTab !== 0"
               v-show="currentTab === 0"
-              class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+              class="relative overflow-hidden bg-white dark:bg-gray-800 md:rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
@@ -190,7 +190,7 @@
               aria-labelledby="privacy-button"
               :hidden="currentTab !== 1"
               v-show="currentTab === 1"
-              class="bg-white dark:bg-gray-800 rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+              class="bg-white dark:bg-gray-800 md:rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>

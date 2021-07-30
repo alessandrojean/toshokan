@@ -6,7 +6,7 @@ import i18n from '../i18n'
 
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
-const SHEET_DEV_SUFFIX = '-dev'
+const SHEET_DEV_SUFFIX = '' // '-dev'
 
 const { t } = i18n.global
 

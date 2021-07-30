@@ -61,10 +61,10 @@ export default {
         perPage: state.perPage,
         links: state.links,
         totalResults,
-        page: 1
+        page: state.currentPage === 0 ? 1 : state.currentPage
       })
 
-      state.currentPage = 1
+      state.currentPage = state.currentPage === 0 ? 1 : state.currentPage
       state.paginationInfo = { ...state.paginationInfo, ...paginationInfo }
     },
 

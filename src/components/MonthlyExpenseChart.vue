@@ -20,7 +20,7 @@
         <div v-if="loading" class="flex items-center justify-center">
           <ChartBarIcon class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
         </div>
-        <div v-else class="overflow-auto md:overflow-visible">
+        <div v-else>
           <ApexChart
             width="100%"
             height="100%"
@@ -103,7 +103,8 @@ export default {
               colors: darkMode.value ? colors.gray[400] : colors.gray[500]
             }
           },
-          type: 'datetime'
+          type: 'datetime',
+          tooltip: { enabled: false }
         },
         yaxis: {
           labels: {

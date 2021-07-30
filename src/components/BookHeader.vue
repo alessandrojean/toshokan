@@ -75,12 +75,24 @@
           <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-44 mb-1"></div>
           <nav v-else class="mb-2 md:mb-1 text-sm font-medium text-gray-500 dark:text-gray-300">
             <ul class="flex space-x-1 md:space-x-3 items-center">
-              <li>{{ t('dashboard.details.header.library') }}</li>
+              <li>
+                <router-link
+                  :to="{ name: 'DashboardLibrary' }"
+                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+                >
+                  {{ t('dashboard.details.header.library') }}
+                </router-link>
+              </li>
               <li aria-hidden="true">
                 <ChevronRightIcon class="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </li>
               <li>
-                {{ book.collection }}
+                <router-link
+                  :to="{ name: 'DashboardLibrary', query: { group: book.collection } }"
+                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+                >
+                  {{ book.collection }}
+                </router-link>
               </li>
             </ul>
           </nav>
@@ -154,8 +166,8 @@
         <div class="mt-5 flex w-full md:w-auto lg:mt-0 lg:ml-10 space-x-4">
           <template v-if="loading || !bookFound">
             <div class="motion-safe:animate-pulse h-9 flex-1 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
-            <div class="motion-safe:animate-pulse h-9 flex-1 md:hidden bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-10"></div>
+            <div class="motion-safe:animate-pulse h-9 flex-1 hidden sm:block md:hidden bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
+            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-10 md:w-24"></div>
           </template>
           <template v-else>
             <transition
@@ -168,7 +180,7 @@
             >
               <button
                 type="button"
-                class="button justify-center flex-1 md:flex-initial"
+                class="button is-primary justify-center flex-1 md:flex-initial"
                 :disabled="editing"
                 @click.stop="$emit('click:edit', $event)"
               >
@@ -189,7 +201,7 @@
             >
               <button
                 type="button"
-                class="button justify-center flex-1 md:hidden"
+                class="button justify-center flex-1 hidden sm:flex md:hidden"
                 :disabled="editing"
                 @click.stop="$emit('click:updateCover', $event)"
               >
@@ -253,13 +265,13 @@
 
                 <transition
                   enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
-                  enter-from-class="transform motion-reduce:transform-none opacity-0 scale-95"
-                  enter-to-class="transform opacity-100 scale-100"
+                  enter-from-class="transform motion-reduce:transform-none opacity-0 translate-y-1/2 md:translate-y-0 md:scale-95"
+                  enter-to-class="transform opacity-100 translate-y-0 md:scale-100"
                   leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
-                  leave-from-class="transform motion-reduce:transform-none opacity-100 scale-100"
-                  leave-to-class="transform opacity-0 scale-95"
+                  leave-from-class="transform motion-reduce:transform-none opacity-100 translate-y-0 md:scale-100"
+                  leave-to-class="transform opacity-0 translate-y-1/2 md:translate-y-0 md:scale-95"
                 >
-                  <MenuItems as="ul" class="z-30 py-1 origin-bottom md:origin-top-right fixed md:absolute left-8 md:left-auto bottom-8 md:bottom-auto inset-x-0 md:w-56 right-8 md:right-0 mt-2 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
+                  <MenuItems as="ul" class="z-30 py-1 origin-bottom md:origin-top-right fixed md:absolute left-0 md:left-auto bottom-0 md:bottom-auto inset-x-0 md:w-56 right-0 md:right-0 mt-2 rounded-t-2xl md:rounded-t-md md:rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
                     <div class="pb-1" v-if="isbn10">
                       <MenuItem v-slot="{ active }">
                         <a
@@ -283,7 +295,7 @@
                         </a>
                       </MenuItem>
                     </div>
-                    <div class="py-1 hidden md:block">
+                    <div class="py-1 sm:hidden md:block">
                       <MenuItem v-slot="{ active }">
                         <button
                           type="button"

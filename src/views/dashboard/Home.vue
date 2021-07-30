@@ -15,7 +15,7 @@
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <button
-            class="button"
+            class="button flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading"
           >
@@ -25,7 +25,7 @@
             {{ t('dashboard.home.reload') }}
           </button>
           <button
-            class="button is-primary"
+            class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
             @click="$router.push({ name: 'DashboardNewBook' })"
             :disabled="loading"
           >
@@ -128,10 +128,10 @@
         <section
           v-if="!sheetIsEmpty"
           aria-labelledby="groups-title"
-          class="w-full mb-3"
+          class="w-full mb-3 mt-8"
         >
-          <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mt-3 mb-3"></div>
-          <h2 v-else id="groups-title" class="font-medium font-title text-xl mt-3 mb-3 dark:text-gray-200">
+          <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mt-3"></div>
+          <h2 v-else id="groups-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">
             {{ t('dashboard.home.groups') }}
           </h2>
 
@@ -146,13 +146,13 @@
             <router-link
               v-for="group in groups"
               :key="group.group"
-              :to="{ name: 'DashboardLibrary', query: { group } }"
+              :to="{ name: 'DashboardLibrary', query: { group: group.group } }"
               class="button justify-between"
             >
               <span class="flex-1 truncate">
                 {{ group.group }}
               </span>
-              <span aria-hidden="true" class="ml-2 bg-indigo-100 dark:bg-gray-600 text-indigo-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              <span aria-hidden="true" class="ml-2 bg-indigo-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-indigo-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {{ n(group.count, 'integer') }}
               </span>
             </router-link>

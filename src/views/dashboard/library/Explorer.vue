@@ -39,13 +39,13 @@
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <template v-if="loading">
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28"></div>
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
+            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"></div>
+            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"></div>
           </template>
           <template v-else>
             <button
               type="button"
-              class="button"
+              class="button flex-1 md:flex-initial justify-center md:justify-start"
               @click.stop="filterOpen = true"
               v-if="!sheetIsEmpty"
             >
@@ -56,7 +56,7 @@
             </button>
             <router-link
               :to="{ name: 'DashboardNewBook' }"
-              class="button is-primary"
+              class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
             >
               <span aria-hidden="true">
                 <PlusIcon aria-hidden="true" />

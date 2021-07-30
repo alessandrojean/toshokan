@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div v-if="mode === 'comfortable'" class="mt-3 mb-4">
+    <div v-if="mode === 'comfortable'" class="mt-3">
       <p class="text-sm font-title font-semibold truncate text-gray-900 dark:text-gray-200">{{ book.titleParts[0] }}</p>
       <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">{{ volume }}</p>
     </div>
