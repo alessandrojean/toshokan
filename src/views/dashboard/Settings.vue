@@ -61,7 +61,7 @@
                     {{ t('dashboard.settings.appearence.description') }}
                   </p>
                 </div>
-                <div class="divide-y dark:divide-gray-700">
+                <div class="-mx-4 sm:-mx-6 divide-y dark:divide-gray-700">
                   <div class="preference">
                     <div class="preference-description">
                       <label for="locale">
@@ -201,7 +201,7 @@
                     {{ t('dashboard.settings.privacy.description') }}
                   </p>
                 </div>
-                <div class="divide-y dark:divide-gray-700">
+                <div class="-mx-4 sm:-mx-6 divide-y dark:divide-gray-700">
                   <div class="preference">
                     <div class="preference-description">
                       <label>
@@ -234,7 +234,7 @@
       @click:disconnect="handleDisconnect"
     />
 
-    <LoadingIndicator :loading="sheetLoading" animation="spin">
+    <LoadingIndicator :loading="sheetLoading" animation="spin" position="fixed">
       <template v-slot:icon="{ cssClass }">
         <CogIcon :class="cssClass" />
       </template>
@@ -472,7 +472,7 @@ function useTabs () {
 }
 
 .aside-button[aria-selected="true"] {
-  @apply bg-white dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 font-semibold shadow-md;
+  @apply bg-white dark:bg-indigo-900 text-indigo-600 dark:text-indigo-100 font-semibold shadow-md;
 }
 
 .aside-button svg {
@@ -485,11 +485,11 @@ function useTabs () {
 }
 
 .aside-button[aria-selected="true"] svg {
-  @apply text-indigo-600 dark:text-indigo-200;
+  @apply text-indigo-600 dark:text-indigo-100;
 }
 
 .preference {
-  @apply flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center justify-between py-4;
+  @apply px-4 sm:px-6 flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center justify-between py-4;
 }
 
 .preference:first-of-type {

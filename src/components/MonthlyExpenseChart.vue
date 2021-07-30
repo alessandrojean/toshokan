@@ -1,6 +1,6 @@
 <template>
   <section
-    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2"
+    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2"
     :aria-labelledby="!loading ? 'monthly-expense-title' : ''"
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
@@ -20,7 +20,7 @@
         <div v-if="loading" class="flex items-center justify-center">
           <ChartBarIcon class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
         </div>
-        <div v-else>
+        <div v-else class="overflow-auto md:overflow-visible">
           <ApexChart
             width="100%"
             height="100%"

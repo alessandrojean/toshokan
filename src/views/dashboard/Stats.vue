@@ -1,10 +1,14 @@
 <template>
   <div class="flex flex-col">
-    <SimpleHeader :title="t('dashboard.stats.title')" :loading="loading" />
+    <SimpleHeader
+      :title="t('dashboard.stats.title')"
+      :loading="loading"
+      class="mb-3 md:mb-0"
+    />
 
     <div class="flex-1">
-      <div v-if="!sheetIsEmpty && !tooEarly" class="h-full flex flex-col max-w-7xl w-full mx-auto py-6 px-6 lg:px-8 space-y-6">
-        <div class="space-y-6 md:space-y-0 md:grid md:grid-cols-2 gap-6">
+      <div v-if="!sheetIsEmpty && !tooEarly" class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 lg:px-8 space-y-6">
+        <div class="space-y-3 sm:space-y-6 md:space-y-0 md:grid md:grid-cols-2 gap-6">
           <MonthlyExpenseChart />
           <MonthlyBoughtsChart />
         </div>

@@ -112,7 +112,7 @@
           </transition>
 
           <!-- Profile dropdown -->
-          <Menu as="div" class="ml-3 md:relative" v-slot="{ open }">
+          <Menu as="div" class="ml-3 md:relative hidden sm:inline-block" v-slot="{ open }">
             <div>
               <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
                 <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>

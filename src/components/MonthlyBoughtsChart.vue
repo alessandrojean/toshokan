@@ -1,6 +1,6 @@
 <template>
   <section
-    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 rounded-md shadow space-y-2"
+    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2"
     :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
@@ -90,9 +90,9 @@ export default {
         grid: {
           borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
         },
-        labels: (stats.value.monthly || []).map(m => m.month.toISOString()),
         tooltip: { enabled: false },
         xaxis: {
+          categories: (stats.value.monthly || []).map(m => m.month.toISOString()),
           labels: {
             format: 'MMM',
             style: {
@@ -112,6 +112,7 @@ export default {
           bar: {
             horizontal: false,
             borderRadius: 5,
+            endingShape: 'rounded',
             dataLabels: {
               position: 'bottom'
             }

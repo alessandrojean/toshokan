@@ -23,7 +23,7 @@
   }
 
   .label {
-    @apply mb-1 block text-sm font-medium text-gray-700 dark:text-gray-400;
+    @apply mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300;
   }
 
   .input {
@@ -40,11 +40,25 @@
   }
 
   .select {
-    @apply block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200;
+    @apply block w-full py-2 px-3 border border-gray-300 bg-white 
+      rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 
+      focus:border-indigo-500 sm:text-sm dark:bg-gray-700 
+      dark:border-gray-700 dark:text-gray-200;
   }
 
   .button {
-    @apply group relative inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:active:bg-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-700 focus-visible:ring-indigo-500 active:bg-gray-100 disabled:cursor-default transition-shadow motion-reduce:transition-none disabled:opacity-50 disabled:bg-white dark:disabled:bg-gray-700;
+    @apply group relative inline-flex items-center px-4 py-2 
+      border border-gray-300 dark:border-gray-700 dark:active:border-gray-500
+      rounded-md shadow-sm text-sm font-medium 
+      text-gray-700 dark:text-gray-300 
+      bg-white hover:bg-gray-50 dark:bg-gray-700 active:bg-gray-100
+      dark:hover:bg-gray-600 dark:active:bg-gray-500 
+      dark:hover:border-gray-600 dark:hover:text-gray-200 
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
+      dark:focus-visible:ring-offset-gray-700 focus-visible:ring-indigo-500
+      disabled:cursor-default transition-shadow 
+      motion-reduce:transition-none 
+      disabled:opacity-50 disabled:bg-white dark:disabled:bg-gray-700 dark:disabled:border-gray-700;
   }
 
   .button svg {
@@ -56,19 +70,26 @@
   }
 
   .button.is-ghost {
-    @apply bg-transparent shadow-none border-transparent hover:bg-gray-100 text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:bg-gray-700;
+    @apply bg-transparent shadow-none border-transparent hover:bg-gray-100
+      text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 
+      dark:hover:bg-gray-700 dark:hover:border-gray-700;
   }
 
   .button.is-ghost.is-darker {
-    @apply hover:bg-gray-200 dark:hover:bg-gray-600;
+    @apply hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:border-gray-600 dark:active:border-gray-600;
   }
 
   .button.is-primary {
-    @apply border-transparent text-white bg-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 active:bg-indigo-800 disabled:opacity-50 disabled:bg-indigo-600;
+    @apply border-transparent text-white bg-indigo-600 
+      hover:bg-indigo-700 hover:border-indigo-700
+      active:bg-indigo-800 active:border-indigo-800
+      disabled:opacity-50 disabled:bg-indigo-600;
   }
 
   .button.is-danger {
-    @apply border-transparent text-white bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:opacity-50 disabled:bg-red-600;
+    @apply border-transparent text-white bg-red-600 hover:bg-red-700 
+      hover:border-red-700 active:bg-red-800 active:border-red-800
+      disabled:opacity-50 disabled:bg-red-600;
   }
 
   .button.is-link {
@@ -76,7 +97,10 @@
   }
 
   .button.is-active {
-    @apply z-10 bg-indigo-50 border-indigo-500 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-200 dark:hover:bg-indigo-800 dark:hover:border-indigo-400 dark:active:bg-indigo-700;
+    @apply z-10 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 
+      dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:active:bg-indigo-700
+      border-indigo-500 dark:border-indigo-600 dark:hover:border-indigo-500
+      text-indigo-600 dark:text-indigo-100;
   }
 
   .button.is-ghost svg {

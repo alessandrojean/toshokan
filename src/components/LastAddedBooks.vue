@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading">
-    <div class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-48 mt-8 mb-3"></div>
+    <div class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-48 mt-8 mb-3"></div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
       <BookCard
@@ -19,7 +19,7 @@
 
     <ul
       :class="[
-        lastAdded.length < 3 ? 'grid grid-cols-2' : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-hidden flex',
+        lastAdded.length < 3 ? 'grid grid-cols-2' : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex',
         'md:grid md:grid-cols-5 lg:grid-cols-6 gap-5'
       ]"
     >

@@ -50,13 +50,15 @@
         <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" aria-hidden="true">
       </transition>
 
+      <div v-if="isRead" class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2">
+        <span class="shadow bg-indigo-500 text-indigo-50 text-xs font-semibold px-2 py-0.5 rounded">
+          {{ t('book.read') }}
+        </span>
+      </div>
+
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
         <span class="font-semibold font-title text-sm truncate max-w-full">{{ book.titleParts[0] }}</span>
         <span class="font-medium text-xs">{{ volume }}</span>
-      </div>
-
-      <div v-if="isFavorite" class="absolute top-1.5 right-1.5 ml-auto w-7 h-7 flex items-center justify-center bg-gray-800 bg-opacity-70 rounded-full" aria-hidden="true">
-        <HeartIcon class="w-5 h-5 text-red-500" />
       </div>
     </div>
 
@@ -74,15 +76,14 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
-import { HeartIcon, PhotographIcon } from '@heroicons/vue/solid'
+import { PhotographIcon } from '@heroicons/vue/solid'
 
-import { BookFavorite } from '@/model/Book'
+import { BookFavorite, BookStatus } from '@/model/Book'
 
 export default {
   name: 'BookCard',
 
   components: {
-    HeartIcon,
     PhotographIcon
   },
 
@@ -101,6 +102,7 @@ export default {
     const { t } = useI18n()
 
     const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
+    const isRead = computed(() => book.value.status === BookStatus.READ)
 
     const thumbnailUrl = computed(() => {
       return book.value
@@ -147,12 +149,14 @@ export default {
 
     return {
       isFavorite,
+      isRead,
       loadedCard,
       imageHasError,
       imageLoading,
       thumbnailUrl,
       volume,
-      mode
+      mode,
+      t
     }
   }
 }

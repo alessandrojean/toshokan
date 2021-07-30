@@ -58,7 +58,7 @@
     </div>
 
     <template v-if="custom">
-      <div class="border-t border-gray-200 dark:border-gray-600 pt-4">
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
         <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
           {{ t('book.coverSelector.custom.title') }}
         </h3>

@@ -44,7 +44,7 @@ export default {
       author: 'Autor | Autores',
       authors: 'Autores',
       imprint: 'Editora',
-      collection: 'Coleção',
+      collection: 'Grupo',
       format: 'Formato',
       labelPrice: 'Preço de capa',
       paidPrice: 'Preço pago',
@@ -259,6 +259,7 @@ export default {
         search: 'Pesquisar'
       },
       menu: {
+        more: 'Mais',
         open: 'Abrir menu de usuário',
         settings: 'Configurações',
         signOut: 'Sair'
@@ -272,7 +273,7 @@ export default {
         authorListComplete: '{authors} e {lastAuthor}',
         authorSeparator: ', ',
         status: 'Estado: ',
-        collection: 'Coleção: ',
+        collection: 'Grupo: ',
         store: 'Loja da compra: ',
         edit: 'Editar',
         options: {
@@ -310,6 +311,7 @@ export default {
       title: 'Dashboard',
       hello: 'Olá, {name}!',
       newBook: 'Novo livro',
+      reload: 'Recarregar',
       beta: {
         short: 'Serviço atualmente em beta!',
         full: `
@@ -331,6 +333,7 @@ export default {
         hideValue: 'Ocultar o valor de {title}'
       },
       lastAdded: 'Últimos adicionados',
+      groups: 'Grupos',
       empty: {
         title: 'Você ainda não possui nenhum livro',
         description: `
@@ -341,12 +344,12 @@ export default {
     },
     library: {
       title: 'Biblioteca',
-      currentCollection: 'Coleção atual: ',
+      currentCollection: 'Grupo atual: ',
       sortingBy: 'Ordenando por: ',
       filter: 'Filtrar',
       newBook: 'Novo livro',
       items: {
-        current: 'Items da coleção {group}',
+        current: 'Items do grupo {group}',
         tableColumns: {
           actions: 'Ações'
         },
@@ -366,7 +369,7 @@ export default {
           compact: 'Compacto',
           comfortable: 'Confortável'
         },
-        collection: 'Coleção',
+        collection: 'Grupo',
         sortDirection: {
           label: 'Sentido',
           asc: 'Crescente',
@@ -470,7 +473,7 @@ export default {
         title: 'Privacidade',
         description: 'Atualize suas configurações de privacidade.',
         removeAccess: {
-          label: 'Remover a permissão de acesso da Conta do Google',
+          label: 'Remover a permissão de acesso',
           description: `
             Remove a permissão de acesso do Toshokan de sua Conta do Google.
           `,
@@ -659,7 +662,7 @@ export default {
           o valor retornado pelo provedor é incorreto e o utilitário realizará
           a correção, mas pode ser que você ainda precise modificar manualmente.
 
-        Coleção
+        Grupo
         : Grupo que este livro possui em comum com outros em sua coleção.
           Apesar de idealmente o recomendado ser utilizar o tipo de publicação
           (tal como "livros", "quadrinhos" ou "mangás"), você também pode, se

@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col">
     <SimpleHeader
-      class="shadow-none sm:shadow"
+      class="mb-3 md:mb-0"
       :title="t('dashboard.newBook.title')"
       :subtitle="stepText"
     />
 
-    <div class="flex-1 flex items-start sm:items-center justify-center py-5 md:py-10 px-5" ref="mainEl">
+    <div class="flex-1 flex items-start sm:items-center justify-center md:py-10 md:px-5" ref="mainEl">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
@@ -18,7 +18,7 @@
       >
         <section
           v-if="step === 1"
-          class="relative sm:max-w-xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+          class="relative sm:max-w-xl w-full md:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-1-title"
           tabindex="-1"
         >
@@ -93,7 +93,7 @@
               <p>{{ t('dashboard.newBook.autoFill.noResults') }}</p>
             </Alert>
           </div>
-          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-700 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
             <button
               type="button"
               class="button is-ghost -mr-4"
@@ -114,7 +114,7 @@
 
         <section
           v-else-if="step == 2"
-          class="sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+          class="sm:max-w-2xl w-full md:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-2-title"
           tabindex="-1"
         >
@@ -138,7 +138,7 @@
             />
           </div>
 
-          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-700 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
             <div>
               <button
                 type="button"
@@ -168,7 +168,7 @@
 
         <section
           v-else-if="step === 3"
-          class="relative sm:max-w-2xl w-full rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+          class="relative sm:max-w-2xl w-full md:rounded-md bg-white shadow-md overflow-hidden dark:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           aria-labelledby="step-3-title"
           tabindex="-1"
         >
@@ -192,7 +192,7 @@
               @update:finding="coverFinding = $event"
             />
           </div>
-          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+          <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-700 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
             <button
               type="button"
               class="button is-ghost -ml-4"
@@ -224,7 +224,7 @@
 
         <TableInfo
           v-else
-          class="sm:max-w-2xl w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+          class="sm:max-w-2xl rounded-t-none rounded-b-none md:rounded-t-md md:rounded-b-md w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
           :info="bookInfo"
           :title="t('dashboard.newBook.review.title')"
           :subtitle="t('dashboard.newBook.review.description')"

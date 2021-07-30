@@ -143,8 +143,9 @@
 </template>
 
 <script>
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import orderBy from 'lodash.orderby'
@@ -229,7 +230,35 @@ export default {
       return sorted.slice(startIndex, endIndex)
     })
 
+    const route = useRoute()
     const loading = computed(() => store.state.sheet.loading)
+
+    function updateGroupFromQuery () {
+      const newGroup = route.query.group
+
+      if (loading.value || !newGroup) {
+        return
+      }
+
+      if (store.state.sheet.collection[newGroup] && group.value !== newGroup) {
+        store.commit('collection/updateGroup', {
+          group: newGroup,
+          totalResults: store.state.sheet.collection[newGroup].length
+        })
+      }
+    }
+
+    watch(loading, newValue => {
+      if (!newValue) {
+        updateGroupFromQuery()
+      }
+    })
+
+    onMounted(() => {
+      if (!loading.value) {
+        updateGroupFromQuery()
+      }
+    })
 
     function handlePage (page) {
       window.scroll({

@@ -9,7 +9,10 @@
   >
     <div
       aria-hidden="true"
-      class="flex justify-center items-center absolute left-0 top-0 w-full h-full bg-opacity-75 bg-white dark:bg-gray-800"
+      :class="[
+        position,
+        'flex justify-center items-center left-0 top-0 w-full h-full bg-opacity-75 bg-white dark:bg-gray-800'
+      ]"
       v-if="loading"
     >
       <slot
@@ -32,7 +35,11 @@ export default {
       type: String,
       default: 'pulse'
     },
-    loading: Boolean
+    loading: Boolean,
+    position: {
+      type: String,
+      default: 'absolute'
+    }
   }
 }
 </script>

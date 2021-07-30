@@ -37,7 +37,7 @@ module.exports = {
       animation: ['motion-safe'],
       backgroundColor: ['even', 'odd', 'active', 'disabled'],
       backgroundImage: ['dark'],
-      borderColor: ['disabled'],
+      borderColor: ['active', 'disabled'],
       borderWidth: ['dark'],
       boxShadow: ['dark'],
       cursor: ['disabled'],

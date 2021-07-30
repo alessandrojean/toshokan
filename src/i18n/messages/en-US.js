@@ -44,7 +44,7 @@ export default {
       author: 'Author | Authors',
       authors: 'Authors',
       imprint: 'Publisher',
-      collection: 'Collection',
+      collection: 'Group',
       format: 'Format',
       labelPrice: 'Label price',
       paidPrice: 'Paid price',
@@ -258,6 +258,7 @@ export default {
         search: 'Search'
       },
       menu: {
+        more: 'More',
         open: 'Open user menu',
         settings: 'Settings',
         signOut: 'Sign out'
@@ -271,7 +272,7 @@ export default {
         authorListComplete: '{authors} and {lastAuthor}',
         authorSeparator: ', ',
         status: 'Status: ',
-        collection: 'Collection: ',
+        collection: 'Group: ',
         store: 'Store: ',
         edit: 'Edit',
         options: {
@@ -309,6 +310,7 @@ export default {
       title: 'Dashboard',
       hello: 'Hello, {name}!',
       newBook: 'New book',
+      reload: 'Reload',
       beta: {
         short: 'Service currently in beta testing!',
         full: `
@@ -330,6 +332,7 @@ export default {
         hideValue: 'Hide value of {title}'
       },
       lastAdded: 'Books created recently',
+      groups: 'Groups',
       empty: {
         title: 'You don\'t have any books yet',
         description: `
@@ -340,12 +343,12 @@ export default {
     },
     library: {
       title: 'Library',
-      currentCollection: 'Current collection: ',
+      currentCollection: 'Current group: ',
       sortingBy: 'Sorting by: ',
       filter: 'Filter',
       newBook: 'New book',
       items: {
-        current: 'Items from the collection {group}',
+        current: 'Items from the group {group}',
         tableColumns: {
           actions: 'Actions'
         },
@@ -365,7 +368,7 @@ export default {
           compact: 'Compact',
           comfortable: 'Comfortable'
         },
-        collection: 'Collection',
+        collection: 'Group',
         sortDirection: {
           label: 'Sort direction',
           asc: 'Ascending',
@@ -469,7 +472,7 @@ export default {
         title: 'Privacy',
         description: 'Update your privacy settings.',
         removeAccess: {
-          label: 'Remove Google Account access permission',
+          label: 'Remove access permission',
           description: `
             Removes the access permission granted to Toshokan from your Google Account.
           `,
@@ -651,7 +654,7 @@ export default {
           by the search is incorrect and the tool will perform a fix,
           but you may still need to modify it manually.
 
-        Collection
+        Group
         : The group the book has in common with the others in your collection.
           Although ideally it is recommended to use the publication type
           (such as "books", "comics" or "manga"), you can also use

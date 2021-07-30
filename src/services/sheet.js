@@ -6,13 +6,14 @@ import i18n from '../i18n'
 
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
+const SHEET_DEV_SUFFIX = '-dev'
 
 const { t } = i18n.global
 
 export async function findSheetId () {
   // Use a development only sheet to prevent issues during tests.
   const fileName = SHEET_FILE_NAME +
-    (process.env.NODE_ENV === 'development' ? '-dev' : '')
+    (process.env.NODE_ENV === 'development' ? SHEET_DEV_SUFFIX : '')
 
   const response = await window.gapi.client.drive.files.list({
     q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
@@ -88,7 +89,7 @@ export async function getSheetData (sheetId) {
       .slice(0, 10)
       .reverse()
       .map(row => ({
-        month: new Date(`${row[0]}-25`),
+        month: new Date(`${row[0]}-01`),
         totalSpent: parseFloat(row[1]),
         count: parseInt(row[2])
       })),
@@ -169,7 +170,7 @@ export async function updateBook (sheetId, book) {
 }
 
 export async function deleteBook (sheetId, book) {
-  const bookRow = parseInt(book.sheetLocation.substring(9))
+  const bookRow = parseInt(book.sheetLocation.substring(12))
 
   await window.gapi.client.sheets.spreadsheets
     .batchUpdate({

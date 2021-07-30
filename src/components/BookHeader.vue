@@ -22,7 +22,7 @@
           <div
             :class="[
               coverExpanded ? 'w-full max-w-sm mx-6' : 'w-7/12 max-w-xs sm:w-1/3',
-              'motion-safe:transition-all ease-in-out duration-300 shadow-lg bg-gray-400 overflow-hidden block md:hidden rounded-md'
+              'motion-safe:transition-all ease-in-out duration-300 shadow-lg bg-gray-400 dark:bg-gray-600 overflow-hidden block md:hidden rounded-md'
             ]"
             @click="coverExpanded = !coverExpanded"
           >
@@ -40,7 +40,7 @@
                   <PhotographIcon
                     :class="[
                       imageLoading ? 'motion-safe:animate-pulse' : '',
-                      'w-10 h-10 text-gray-200 dark:text-gray-500'
+                      'w-10 h-10 text-gray-200 dark:text-gray-400'
                     ]"
                     aria-hidden="true"
                   />
@@ -151,10 +151,11 @@
         </div>
 
         <!-- Book actions -->
-        <div class="mt-5 flex lg:mt-0 lg:ml-10 space-x-4">
+        <div class="mt-5 flex w-full md:w-auto lg:mt-0 lg:ml-10 space-x-4">
           <template v-if="loading || !bookFound">
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28"></div>
+            <div class="motion-safe:animate-pulse h-9 flex-1 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
+            <div class="motion-safe:animate-pulse h-9 flex-1 md:hidden bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
+            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-10"></div>
           </template>
           <template v-else>
             <transition
@@ -167,7 +168,7 @@
             >
               <button
                 type="button"
-                class="button"
+                class="button justify-center flex-1 md:flex-initial"
                 :disabled="editing"
                 @click.stop="$emit('click:edit', $event)"
               >
@@ -186,6 +187,27 @@
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
             >
+              <button
+                type="button"
+                class="button justify-center flex-1 md:hidden"
+                :disabled="editing"
+                @click.stop="$emit('click:updateCover', $event)"
+              >
+                <span aria-hidden="true">
+                  <PhotographIcon aria-hidden="true" />
+                </span>
+                {{ t('dashboard.details.header.options.updateCover') }}
+              </button>
+            </transition>
+
+            <transition
+              leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+            >
               <Menu
                 as="div"
                 class="md:relative inline-block text-left"
@@ -193,12 +215,20 @@
               >
                 <div>
                   <MenuButton
-                    class="button"
+                    class="button is-icon-only px-2 md:hidden"
                     :disabled="editing"
                   >
                     <span aria-hidden="true" class="md:hidden">
                       <DotsHorizontalIcon />
                     </span>
+                    <span class="sr-only">
+                      {{ t('dashboard.details.header.options.title') }}
+                    </span>
+                  </MenuButton>
+                  <MenuButton
+                    class="button hidden md:flex"
+                    :disabled="editing"
+                  >
                     {{ t('dashboard.details.header.options.title') }}
                     <span aria-hidden="true" class="hidden sm:inline-block">
                       <ChevronDownIcon class="is-right" aria-hidden="true" />
@@ -253,7 +283,7 @@
                         </a>
                       </MenuItem>
                     </div>
-                    <div class="py-1">
+                    <div class="py-1 hidden md:block">
                       <MenuItem v-slot="{ active }">
                         <button
                           type="button"
@@ -350,7 +380,7 @@
           </template>
         </div>
 
-        <div aria-hidden="true" class="mt-6 w-full border-b border-gray-300 dark:border-gray-600 md:hidden"></div>
+        <div aria-hidden="true" class="mt-6 w-full border-b border-gray-300 dark:border-gray-700 md:hidden"></div>
       </div>
     </div>
   </header>

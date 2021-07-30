@@ -134,7 +134,8 @@ const routes = [
         name: 'DashboardSettings',
         component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/dashboard/Settings.vue'),
         meta: {
-          title: () => t('app.routes.dashboard.settings')
+          title: () => t('app.routes.dashboard.settings'),
+          more: true
         }
       }
     ]

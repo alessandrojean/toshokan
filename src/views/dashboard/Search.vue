@@ -1,6 +1,9 @@
 <template>
   <div class="md:max-w-2xl mx-auto md:py-6 md:px-8">
-    <form class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800">
+    <form
+      class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800"
+      @submit.prevent="handleSubmit"
+    >
       <label for="search" class="sr-only">
         {{ t('dashboard.search.label') }}
       </label>
@@ -82,9 +85,16 @@ export default {
       })
     })
 
-    watch(searchQuery, newQuery => {
-      store.dispatch('collection/search', { query: newQuery })
-    })
+    function search (query) {
+      store.dispatch('collection/search', { query: query || searchQuery.value })
+    }
+
+    function handleSubmit (event) {
+      event.preventDefault()
+      search()
+    }
+
+    watch(searchQuery, newQuery => search(newQuery))
 
     onMounted(() => {
       if (loading.value) {
@@ -98,6 +108,7 @@ export default {
       searchInput,
       searchQuery,
       searchResults,
+      handleSubmit,
       t
     }
   }

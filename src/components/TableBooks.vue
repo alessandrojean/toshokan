@@ -3,7 +3,7 @@
     <div class="overflow-x-auto -mx-5 md:-mx-8 lg:mx-0">
       <div class="align-middle inline-block min-w-full">
         <div class="shadow overflow-hidden border-b border-gray-200 dark:border-gray-600 lg:rounded-t-lg">
-          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
@@ -58,8 +58,8 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-600">
-              <tr v-for="book in items" :key="book.id" class="hover:bg-gray-50 dark:hover:bg-gray-600">
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tr v-for="book in items" :key="book.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
@@ -69,7 +69,7 @@
                       <div class="text-sm font-medium text-gray-900 dark:text-gray-200">
                         {{ book.titleParts[0] }}
                       </div>
-                      <div class="text-sm text-gray-500 dark:text-gray-400">
+                      <div class="text-xs text-gray-500 dark:text-gray-400">
                         {{ volumeText(book) }}
                       </div>
                     </div>
@@ -82,8 +82,8 @@
                   <span
                     :class="[
                       book.status === BookStatus.READ
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-500 dark:border dark:border-green-500'
-                        : 'bg-red-100 text-red-800 dark:bg-transparent dark:text-red-400 dark:border dark:border-red-400',
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-500 dark:border dark:border-green-500'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-40 dark:text-red-400 dark:border dark:border-red-400',
                       'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
                     ]"
                   >

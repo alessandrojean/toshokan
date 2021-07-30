@@ -106,17 +106,15 @@ export default {
 </script>
 
 <style scoped>
-@media (prefers-color-scheme: dark) {
-  .alert-error {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.25), rgba(55, 65, 81, 0.6) 25%);
-  }
+html.dark .alert-error {
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.25), rgba(55, 65, 81, 0.6) 25%);
+}
 
-  .alert-info {
-    background: linear-gradient(to right, rgba(59, 130, 246, 0.25), rgba(55, 65, 81, 0.6) 25%);
-  }
+html.dark .alert-info {
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.25), rgba(55, 65, 81, 0.6) 25%);
+}
 
-  .alert-warning {
-    background: linear-gradient(to right, rgba(245, 158, 11, 0.25), rgba(55, 65, 81, 0.6) 25%);
-  }
+html.dark .alert-warning {
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.25), rgba(55, 65, 81, 0.6) 25%);
 }
 </style>

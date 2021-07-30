@@ -14,12 +14,12 @@
         {{ subtitle }}
       </p>
     </div>
-    <div class="border-t border-gray-200 dark:border-gray-600">
-      <dl class="divide-y dark:divide-gray-600">
+    <div class="border-t border-gray-200 dark:border-gray-700">
+      <dl class="divide-y dark:divide-gray-700">
         <div
           v-for="infoLine in info"
           :key="infoLine.title"
-          class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-700 dark:even:bg-gray-700 px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4"
+          class="odd:bg-gray-50 even:bg-white dark:odd:bg-gray-800 dark:even:bg-gray-800 px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4"
         >
           <dt class="text-sm font-semibold md:font-medium text-gray-500 dark:text-gray-100">
             {{ infoLine.title }}
@@ -31,7 +31,7 @@
         </div>
       </dl>
     </div>
-    <div v-if="$slots.footer" class="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
+    <div v-if="$slots.footer" class="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6 sm:py-3 flex justify-between">
       <slot name="footer"></slot>
     </div>
     <slot name="loading-indicator"></slot>

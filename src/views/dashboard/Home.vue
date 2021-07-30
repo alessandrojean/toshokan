@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col">
-    <!-- <SimpleHeader title="Dashboard" :loading="loading" /> -->
     <header class="bg-white shadow dark:bg-gray-800">
       <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
@@ -14,16 +13,27 @@
             </p>
           </div>
         </div>
-        <div class="flex mt-5 md:mt-0 md:ml-4">
-          <router-link
-            :to="{ name: 'DashboardNewBook' }"
+        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
+          <button
+            class="button"
+            @click="reload"
+            :disabled="loading"
+          >
+            <span aria-hidden="true">
+              <RefreshIcon />
+            </span>
+            {{ t('dashboard.home.reload') }}
+          </button>
+          <button
             class="button is-primary"
+            @click="$router.push({ name: 'DashboardNewBook' })"
+            :disabled="loading"
           >
             <span aria-hidden="true">
               <PlusIcon aria-hidden="true" />
             </span>
             {{ t('dashboard.home.newBook') }}
-          </router-link>
+          </button>
         </div>
       </div>
     </header>
@@ -36,7 +46,7 @@
           v-if="!sheetIsEmpty"
           :aria-labelledby="loading? '' : 'overview-title'"
         >
-          <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
+          <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
           <h2 v-else id="overview-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">
             {{ t('dashboard.home.overview.title') }}
           </h2>
@@ -114,6 +124,41 @@
           :last-added="lastAdded"
         />
 
+        <!-- Groups -->
+        <section
+          v-if="!sheetIsEmpty"
+          aria-labelledby="groups-title"
+          class="w-full mb-3"
+        >
+          <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mt-3 mb-3"></div>
+          <h2 v-else id="groups-title" class="font-medium font-title text-xl mt-3 mb-3 dark:text-gray-200">
+            {{ t('dashboard.home.groups') }}
+          </h2>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" v-if="loading">
+            <div
+              v-for="i in 4"
+              :key="i"
+              class="motion-safe:animate-pulse h-10 bg-gray-400 dark:bg-gray-600 rounded w-full"
+            />
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" v-else>
+            <router-link
+              v-for="group in groups"
+              :key="group.group"
+              :to="{ name: 'DashboardLibrary', query: { group } }"
+              class="button justify-between"
+            >
+              <span class="flex-1 truncate">
+                {{ group.group }}
+              </span>
+              <span aria-hidden="true" class="ml-2 bg-indigo-100 dark:bg-gray-600 text-indigo-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                {{ n(group.count, 'integer') }}
+              </span>
+            </router-link>
+          </div>
+        </section>
+
         <!-- Empty collection -->
         <section
           v-if="sheetIsEmpty && !loading"
@@ -161,7 +206,7 @@ import {
   ExclamationCircleIcon
 } from '@heroicons/vue/outline'
 
-import { PlusIcon } from '@heroicons/vue/solid'
+import { PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
 import BetaWarning from '@/components/BetaWarning'
 import LastAddedBooks from '@/components/LastAddedBooks'
@@ -179,7 +224,8 @@ export default {
     CurrencyDollarIcon,
     EmojiHappyIcon,
     ExclamationCircleIcon,
-    PlusIcon
+    PlusIcon,
+    RefreshIcon
   },
 
   setup () {
@@ -196,6 +242,19 @@ export default {
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
+    const groups = computed(() => {
+      return store.getters['sheet/collections']
+        .map(group => ({
+          group,
+          count: store.state.sheet.collection[group].length
+        }))
+        .sort((a, b) => b.count - a.count)
+    })
+
+    function reload () {
+      store.dispatch('sheet/loadSheetData')
+    }
+
     return {
       sheetIsEmpty,
       lastAdded,
@@ -204,6 +263,8 @@ export default {
       profileName,
       stats,
       isDev,
+      groups,
+      reload,
       n,
       t
     }

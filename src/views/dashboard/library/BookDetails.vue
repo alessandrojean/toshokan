@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 md:bg-transparent">
+  <div class="bg-white dark:bg-gray-900 md:bg-transparent">
     <BookHeader
       :book="book"
       :book-found="bookFound"
@@ -41,7 +41,7 @@
                   {{ volume }}
                 </p>
               </div>
-              <HeartIcon v-if="isFavorite" class="ml-2 h-8 w-8 dark:text-gray-500" aria-hidden="true" />
+              <HeartIcon v-if="isFavorite" class="ml-2 h-8 w-8 text-red-600 dark:text-gray-500" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -69,8 +69,8 @@
                     v-if="discount !== null"
                     :class="[
                       discount > 1
-                        ? 'bg-red-100 text-red-800 dark:bg-transparent dark:text-red-500 dark:border dark:border-red-500'
-                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-400 dark:border dark:border-green-500',
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-40 dark:text-red-400 dark:border dark:border-red-500'
+                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400 dark:border dark:border-green-500',
                       'px-2 py-0.5 text-xs rounded-full leading-5 font-semibold ml-2'
                     ]"
                   >
@@ -109,7 +109,7 @@
                 />
               </div>
 
-              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-600 px-6 py-5 sm:py-3 flex justify-between">
+              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-700 px-6 py-5 sm:py-3 flex justify-between">
                 <button
                   type="button"
                   class="button is-ghost -ml-4"
@@ -151,7 +151,7 @@
                   @update:finding="findingCovers = $event"
                 />
               </div>
-              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-600 px-6 py-5 sm:py-3 flex justify-between">
+              <div class="md:bg-gray-50 md:dark:bg-gray-800 dark:border-t dark:border-gray-700 px-6 py-5 sm:py-3 flex justify-between">
                 <button
                   type="button"
                   class="button is-ghost -ml-4"
@@ -287,6 +287,12 @@ export default {
     watch(bookFound, newValue => {
       if (newValue) {
         loadImage()
+      }
+    })
+
+    watch(book, newValue => {
+      if (newValue) {
+        document.title = newValue.title + ' | ' + t('app.name')
       }
     })
 

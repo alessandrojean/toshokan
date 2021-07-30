@@ -34,26 +34,135 @@
           </a>
         </router-link>
       </li>
+
+      <!-- More menu -->
+      <li class="flex-1 sm:hidden">
+        <Menu as="div" v-slot="{ open }">
+          <MenuButton
+            :class="[
+              $route.meta.more ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : '',
+              'w-full sm:w-auto sm:p-2 text-gray-500 font-medium inline-flex space-y-1 flex-col items-center justify-center rounded-md'
+            ]"
+          >
+            <span aria-hidden="true">
+              <DotsHorizontalIcon class="w-6 h-6 motion-safe:transition-colors duration-500" />
+            </span>
+            <span class="text-xs motion-safe:transition-colors duration-500">
+              {{ t('dashboard.header.menu.more') }}
+            </span>
+          </MenuButton>
+          <transition
+            enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          >
+            <div
+              v-if="open"
+              aria-hidden="true"
+              class="md:hidden fixed z-30 inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity"
+            />
+          </transition>
+          <transition
+            enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
+            enter-from-class="transform scale-95 opacity-0"
+            enter-to-class="transform scale-100 opacity-100"
+            leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
+            leave-from-class="transform scale-100 opacity-100"
+            leave-to-class="transform scale-95 opacity-0"
+          >
+            <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div class="pb-1 w-full">
+                <div class="flex px-4 py-2.5 space-x-4">
+                  <img :src="profileImageUrl" class="rounded-full w-10 h-10">
+                  <div class="flex-1 flex flex-col justify-center text-sm text-gray-700 dark:text-gray-300">
+                    <span class="font-semibold">{{ profileName }}</span>
+                    <span class="text-xs dark:text-gray-400">{{ profileEmail }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="py-1">
+                <MenuItem v-slot="{ active }">
+                  <router-link
+                    :to="{ name: 'DashboardSettings' }"
+                    :class="[
+                      active ? 'bg-gray-100 dark:bg-gray-600' : '',
+                      'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                    ]"
+                  >
+                    <span aria-hidden="true">
+                      <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                    </span>
+                    {{ t('dashboard.header.menu.settings') }}
+                  </router-link>
+                </MenuItem>
+              </div>
+              <div class="pt-1">
+                <MenuItem v-slot="{ active }">
+                  <button
+                    type="button"
+                    :class="[
+                      active ? 'bg-gray-100 dark:bg-gray-600' : '',
+                      'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                    ]"
+                    @click.stop="signOut"
+                  >
+                    <span aria-hidden="true">
+                      <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
+                    </span>
+                    {{ t('dashboard.header.menu.signOut') }}
+                  </button>
+                </MenuItem>
+              </div>
+            </MenuItems>
+          </transition>
+        </Menu>
+      </li>
     </ul>
   </nav>
 </template>
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import {
+  DotsHorizontalIcon,
   HomeIcon,
   LibraryIcon,
   PresentationChartLineIcon,
   SearchIcon
 } from '@heroicons/vue/outline'
-import { LibraryIcon as LibraryIconSolid } from '@heroicons/vue/solid'
+
+import {
+  CogIcon,
+  LibraryIcon as LibraryIconSolid,
+  LogoutIcon
+} from '@heroicons/vue/solid'
+
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems
+} from '@headlessui/vue'
 
 export default {
   name: 'MobileNavbar',
 
-  components: { LibraryIconSolid },
+  components: {
+    DotsHorizontalIcon,
+    CogIcon,
+    LibraryIconSolid,
+    LogoutIcon,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems
+  },
 
   setup () {
     const { t } = useI18n()
@@ -65,7 +174,19 @@ export default {
       { to: 'DashboardStats', title: t('dashboard.stats.title'), icon: PresentationChartLineIcon }
     ])
 
-    return { items }
+    const store = useStore()
+
+    const profileEmail = computed(() => store.state.auth.profileEmail)
+    const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
+    const profileName = computed(() => store.state.auth.profileName)
+
+    return {
+      items,
+      profileEmail,
+      profileImageUrl,
+      profileName,
+      t
+    }
   }
 }
 </script>
