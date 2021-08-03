@@ -3,7 +3,7 @@
     <header class="bg-white shadow dark:bg-gray-800">
       <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 items-center">
-          <template v-if="loading">
+          <template v-if="sheetLoading">
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"></div>
             <div class="flex space-x-2">
               <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
@@ -38,7 +38,7 @@
           </template>
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
-          <template v-if="loading">
+          <template v-if="sheetLoading">
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"></div>
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"></div>
           </template>
@@ -48,6 +48,7 @@
               class="button flex-1 md:flex-initial justify-center md:justify-start"
               @click.stop="filterOpen = true"
               v-if="!sheetIsEmpty"
+              :disabled="loading"
             >
               <span aria-hidden="true">
                 <FilterIcon aria-hidden="true" />
@@ -88,8 +89,8 @@
           enter-to-class="opacity-100 translate-x-0"
         >
           <TableBooks
-            v-if="viewMode === 'table' && results.length > 0"
-            :items="results"
+            v-if="viewMode === 'table' && books.length > 0"
+            :items="books"
             :pagination-info="paginationInfo"
             :sort-direction="sortDirection"
             :sort-property="sortProperty"
@@ -98,10 +99,9 @@
 
           <GridBooks
             v-else
-            :items="results"
+            :items="books"
             :pagination-info="paginationInfo"
             :skeleton-items="18"
-            :loading="loading"
             @page="handlePage"
           />
         </transition>
@@ -138,7 +138,13 @@
     </div>
 
     <!-- Filters -->
-    <LibraryFilters v-model:open="filterOpen" v-if="!sheetIsEmpty" />
+    <LibraryFilters
+      v-model:open="filterOpen"
+      v-if="!sheetIsEmpty"
+      @filter="handleFilter"
+    />
+
+    <!-- <GroupChips /> -->
   </div>
 </template>
 
@@ -147,8 +153,6 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-
-import orderBy from 'lodash.orderby'
 
 import {
   ArchiveIcon,
@@ -160,6 +164,7 @@ import {
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
 
 import GridBooks from '@/components/GridBooks'
+// import GroupChips from '@/components/GroupChips'
 import LibraryFilters from '@/components/LibraryFilters'
 import TableBooks from '@/components/TableBooks'
 
@@ -168,6 +173,7 @@ export default {
 
   components: {
     GridBooks,
+    // GroupChips,
     LibraryFilters,
     TableBooks,
     ArchiveIcon,
@@ -185,10 +191,8 @@ export default {
 
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
 
-    const currentPage = computed(() => store.state.collection.currentPage)
     const group = computed(() => store.state.collection.group)
     const paginationInfo = computed(() => store.state.collection.paginationInfo)
-    const perPage = computed(() => store.state.collection.perPage)
     const sortProperty = computed(() => store.state.collection.sortBy)
     const sortDirection = computed(() => store.state.collection.sortDirection)
     const viewMode = computed(() => store.state.collection.viewMode)
@@ -197,66 +201,68 @@ export default {
       title: t('book.properties.title'),
       imprint: t('book.properties.imprint'),
       status: t('book.properties.status'),
+      readAt: t('book.properties.readAt'),
       'paidPrice.value': t('book.properties.paidPrice'),
-      createdAt: t('book.properties.createdAt')
+      'labelPrice.value': t('book.properties.labelPrice'),
+      createdAt: t('book.properties.createdAt'),
+      updatedAt: t('book.properties.updatedAt')
     }
 
     const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
 
-    const groupItems = computed(() => {
-      return store.state.sheet.collection[store.state.collection.group] || []
-    })
-
-    const results = computed(() => {
-      if (groupItems.value.length === 0) {
-        return []
-      }
-
-      const startIndex = (currentPage.value - 1) * perPage.value
-      const endIndex = startIndex + perPage.value
-
-      let sorted = groupItems.value
-
-      if (sortProperty.value !== 'title') {
-        sorted = orderBy(
-          groupItems.value,
-          [sortProperty.value],
-          [sortDirection.value]
-        )
-      } else if (sortProperty.value === 'title' && sortDirection.value === 'desc') {
-        sorted = groupItems.value.slice().reverse()
-      }
-
-      return sorted.slice(startIndex, endIndex)
-    })
+    const books = computed(() => store.state.collection.books.items)
+    const loading = computed(() => store.state.collection.books.loading)
+    const currentPage = computed(() => store.state.collection.currentPage)
 
     const route = useRoute()
-    const loading = computed(() => store.state.sheet.loading)
+    const sheetId = computed(() => store.state.sheet.sheetId)
+    const sheetLoading = computed(() => store.state.sheet.loading)
 
-    function updateGroupFromQuery () {
+    async function updateGroupFromQuery () {
       const newGroup = route.query.group
 
-      if (loading.value || !newGroup) {
+      if (sheetLoading.value || loading.value || !newGroup) {
         return
       }
 
-      if (store.state.sheet.collection[newGroup] && group.value !== newGroup) {
+      if (!sheetIsEmpty.value && store.state.collection.groups.items === 0) {
+        await store.dispatch('collection/fetchGroups')
+      }
+
+      const groupData = store.state.collection.groups.items
+        .find(grp => grp.name === newGroup)
+
+      const oldGroup = group.value
+
+      if (groupData && oldGroup !== newGroup) {
         store.commit('collection/updateGroup', {
           group: newGroup,
-          totalResults: store.state.sheet.collection[newGroup].length
+          totalResults: groupData.count
         })
+
+        return true
       }
+
+      return false
     }
 
-    watch(loading, newValue => {
-      if (!newValue) {
-        updateGroupFromQuery()
+    watch(sheetId, async newSheetId => {
+      if (newSheetId) {
+        const groupChanged = await updateGroupFromQuery()
+
+        if (groupChanged || books.value.length === 0) {
+          await store.dispatch('collection/fetchBooks', currentPage.value)
+        }
       }
     })
 
-    onMounted(() => {
-      if (!loading.value) {
-        updateGroupFromQuery()
+    onMounted(async () => {
+      if (sheetId.value) {
+        const groupChanged = await updateGroupFromQuery()
+
+        if (groupChanged || books.value.length === 0) {
+          await store.dispatch('collection/fetchBooks', currentPage.value)
+        }
       }
     })
 
@@ -268,26 +274,47 @@ export default {
       })
 
       nextTick(() => {
-        store.commit('collection/updateCurrentPage', {
-          page,
-          totalResults: groupItems.value.length
-        })
+        const totalResults = store.state.collection.paginationInfo.total_results
+        store.commit('collection/updateCurrentPage', { page, totalResults })
+
+        store.dispatch('collection/fetchBooks', page)
       })
+    }
+
+    async function handleFilter (filters) {
+      store.commit('collection/updateViewMode', filters.viewMode)
+      store.commit('collection/updateGridMode', filters.gridMode)
+
+      if (store.state.collection.group !== filters.group ||
+          store.state.collection.sortBy !== filters.sortProperty ||
+          store.state.collection.sortDirection !== filters.sortDirection) {
+        const totalResults = store.state.collection.paginationInfo.total_results
+        store.commit('collection/updateCurrentPage', { page: 1, totalResults })
+
+        store.commit('collection/updateGroup', { group: filters.group })
+        store.commit('collection/updateSort', {
+          sortBy: filters.sortProperty,
+          sortDirection: filters.sortDirection
+        })
+
+        store.dispatch('collection/fetchBooks', 1)
+      }
     }
 
     return {
       filterOpen,
       sheetIsEmpty,
       group,
-      groupItems,
       handlePage,
+      sheetLoading,
       loading,
+      books,
       paginationInfo,
-      results,
       sortDirection,
       sortProperty,
       sortPropertyName,
       viewMode,
+      handleFilter,
       t
     }
   }

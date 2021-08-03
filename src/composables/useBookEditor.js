@@ -27,6 +27,10 @@ export default function useBookEditor (book) {
 
     const bookId = await sheetUpdateBook(store.state.sheet.sheetId, bookToUpdate)
     await store.dispatch('sheet/loadSheetData')
+    await store.dispatch('collection/fetchGroups')
+    store.commit('collection/updateLastAdded', { items: [] })
+    store.commit('collection/updateLatestReadings', { items: [] })
+    store.commit('collection/updateBooks', { items: [] })
 
     updating.value = false
     store.commit('sheet/updateLoading', false)

@@ -60,7 +60,7 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
-    const { n, t, locale } = useI18n()
+    const { n, t, d, locale } = useI18n()
 
     const { darkMode } = useDarkMode()
     const { motionSafe } = useMotionSafe()
@@ -91,19 +91,25 @@ export default {
           borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
         },
         stroke: { curve: 'smooth' },
-        labels: (stats.value.monthly || []).map(m => m.month.toISOString()),
         tooltip: {
           theme: darkMode.value ? 'dark' : 'light',
-          x: { format: 'MMMMM/yyyy' }
+          x: {
+            formatter: (value) => {
+              return d(stats.value.monthly[value - 1].month, 'monthYear')
+            }
+          }
         },
         xaxis: {
+          categories: (stats.value.monthly || [])
+            .map(m => m.month.toISOString()),
           labels: {
-            format: 'MMM',
+            formatter: (value) => {
+              return value ? d(new Date(value), 'month') : value
+            },
             style: {
               colors: darkMode.value ? colors.gray[400] : colors.gray[500]
             }
           },
-          type: 'datetime',
           tooltip: { enabled: false }
         },
         yaxis: {

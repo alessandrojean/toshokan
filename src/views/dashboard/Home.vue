@@ -119,45 +119,19 @@
         </section>
 
         <!-- Last added books -->
-        <LastAddedBooks
-          :loading="loading"
-          :last-added="lastAdded"
+        <BookCarousel
+          :title="t('dashboard.home.lastAdded')"
+          collection="lastAdded"
+        />
+
+        <!-- Latest readings -->
+        <BookCarousel
+          :title="t('dashboard.home.latestReadings')"
+          collection="latestReadings"
         />
 
         <!-- Groups -->
-        <section
-          v-if="!sheetIsEmpty"
-          aria-labelledby="groups-title"
-          class="w-full mb-3 mt-8"
-        >
-          <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mt-3"></div>
-          <h2 v-else id="groups-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">
-            {{ t('dashboard.home.groups') }}
-          </h2>
-
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" v-if="loading">
-            <div
-              v-for="i in 4"
-              :key="i"
-              class="motion-safe:animate-pulse h-10 bg-gray-400 dark:bg-gray-600 rounded w-full"
-            />
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" v-else>
-            <router-link
-              v-for="group in groups"
-              :key="group.group"
-              :to="{ name: 'DashboardLibrary', query: { group: group.group } }"
-              class="button justify-between"
-            >
-              <span class="flex-1 truncate">
-                {{ group.group }}
-              </span>
-              <span aria-hidden="true" class="ml-2 bg-indigo-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-indigo-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {{ n(group.count, 'integer') }}
-              </span>
-            </router-link>
-          </div>
-        </section>
+        <GroupGrid />
 
         <!-- Empty collection -->
         <section
@@ -209,7 +183,8 @@ import {
 import { PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
 import BetaWarning from '@/components/BetaWarning'
-import LastAddedBooks from '@/components/LastAddedBooks'
+import BookCarousel from '@/components/BookCarousel'
+import GroupGrid from '@/components/GroupGrid'
 import StatCard from '@/components/StatCard'
 
 export default {
@@ -217,7 +192,8 @@ export default {
 
   components: {
     BetaWarning,
-    LastAddedBooks,
+    BookCarousel,
+    GroupGrid,
     StatCard,
     BookOpenIcon,
     BookmarkIcon,
@@ -236,34 +212,26 @@ export default {
 
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
-    const lastAdded = computed(() => store.state.sheet.lastAdded)
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
-    const groups = computed(() => {
-      return store.getters['sheet/collections']
-        .map(group => ({
-          group,
-          count: store.state.sheet.collection[group].length
-        }))
-        .sort((a, b) => b.count - a.count)
-    })
-
     function reload () {
       store.dispatch('sheet/loadSheetData')
+      store.dispatch('collection/fetchLastAdded')
+      store.dispatch('collection/fetchLatestReadings')
+      store.dispatch('collection/fetchGroups')
+      store.commit('collection/updateBooks', { items: [] })
     }
 
     return {
       sheetIsEmpty,
-      lastAdded,
       loading,
       profileImageUrl,
       profileName,
       stats,
       isDev,
-      groups,
       reload,
       n,
       t

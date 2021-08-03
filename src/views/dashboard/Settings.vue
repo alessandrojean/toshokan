@@ -291,6 +291,9 @@ export default {
       if (locale.value !== settings.appearence.locale) {
         locale.value = settings.appearence.locale
         store.dispatch('sheet/loadSheetData')
+        store.commit('collection/updateLastAdded', { items: [] })
+        store.commit('collection/updateLatestReadings', { items: [] })
+        store.commit('collection/updateBooks', { items: [] })
       }
 
       store.commit('updateTheme', settings.appearence.theme)

@@ -1,6 +1,9 @@
 <template>
   <nav
-    class="shadow-top md:hidden z-20 flex sm:flex-col items-center bg-white dark:bg-gray-800 fixed bottom-0 left-0 sm:inset-y-0 w-full sm:w-16 h-16 sm:h-screen p-2 border-t sm:border-t-0 sm:border-r border-gray-200 dark:border-gray-700"
+    :class="[
+      'motion-safe:transition-shadow duration-100 shadow-top md:hidden z-20 flex sm:flex-col items-center bg-white dark:bg-gray-800 fixed bottom-0 left-0 sm:inset-y-0 w-full sm:w-16 h-16 sm:h-screen p-2 border-t sm:border-t-0 sm:border-r border-gray-200 dark:border-gray-700'
+      /* $route.name === 'DashboardLibrary' ? '' : 'shadow-top' */
+    ]"
     aria-label="Navegação principal"
   >
     <div aria-hidden="true" class="hidden sm:block mt-1.5 mb-6">
@@ -52,10 +55,10 @@
             </span>
           </MenuButton>
           <transition
-            enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
+            enter-active-class="transition motion-reduce:transition-none ease-out duration-300"
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
-            leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+            leave-active-class="transition motion-reduce:transition-none ease-in duration-200"
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
           >
@@ -66,12 +69,12 @@
             />
           </transition>
           <transition
-            enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
-            enter-from-class="transform translate-y-1/2 opacity-0"
+            enter-active-class="transition motion-reduce:transition-none duration-300 md:duration-100 ease-out"
+            enter-from-class="transform translate-y-full opacity-0"
             enter-to-class="transform translate-y-0 opacity-100"
-            leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
+            leave-active-class="transition motion-reduce:transition-none duration-200 md:duration-75 ease-in"
             leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform translate-y-1/2 opacity-0"
+            leave-to-class="transform translate-y-full opacity-0"
           >
             <MenuItems as="ul" class="fixed md:absolute z-40 inset-x-0 bottom-0 py-1 origin-bottom bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-t-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="pb-1 w-full">

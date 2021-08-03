@@ -13,6 +13,11 @@ export default function useBookDeleter (book) {
 
     await sheetDeleteBook(store.state.sheet.sheetId, book.value)
     await store.dispatch('sheet/loadSheetData')
+    await store.dispatch('collection/fetchGroups')
+    await store.dispatch('collection/fetchIdMap')
+    store.commit('collection/updateLastAdded', { items: [] })
+    store.commit('collection/updateLatestReadings', { items: [] })
+    store.commit('collection/updateBooks', { items: [] })
 
     deleting.value = false
     store.commit('sheet/updateLoading', false)

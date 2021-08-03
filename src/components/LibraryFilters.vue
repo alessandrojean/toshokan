@@ -19,17 +19,17 @@
         >
           <DialogOverlay class="absolute inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity" />
         </TransitionChild>
-        <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
+        <div class="fixed inset-x-0 sm:inset-x-auto sm:inset-y-0 bottom-0 sm:right-0 sm:pl-10 max-w-full flex">
           <TransitionChild
             as="template"
             enter="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
-            enter-from="translate-x-full"
-            enter-to="translate-x-0"
+            enter-from="translate-y-full sm:translate-y-0 sm:translate-x-full"
+            enter-to="translate-y-0 sm:translate-x-0"
             leave="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
-            leave-from="translate-x-0"
-            leave-to="translate-x-full"
+            leave-from="translate-y-0 sm:translate-x-0"
+            leave-to="translate-y-full sm:translate-y-0 sm:translate-x-full"
           >
-            <div class="relative w-screen max-w-md">
+            <div class="relative w-screen sm:max-w-md">
               <TransitionChild
                 as="template"
                 enter="motion-reduce:transition-none ease-in-out duration-500"
@@ -39,23 +39,23 @@
                 leave-from="opacity-100"
                 leave-to="opacity-0"
               >
-                <div class="absolute top-0 left-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
-                  <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" @click="$emit('update:open', false)">
+                <div class="hidden sm:flex absolute top-0 left-0 -ml-8 pt-4 pr-2 sm:-ml-10 sm:pr-4">
+                  <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600" @click="$emit('update:open', false)">
                     <span class="sr-only">{{ t('dashboard.library.filters.close') }}</span>
                     <XIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
               </TransitionChild>
-              <div class="h-full flex flex-col py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800">
-                <div class="px-4 sm:px-6">
-                  <DialogTitle class="text-lg font-title font-medium text-gray-900 dark:text-gray-100">
+              <div class="h-full flex flex-col sm:py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none">
+                <div class="pt-5 sm:pt-0 pb-4 sm:pb-0 px-4 sm:px-6 border-b sm:border-b-0 border-gray-300 dark:border-gray-700">
+                  <DialogTitle class="leading-3 text-lg font-title font-medium text-gray-900 dark:text-gray-100">
                     {{ t('dashboard.library.filters.title') }}
                   </DialogTitle>
                 </div>
                 <form
                   role="form"
                   aria-label="Filtros"
-                  class="mt-6 space-y-6 relative flex-1 px-4 sm:px-6"
+                  class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-0 sm:mt-6 space-y-5 relative sm:flex-1 px-4 sm:px-6"
                 >
                   <div>
                     <RadioGroup v-model="viewMode">
@@ -63,28 +63,24 @@
                         {{ t('dashboard.library.filters.viewMode.label' )}}
                       </RadioGroupLabel>
 
-                      <div class="flex -space-x-px">
-                        <RadioGroupOption as="template" value="table" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
-                            <TableIcon aria-hidden="true" />
+                      <div class="w-full">
+                        <RadioGroupOption
+                          value="table"
+                          v-slot="{ checked }"
+                          class="inline-block mr-2 has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.viewMode.table') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
-                        <RadioGroupOption as="template" value="grid" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
-                            <ViewGridIcon aria-hidden="true" />
+                        <RadioGroupOption
+                          value="grid"
+                          v-slot="{ checked }"
+                          class="inline-block has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.viewMode.grid') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
                       </div>
                     </RadioGroup>
@@ -96,50 +92,49 @@
                         {{ t('dashboard.library.filters.gridMode.label') }}
                       </RadioGroupLabel>
 
-                      <div class="flex -space-x-px">
-                        <RadioGroupOption as="template" value="compact" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
+                      <div class="w-full">
+                        <RadioGroupOption
+                          value="compact"
+                          v-slot="{ checked }"
+                          class="inline-block mr-2 has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.gridMode.compact') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
-                        <RadioGroupOption as="template" value="comfortable" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
+                        <RadioGroupOption
+                          value="comfortable"
+                          v-slot="{ checked }"
+                          class="inline-block has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.gridMode.comfortable') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
                       </div>
                     </RadioGroup>
                   </div>
 
-                  <div>
-                    <label for="group" class="label">
-                      {{ t('dashboard.library.filters.collection') }}
-                    </label>
-                    <select
-                      name="group"
-                      id="group"
-                      class="select"
-                      @change="handleGroup"
-                    >
-                      <option
-                        v-for="col of collections"
-                        :key="col"
-                        :value="col"
-                        :selected="col === group"
-                      >
-                        {{ col }}
-                      </option>
-                    </select>
+                  <div v-if="groups.length > 0">
+                    <RadioGroup v-model="group">
+                      <RadioGroupLabel class="label">
+                        {{ t('dashboard.library.filters.collection') }}
+                      </RadioGroupLabel>
+
+                      <div class="w-full -mt-2">
+                        <RadioGroupOption
+                          v-for="grp of groups"
+                          :key="grp.name"
+                          :value="grp.name"
+                          v-slot="{ checked }"
+                          class="mr-2 mt-2 inline-block has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
+                            {{ grp.name }}
+                          </span>
+                        </RadioGroupOption>
+                      </div>
+                    </RadioGroup>
                   </div>
 
                   <div>
@@ -148,65 +143,74 @@
                         {{ t('dashboard.library.filters.sortDirection.label') }}
                       </RadioGroupLabel>
 
-                      <div class="flex -space-x-px">
-                        <RadioGroupOption as="template" value="asc" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-r-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
-                            <span aria-hidden="true">
-                              <SortAscendingIcon aria-hidden="true" />
-                            </span>
+                      <div class="w-full">
+                        <RadioGroupOption
+                          value="asc"
+                          v-slot="{ checked }"
+                          class="inline-block mr-2 has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.sortDirection.asc') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
-                        <RadioGroupOption as="template" value="desc" v-slot="{ checked }">
-                          <div
-                            :class="[
-                              checked ? 'is-active' : '',
-                              'button flex-1 rounded-l-none cursor-pointer justify-center text-base sm:text-sm'
-                            ]"
-                          >
-                            <span aria-hidden="true">
-                              <SortDescendingIcon aria-hidden="true" />
-                            </span>
+                        <RadioGroupOption
+                          value="desc"
+                          v-slot="{ checked }"
+                          class="inline-block has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
                             {{ t('dashboard.library.filters.sortDirection.desc') }}
-                          </div>
+                          </span>
                         </RadioGroupOption>
                       </div>
                     </RadioGroup>
                   </div>
 
                   <div>
-                    <label for="sort-by" class="label">
-                      {{ t('dashboard.library.filters.sortBy') }}
-                    </label>
-                    <select
-                      name="sort-by"
-                      id="sort-by"
-                      class="select"
-                      v-model="sortProperty"
-                    >
-                      <option
-                        v-for="sortOption of sortProperties"
-                        :key="sortOption.attr"
-                        :value="sortOption.attr"
-                      >
-                        {{ sortOption.title }}
-                      </option>
-                    </select>
+                    <RadioGroup v-model="sortProperty">
+                      <RadioGroupLabel class="label">
+                        {{ t('dashboard.library.filters.sortBy') }}
+                      </RadioGroupLabel>
+
+                      <div class="w-full -mt-2">
+                        <RadioGroupOption
+                          v-for="sortOption of sortProperties"
+                          :key="sortOption.attr"
+                          :value="sortOption.attr"
+                          v-slot="{ checked }"
+                          class="mr-2 mt-2 inline-block has-ring-focus rounded"
+                        >
+                          <span :class="['chip is-square', checked ? 'is-active' : '']">
+                            {{ sortOption.title }}
+                          </span>
+                        </RadioGroupOption>
+                      </div>
+                    </RadioGroup>
                   </div>
                 </form>
 
-                <div class="block md:hidden w-full px-4 sm:px-6">
+                <div class="flex justify-between sm:justify-end w-full py-3 sm:py-0 px-4 sm:px-6 border-t sm:border-t-0 border-gray-300 dark:border-gray-700">
                   <button
                     type="button"
-                    class="button is-primary w-full justify-center text-base sm:text-sm"
+                    class="button is-ghost justify-center sm:hidden -ml-4"
                     @click="$emit('update:open', false)"
                   >
                     {{ t('dashboard.library.filters.closeMobile') }}
+                  </button>
+
+                  <button
+                    type="button"
+                    class="button justify-center text-base hidden sm:flex md:hidden sm:text-sm flex-1"
+                    @click="$emit('update:open', false)"
+                  >
+                    {{ t('dashboard.library.filters.closeMobile') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="button is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial md:w-1/2"
+                    @click="handleFilter"
+                  >
+                    {{ t('dashboard.library.filters.filter') }}
                   </button>
                 </div>
               </div>
@@ -219,7 +223,7 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -234,22 +238,12 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import {
-  SortAscendingIcon,
-  SortDescendingIcon,
-  TableIcon,
-  ViewGridIcon,
-  XIcon
-} from '@heroicons/vue/solid'
+import { XIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'LibraryFilters',
 
   components: {
-    SortAscendingIcon,
-    SortDescendingIcon,
-    TableIcon,
-    ViewGridIcon,
     XIcon,
     Dialog,
     DialogOverlay,
@@ -261,80 +255,73 @@ export default {
     TransitionRoot
   },
 
-  emits: ['update:open'],
+  emits: ['update:open', 'filter'],
 
   props: {
     open: Boolean
   },
 
-  setup () {
+  setup (props, context) {
     const store = useStore()
-    const { t } = useI18n()
+    const { t, n, locale } = useI18n()
 
     const gridMode = ref(store.state.collection.gridMode)
     const viewMode = ref(store.state.collection.viewMode)
-
-    const sortProperties = ref([
-      { attr: 'title', title: t('book.properties.title') },
-      { attr: 'imprint', title: t('book.properties.imprint') },
-      { attr: 'status', title: t('book.properties.status') },
-      { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
-      { attr: 'createdAt', title: t('book.properties.createdAt') }
-    ])
-
-    const collections = computed(() => store.getters['sheet/collections'])
-    const group = computed(() => store.state.collection.group)
-    const paginationInfo = computed(() => store.state.collection.paginationInfo)
+    const group = ref(store.state.collection.group)
     const sortProperty = ref(store.state.collection.sortBy)
     const sortDirection = ref(store.state.collection.sortDirection)
 
-    const groupItems = computed(() => {
-      return store.state.sheet.collection[store.state.collection.group] || []
+    const sortProperties = computed(() => {
+      const properties = [
+        { attr: 'title', title: t('book.properties.title') },
+        { attr: 'imprint', title: t('book.properties.imprint') },
+        { attr: 'status', title: t('book.properties.status') },
+        { attr: 'readAt', title: t('book.properties.readAt') },
+        { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
+        { attr: 'labelPrice.value', title: t('book.properties.labelPrice') },
+        { attr: 'createdAt', title: t('book.properties.createdAt') },
+        { attr: 'updatedAt', title: t('book.properties.updatedAt') }
+      ]
+
+      return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
-    const handleGroup = e => {
-      const newGroup = e.target.value
+    const groups = computed(() => store.state.collection.groups.items)
 
-      store.commit('collection/updateGroup', {
-        group: newGroup,
-        totalResults: store.state.sheet.collection[newGroup].length
+    const { open } = toRefs(props)
+
+    watch(open, newOpen => {
+      if (newOpen) {
+        gridMode.value = store.state.collection.gridMode
+        viewMode.value = store.state.collection.viewMode
+        group.value = store.state.collection.group
+        sortProperty.value = store.state.collection.sortBy
+        sortDirection.value = store.state.collection.sortDirection
+      }
+    })
+
+    function handleFilter () {
+      context.emit('update:open', false)
+      context.emit('filter', {
+        viewMode: viewMode.value,
+        gridMode: gridMode.value,
+        group: group.value,
+        sortProperty: sortProperty.value,
+        sortDirection: sortDirection.value
       })
     }
 
-    watch(sortProperty, newSortProperty => {
-      store.commit('collection/updateSort', {
-        sortBy: newSortProperty,
-        sortDirection: sortDirection.value
-      })
-    })
-
-    watch(sortDirection, newSortDirection => {
-      store.commit('collection/updateSort', {
-        sortBy: sortProperty.value,
-        sortDirection: newSortDirection
-      })
-    })
-
-    watch(gridMode, newGridMode => {
-      store.commit('collection/updateGridMode', newGridMode)
-    })
-
-    watch(viewMode, newViewMode => {
-      store.commit('collection/updateViewMode', newViewMode)
-    })
-
     return {
-      collections,
       gridMode,
       group,
-      groupItems,
-      handleGroup,
-      paginationInfo,
+      groups,
       sortProperty,
       sortDirection,
       sortProperties,
       viewMode,
-      t
+      handleFilter,
+      t,
+      n
     }
   }
 }

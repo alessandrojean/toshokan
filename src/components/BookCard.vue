@@ -12,7 +12,7 @@
         <div class="h-3 bg-gray-200 dark:bg-gray-500 w-1/2 rounded"></div>
       </div>
     </div>
-    <div v-if="mode === 'comfortable'" class="mt-3 mb-4 space-y-1">
+    <div v-if="mode === 'comfortable'" class="mt-3 space-y-1">
       <div class="h-4 bg-gray-400 dark:bg-gray-600 w-3/4 rounded"></div>
       <div class="h-3 bg-gray-400 dark:bg-gray-600 w-1/2 rounded"></div>
     </div>

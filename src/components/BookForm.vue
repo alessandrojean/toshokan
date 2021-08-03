@@ -94,10 +94,10 @@
           <datalist id="imprints">
             <option
               v-for="imprint of imprintOptions"
-              :key="imprint"
-              :value="imprint"
+              :key="imprint.name"
+              :value="imprint.name"
             >
-              {{ imprint }}
+              {{ imprint.name }}
             </option>
           </datalist>
           <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -110,37 +110,37 @@
       </div>
 
       <div class="col-span-12 sm:col-span-1">
-        <label for="book-collection" class="label">
+        <label for="book-group" class="label">
           {{ t('book.properties.collection') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
-            id="book-collection"
+            id="book-group"
             type="text"
             :value="book.collection"
             @input="handleInput('collection', $event.target.value)"
             class="input pr-9"
             :placeholder="t('book.form.example.placeholder', [t('book.form.example.collection')])"
-            list="collections"
+            list="groups"
             required
-            aria-describedby="book-collection-error"
+            aria-describedby="book-group-error"
             :aria-invalid="v$.collection.$error"
           >
-          <datalist id="collections">
+          <datalist id="groups">
             <option
-              v-for="collection of collectionOptions"
-              :key="collection"
-              :value="collection"
+              v-for="group of groupOptions"
+              :key="group.name"
+              :value="group.name"
             >
-              {{ collection }}
+              {{ group.name }}
             </option>
           </datalist>
           <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
-        <p id="book-collection-error" class="sr-only" aria-hidden="true">
+        <p id="book-group-error" class="sr-only" aria-hidden="true">
           {{ v$.collection.$error ? v$.collection.$errors[0].$message : '' }}
         </p>
       </div>
@@ -289,10 +289,10 @@
           <datalist id="stores">
             <option
               v-for="store of storeOptions"
-              :key="store"
-              :value="store"
+              :key="store.name"
+              :value="store.name"
             >
-              {{ store }}
+              {{ store.name }}
             </option>
           </datalist>
           <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -352,7 +352,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref, toRefs } from 'vue'
+import { computed, onMounted, reactive, ref, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -388,7 +388,7 @@ export default {
   setup (props, context) {
     const { book } = toRefs(props)
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
-    const { t } = useI18n()
+    const { t, locale } = useI18n()
 
     const bookState = reactive({ ...book.value })
 
@@ -462,9 +462,22 @@ export default {
 
     const store = useStore()
 
-    const imprintOptions = computed(() => store.state.sheet.imprints)
-    const storeOptions = computed(() => store.state.sheet.stores)
-    const collectionOptions = computed(() => store.getters['sheet/collections'])
+    const imprintOptions = computed(() => store.state.collection.imprints.items)
+    const storeOptions = computed(() => store.state.collection.stores.items)
+    const groupOptions = computed(() => {
+      return store.state.collection.groups.items
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b, locale.value))
+    })
+
+    onMounted(async () => {
+      await store.dispatch('collection/fetchImprints')
+      await store.dispatch('collection/fetchStores')
+
+      if (groupOptions.value.length === 0) {
+        await store.dispatch('collection/fetchGroups')
+      }
+    })
 
     return {
       currencies,
@@ -475,7 +488,7 @@ export default {
       reset,
       imprintOptions,
       storeOptions,
-      collectionOptions,
+      groupOptions,
       t
     }
   }

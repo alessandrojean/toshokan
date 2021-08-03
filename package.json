@@ -1,6 +1,6 @@
 {
   "name": "toshokan",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,14 +14,10 @@
     "@tailwindcss/forms": "^0.3.3",
     "@vuelidate/core": "^2.0.0-alpha.19",
     "@vuelidate/validators": "^2.0.0-alpha.17",
-    "apexcharts": "^3.27.1",
+    "apexcharts": "^3.27.3",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "dedent": "^0.7.0",
-    "fuse.js": "^6.4.6",
-    "lodash.groupby": "^4.6.0",
-    "lodash.orderby": "^4.6.0",
-    "lodash.uniqby": "^4.7.0",
     "markdown-it": "^12.1.0",
     "markdown-it-deflist": "^2.1.0",
     "nanoid": "^3.1.23",
@@ -32,7 +28,7 @@
     "vue": "^3.0.0",
     "vue-i18n": "^9.1.6",
     "vue-router": "^4.0.0-0",
-    "vue3-apexcharts": "^1.4.0",
+    "vue3-apexcharts": "^1.4.1",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

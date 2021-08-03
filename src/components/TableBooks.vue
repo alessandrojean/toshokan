@@ -122,7 +122,7 @@
             <button
               type="button"
               class="button"
-              :disabled="!paginationInfo.has_previous_page"
+              :disabled="!paginationInfo.has_previous_page || loading"
               @click.stop="handlePage(paginationInfo.current_page - 1)"
             >
               {{ t('pagination.previous') }}
@@ -133,7 +133,7 @@
             <button
               type="button"
               class="button"
-              :disabled="!paginationInfo.has_next_page"
+              :disabled="!paginationInfo.has_next_page || loading"
               @click.stop="handlePage(paginationInfo.current_page + 1)"
             >
               {{ t('pagination.next') }}
@@ -154,6 +154,7 @@
         <Paginator
           v-if="paginationInfo.total_pages > 1"
           :pagination-info="paginationInfo"
+          :enabled="!loading"
           @page="handlePage"
         />
       </div>
@@ -219,13 +220,16 @@ export default {
       )
     }
 
+    const loading = computed(() => store.state.collection.books.loading)
+
     return {
       BookStatus,
       formatDate,
       formatPrice,
       handlePage,
-      t,
-      volumeText
+      volumeText,
+      loading,
+      t
     }
   }
 }

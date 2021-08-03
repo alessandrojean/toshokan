@@ -5,7 +5,7 @@
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
     <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
-      {{ t('dashboard.stats.booksBought') }}
+      {{ t('dashboard.stats.booksBoughtAndRead.title') }}
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico de livros comprados por mês">
       <transition
@@ -60,7 +60,7 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
-    const { t, locale } = useI18n()
+    const { t, d, locale } = useI18n()
 
     const { darkMode } = useDarkMode()
     const { motionSafe } = useMotionSafe()
@@ -72,6 +72,8 @@ export default {
     const apexLocale = computed(() => {
       return require('apexcharts/dist/locales/' + localeStr.value + '.json')
     })
+
+    const monthly = computed(() => (stats.value.monthly || []).slice(-6))
 
     const itemsBought = computed(() => ({
       options: {
@@ -85,28 +87,50 @@ export default {
           toolbar: { show: false },
           zoom: { enabled: false }
         },
-        colors: [colors.indigo[500]],
+        colors: [colors.indigo[500], colors.green[500]],
         fill: { opacity: 1.0 },
         grid: {
           borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
         },
         tooltip: { enabled: false },
         xaxis: {
-          categories: (stats.value.monthly || []).map(m => m.month.toISOString()),
+          categories: monthly.value.map(m => m.month.toISOString()),
           labels: {
-            format: 'MMM',
-            style: {
-              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
-            }
-          },
-          type: 'datetime'
-        },
-        yaxis: {
-          labels: {
+            formatter: (_, timestamp) => {
+              return d(new Date(timestamp), 'month')
+            },
+            hideOverlappingLabels: false,
+            showDuplicates: true,
             style: {
               colors: darkMode.value ? colors.gray[400] : colors.gray[500]
             }
           }
+        },
+        yaxis: {
+          labels: {
+            formatter: val => val.toFixed(0),
+            style: {
+              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
+            }
+          }
+        },
+        legend: {
+          labels: {
+            colors: darkMode.value ? colors.gray[300] : colors.gray[600],
+            useSeriesColors: false
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          offsetY: -20,
+          style: {
+            colors: [darkMode.value ? colors.gray[100] : colors.gray[700]]
+          }
+        },
+        stroke: {
+          show: true,
+          colors: ['transparent'],
+          width: 6
         },
         plotOptions: {
           bar: {
@@ -114,15 +138,20 @@ export default {
             borderRadius: 5,
             endingShape: 'rounded',
             dataLabels: {
-              position: 'bottom'
+              position: 'top',
+              hideOverflowingLabels: false
             }
           }
         }
       },
       series: [
         {
-          name: t('dashboard.stats.booksBought'),
-          data: (stats.value.monthly || []).map(m => m.count)
+          name: t('dashboard.stats.booksBoughtAndRead.bought'),
+          data: monthly.value.map(m => m.count)
+        },
+        {
+          name: t('dashboard.stats.booksBoughtAndRead.read'),
+          data: monthly.value.map(m => m.read)
         }
       ]
     }))

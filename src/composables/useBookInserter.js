@@ -25,6 +25,10 @@ export default function useBookInserter (book) {
 
     const bookId = await sheetInsertBook(store.state.sheet.sheetId, bookToInsert)
     await store.dispatch('sheet/loadSheetData')
+    await store.dispatch('collection/fetchGroups')
+    await store.dispatch('collection/fetchIdMap')
+    store.commit('collection/updateLastAdded', { items: [] })
+    store.commit('collection/updateBooks', { items: [] })
 
     inserting.value = false
     store.commit('sheet/updateLoading', false)

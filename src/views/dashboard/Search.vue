@@ -8,9 +8,9 @@
         {{ t('dashboard.search.label') }}
       </label>
       <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 -space-x-1">
-        <div class="relative flex-1">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <SearchIcon class="w-5 h-5 text-gray-500 dark:text-gray-300 sm:text-sm" aria-hidden="true" />
+        <div class="group relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
+            <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
           <input
             ref="searchInput"
@@ -19,19 +19,29 @@
             id="search"
             :placeholder="t('dashboard.search.placeholder')"
             v-model="searchQuery"
-            class="input text-lg pl-10"
+            class="input text-lg pl-10 md:pr-16"
+            :disabled="searchLoading"
           >
+          <p class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
+            <span class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md">
+              <span class="sr-only">{{ t('dashboard.newBook.autoFill.press') }} </span>
+              <kbd class="font-sans">{{ t('dashboard.newBook.autoFill.enter') }}</kbd>
+              <span class="sr-only"> {{ t('dashboard.newBook.autoFill.toSearch') }}</span>
+            </span>
+          </p>
         </div>
       </div>
     </form>
 
     <ul
-      class="md:mt-6 md:rounded-md shadow-md border-t md:border-t-0 border-gray-200 dark:border-gray-700 divide-y bg-white dark:bg-gray-800 dark:divide-gray-700 darkdark:bg-gray-800"
+      class="md:mt-6 md:rounded-md shadow-md border-t md:border-t-0 border-gray-200 dark:border-gray-700 divide-y bg-white dark:bg-gray-800 dark:divide-gray-700 darkdark:bg-gray-800 focus:outline-none"
       v-if="searchResults.length > 0"
+      tabindex="-1"
+      ref="results"
     >
       <li
         v-for="result in searchResults"
-        :key="result.item.id"
+        :key="result.id"
         class="result"
       >
         <SearchItem :result="result" />
@@ -41,12 +51,10 @@
 </template>
 
 <script>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-
-import useDebouncedRef from '@/composables/useDebouncedRef'
 
 import { SearchIcon } from '@heroicons/vue/solid'
 
@@ -66,35 +74,54 @@ export default {
     const router = useRouter()
 
     const searchInput = ref(null)
+    const results = ref(null)
 
     const loading = computed(() => store.state.sheet.loading)
 
     const query = route.query.q || store.state.collection.search.query
 
-    const searchQuery = useDebouncedRef(query, 400)
-
+    const searchQuery = ref(query)
+    const searchLoading = computed(() => store.state.collection.search.loading)
     const searchResults = computed(() => store.state.collection.search.results)
 
-    onMounted(() => {
-      if (route.query.q && !loading.value) {
-        store.dispatch('collection/search', { query: searchQuery.value })
+    onMounted(async () => {
+      if (route.query.q) {
+        await search(searchQuery.value)
+
+        nextTick(() => {
+          if (results.value) {
+            results.value.focus()
+          }
+        })
+
+        return
       }
 
       nextTick(() => {
-        searchInput.value.focus()
+        if (searchInput.value) {
+          searchInput.value.focus()
+        }
       })
     })
 
-    function search (query) {
-      store.dispatch('collection/search', { query: query || searchQuery.value })
+    async function search (query) {
+      const searchTerm = query || searchQuery.value
+
+      if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
+        await store.dispatch('collection/search', { query: searchTerm })
+
+        if (searchResults.value.length > 0) {
+          results.value.focus()
+        }
+      }
     }
 
-    function handleSubmit (event) {
+    async function handleSubmit (event) {
       event.preventDefault()
-      search()
+      await search()
     }
 
-    watch(searchQuery, newQuery => search(newQuery))
+    // watch(searchQuery, newQuery => search(newQuery))
 
     onMounted(() => {
       if (loading.value) {
@@ -107,8 +134,10 @@ export default {
     return {
       searchInput,
       searchQuery,
+      searchLoading,
       searchResults,
       handleSubmit,
+      results,
       t
     }
   }

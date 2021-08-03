@@ -10,7 +10,7 @@
           type="button"
           class="pag-button is-left"
           @click.stop="$emit('page', 1)"
-          :disabled="!paginationInfo.has_previous_page"
+          :disabled="!paginationInfo.has_previous_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.firstPage') }}</span>
           <span aria-hidden="true">
@@ -24,7 +24,7 @@
           type="button"
           class="pag-button"
           @click.stop="$emit('page', paginationInfo.previous_page)"
-          :disabled="!paginationInfo.has_previous_page"
+          :disabled="!paginationInfo.has_previous_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.previousPage') }}</span>
           <span aria-hidden="true">
@@ -44,6 +44,7 @@
             'pag-button is-number'
           ]"
           :aria-current="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page"
+          :disabled="!enabled"
           @click.stop="$emit('page', paginationInfo.first_page + pageIdx - 1)"
         >
           <span class="sr-only" v-if="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page">{{ t('pagination.current') }}</span>
@@ -57,7 +58,7 @@
           type="button"
           class="pag-button"
           @click.stop="$emit('page', paginationInfo.next_page)"
-          :disabled="!paginationInfo.has_next_page"
+          :disabled="!paginationInfo.has_next_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.nextPage') }}</span>
           <span aria-hidden="true">
@@ -71,7 +72,7 @@
           type="button"
           class="pag-button is-right"
           @click.stop="$emit('page', paginationInfo.total_pages)"
-          :disabled="!paginationInfo.has_next_page"
+          :disabled="!paginationInfo.has_next_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.lastPage') }}</span>
           <span aria-hidden="true">
@@ -105,6 +106,7 @@ export default {
   },
 
   props: {
+    enabled: Boolean,
     paginationInfo: Object
   },
 
@@ -150,7 +152,12 @@ export default {
   }
 
   .pag-button.is-current {
-    @apply z-10 bg-indigo-50 border-indigo-500 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 dark:bg-indigo-900 dark:text-indigo-200 dark:hover:bg-indigo-800 dark:hover:border-indigo-400 dark:active:bg-indigo-700;
+    @apply z-10 bg-indigo-50 border-indigo-500 text-indigo-600
+      hover:bg-indigo-100 active:bg-indigo-200 dark:bg-indigo-900
+      dark:text-indigo-200 dark:hover:bg-indigo-800
+      dark:hover:border-indigo-400 dark:active:bg-indigo-700
+      disabled:bg-indigo-50 dark:disabled:bg-indigo-900
+      disabled:border-indigo-500 dark:disabled:border-indigo-500;
   }
 }
 </style>

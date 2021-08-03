@@ -116,7 +116,8 @@
             <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 mb-1 sm:mb-0"></li>
             <li v-else class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
               <span aria-hidden="true">
-                <UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                <UserIcon v-if="book.authors.length === 1" class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                <UserGroupIcon v-else class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
               <span class="sr-only">
                 {{ t('dashboard.details.header.author', book.authors.length) }}
@@ -249,10 +250,10 @@
                 </div>
 
                 <transition
-                  enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
+                  enter-active-class="transition motion-reduce:transition-none ease-out duration-300"
                   enter-from-class="opacity-0"
                   enter-to-class="opacity-100"
-                  leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+                  leave-active-class="transition motion-reduce:transition-none ease-in duration-200"
                   leave-from-class="opacity-100"
                   leave-to-class="opacity-0"
                 >
@@ -264,12 +265,12 @@
                 </transition>
 
                 <transition
-                  enter-active-class="transition motion-reduce:transition-none ease-out duration-100"
-                  enter-from-class="transform motion-reduce:transform-none opacity-0 translate-y-1/2 md:translate-y-0 md:scale-95"
+                  enter-active-class="transition motion-reduce:transition-none ease-out duration-300 md:duration-100"
+                  enter-from-class="transform motion-reduce:transform-none opacity-0 translate-y-full md:translate-y-0 md:scale-95"
                   enter-to-class="transform opacity-100 translate-y-0 md:scale-100"
-                  leave-active-class="transition motion-reduce:transition-none ease-in duration-75"
+                  leave-active-class="transition motion-reduce:transition-none ease-in duration-200 md:duration-75"
                   leave-from-class="transform motion-reduce:transform-none opacity-100 translate-y-0 md:scale-100"
-                  leave-to-class="transform opacity-0 translate-y-1/2 md:translate-y-0 md:scale-95"
+                  leave-to-class="transform opacity-0 translate-y-full md:translate-y-0 md:scale-95"
                 >
                   <MenuItems as="ul" class="z-30 py-1 origin-bottom md:origin-top-right fixed md:absolute left-0 md:left-auto bottom-0 md:bottom-auto inset-x-0 md:w-56 right-0 md:right-0 mt-2 rounded-t-2xl md:rounded-t-md md:rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-100 dark:divide-gray-600">
                     <div class="pb-1" v-if="isbn10">
@@ -418,7 +419,8 @@ import {
   PencilIcon,
   PhotographIcon,
   TrashIcon,
-  UserIcon
+  UserIcon,
+  UserGroupIcon
 } from '@heroicons/vue/solid'
 
 import {
@@ -447,6 +449,7 @@ export default {
     PhotographIcon,
     TrashIcon,
     UserIcon,
+    UserGroupIcon,
     Menu,
     MenuButton,
     MenuItems,

@@ -27,7 +27,7 @@
   }
 
   .input {
-    @apply block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-gray-300;
+    @apply text-sm block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-gray-300;
   }
 
   input::-webkit-calendar-picker-indicator,
@@ -40,7 +40,7 @@
   }
 
   .select {
-    @apply block w-full py-2 px-3 border border-gray-300 bg-white 
+    @apply text-sm block w-full py-2 px-3 border border-gray-300 bg-white 
       rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 
       focus:border-indigo-500 sm:text-sm dark:bg-gray-700 
       dark:border-gray-700 dark:text-gray-200;
@@ -129,5 +129,23 @@
 
   .button .icon.is-google-icon svg {
     @apply mx-0;
+  }
+
+  .chip {
+    @apply cursor-pointer inline-block motion-safe:transition-colors duration-300 
+      text-sm px-3 py-1 dark:text-gray-200 rounded-full
+      border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700
+      hover:bg-gray-100 dark:hover:bg-gray-600;
+  }
+
+  .chip.is-active {
+    @apply bg-indigo-100 dark:bg-indigo-900 
+      text-indigo-600 dark:text-indigo-100 
+      border-indigo-500 dark:border-indigo-500
+      hover:bg-indigo-200 dark:hover:bg-indigo-800 dark:hover:border-indigo-400;
+  }
+
+  .chip.is-square {
+    @apply rounded-md;
   }
 }

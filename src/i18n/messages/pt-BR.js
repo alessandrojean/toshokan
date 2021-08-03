@@ -51,6 +51,7 @@ export default {
       store: 'Local da compra',
       boughtAt: 'Data de compra',
       status: 'Estado',
+      readAt: 'Data de leitura',
       createdAt: 'Data de criação',
       updatedAt: 'Data de modificação',
       currency: 'Moeda'
@@ -333,6 +334,7 @@ export default {
         hideValue: 'Ocultar o valor de {title}'
       },
       lastAdded: 'Últimos adicionados',
+      latestReadings: 'Últimas leituras',
       groups: 'Grupos',
       empty: {
         title: 'Você ainda não possui nenhum livro',
@@ -358,7 +360,8 @@ export default {
       filters: {
         title: 'Filtros',
         close: 'Fechar painel',
-        closeMobile: 'Fechar filtros',
+        closeMobile: 'Fechar',
+        filter: 'Filtrar',
         viewMode: {
           label: 'Modo de visualização',
           table: 'Tabela',
@@ -499,7 +502,11 @@ export default {
           dois meses de compras de livros na biblioteca.
         `
       },
-      booksBought: 'Livros comprados',
+      booksBoughtAndRead: {
+        title: 'Livros comprados e lidos por mês',
+        bought: 'Livros comprados',
+        read: 'Livros lidos'
+      },
       monthlyExpense: 'Gasto mensal'
     }
   },

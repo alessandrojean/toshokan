@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{ name: 'BookDetails', params: { bookId: result.item.id } }"
+    :to="{ name: 'BookDetails', params: { bookId: result.id } }"
     class="group px-5 py-5 sm:px-7 md:px-5 flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 has-ring-focus"
     ref="searchItem"
   >
@@ -32,7 +32,7 @@
     </div>
     <div class="flex-1 flex flex-col">
       <span class="text-sm font-medium dark:text-gray-100">
-        {{ result.item.titleParts[0] }}
+        {{ result.titleParts[0] }}
       </span>
       <span class="text-xs text-gray-500 dark:text-gray-400">
         {{ volumeText }}
@@ -69,17 +69,17 @@ export default {
     const { result } = toRefs(props)
 
     const volumeText = computed(() => {
-      const isSingle = result.value.item.titleParts[1] === undefined
+      const isSingle = result.value.titleParts[1] === undefined
 
       return t(
         isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: result.value.item.titleParts[1] }
+        isSingle ? undefined : { number: result.value.titleParts[1] }
       )
     })
 
     const thumbnailUrl = computed(() => {
-      return result.value.item
-        ? result.value.item.coverUrl.replace('_SL700_', '_SL300_')
+      return result.value
+        ? result.value.coverUrl.replace('_SL700_', '_SL300_')
         : ''
     })
 
@@ -93,7 +93,7 @@ export default {
     } = useImageLazyLoader(thumbnailUrl, searchItem)
 
     onMounted(() => {
-      if (result.value.item) {
+      if (result.value) {
         setupObserver()
       }
     })

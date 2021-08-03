@@ -266,21 +266,21 @@ export default {
       router.replace({ name: 'DashboardHome' })
     }
 
-    onMounted(() => {
+    onMounted(async () => {
       if (!loading.value && bookId.value) {
-        findTheBook(bookId.value, redirectToHome)
+        await findTheBook(bookId.value, redirectToHome)
       }
     })
 
-    watch(loading, newValue => {
+    watch(loading, async newValue => {
       if (!newValue && bookId.value) {
-        findTheBook(bookId.value, redirectToHome)
+        await findTheBook(bookId.value, redirectToHome)
       }
     })
 
-    watch(bookId, newId => {
+    watch(bookId, async newId => {
       if (newId && !loading.value) {
-        findTheBook(newId, redirectToHome)
+        await findTheBook(newId, redirectToHome)
       }
     })
 
@@ -351,6 +351,12 @@ function useInfo (book, bookFound, bookId, loading) {
   const boughtAt = computed(() => {
     return book.value.boughtAt
       ? formatDate(book.value.boughtAt)
+      : t('dashboard.details.info.dateUnknown')
+  })
+
+  const readAt = computed(() => {
+    return book.value.readAt
+      ? formatDate(book.value.readAt)
       : t('dashboard.details.info.dateUnknown')
   })
 
@@ -449,6 +455,11 @@ function useInfo (book, bookFound, bookId, loading) {
         property: 'collection'
       },
       {
+        title: t('book.properties.readAt'),
+        value: readAt.value,
+        property: 'readAt'
+      },
+      {
         title: t('book.properties.format'),
         value: book.value.format,
         property: 'format'
@@ -543,18 +554,26 @@ function useEditor (book, bookId, findTheBook, redirectToHome, mainEl) {
     if (!error) {
       hideEditForm()
       await updateBook(editedBook)
-      findTheBook(editedBook.id, redirectToHome)
+      await findTheBook(editedBook.id, redirectToHome)
     }
+  }
+
+  function toDateInputValue (date) {
+    const local = new Date(date)
+    local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+    return local.toISOString().slice(0, 10)
   }
 
   async function toggleStatus () {
     await updateBook({
       ...book.value,
       status: book.value.status === BookStatus.READ
-        ? BookStatus.UNREAD : BookStatus.READ
+        ? BookStatus.UNREAD : BookStatus.READ,
+      readAt: book.value.status === BookStatus.READ
+        ? '' : toDateInputValue(new Date())
     })
 
-    findTheBook(bookId.value, redirectToHome)
+    await findTheBook(bookId.value, redirectToHome)
   }
 
   async function toggleFavorite () {
@@ -564,7 +583,7 @@ function useEditor (book, bookId, findTheBook, redirectToHome, mainEl) {
         ? BookFavorite.INACTIVE : BookFavorite.ACTIVE
     })
 
-    findTheBook(bookId.value, redirectToHome)
+    await findTheBook(bookId.value, redirectToHome)
   }
 
   return {
@@ -619,7 +638,7 @@ function useCoverEditor (book, updateBook, findTheBook, redirectToHome, mainEl) 
 
     editingCoverUrl.value = ''
 
-    findTheBook(book.value.id, redirectToHome)
+    await findTheBook(book.value.id, redirectToHome)
   }
 
   return {

@@ -26,6 +26,13 @@ const datetimeFormats = {
       minute: '2-digit',
       second: '2-digit',
       hour12: false
+    },
+    month: {
+      month: 'short'
+    },
+    monthYear: {
+      month: 'long',
+      year: 'numeric'
     }
   },
   'pt-BR': {
@@ -51,6 +58,13 @@ const datetimeFormats = {
       minute: '2-digit',
       second: '2-digit',
       hour12: false
+    },
+    month: {
+      month: 'short'
+    },
+    monthYear: {
+      month: 'long',
+      year: 'numeric'
     }
   }
 }

@@ -51,6 +51,7 @@ export default {
       store: 'Store',
       boughtAt: 'Bought at',
       status: 'Status',
+      readAt: 'Read at',
       createdAt: 'Created at',
       updatedAt: 'Updated at',
       currency: 'Currency'
@@ -332,6 +333,7 @@ export default {
         hideValue: 'Hide value of {title}'
       },
       lastAdded: 'Books created recently',
+      latestReadings: 'Latest readings',
       groups: 'Groups',
       empty: {
         title: 'You don\'t have any books yet',
@@ -357,7 +359,8 @@ export default {
       filters: {
         title: 'Filters',
         close: 'Close panel',
-        closeMobile: 'Close filters',
+        closeMobile: 'Close',
+        filter: 'Filtrar',
         viewMode: {
           label: 'Display mode',
           table: 'Table',
@@ -498,7 +501,11 @@ export default {
           period of at least two months are created.
         `
       },
-      booksBought: 'Books bought',
+      booksBoughtAndRead: {
+        title: 'Books bought and read per month',
+        bought: 'Books bought',
+        read: 'Books read'
+      },
       monthlyExpense: 'Monthly expense'
     }
   },
