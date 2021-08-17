@@ -3,10 +3,10 @@
     <div class="max-w-prose mx-auto px-4 sm:px-6 lg:px-0 flex items-center h-full">
       <router-link
         :to="{ name: 'Home' }"
-        class="flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-offset-gray-900"
+        class="flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
       >
         <span aria-hidden="true">
-          <LibraryIcon class="h-9 w-9 text-indigo-500" />
+          <LibraryIcon class="h-9 w-9 text-primary-500" />
         </span>
         <span class="sr-only">{{ t('app.routes.home') }}</span>
         <span class="text-gray-800 dark:text-gray-200 font-title font-semibold text-xl ml-3" aria-hidden="true">

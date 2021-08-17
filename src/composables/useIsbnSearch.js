@@ -1,18 +1,10 @@
 import { computed, ref } from 'vue'
 
-import { searchByIsbn } from '@/services/cbl'
-
-export function useSearchAvailable () {
-  return ref(
-    process.env.VUE_APP_CBL_QUERY_KEY &&
-      process.env.VUE_APP_CBL_QUERY_KEY.length > 0
-  )
-}
+import lookupSearch from '@/services/lookup'
 
 export default function useIsbnSearch (isbnRef) {
-  const available = useSearchAvailable()
   const errorMessage = ref('')
-  const result = ref()
+  const results = ref(null)
   const searching = ref(false)
   const noResultsFound = ref(false)
 
@@ -20,7 +12,7 @@ export default function useIsbnSearch (isbnRef) {
 
   function clear () {
     noResultsFound.value = false
-    result.value = undefined
+    results.value = null
     searching.value = false
     errorMessage.value = false
   }
@@ -33,27 +25,25 @@ export default function useIsbnSearch (isbnRef) {
     try {
       searching.value = true
 
-      const results = await searchByIsbn(isbnRef.value)
-      result.value = results[0]
+      results.value = await lookupSearch(isbnRef.value)
 
-      noResultsFound.value = !result.value
+      noResultsFound.value = results.value.length === 0
       searching.value = false
       errorMessage.value = ''
     } catch (e) {
       noResultsFound.value = false
-      result.value = undefined
+      results.value = null
       searching.value = false
       errorMessage.value = e.message
     }
   }
 
   return {
-    available,
     clear,
     errorMessage,
     failed,
     noResultsFound,
-    result,
+    results,
     search,
     searching
   }

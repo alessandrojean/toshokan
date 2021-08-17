@@ -3,13 +3,15 @@ import { useStore } from 'vuex'
 
 import { insertBook as sheetInsertBook } from '@/services/sheet'
 
+import { MutationTypes } from '@/store'
+
 export default function useBookInserter (book) {
   const store = useStore()
   const inserting = ref(false)
 
   async function insertBook () {
     inserting.value = true
-    store.commit('sheet/updateLoading', true)
+    store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
 
     const bookToInsert = {
       ...book,
@@ -27,11 +29,11 @@ export default function useBookInserter (book) {
     await store.dispatch('sheet/loadSheetData')
     await store.dispatch('collection/fetchGroups')
     await store.dispatch('collection/fetchIdMap')
-    store.commit('collection/updateLastAdded', { items: [] })
-    store.commit('collection/updateBooks', { items: [] })
+    store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
+    store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
 
     inserting.value = false
-    store.commit('sheet/updateLoading', false)
+    store.commit(MutationTypes.SHEET_UPDATE_LOADING, false)
 
     return bookId
   }

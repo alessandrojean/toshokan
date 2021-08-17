@@ -12,7 +12,7 @@ import {
 
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
-const SHEET_DEV_SUFFIX = '' // '-dev'
+const SHEET_DEV_SUFFIX = '-dev'
 
 const { t } = i18n.global
 
@@ -33,45 +33,35 @@ export async function findSheetId () {
   throw new Error(t('sheet.notFound'))
 }
 
-// const COLLECTION_RANGE = 'Collection!B5:Q'
-const TOTAL_RANGE = 'Statistics!C5'
-const MONEY_RANGE = 'Statistics!C8:C11'
-const STATUS_RANGE = 'Statistics!C14:C16'
-const MONTHLY_RANGE = 'Statistics!E5:H'
-const AUTHORS_RANGE = 'Statistics!J5:K'
-const SERIES_RANGE = 'Statistics!M5:N'
-const IMPRINTS_RANGE = 'Statistics!P5:Q'
-const CURRENCY_RANGE = 'Statistics!C20'
-
 export async function getSheetData (sheetId) {
   const response = await window.gapi.client.sheets.spreadsheets.values
     .batchGet({
       spreadsheetId: sheetId,
       ranges: [
-        TOTAL_RANGE,
-        MONEY_RANGE,
-        STATUS_RANGE,
-        MONTHLY_RANGE,
-        AUTHORS_RANGE,
-        SERIES_RANGE,
-        IMPRINTS_RANGE,
-        CURRENCY_RANGE
+        'TotalItems',
+        'Expense',
+        'Reading',
+        'MonthlyStatistics',
+        'AuthorRank',
+        'SeriesRank',
+        'PublisherRank',
+        'Currency'
       ]
     })
 
   const stats = {
     count: parseInt(response.result.valueRanges[0].values[0][0]),
     money: {
-      totalSpentLabel: parseFloat(response.result.valueRanges[1].values[0][0]),
-      totalSpentPaid: parseFloat(response.result.valueRanges[1].values[1][0]),
-      saved: parseFloat(response.result.valueRanges[1].values[2][0]),
-      percent: parseFloat(response.result.valueRanges[1].values[3][0]),
+      totalSpentLabel: parseFloat(response.result.valueRanges[1].values[0][1]),
+      totalSpentPaid: parseFloat(response.result.valueRanges[1].values[1][1]),
+      saved: parseFloat(response.result.valueRanges[1].values[2][1]),
+      percent: parseFloat(response.result.valueRanges[1].values[3][1]),
       currency: response.result.valueRanges[7].values[0][0]
     },
     status: {
-      read: parseInt(response.result.valueRanges[2].values[0][0], 10),
-      unread: parseInt(response.result.valueRanges[2].values[1][0], 10),
-      percent: parseFloat(response.result.valueRanges[2].values[2][0], 10)
+      read: parseInt(response.result.valueRanges[2].values[0][1], 10),
+      unread: parseInt(response.result.valueRanges[2].values[1][1], 10),
+      percent: parseFloat(response.result.valueRanges[2].values[2][1], 10)
     },
     monthly: (response.result.valueRanges[3].values || [])
       .slice(0, 10)
@@ -123,7 +113,7 @@ export async function getSheetData (sheetId) {
   return { stats, timeZone }
 }
 
-const COLLECTION_RANGE = 'B4:R'
+const COLLECTION_RANGE = 'B4:T'
 const COLLECTION_SHEET = 'Collection'
 const PER_PAGE = 18
 
@@ -301,6 +291,42 @@ export function getBookById (sheetId, idMap, id) {
       }
 
       resolve(parseBookFromDataTable(dataTable, idMap, 0))
+    })
+  })
+}
+
+export function getBooksFromCollection (sheetId, idMap, book) {
+  const sheetUrl = buildSheetUrl(sheetId)
+
+  const query = new window.google.visualization.Query(sheetUrl)
+  query.setQuery(dedent`
+    select *
+    where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
+      and ${CollectionColumns.IMPRINT} = "${book.imprint}"
+    order by ${CollectionColumns.TITLE} asc
+  `)
+
+  return new Promise((resolve, reject) => {
+    query.send(response => {
+      if (response.isError()) {
+        reject(new Error('Error in query: ' + response.getMessage()))
+        return
+      }
+
+      const dataTable = response.getDataTable()
+      const rows = dataTable.getNumberOfRows()
+      const books = []
+
+      if (rows < 2) {
+        resolve(books)
+        return
+      }
+
+      for (let i = 0; i < rows; i++) {
+        books.push(parseBookFromDataTable(dataTable, idMap, i))
+      }
+
+      resolve(books)
     })
   })
 }

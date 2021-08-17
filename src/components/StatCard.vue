@@ -1,15 +1,15 @@
 <template>
-  <div class="bg-gray-50 shadow rounded-md dark:bg-gray-700" v-if="loading">
+  <div class="bg-gray-50 shadow rounded-md dark:bg-gray-800" v-if="loading">
     <div class="motion-safe:animate-pulse flex items-center p-3 md:p-4">
-      <div class="w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-500"></div>
+      <div class="w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-600"></div>
       <div class="flex-1 space-y-2">
-        <div class="h-3 bg-gray-400 dark:bg-gray-500 rounded w-24"></div>
-        <div class="h-5 bg-gray-400 dark:bg-gray-500 rounded w-32"></div>
+        <div class="h-3 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
+        <div class="h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
       </div>
     </div>
   </div>
-  <div class="flex items-center justify-center bg-white dark:bg-gray-700 p-3 md:p-4 rounded-md shadow hover:shadow-md motion-safe:transition-shadow" v-else>
-    <div class="flex w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-md bg-indigo-500" aria-hidden="true">
+  <div class="flex items-center justify-center bg-white dark:bg-gray-800 p-3 md:p-4 rounded-md shadow hover:shadow-md motion-safe:transition-shadow" v-else>
+    <div class="flex w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-md bg-primary-500" aria-hidden="true">
       <slot name="icon" css-class="text-white h-6 w-6 md:h-8 md:w-8"></slot>
     </div>
     <div class="flex-1">
@@ -27,7 +27,7 @@
           <p class="font-semibold dark:text-gray-50 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue">
             {{ value || '' }}
           </p>
-          <div v-else class="h-5 sm:h-6 mt-1 bg-gray-500 dark:bg-gray-600 rounded w-32 lg:w-24"></div>
+          <div v-else class="h-5 sm:h-6 mt-1 bg-gray-500 dark:bg-gray-700 rounded w-32 lg:w-24"></div>
         </transition>
       </div>
     </div>

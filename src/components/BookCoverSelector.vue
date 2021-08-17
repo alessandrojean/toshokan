@@ -35,6 +35,8 @@
                   :active="active"
                   :checked="checked"
                   :cover-url="result"
+                  @click="unselect(result)"
+                  @error="handleError(result)"
                 />
               </RadioGroupOption>
             </div>
@@ -58,7 +60,7 @@
     </div>
 
     <template v-if="custom">
-      <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-4" v-if="!hideCustomTitle">
         <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
           {{ t('book.coverSelector.custom.title') }}
         </h3>
@@ -81,11 +83,25 @@
           >
           <button
             type="button"
-            class="button is-icon-only px-2"
+            class="button md:hidden is-icon-only px-2"
             @click="addNewImage"
           >
-            <PlusIcon aria-hidden="true" />
+            <span aria-hidden="true">
+              <PlusIcon class="w-5 h-5" />
+            </span>
             <span class="sr-only">
+              {{ t('book.coverSelector.custom.add') }}
+            </span>
+          </button>
+          <button
+            type="button"
+            class="button hidden md:flex"
+            @click="addNewImage"
+          >
+            <span aria-hidden="true">
+              <PlusIcon class="w-5 h-5" />
+            </span>
+            <span class="hidden md:inline-block">
               {{ t('book.coverSelector.custom.add') }}
             </span>
           </button>
@@ -153,7 +169,8 @@ export default {
       type: String,
       required: true
     },
-    custom: Boolean
+    custom: Boolean,
+    hideCustomTitle: Boolean
   },
 
   emits: ['update:coverUrl', 'update:finding'],
@@ -202,7 +219,9 @@ export default {
     }
 
     const results = computed(() => {
-      const allImages = coverResults.value.concat(customs.value)
+      const allImages = coverResults.value
+        .concat(customs.value)
+        .filter(url => errors.value.indexOf(url) === -1)
 
       return Array.from(new Set(allImages))
     })
@@ -213,6 +232,26 @@ export default {
       }
     })
 
+    const errors = ref([])
+
+    function handleError (url) {
+      if (errors.value.indexOf(url) === -1) {
+        errors.value.push(url)
+      }
+
+      if (state.customUrl === url) {
+        context.emit('update:coverUrl', '')
+      }
+    }
+
+    function unselect (url) {
+      if (coverUrl.value === url) {
+        setTimeout(() => {
+          context.emit('update:coverUrl', '')
+        })
+      }
+    }
+
     return {
       clearResults,
       finding,
@@ -221,6 +260,8 @@ export default {
       state,
       v$,
       addNewImage,
+      handleError,
+      unselect,
       t
     }
   }

@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
-import { getBookById, getBookNeighbors } from '@/services/sheet'
+import { getBookById, getBooksFromCollection } from '@/services/sheet'
 
 export default function useBookFinder () {
   const store = useStore()
@@ -9,10 +9,9 @@ export default function useBookFinder () {
   const sheetId = computed(() => store.state.sheet.sheetId)
   const idMap = computed(() => store.state.collection.idMap)
 
-  const book = ref()
+  const book = ref(null)
   const bookFound = ref(false)
-  const previousBook = ref()
-  const nextBook = ref()
+  const collection = ref(null)
 
   async function findTheBook (bookId, failCallback) {
     if (!bookId) {
@@ -28,8 +27,6 @@ export default function useBookFinder () {
 
       const theBook = await getBookById(sheetId.value, idMap.value, bookId)
 
-      console.log(theBook)
-
       if (!theBook && failCallback) {
         book.value = undefined
         failCallback()
@@ -37,12 +34,7 @@ export default function useBookFinder () {
       }
 
       if (theBook.titleParts[1]) {
-        const neighbors = await getBookNeighbors(sheetId.value, idMap.value, theBook)
-
-        if (neighbors) {
-          previousBook.value = neighbors.previous
-          nextBook.value = neighbors.next
-        }
+        collection.value = await getBooksFromCollection(sheetId.value, idMap.value, theBook)
       }
 
       bookFound.value = true
@@ -54,11 +46,17 @@ export default function useBookFinder () {
     }
   }
 
+  function clearBook () {
+    book.value = null
+    bookFound.value = false
+    collection.value = null
+  }
+
   return {
     book,
     bookFound,
     findTheBook,
-    previousBook,
-    nextBook
+    clearBook,
+    collection
   }
 }

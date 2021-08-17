@@ -17,9 +17,22 @@
   </div>
 
   <section v-else-if="collectionItems.length > 0" aria-labelledby="last-added-title">
-    <h2 id="last-added-title" class="font-medium font-title text-xl mt-8 mb-3 dark:text-gray-200">
-      {{ title }}
-    </h2>
+    <div class="flex justify-between items-center w-full mt-8 mb-3">
+      <h2 id="last-added-title" class="font-medium font-title text-xl dark:text-gray-200">
+        {{ title }}
+      </h2>
+
+      <router-link
+        v-if="buttonText && buttonLink"
+        class="button is-ghost -mr-3 hidden md:flex"
+        :to="buttonLink"
+      >
+        {{ buttonText }}
+        <span aria-hidden="true">
+          <ArrowNarrowRightIcon class="is-right" />
+        </span>
+      </router-link>
+    </div>
 
     <ul
       :class="[
@@ -46,12 +59,14 @@
 import { computed, onMounted, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 
+import { ArrowNarrowRightIcon } from '@heroicons/vue/solid'
+
 import BookCard from '@/components/BookCard'
 
 export default {
   name: 'LastAddedBooks',
 
-  components: { BookCard },
+  components: { BookCard, ArrowNarrowRightIcon },
 
   props: {
     collection: {
@@ -61,6 +76,12 @@ export default {
     title: {
       type: String,
       required: true
+    },
+    buttonText: {
+      type: String
+    },
+    buttonLink: {
+      type: Object
     }
   },
 

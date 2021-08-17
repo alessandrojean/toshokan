@@ -34,6 +34,24 @@ export const IMPRINT_REPLACEMENTS = {
   'reginaldo f silva': 'ComixZone'
 }
 
+const FIELDS_TO_SELECT = [
+  'Authors',
+  'Colection',
+  'Countries',
+  'Date',
+  'Imprint',
+  'Title',
+  'RowKey',
+  'PartitionKey',
+  'RecordId',
+  'FormattedKey',
+  'Subject',
+  'Veiculacao',
+  'Profissoes',
+  'Dimensao',
+  'Sinopse'
+]
+
 function createSearchPayload (query, dataOptions) {
   let payload = {
     count: true,
@@ -44,8 +62,7 @@ function createSearchPayload (query, dataOptions) {
     search: query,
     searchFields: 'FormattedKey,RowKey,Authors,Title,Imprint',
     searchMode: 'any',
-    select: 'Authors,Colection,Countries,Date,Imprint,Title,RowKey,' +
-      'PartitionKey,RecordId,FormattedKey,Subject,Veiculacao,Profissoes,Dimensao',
+    select: FIELDS_TO_SELECT.join(','),
     skip: 0,
     top: 12
   }

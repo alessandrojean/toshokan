@@ -3,13 +3,15 @@ import { useStore } from 'vuex'
 
 import { updateBook as sheetUpdateBook } from '@/services/sheet'
 
+import { MutationTypes } from '@/store'
+
 export default function useBookEditor (book) {
   const store = useStore()
   const updating = ref(false)
 
   async function updateBook (overrideBook) {
     updating.value = true
-    store.commit('sheet/updateLoading', true)
+    store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
 
     const orgBook = overrideBook || book
 
@@ -28,12 +30,12 @@ export default function useBookEditor (book) {
     const bookId = await sheetUpdateBook(store.state.sheet.sheetId, bookToUpdate)
     await store.dispatch('sheet/loadSheetData')
     await store.dispatch('collection/fetchGroups')
-    store.commit('collection/updateLastAdded', { items: [] })
-    store.commit('collection/updateLatestReadings', { items: [] })
-    store.commit('collection/updateBooks', { items: [] })
+    store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
+    store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
+    store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
 
     updating.value = false
-    store.commit('sheet/updateLoading', false)
+    store.commit(MutationTypes.SHEET_UPDATE_LOADING, false)
 
     return bookId
   }

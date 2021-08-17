@@ -31,6 +31,8 @@ import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
+import { MutationTypes } from '@/store'
+
 import {
   RadioGroup,
   RadioGroupLabel,
@@ -56,14 +58,14 @@ export default {
 
     watch(activeGroup, async newGroup => {
       if (newGroup !== store.state.collection.group) {
-        store.commit('collection/updateGroup', { group: newGroup })
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, { group: newGroup })
         await store.dispatch('collection/fetchBooks', 1)
       }
     })
 
     async function changeGroup (groupName) {
       if (groupName !== activeGroup.value) {
-        store.commit('collection/updateGroup', { group: groupName })
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, { group: groupName })
         await store.dispatch('collection/fetchBooks', 1)
       }
     }

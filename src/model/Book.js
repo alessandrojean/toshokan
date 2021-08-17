@@ -27,8 +27,10 @@ export const Columns = {
   COVER_URL: 12,
   BOUGHT_AT: 13,
   FAVORITE: 14,
-  CREATED_AT: 15,
-  UPDATED_AT: 16
+  SYNOPSIS: 15,
+  NOTES: 16,
+  CREATED_AT: 17,
+  UPDATED_AT: 18
 }
 
 export const CollectionColumns = {
@@ -47,8 +49,10 @@ export const CollectionColumns = {
   COVER_URL: 'N',
   BOUGHT_AT: 'O',
   FAVORITE: 'P',
-  CREATED_AT: 'Q',
-  UPDATED_AT: 'R'
+  SYNOPSIS: 'Q',
+  NOTES: 'R',
+  CREATED_AT: 'S',
+  UPDATED_AT: 'T'
 }
 
 export const PropertyToColumn = {
@@ -108,6 +112,8 @@ export function parseBook (value, index) {
     coverUrl: value[Columns.COVER_URL],
     boughtAt: value[Columns.BOUGHT_AT],
     favorite: value[Columns.FAVORITE],
+    synopsis: value[Columns.SYNOPSIS],
+    notes: value[Columns.NOTES],
     createdAt: new Date(value[Columns.CREATED_AT]),
     updatedAt: new Date(value[Columns.UPDATED_AT])
   }
@@ -154,6 +160,8 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
     coverUrl: getProperty(Columns.COVER_URL) || '',
     boughtAt: getProperty(Columns.BOUGHT_AT) || '',
     favorite: getProperty(Columns.FAVORITE) || '',
+    synopsis: getProperty(Columns.SYNOPSIS) || '',
+    notes: getProperty(Columns.NOTES) || '',
     createdAt: new Date(getProperty(Columns.CREATED_AT)),
     updatedAt: new Date(getProperty(Columns.UPDATED_AT))
   }
@@ -184,6 +192,8 @@ export function formatBook (book) {
     book.coverUrl || '',
     book.boughtAt ? book.boughtAt : '',
     book.favorite || BookFavorite.INACTIVE,
+    book.synopsis || '',
+    book.notes || '',
     d(book.createdAt || new Date(), 'sheet', 'en-US')
       .replace(',', '')
       .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2'),
@@ -234,7 +244,53 @@ export function parseBookFromCbl (cblBook) {
         return n(parseFloat(p1 + (p2 ? '.' + p2 : '')), 'format') + ' x ' +
           n(parseFloat(p3 + (p4 ? '.' + p4 : '')), 'format')
       })
-      : ''
+      : '',
+    synopsis: cblBook.Sinopse || '',
+    provider: 'CBL'
+  }
+}
+
+export function parseBookFromOpenLibrary (openLibraryBook) {
+  const code = openLibraryBook.identifiers.isbn_13
+    ? openLibraryBook.identifiers.isbn_13[0]
+    : openLibraryBook.identifiers.isbn_10[0]
+
+  return {
+    code,
+    codeType: code.length === 13 ? 'ISBN-13' : 'ISBN-10',
+    title: openLibraryBook.title,
+    authors: (openLibraryBook.authors || []).map(author => author.name),
+    imprint: openLibraryBook.publishers.length > 0 ? openLibraryBook.publishers[0].name : '',
+    coverUrl: openLibraryBook.cover ? openLibraryBook.cover.large : '',
+    provider: 'Open Library'
+  }
+}
+
+export function parseBookFromGoogleBooks (googleBook) {
+  const volumeInfo = googleBook.volumeInfo
+  const isbn13 = (volumeInfo.industryIdentifiers || [])
+    .find(identifier => identifier.type === 'ISBN_13')
+  const isbn10 = (volumeInfo.industryIdentifiers || [])
+    .find(identifier => identifier.type === 'ISBN_10')
+
+  const width = volumeInfo.dimensions
+    ? parseFloat(volumeInfo.dimensions.width.replace(/\s(.*)$/, ''))
+    : null
+  const height = volumeInfo.dimensions
+    ? parseFloat(volumeInfo.dimensions.height.replace(/\s(.*)$/, ''))
+    : null
+
+  return {
+    code: isbn13 ? isbn13.identifier : isbn10.identifier,
+    codeType: isbn13 ? 'ISBN-13' : 'ISBN-10',
+    title: volumeInfo.title,
+    authors: volumeInfo.authors || [],
+    imprint: volumeInfo.publisher || '',
+    synopsis: volumeInfo.description || '',
+    format: width && height
+      ? `${n(width, 'format')} x ${n(height, 'format')}`
+      : '',
+    provider: 'Google Books'
   }
 }
 

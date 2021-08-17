@@ -38,6 +38,7 @@ export default {
     single: 'Single volume',
     read: 'Read',
     unread: 'Unread',
+    emptySynopsis: 'The book synopsis is empty.',
     properties: {
       id: 'ID',
       title: 'Title',
@@ -45,7 +46,7 @@ export default {
       authors: 'Authors',
       imprint: 'Publisher',
       collection: 'Group',
-      format: 'Format',
+      format: 'Size',
       labelPrice: 'Label price',
       paidPrice: 'Paid price',
       store: 'Store',
@@ -54,7 +55,10 @@ export default {
       readAt: 'Read at',
       createdAt: 'Created at',
       updatedAt: 'Updated at',
-      currency: 'Currency'
+      currency: 'Currency',
+      synopsis: 'Synopsis',
+      notes: 'Notes',
+      language: 'Language'
     },
     coverSelector: {
       blankField: 'Field is required.',
@@ -79,6 +83,8 @@ export default {
       invalidValue: 'Invalid value.',
       invalidNumber: 'Invalid number.',
       required: 'Required',
+      markdown: 'This field supports Markdown.',
+      addNotes: 'Add notes about this book',
       example: {
         placeholder: 'eg. {0}',
         id: '9781934287729',
@@ -90,6 +96,8 @@ export default {
         labelPrice: '19.95',
         paidPrice: '15.95',
         store: 'Amazon',
+        synopsis: 'A secret U.S. chemical weapon called "MW" accidentally leaks…',
+        notes: 'The manga have a Tezuka autograph in the first page.',
         boughtAt: '02/18/2021'
       },
       authorsHint: 'Separate the names with the semicolon character.',
@@ -266,6 +274,7 @@ export default {
       }
     },
     details: {
+      zoom: 'Zoom in',
       header: {
         library: 'Library',
         author: 'Author: | Authors:',
@@ -285,6 +294,11 @@ export default {
           removeFromFavorites: 'Remove from favorites',
           delete: 'Delete'
         }
+      },
+      tabs: {
+        metadata: 'Book metadata',
+        notes: 'Notes',
+        collection: 'Other volumes'
       },
       info: {
         title: 'Book information',
@@ -312,6 +326,7 @@ export default {
       hello: 'Hello, {name}!',
       newBook: 'New book',
       reload: 'Reload',
+      viewAll: 'View all',
       beta: {
         short: 'Service currently in beta testing!',
         full: `
@@ -411,7 +426,7 @@ export default {
         fillManually: 'Fill manually'
       },
       metadata: {
-        title: 'Book metadata',
+        title: 'Book information',
         description: `
           This information will be added to the sheet.
         `,
@@ -426,7 +441,7 @@ export default {
         review: 'Review'
       },
       review: {
-        title: 'Book information',
+        title: 'Review',
         description: `
           Review the information provided before finishing the procedure.
         `,

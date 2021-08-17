@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-5 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
           <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
           <div>
@@ -15,7 +15,7 @@
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <button
-            class="button flex-1 md:flex-initial justify-center md:justify-start"
+            class="button md:text-base flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading"
           >
@@ -25,7 +25,7 @@
             {{ t('dashboard.home.reload') }}
           </button>
           <button
-            class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
+            class="button md:text-base is-primary flex-1 md:flex-initial justify-center md:justify-start"
             @click="$router.push({ name: 'DashboardNewBook' })"
             :disabled="loading"
           >
@@ -122,12 +122,16 @@
         <BookCarousel
           :title="t('dashboard.home.lastAdded')"
           collection="lastAdded"
+          :button-text="t('dashboard.home.viewAll')"
+          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'createdAt' } }"
         />
 
         <!-- Latest readings -->
         <BookCarousel
           :title="t('dashboard.home.latestReadings')"
           collection="latestReadings"
+          :button-text="t('dashboard.home.viewAll')"
+          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
         />
 
         <!-- Groups -->
@@ -171,6 +175,8 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { MutationTypes } from '@/store'
 
 import {
   BookOpenIcon,
@@ -222,7 +228,7 @@ export default {
       store.dispatch('collection/fetchLastAdded')
       store.dispatch('collection/fetchLatestReadings')
       store.dispatch('collection/fetchGroups')
-      store.commit('collection/updateBooks', { items: [] })
+      store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
     }
 
     return {

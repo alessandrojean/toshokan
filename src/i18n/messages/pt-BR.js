@@ -38,6 +38,7 @@ export default {
     single: 'Volume único',
     read: 'Lido',
     unread: 'Não lido',
+    emptySynopsis: 'A sinopse do livro não foi preenchida.',
     properties: {
       id: 'Identificação',
       title: 'Título',
@@ -54,7 +55,10 @@ export default {
       readAt: 'Data de leitura',
       createdAt: 'Data de criação',
       updatedAt: 'Data de modificação',
-      currency: 'Moeda'
+      currency: 'Moeda',
+      synopsis: 'Sinopse',
+      notes: 'Observações',
+      language: 'Idioma'
     },
     coverSelector: {
       blankField: 'Campo não preenchido.',
@@ -79,6 +83,8 @@ export default {
       invalidValue: 'Valor inválido.',
       invalidNumber: 'Número inválido.',
       required: 'Obrigatório',
+      markdown: 'O Markdown é suportado neste campo.',
+      addNotes: 'Adicionar observações sobre este livro',
       example: {
         placeholder: 'ex. {0}',
         id: '9788583621508',
@@ -90,6 +96,8 @@ export default {
         labelPrice: '26,90',
         paidPrice: '22,90',
         store: 'Amazon',
+        synopsis: 'No meio dos pertences de seu falecido pai, o garoto Pete encontra…',
+        notes: 'O mangá tem um autógrafo do Tezuka na primeira página.',
         boughtAt: '18/02/2021'
       },
       authorsHint: 'Separe os nomes utilizando o caractere de ponto-e-vírgula.',
@@ -267,6 +275,7 @@ export default {
       }
     },
     details: {
+      zoom: 'Dar zoom na imagem',
       header: {
         library: 'Biblioteca',
         author: 'Autor: | Autores:',
@@ -286,6 +295,11 @@ export default {
           removeFromFavorites: 'Remover dos favoritos',
           delete: 'Deletar'
         }
+      },
+      tabs: {
+        metadata: 'Metadados do livro',
+        notes: 'Observações',
+        collection: 'Outros volumes'
       },
       info: {
         title: 'Informações do livro',
@@ -313,6 +327,7 @@ export default {
       hello: 'Olá, {name}!',
       newBook: 'Novo livro',
       reload: 'Recarregar',
+      viewAll: 'Visualizar todos',
       beta: {
         short: 'Serviço atualmente em beta!',
         full: `
@@ -412,9 +427,9 @@ export default {
         fillManually: 'Preencher manualmente'
       },
       metadata: {
-        title: 'Metadados do livro',
+        title: 'Informações do livro',
         description: `
-          Estas informações serão cadastradas na planilha.
+          Metadados que serão cadastrados na planilha.
         `,
         review: 'Revisar',
         findCover: 'Procurar capa'
@@ -427,7 +442,7 @@ export default {
         review: 'Revisar'
       },
       review: {
-        title: 'Informações do livro',
+        title: 'Revisão',
         description: `
           Revise as informações antes de concluir o procedimento.
         `,

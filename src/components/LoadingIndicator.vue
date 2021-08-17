@@ -11,7 +11,7 @@
       aria-hidden="true"
       :class="[
         position,
-        'flex justify-center items-center left-0 top-0 w-full h-full bg-opacity-75 bg-white dark:bg-gray-800'
+        'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75'
       ]"
       v-if="loading"
     >
@@ -19,7 +19,7 @@
         name="icon"
         :css-class="[
           `motion-safe:animate-${animation}`,
-          'h-10 w-10 mx-auto text-indigo-500'
+          'h-10 w-10 mx-auto text-primary-500'
         ]"
       />
     </div>

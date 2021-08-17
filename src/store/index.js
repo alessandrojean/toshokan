@@ -1,8 +1,8 @@
 import { createStore } from 'vuex'
 
-import auth from './modules/auth'
-import collection from './modules/collection'
-import sheet from './modules/sheet'
+import auth, { AuthMutations } from './modules/auth'
+import collection, { CollectionMutations } from './modules/collection'
+import sheet, { SheetMutations } from './modules/sheet'
 
 function getTheme () {
   const theme = localStorage.getItem('theme')
@@ -40,6 +40,35 @@ function handleThemeChange (event) {
 window.matchMedia('(prefers-color-scheme: dark)')
   .addEventListener('change', handleThemeChange)
 
+export const GlobalMutations = {
+  CLEAR_CRITICAL_ERROR: 'clearCriticalError',
+  UPDATE_CRITICAL_ERROR: 'updateCriticalError',
+  UPDATE_THEME: 'updateTheme'
+}
+
+function createMutationTypes () {
+  const modules = {
+    AUTH: AuthMutations,
+    COLLECTION: CollectionMutations,
+    SHEET: SheetMutations
+  }
+
+  const MutationTypes = Object
+    .entries(modules)
+    .flatMap(([module, mutations]) => {
+      return Object.entries(mutations)
+        .map(([mutationKey, mutationValue]) => [
+          `${module}_${mutationKey}`,
+          `${module.toLowerCase()}/${mutationValue}`
+        ])
+    })
+    .concat(Object.entries(GlobalMutations))
+
+  return Object.fromEntries(MutationTypes)
+}
+
+export const MutationTypes = createMutationTypes()
+
 const store = createStore({
   state: {
     criticalError: null,
@@ -51,13 +80,15 @@ const store = createStore({
     }
   },
   mutations: {
-    clearCriticalError (state) {
+    [GlobalMutations.CLEAR_CRITICAL_ERROR] (state) {
       state.criticalError = null
     },
-    updateCriticalError (state, error) {
+
+    [GlobalMutations.UPDATE_CRITICAL_ERROR] (state, error) {
       state.criticalError = error
     },
-    updateTheme (state, theme) {
+
+    [GlobalMutations.UPDATE_THEME] (state, theme) {
       state.theme = theme
 
       if (theme === 'system') {

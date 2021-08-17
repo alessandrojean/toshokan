@@ -32,11 +32,11 @@
 
         <p class="text-sm text-gray-600 dark:text-gray-400">
           {{ t('footer.version', { version: appVersion }) }}
-          <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm hover:text-indigo-500 hover:underline dark:hover:text-gray-200 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
+          <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm hover:text-primary-500 hover:underline dark:hover:text-gray-200 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-primary-500">{{ gitHash }}</a>)</span>
         </p>
 
         <p v-if="!isDev" class="text-xs text-gray-600 dark:text-gray-400" lang="en">
-          <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-indigo-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-indigo-500">This site is powered by Netlify</a>
+          <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-primary-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-primary-500">This site is powered by Netlify</a>
           <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
         </p>
 
@@ -53,6 +53,8 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
+import { MutationTypes } from '@/store'
 
 import useAppInfo from '@/composables/useAppInfo'
 
@@ -86,7 +88,7 @@ export default {
         try {
           await store.dispatch('sheet/loadSheetData')
         } catch (e) {
-          store.commit('updateCriticalError', e)
+          store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
           router.replace({ name: 'Error' })
         }
       }
@@ -97,7 +99,7 @@ export default {
     watch(signedIn, newValue => {
       if (!newValue) {
         router.replace('/')
-        store.commit('sheet/resetLoadedOnce')
+        store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
       }
     })
 

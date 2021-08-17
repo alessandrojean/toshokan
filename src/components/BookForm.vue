@@ -72,6 +72,24 @@
       </p>
     </div>
 
+    <div>
+      <label for="book-synopsis" class="label">
+        {{ t('book.properties.synopsis') }}
+      </label>
+      <textarea
+        id="book-synopsis"
+        :value="book.synopsis"
+        @input="handleInput('synopsis', $event.target.value)"
+        class="input"
+        :placeholder="t('book.form.example.synopsis')"
+        aria-describedby="book-synopsis-hint"
+        rows="5"
+      />
+      <p id="book-synopsis-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
+        {{ t('book.form.markdown') }}
+      </p>
+    </div>
+
     <div class="grid grid-cols-12 sm:grid-cols-2 gap-6">
       <div class="col-span-12 sm:col-span-1">
         <label for="book-imprint" class="label">
@@ -319,6 +337,42 @@
       </div>
     </div>
 
+    <div>
+      <label
+        for="add-notes"
+        class="checkbox-label"
+      >
+        <input
+          type="checkbox"
+          class="checkbox"
+          name="add-notes"
+          id="add-notes"
+          v-model="addNotes"
+        >
+        <span class="ml-2">
+          {{ t('book.form.addNotes') }}
+        </span>
+      </label>
+    </div>
+
+    <div v-if="addNotes">
+      <label for="book-notes" class="label">
+        {{ t('book.properties.notes') }}
+      </label>
+      <textarea
+        id="book-notes"
+        :value="book.notes"
+        @input="handleInput('notes', $event.target.value)"
+        class="input"
+        :placeholder="t('book.form.example.notes')"
+        aria-describedby="book-notes-hint"
+        rows="5"
+      />
+      <p id="book-notes-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
+        {{ t('book.form.markdown') }}
+      </p>
+    </div>
+
     <i18n-t
       keypath="book.form.requiredHint"
       tag="p"
@@ -352,7 +406,7 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, ref, toRefs } from 'vue'
+import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -391,6 +445,7 @@ export default {
     const { t, locale } = useI18n()
 
     const bookState = reactive({ ...book.value })
+    const addNotes = ref(book.value.notes.length > 0)
 
     const messageRequired = helpers.withMessage(
       t('book.form.blankField'),
@@ -426,7 +481,9 @@ export default {
       labelPriceValue: t('book.properties.labelPrice'),
       paidPriceValue: t('book.properties.paidPrice'),
       format: t('book.properties.format'),
-      store: t('book.properties.store')
+      store: t('book.properties.store'),
+      synopsis: t('book.properties.synopsis'),
+      notes: t('book.properties.notes')
     }))
 
     const v$ = useVuelidate(rules, bookState)
@@ -446,6 +503,7 @@ export default {
     function touch (book) {
       if (book) {
         Object.assign(bookState, book)
+        addNotes.value = book.notes.length > 0
       }
 
       v$.value.$touch()
@@ -479,6 +537,10 @@ export default {
       }
     })
 
+    watch(addNotes, () => {
+      handleInput('notes', '')
+    })
+
     return {
       currencies,
       handleInput,
@@ -489,6 +551,7 @@ export default {
       imprintOptions,
       storeOptions,
       groupOptions,
+      addNotes,
       t
     }
   }

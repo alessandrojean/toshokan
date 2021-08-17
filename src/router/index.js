@@ -95,10 +95,18 @@ const routes = [
               title: () => t('app.routes.dashboard.library')
             }
           },
+          // {
+          //   path: 'book/:bookId',
+          //   name: 'BookDetails',
+          //   component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/BookDetails.vue'),
+          //   meta: {
+          //     title: () => t('app.routes.dashboard.details')
+          //   }
+          // },
           {
             path: 'book/:bookId',
             name: 'BookDetails',
-            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/BookDetails.vue'),
+            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/Book.vue'),
             meta: {
               title: () => t('app.routes.dashboard.details')
             }

@@ -78,7 +78,7 @@
               <li>
                 <router-link
                   :to="{ name: 'DashboardLibrary' }"
-                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
                 >
                   {{ t('dashboard.details.header.library') }}
                 </router-link>
@@ -89,7 +89,7 @@
               <li>
                 <router-link
                   :to="{ name: 'DashboardLibrary', query: { group: book.collection } }"
-                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+                  class="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
                 >
                   {{ book.collection }}
                 </router-link>
@@ -280,7 +280,7 @@
                           target="_blank"
                           :class="[
                             active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                           ]"
                         >
                           <span aria-hidden="true">
@@ -302,7 +302,7 @@
                           type="button"
                           :class="[
                             active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                           ]"
                           @click="$emit('click:updateCover', $event)"
                         >
@@ -325,7 +325,7 @@
                           type="button"
                           :class="[
                             active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                           ]"
                           @click="$emit('click:toggleStatus', $event)"
                         >
@@ -346,7 +346,7 @@
                           type="button"
                           :class="[
                             active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                           ]"
                           @click="$emit('click:toggleFavorite', $event)"
                         >
@@ -369,7 +369,7 @@
                           type="button"
                           :class="[
                             active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                            'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                           ]"
                           @click="$emit('click:delete', $event)"
                         >

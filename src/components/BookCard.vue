@@ -24,7 +24,7 @@
     ref="loadedCard"
     :title="book.title"
   >
-    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-indigo-500 dark:group-focus-visible:ring-offset-gray-700">
+    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-700">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -51,7 +51,7 @@
       </transition>
 
       <div v-if="isRead" class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2">
-        <span class="shadow bg-indigo-500 text-indigo-50 text-xs font-semibold px-2 py-0.5 rounded">
+        <span class="shadow bg-primary-500 text-primary-50 text-xs font-semibold px-2 py-0.5 rounded">
           {{ t('book.read') }}
         </span>
       </div>

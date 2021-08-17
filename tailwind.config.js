@@ -1,9 +1,14 @@
+const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
+    colors: {
+      ...defaultTheme.colors,
+      primary: colors.indigo
+    },
     fontFamily: {
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
       mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
@@ -57,7 +62,7 @@ module.exports = {
       ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],
       ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
       ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
-      textColor: ['group-focus-within', 'group-disabled'],
+      textColor: ['disabled', 'group-focus-within', 'group-disabled'],
       transform: ['motion-reduce'],
       transitionProperty: ['motion-safe', 'motion-reduce'],
       zIndex: ['focus-visible']
@@ -65,6 +70,7 @@ module.exports = {
   },
   plugins: [
     require('tailwindcss-interaction-variants'),
+    require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio')
   ]

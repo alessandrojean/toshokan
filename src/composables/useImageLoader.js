@@ -3,6 +3,8 @@ import { ref, watch } from 'vue'
 export default function useImageLoader (imageUrl) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
+  const imageWidth = ref(0)
+  const imageHeight = ref(0)
 
   const image = new Image()
 
@@ -12,6 +14,9 @@ export default function useImageLoader (imageUrl) {
     } else {
       imageHasError.value = false
     }
+
+    imageWidth.value = image.naturalWidth
+    imageHeight.value = image.naturalHeight
 
     imageLoading.value = false
   }
@@ -30,7 +35,7 @@ export default function useImageLoader (imageUrl) {
     }
   }
 
-  watch(imageUrl, newValue => {
+  watch(imageUrl, () => {
     imageHasError.value = false
     imageLoading.value = true
     loadImage()
@@ -39,6 +44,8 @@ export default function useImageLoader (imageUrl) {
   return {
     imageHasError,
     imageLoading,
+    imageWidth,
+    imageHeight,
     loadImage
   }
 }

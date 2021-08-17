@@ -26,7 +26,7 @@
       <footer class="mt-8 space-y-8 flex flex-col items-center">
         <p class="font-mono text-gray-400 text-xs dark:text-gray-500">
           {{ t('footer.version', { version: appVersion }) }}
-          (<a :href="gitHubUrl" target="_blank" class="hover:text-indigo-500 hover:underline dark:hover:text-gray-200">{{ gitHash }}</a>)
+          (<a :href="gitHubUrl" target="_blank" class="hover:text-primary-500 hover:underline dark:hover:text-gray-200">{{ gitHash }}</a>)
         </p>
       </footer>
     </div>

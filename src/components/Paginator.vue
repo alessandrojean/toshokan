@@ -131,7 +131,7 @@ export default {
        bg-white text-sm font-medium text-gray-500 hover:bg-gray-50
        disabled:cursor-default disabled:opacity-50 disabled:bg-white
        active:bg-gray-100 focus:outline-none focus-visible:ring-2
-       focus-visible:ring-offset-2 focus-visible:ring-indigo-500
+       focus-visible:ring-offset-2 focus-visible:ring-primary-500
        focus-visible:z-20 motion-safe:transition-shadow dark:bg-gray-700
        dark:text-gray-300 dark:disabled:bg-gray-700 dark:border-gray-700
        dark:hover:bg-gray-600 dark:active:bg-gray-500 dark:hover:border-gray-600
@@ -152,12 +152,12 @@ export default {
   }
 
   .pag-button.is-current {
-    @apply z-10 bg-indigo-50 border-indigo-500 text-indigo-600
-      hover:bg-indigo-100 active:bg-indigo-200 dark:bg-indigo-900
-      dark:text-indigo-200 dark:hover:bg-indigo-800
-      dark:hover:border-indigo-400 dark:active:bg-indigo-700
-      disabled:bg-indigo-50 dark:disabled:bg-indigo-900
-      disabled:border-indigo-500 dark:disabled:border-indigo-500;
+    @apply z-10 bg-primary-50 border-primary-500 text-primary-600
+      hover:bg-primary-100 active:bg-primary-200 dark:bg-primary-900
+      dark:text-primary-200 dark:hover:bg-primary-800
+      dark:hover:border-primary-400 dark:active:bg-primary-700
+      disabled:bg-primary-50 dark:disabled:bg-primary-900
+      disabled:border-primary-500 dark:disabled:border-primary-500;
   }
 }
 </style>

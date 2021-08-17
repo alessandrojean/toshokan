@@ -1,11 +1,11 @@
 <template>
   <div
     v-if="!hideBetaWarning"
-    class="bg-indigo-600 py-3 px-3 rounded-md mb-5"
+    class="bg-primary-600 py-3 px-3 rounded-md mb-5"
   >
     <div class="flex items-center justify-between flex-wrap">
       <div class="w-0 flex-1 flex items-center">
-        <span class="flex p-2 rounded-lg bg-indigo-800">
+        <span class="flex p-2 rounded-lg bg-primary-800">
           <SpeakerphoneIcon class="h-6 w-6 text-white" aria-hidden="true" />
         </span>
         <p class="ml-3 font-medium text-white truncate">
@@ -20,7 +20,7 @@
       <div class="flex-shrink-0">
         <button
           type="button"
-          class="-mr-1 flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
+          class="-mr-1 flex p-2 rounded-md hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
           @click.stop="handleDismiss"
         >
            <span class="sr-only">{{ t('dashboard.home.beta.close') }}</span>

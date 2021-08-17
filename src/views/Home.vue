@@ -8,7 +8,7 @@
           <div class="space-y-8">
             <h2 class="text-gray-800 dark:text-gray-100 font-bold font-title text-center text-5xl">
               {{ t('home.leading1') }}<br>
-              <span class="text-indigo-600 dark:text-indigo-500">
+              <span class="text-primary-600 dark:text-primary-500">
                 {{ t('home.leading2') }}
               </span>
             </h2>
@@ -169,7 +169,7 @@ export default {
 
 .functionality-description .icon,
 .feature .icon {
-  @apply w-12 h-12 bg-indigo-500 inline-flex justify-center items-center rounded-md;
+  @apply w-12 h-12 bg-primary-500 inline-flex justify-center items-center rounded-md;
 }
 
 .functionality-description .icon svg,
@@ -222,6 +222,6 @@ export default {
 }
 
 .cta .button.is-secondary {
-  @apply text-indigo-500 dark:text-gray-100;
+  @apply text-primary-500 dark:text-gray-100;
 }
 </style>

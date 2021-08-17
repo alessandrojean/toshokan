@@ -1,13 +1,10 @@
 <template>
-  <div class="md:max-w-2xl mx-auto md:py-6 md:px-8">
-    <form
-      class="md:mt-6 md:rounded-md shadow-md py-5 px-4 sm:px-7 md:px-5 bg-white dark:bg-gray-800"
-      @submit.prevent="handleSubmit"
-    >
+  <div class="md:max-w-2xl mx-auto py-5 md:py-10 px-4 md:px-8 space-y-5 md:space-y-10">
+    <form @submit.prevent="handleSubmit" class="md:py-3">
       <label for="search" class="sr-only">
         {{ t('dashboard.search.label') }}
       </label>
-      <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 -space-x-1">
+      <div class="flex w-full rounded-md shadow-sm focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 -space-x-1">
         <div class="group relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
@@ -33,20 +30,37 @@
       </div>
     </form>
 
-    <ul
-      class="md:mt-6 md:rounded-md shadow-md border-t md:border-t-0 border-gray-200 dark:border-gray-700 divide-y bg-white dark:bg-gray-800 dark:divide-gray-700 darkdark:bg-gray-800 focus:outline-none"
-      v-if="searchResults.length > 0"
-      tabindex="-1"
-      ref="results"
+    <transition
+      mode="out-in"
+      leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+      enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
     >
-      <li
-        v-for="result in searchResults"
-        :key="result.id"
-        class="result"
+      <div
+        v-if="searchLoading"
+        class="w-full flex items-start justify-center pt-5"
       >
-        <SearchItem :result="result" />
-      </li>
-    </ul>
+        <SearchIcon class="w-10 h-10 text-primary-600 dark:text-gray-400 motion-safe:animate-pulse" />
+      </div>
+
+      <ul
+        class="rounded-md shadow-md divide-y bg-white dark:bg-gray-800 dark:divide-gray-700 darkdark:bg-gray-800 focus:outline-none"
+        v-else-if="searchResults.length > 0"
+        tabindex="-1"
+        ref="results"
+      >
+        <li
+          v-for="result in searchResults"
+          :key="result.id"
+          class="result"
+        >
+          <SearchItem :result="result" />
+        </li>
+      </ul>
+    </transition>
   </div>
 </template>
 
@@ -120,8 +134,6 @@ export default {
       event.preventDefault()
       await search()
     }
-
-    // watch(searchQuery, newQuery => search(newQuery))
 
     onMounted(() => {
       if (loading.value) {

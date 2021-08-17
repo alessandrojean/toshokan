@@ -1,3 +1,11 @@
+export const AuthMutations = {
+  UPDATE_SIGNED_IN: 'updateSignedIn',
+  UPDATE_STARTED: 'updateStarted',
+  UPDATE_PROFILE_NAME: 'updateProfileName',
+  UPDATE_PROFILE_EMAIL: 'updateProfileEmail',
+  UPDATE_PROFILE_IMAGE_URL: 'updateProfileImageUrl'
+}
+
 export default {
   namespaced: true,
   state: () => ({
@@ -30,12 +38,14 @@ export default {
               window.gapi.auth2
                 .getAuthInstance()
                 .isSignedIn
-                .listen(signedIn => commit('updateSignedIn', signedIn))
+                .listen(signedIn => {
+                  commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
+                })
 
               const signedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
 
-              commit('updateStarted', true)
-              commit('updateSignedIn', signedIn)
+              commit(AuthMutations.UPDATE_STARTED, true)
+              commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
 
               resolve(signedIn)
             }, () => reject(new Error('Não foi possível inicializar.')))
@@ -53,7 +63,7 @@ export default {
     }
   },
   mutations: {
-    updateSignedIn: function (state, signedIn) {
+    [AuthMutations.UPDATE_SIGNED_IN]: function (state, signedIn) {
       state.signedIn = signedIn
 
       if (signedIn) {
@@ -68,16 +78,20 @@ export default {
         state.profileImageUrl = undefined
       }
     },
-    updateStarted: function (state, started) {
+
+    [AuthMutations.UPDATE_STARTED]: function (state, started) {
       state.started = started
     },
-    updateProfileName: function (state, name) {
+
+    [AuthMutations.UPDATE_PROFILE_NAME]: function (state, name) {
       state.profileName = name
     },
-    updateProfileEmail: function (state, email) {
+
+    [AuthMutations.UPDATE_PROFILE_EMAIL]: function (state, email) {
       state.profileEmail = email
     },
-    updateProfileImageUrl: function (state, imageUrl) {
+
+    [AuthMutations.UPDATE_PROFILE_IMAGE_URL]: function (state, imageUrl) {
       state.profileImageUrl = imageUrl
     }
   }

@@ -3,11 +3,11 @@
     <div class="motion-safe:animate-pulse bg-gray-50 shadow rounded-md dark:bg-gray-700 h-12 sm:h-20" v-if="loading"></div>
     <router-link
       v-else-if="previousBook && Object.keys(previousBook).length > 0"
-      class="group shadow bg-white dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md p-3 flex items-center hover:shadow-md motion-safe:transition-shadow active:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500"
+      class="group shadow bg-white dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md p-3 flex items-center hover:shadow-md motion-safe:transition-shadow active:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500"
       :to="{ name: 'BookDetails', params: { bookId: previousBook.id } }"
     >
       <span aria-hidden="true">
-        <ChevronLeftIcon class="text-gray-400 w-7 h-6 sm:h-10 mr-2 group-hover:text-indigo-500 dark:group-hover:text-gray-200" />
+        <ChevronLeftIcon class="text-gray-400 w-7 h-6 sm:h-10 mr-2 group-hover:text-primary-500 dark:group-hover:text-gray-200" />
       </span>
       <div class="flex flex-col flex-1 truncate">
         <p class="font-semibold text-sm max-w-full truncate hidden sm:block dark:text-gray-100">{{ previousBook.titleParts[0] }}</p>
@@ -22,7 +22,7 @@
       v-else-if="nextBook && Object.keys(nextBook).length > 0"
       :class="[
         !previousBook ? 'col-start-2' : '',
-        'group shadow bg-white dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md p-3 flex items-center hover:shadow-md motion-safe:transition-shadow active:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500'
+        'group shadow bg-white dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md p-3 flex items-center hover:shadow-md motion-safe:transition-shadow active:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500'
       ]"
       :to="{ name: 'BookDetails', params: { bookId: nextBook.id } }"
     >
@@ -33,7 +33,7 @@
         </p>
       </div>
       <span aria-hidden="true">
-        <ChevronRightIcon class="text-gray-400 w-7 h-6 sm:h-10 ml-2 group-hover:text-indigo-500 dark:group-hover:text-gray-200" />
+        <ChevronRightIcon class="text-gray-400 w-7 h-6 sm:h-10 ml-2 group-hover:text-primary-500 dark:group-hover:text-gray-200" />
       </span>
     </router-link>
   </div>

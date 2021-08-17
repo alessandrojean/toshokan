@@ -1,7 +1,7 @@
 <template>
   <nav
     :class="[
-      isTransparent ? 'dark:bg-opacity-0 md:dark:bg-opacity-100' : '',
+      isTransparent ? 'dark:bg-gray-700 md:dark:bg-gray-800' : '',
       'bg-gray-800 motion-safe:transition-opacity duration-400'
     ]"
   >
@@ -10,10 +10,10 @@
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
-            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700"
+            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
-              <LibraryIcon class="h-9 w-9 text-indigo-500" aria-hidden="true" />
+              <LibraryIcon class="h-9 w-9 text-primary-500" aria-hidden="true" />
             </span>
             <span class="sr-only">{{ t('dashboard.header.links.start') }}</span>
             <span class="text-gray-200 font-title font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
@@ -31,7 +31,7 @@
               >
                 <router-link
                   :to="{ name: item.name }"
-                  class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
+                  class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
                 >
                   {{ item.title }}
                 </router-link>
@@ -45,7 +45,7 @@
           <router-link
             v-if="showSearch"
             :to="{ name: 'DashboardSearch' }"
-            class="hidden md:block lg:hidden bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-800"
+            class="hidden md:block lg:hidden bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span class="sr-only">{{ t('dashboard.header.search.link') }}</span>
             <span aria-hidden="true">
@@ -82,7 +82,7 @@
                 ref="searchNavbar"
                 id="search-navbar"
                 type="text"
-                class="focus:outline-none focus:ring-indigo-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
+                class="focus:outline-none focus:ring-primary-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
                 :placeholder="t('dashboard.header.search.placeholder')"
                 v-model="searchQuery"
                 aria-describedby="navbar-search-enter-hint"
@@ -114,7 +114,7 @@
           <!-- Profile dropdown -->
           <Menu as="div" class="ml-3 md:relative hidden sm:inline-block" v-slot="{ open }">
             <div>
-              <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700">
+              <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700">
                 <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>
                 <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="">
               </MenuButton>
@@ -148,7 +148,7 @@
                       :to="{ name: 'DashboardSettings' }"
                       :class="[
                         active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                        'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                        'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                       ]"
                     >
                       <span aria-hidden="true">
@@ -164,7 +164,7 @@
                       type="button"
                       :class="[
                         active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                        'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                        'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                       ]"
                       @click.stop="signOut"
                     >

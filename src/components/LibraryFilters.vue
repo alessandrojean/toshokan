@@ -40,23 +40,22 @@
                 leave-to="opacity-0"
               >
                 <div class="hidden sm:flex absolute top-0 left-0 -ml-8 pt-4 pr-2 sm:-ml-10 sm:pr-4">
-                  <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600" @click="$emit('update:open', false)">
+                  <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600" @click="$emit('update:open', false)">
                     <span class="sr-only">{{ t('dashboard.library.filters.close') }}</span>
                     <XIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
               </TransitionChild>
-              <div class="h-full flex flex-col sm:py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none">
+              <form
+                class="h-full flex flex-col sm:py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none"
+                @submit.prevent="handleFilter"
+              >
                 <div class="pt-5 sm:pt-0 pb-4 sm:pb-0 px-4 sm:px-6 border-b sm:border-b-0 border-gray-300 dark:border-gray-700">
                   <DialogTitle class="leading-3 text-lg font-title font-medium text-gray-900 dark:text-gray-100">
                     {{ t('dashboard.library.filters.title') }}
                   </DialogTitle>
                 </div>
-                <form
-                  role="form"
-                  aria-label="Filtros"
-                  class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-0 sm:mt-6 space-y-5 relative sm:flex-1 px-4 sm:px-6"
-                >
+                <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-0 sm:mt-6 space-y-5 relative sm:flex-1 px-4 sm:px-6">
                   <div>
                     <RadioGroup v-model="viewMode">
                       <RadioGroupLabel class="label">
@@ -187,7 +186,7 @@
                       </div>
                     </RadioGroup>
                   </div>
-                </form>
+                </div>
 
                 <div class="flex justify-between sm:justify-end w-full py-3 sm:py-0 px-4 sm:px-6 border-t sm:border-t-0 border-gray-300 dark:border-gray-700">
                   <button
@@ -206,14 +205,13 @@
                     {{ t('dashboard.library.filters.closeMobile') }}
                   </button>
                   <button
-                    type="button"
-                    class="button is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial md:w-1/2"
-                    @click="handleFilter"
+                    type="submit"
+                    class="button md:text-base is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial md:w-1/2"
                   >
                     {{ t('dashboard.library.filters.filter') }}
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </TransitionChild>
         </div>

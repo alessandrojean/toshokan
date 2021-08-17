@@ -7,7 +7,7 @@
     aria-label="Navegação principal"
   >
     <div aria-hidden="true" class="hidden sm:block mt-1.5 mb-6">
-      <LibraryIconSolid class="text-indigo-500 w-9 h-9" />
+      <LibraryIconSolid class="text-primary-500 w-9 h-9" />
     </div>
     <ul class="w-full sm:h-full flex items-center sm:justify-start sm:flex-col sm:space-y-2">
       <li
@@ -25,7 +25,7 @@
             :href="href"
             :aria-current="isExactActive ? 'page' : undefined"
             :class="[
-              isActive ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : '',
+              isActive ? 'text-primary-600 dark:text-primary-400 font-semibold' : '',
               'w-full sm:w-auto sm:p-2 text-gray-500 font-medium inline-flex space-y-1 flex-col items-center justify-center rounded-md'
             ]"
             @click="navigate"
@@ -43,7 +43,7 @@
         <Menu as="div" v-slot="{ open }">
           <MenuButton
             :class="[
-              $route.meta.more ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : '',
+              $route.meta.more ? 'text-primary-600 dark:text-primary-400 font-semibold' : '',
               'w-full sm:w-auto sm:p-2 text-gray-500 font-medium inline-flex space-y-1 flex-col items-center justify-center rounded-md'
             ]"
           >
@@ -92,7 +92,7 @@
                     :to="{ name: 'DashboardSettings' }"
                     :class="[
                       active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                      'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                      'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                     ]"
                   >
                     <span aria-hidden="true">
@@ -108,7 +108,7 @@
                     type="button"
                     :class="[
                       active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                      'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-gray-700'
+                      'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                     ]"
                     @click.stop="signOut"
                   >

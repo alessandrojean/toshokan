@@ -45,7 +45,7 @@
           <template v-else>
             <button
               type="button"
-              class="button flex-1 md:flex-initial justify-center md:justify-start"
+              class="button md:text-base flex-1 md:flex-initial justify-center md:justify-start"
               @click.stop="filterOpen = true"
               v-if="!sheetIsEmpty"
               :disabled="loading"
@@ -57,7 +57,7 @@
             </button>
             <router-link
               :to="{ name: 'DashboardNewBook' }"
-              class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
+              class="button md:text-base is-primary flex-1 md:flex-initial justify-center md:justify-start"
             >
               <span aria-hidden="true">
                 <PlusIcon aria-hidden="true" />
@@ -154,6 +154,8 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
+import { MutationTypes } from '@/store'
+
 import {
   ArchiveIcon,
   FilterIcon,
@@ -164,7 +166,6 @@ import {
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
 
 import GridBooks from '@/components/GridBooks'
-// import GroupChips from '@/components/GroupChips'
 import LibraryFilters from '@/components/LibraryFilters'
 import TableBooks from '@/components/TableBooks'
 
@@ -173,7 +174,6 @@ export default {
 
   components: {
     GridBooks,
-    // GroupChips,
     LibraryFilters,
     TableBooks,
     ArchiveIcon,
@@ -235,9 +235,32 @@ export default {
       const oldGroup = group.value
 
       if (groupData && oldGroup !== newGroup) {
-        store.commit('collection/updateGroup', {
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, {
           group: newGroup,
           totalResults: groupData.count
+        })
+
+        return true
+      }
+
+      return false
+    }
+
+    function updateSortPropertyFromQuery () {
+      const newSortProperty = route.query.sortProperty
+
+      if (sheetLoading.value || loading.value || !newSortProperty) {
+        return false
+      }
+
+      if (!sortPropertyNames[newSortProperty]) {
+        return false
+      }
+
+      if (newSortProperty !== sortProperty.value) {
+        store.commit(MutationTypes.COLLECTION_UPDATE_SORT, {
+          sortBy: newSortProperty,
+          sortDirection: 'desc'
         })
 
         return true
@@ -249,9 +272,13 @@ export default {
     watch(sheetId, async newSheetId => {
       if (newSheetId) {
         const groupChanged = await updateGroupFromQuery()
+        const sortChanged = updateSortPropertyFromQuery()
 
-        if (groupChanged || books.value.length === 0) {
-          await store.dispatch('collection/fetchBooks', currentPage.value)
+        if (groupChanged || sortChanged || books.value.length === 0) {
+          await store.dispatch(
+            'collection/fetchBooks',
+            sortChanged ? 1 : currentPage.value
+          )
         }
       }
     })
@@ -259,9 +286,13 @@ export default {
     onMounted(async () => {
       if (sheetId.value) {
         const groupChanged = await updateGroupFromQuery()
+        const sortChanged = updateSortPropertyFromQuery()
 
-        if (groupChanged || books.value.length === 0) {
-          await store.dispatch('collection/fetchBooks', currentPage.value)
+        if (groupChanged || sortChanged || books.value.length === 0) {
+          await store.dispatch(
+            'collection/fetchBooks',
+            sortChanged ? 1 : currentPage.value
+          )
         }
       }
     })
@@ -275,24 +306,24 @@ export default {
 
       nextTick(() => {
         const totalResults = store.state.collection.paginationInfo.total_results
-        store.commit('collection/updateCurrentPage', { page, totalResults })
+        store.commit(MutationTypes.COLLECTION_UPDATE_CURRENT_PAGE, { page, totalResults })
 
         store.dispatch('collection/fetchBooks', page)
       })
     }
 
     async function handleFilter (filters) {
-      store.commit('collection/updateViewMode', filters.viewMode)
-      store.commit('collection/updateGridMode', filters.gridMode)
+      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, filters.viewMode)
+      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, filters.gridMode)
 
       if (store.state.collection.group !== filters.group ||
           store.state.collection.sortBy !== filters.sortProperty ||
           store.state.collection.sortDirection !== filters.sortDirection) {
         const totalResults = store.state.collection.paginationInfo.total_results
-        store.commit('collection/updateCurrentPage', { page: 1, totalResults })
+        store.commit(MutationTypes.COLLECTION_UPDATE_CURRENT_PAGE, { page: 1, totalResults })
 
-        store.commit('collection/updateGroup', { group: filters.group })
-        store.commit('collection/updateSort', {
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, { group: filters.group })
+        store.commit(MutationTypes.COLLECTION_UPDATE_SORT, {
           sortBy: filters.sortProperty,
           sortDirection: filters.sortDirection
         })

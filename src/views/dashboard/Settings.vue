@@ -3,54 +3,33 @@
     <SimpleHeader :title="t('dashboard.settings.title')" />
 
     <div class="flex-1">
-      <div class="max-w-7xl mx-auto md:py-6 md:px-8 md:grid grid-cols-4 gap-6">
-        <aside
-          class="flex flex-col space-y-2 mb-4 md:mb-0 pt-4 px-5 md:pt-0 md:px-0"
-          role="tablist"
-          :aria-label="t('dashboard.settings.title')"
-          aria-orientation="vertical"
+      <div class="max-w-7xl mx-auto py-6 px-4 md:px-8">
+        <TabGroup
+          vertical
+          :default-index="0"
+          as="div"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-md md:grid md:grid-cols-4"
         >
-          <button
-            v-for="(tab, idx) in tabs"
-            :key="tab.key"
-            role="tab"
-            :aria-selected="currentTab === idx"
-            :aria-controls="`${tab.key}-tab`"
-            :id="`${tab.key}-button`"
-            :tabindex="currentTab !== idx ? '-1' : undefined"
-            type="button"
-            class="aside-button"
-            @click="activateTab(idx, false)"
-            @keydown="handleTabKeydown($event, idx)"
-            @keyup="handleTabKeyup($event, idx)"
-            :ref="el => { if (el) tabRefs[idx] = el }"
-            :disabled="sheetLoading"
+          <TabList
+            as="aside"
+            class="z-10 flex flex-col space-y-2 mb-4 md:mb-0 pt-4 px-0"
           >
-            <span aria-hidden="true">
-              <component :is="tab.icon" />
-            </span>
-            {{ tab.title }}
-          </button>
-        </aside>
+            <Tab
+              v-for="tab in tabs"
+              :key="tab.key"
+              class="aside-button"
+            >
+              <span aria-hidden="true">
+                <component :is="tab.icon" />
+              </span>
+              {{ tab.title }}
+            </Tab>
+          </TabList>
 
-        <div class="col-span-3">
-          <transition
-            mode="out-in"
-            enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100 "
-            leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <section
-              tabindex="0"
-              role="tabpanel"
-              id="appearence-tab"
-              aria-labelledby="appearence-button"
-              :hidden="currentTab !== 0"
-              v-show="currentTab === 0"
-              class="relative overflow-hidden bg-white dark:bg-gray-800 md:rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+          <TabPanels class="col-span-3 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-600">
+            <TabPanel
+              as="section"
+              class="relative overflow-hidden md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
@@ -162,7 +141,7 @@
                   </div>
                 </div>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
+              <div class="border-t border-gray-200 dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
                 <button
                   type="button"
                   class="button is-primary"
@@ -171,26 +150,11 @@
                   {{ t('dashboard.settings.save') }}
                 </button>
               </div>
-            </section>
-          </transition>
+            </TabPanel>
 
-          <transition
-            mode="out-in"
-            enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100 "
-            leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-          >
-            <section
-              tabindex="0"
-              role="tabpanel"
-              id="privacy-tab"
-              aria-labelledby="privacy-button"
-              :hidden="currentTab !== 1"
-              v-show="currentTab === 1"
-              class="bg-white dark:bg-gray-800 md:rounded-md shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600"
+            <TabPanel
+              as="section"
+              class="md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
@@ -223,9 +187,9 @@
                   </div>
                 </div>
               </div>
-            </section>
-          </transition>
-        </div>
+            </TabPanel>
+          </TabPanels>
+        </TabGroup>
       </div>
     </div>
 
@@ -243,12 +207,16 @@
 </template>
 
 <script>
-import { computed, nextTick, onBeforeUpdate, reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
+import { MutationTypes } from '@/store'
+
 import { CollectionIcon, ShieldCheckIcon } from '@heroicons/vue/outline'
 import { CogIcon, TranslateIcon } from '@heroicons/vue/solid'
+
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 
 import DisconnectModal from '@/components/DisconnectModal'
 import LoadingIndicator from '@/components/LoadingIndicator'
@@ -261,6 +229,11 @@ export default {
     DisconnectModal,
     LoadingIndicator,
     SimpleHeader,
+    TabGroup,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
     CollectionIcon,
     ShieldCheckIcon,
     CogIcon,
@@ -270,8 +243,6 @@ export default {
   setup () {
     const { t, availableLocales, locale } = useI18n({ useScope: 'global' })
     const store = useStore()
-
-    const tabs = useTabs()
 
     const settings = reactive({
       appearence: {
@@ -291,14 +262,14 @@ export default {
       if (locale.value !== settings.appearence.locale) {
         locale.value = settings.appearence.locale
         store.dispatch('sheet/loadSheetData')
-        store.commit('collection/updateLastAdded', { items: [] })
-        store.commit('collection/updateLatestReadings', { items: [] })
-        store.commit('collection/updateBooks', { items: [] })
+        store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
+        store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
+        store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
       }
 
-      store.commit('updateTheme', settings.appearence.theme)
-      store.commit('collection/updateViewMode', settings.appearence.viewMode)
-      store.commit('collection/updateGridMode', settings.appearence.gridMode)
+      store.commit(MutationTypes.UPDATE_THEME, settings.appearence.theme)
+      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, settings.appearence.viewMode)
+      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, settings.appearence.gridMode)
     }
 
     const sheetLoading = computed(() => store.state.sheet.loading)
@@ -313,6 +284,19 @@ export default {
       store.dispatch('auth/disconnect')
     }
 
+    const tabs = ref([
+      {
+        key: 'appearence',
+        icon: CollectionIcon,
+        title: t('dashboard.settings.appearence.title')
+      },
+      {
+        key: 'privacy',
+        icon: ShieldCheckIcon,
+        title: t('dashboard.settings.privacy.title')
+      }
+    ])
+
     return {
       t,
       availableLocales,
@@ -324,149 +308,15 @@ export default {
       disconnectModalOpen,
       confirmRemove,
       handleDisconnect,
-      ...tabs
+      tabs
     }
-  }
-}
-
-function useTabs () {
-  const { t } = useI18n({ useScope: 'global' })
-
-  const tabs = computed(() => [
-    {
-      key: 'appearence',
-      title: t('dashboard.settings.appearence.title'),
-      icon: 'CollectionIcon'
-    },
-    {
-      key: 'privacy',
-      title: t('dashboard.settings.privacy.title'),
-      icon: 'ShieldCheckIcon'
-    }
-  ])
-  const currentTab = ref(0)
-  const tabRefs = ref([])
-
-  onBeforeUpdate(() => {
-    tabRefs.value = []
-  })
-
-  function activateTab (tabIdx, setFocus) {
-    setFocus = setFocus || true
-    currentTab.value = tabIdx
-
-    if (setFocus) {
-      nextTick(() => tabRefs.value[tabIdx].focus())
-    }
-  }
-
-  const keys = {
-    end: 'End',
-    home: 'Home',
-    up: 'ArrowUp',
-    down: 'ArrowDown',
-    enter: 'Enter',
-    space: ' '
-  }
-
-  const direction = {
-    ArrowLeft: -1,
-    ArrowUp: -1,
-    ArrowRight: 1,
-    ArrowDown: 1
-  }
-
-  /**
-   * @param {KeyboardEvent} event
-   * @param {number} tabIdx
-   */
-  function handleTabKeydown (event, tabIdx) {
-    const key = event.key
-
-    switch (key) {
-      case keys.end:
-        event.preventDefault()
-        focusLastTab()
-        break
-      case keys.home:
-        event.preventDefault()
-        focusFirstTab()
-        break
-      case keys.up:
-      case keys.down:
-        determineOrientation(event, tabIdx)
-        break
-    }
-  }
-
-  /**
-   * @param {KeyboardEvent} event
-   * @param {number} tabIdx
-   */
-  function handleTabKeyup (event, tabIdx) {
-    const key = event.key
-
-    switch (key) {
-      case keys.enter:
-      case keys.space:
-        activateTab(tabIdx)
-        break
-    }
-  }
-
-  /**
-   * @param {KeyboardEvent} event
-   * @param {number} tabIdx
-   */
-  function determineOrientation (event, tabIdx) {
-    const key = event.key
-
-    if (key === keys.up || key === keys.down) {
-      event.preventDefault()
-      switchTabOnArrowPress(event, tabIdx)
-    }
-  }
-
-  /**
-   * @param {KeyboardEvent} event
-   * @param {number} tabIdx
-   */
-  function switchTabOnArrowPress (event, tabIdx) {
-    const pressed = event.key
-
-    if (direction[pressed] && tabIdx !== undefined) {
-      if (tabRefs.value[tabIdx + direction[pressed]]) {
-        tabRefs.value[tabIdx + direction[pressed]].focus()
-      } else if (pressed === keys.left || pressed === keys.up) {
-        focusLastTab()
-      } else if (pressed === keys.right || pressed === keys.down) {
-        focusFirstTab()
-      }
-    }
-  }
-
-  function focusFirstTab () {
-    tabRefs.value[0].focus()
-  }
-
-  function focusLastTab () {
-    tabRefs.value[tabRefs.value.length - 1].focus()
-  }
-
-  return {
-    tabs,
-    currentTab,
-    tabRefs,
-    activateTab,
-    handleTabKeydown,
-    handleTabKeyup
   }
 }
 </script>
 
 <style scoped>
 .aside-button {
-  @apply group rounded-md font-medium text-gray-700 dark:text-gray-400 text-sm flex items-center px-2 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-indigo-600 disabled:opacity-60 disabled:cursor-default;
+  @apply group border-l-4 border-transparent font-medium text-gray-700 dark:text-gray-400 md:text-sm flex items-center px-3 py-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 disabled:opacity-60 disabled:cursor-default;
 }
 
 .aside-button:focus,
@@ -475,11 +325,11 @@ function useTabs () {
 }
 
 .aside-button[aria-selected="true"] {
-  @apply bg-white dark:bg-indigo-900 text-indigo-600 dark:text-indigo-100 font-semibold shadow-md;
+  @apply border-primary-600 dark:border-primary-500 bg-primary-50 dark:bg-primary-500 dark:bg-opacity-30 text-primary-600 dark:text-primary-100;
 }
 
 .aside-button svg {
-  @apply w-6 h-6 text-gray-400 dark:text-gray-500 mr-2;
+  @apply w-6 h-6 text-gray-400 dark:text-gray-500 mr-4;
 }
 
 .aside-button:focus svg,
@@ -488,7 +338,7 @@ function useTabs () {
 }
 
 .aside-button[aria-selected="true"] svg {
-  @apply text-indigo-600 dark:text-indigo-100;
+  @apply text-primary-600 dark:text-primary-100;
 }
 
 .preference {

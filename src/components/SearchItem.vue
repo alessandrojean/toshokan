@@ -1,7 +1,7 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="group px-5 py-5 sm:px-7 md:px-5 flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 has-ring-focus"
+    class="group px-4 py-4 sm:px-7 md:px-5 flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 has-ring-focus"
     ref="searchItem"
   >
     <div class="mr-4 w-12">
@@ -39,7 +39,7 @@
       </span>
     </div>
     <span aria-hidden="true">
-      <ChevronRightIcon class="w-6 h-6 text-gray-400 group-hover:text-indigo-600 dark:text-gray-400 dark:group-hover:text-gray-200" aria-hidden="true" />
+      <ChevronRightIcon class="w-6 h-6 text-gray-400 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-gray-200" aria-hidden="true" />
     </span>
   </router-link>
 </template>

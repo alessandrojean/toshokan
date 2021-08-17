@@ -12,7 +12,7 @@
       class="z-30 absolute w-full h-full flex justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
     >
       <span aria-hidden="true">
-        <BookOpenIcon class="motion-safe:animate-pulse h-28 w-28 mx-auto text-indigo-500" aria-hidden="true" />
+        <BookOpenIcon class="motion-safe:animate-pulse h-28 w-28 mx-auto text-primary-500" aria-hidden="true" />
       </span>
     </div>
   </transition>
@@ -42,6 +42,8 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
+import { MutationTypes } from '@/store'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 
@@ -85,7 +87,7 @@ export default {
       document.title = route.meta.title() + ' | ' + t('app.name')
       document.documentElement.lang = newLocale
       localStorage.setItem('locale', newLocale)
-      store.commit('sheet/resetLoadedOnce')
+      store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
     })
 
     return {

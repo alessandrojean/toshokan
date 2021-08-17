@@ -20,7 +20,7 @@
       <footer class="mt-8 flex flex-col items-center">
         <p class="text-center text-gray-600 text-sm dark:text-gray-500">
           {{ t('footer.version', { version: appVersion }) }}
-          <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-indigo-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-indigo-500">{{ gitHash }}</a>)</span>
+          <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-primary-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500">{{ gitHash }}</a>)</span>
         </p>
 
         <p v-if="isDev" class="text-center text-xs text-gray-600 dark:text-gray-500 mt-1">

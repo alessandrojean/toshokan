@@ -18,6 +18,22 @@ function buildPaginationInfo ({ perPage, links, totalResults, page }) {
   return paginator.build(totalResults, page)
 }
 
+export const CollectionMutations = {
+  UPDATE_BOOKS: 'updateBooks',
+  UPDATE_CURRENT_PAGE: 'updateCurrentPage',
+  UPDATE_GRID_MODE: 'updateGridMode',
+  UPDATE_GROUP: 'updateGroup',
+  UPDATE_GROUPS: 'updateGroups',
+  UPDATE_ID_MAP: 'updateIdMap',
+  UPDATE_IMPRINTS: 'updateImprints',
+  UPDATE_LAST_ADDED: 'updateLastAdded',
+  UPDATE_LATEST_READINGS: 'updateLatestReadings',
+  UPDATE_SEARCH: 'updateSearch',
+  UPDATE_SORT: 'updateSort',
+  UPDATE_STORES: 'updateStores',
+  UPDATE_VIEW_MODE: 'updateViewMode'
+}
+
 export default {
   namespaced: true,
   state: {
@@ -62,11 +78,11 @@ export default {
     viewMode: localStorage.getItem('view_mode') || 'table'
   },
   mutations: {
-    updateBooks: function (state, books) {
+    [CollectionMutations.UPDATE_BOOKS]: function (state, books) {
       state.books = { ...state.books, ...books }
     },
 
-    updateCurrentPage: function (state, { page, totalResults }) {
+    [CollectionMutations.UPDATE_CURRENT_PAGE]: function (state, { page, totalResults }) {
       const paginationInfo = buildPaginationInfo({
         perPage: state.perPage,
         links: state.links,
@@ -78,12 +94,12 @@ export default {
       state.paginationInfo = { ...state.paginationInfo, ...paginationInfo }
     },
 
-    updateGridMode: function (state, gridMode) {
+    [CollectionMutations.UPDATE_GRID_MODE]: function (state, gridMode) {
       state.gridMode = gridMode
       localStorage.setItem('grid_mode', gridMode)
     },
 
-    updateGroup: function (state, { group, totalResults }) {
+    [CollectionMutations.UPDATE_GROUP]: function (state, { group, totalResults }) {
       state.group = group || ''
       localStorage.setItem('collection_group', group)
 
@@ -100,48 +116,48 @@ export default {
       }
     },
 
-    updateGroups: function (state, groups) {
+    [CollectionMutations.UPDATE_GROUPS]: function (state, groups) {
       state.groups = { ...state.groups, ...groups }
     },
 
-    updateIdMap: function (state, idMap) {
+    [CollectionMutations.UPDATE_ID_MAP]: function (state, idMap) {
       state.idMap = {}
       state.idMap = { ...state.idMap, ...idMap }
     },
 
-    updateImprints: function (state, imprints) {
+    [CollectionMutations.UPDATE_IMPRINTS]: function (state, imprints) {
       state.imprints = { ...state.imprints, ...imprints }
     },
 
-    updateLastAdded: function (state, lastAdded) {
+    [CollectionMutations.UPDATE_LAST_ADDED]: function (state, lastAdded) {
       state.lastAdded = { ...state.lastAdded, ...lastAdded }
     },
 
-    updateLatestReadings: function (state, latestReadings) {
+    [CollectionMutations.UPDATE_LATEST_READINGS]: function (state, latestReadings) {
       state.latestReadings = { ...state.latestReadings, ...latestReadings }
     },
 
-    updateSearch: function (state, search) {
+    [CollectionMutations.UPDATE_SEARCH]: function (state, search) {
       state.search = { ...state.search, ...search }
     },
 
-    updateSort: function (state, { sortBy, sortDirection }) {
+    [CollectionMutations.UPDATE_SORT]: function (state, { sortBy, sortDirection }) {
       state.sortBy = sortBy
       state.sortDirection = sortDirection
     },
 
-    updateStores: function (state, stores) {
+    [CollectionMutations.UPDATE_STORES]: function (state, stores) {
       state.stores = { ...state.stores, ...stores }
     },
 
-    updateViewMode: function (state, viewMode) {
+    [CollectionMutations.UPDATE_VIEW_MODE]: function (state, viewMode) {
       state.viewMode = viewMode
       localStorage.setItem('view_mode', viewMode)
     }
   },
   actions: {
     async fetchBooks ({ commit, dispatch, state, rootState }, page) {
-      commit('updateBooks', { loading: true })
+      commit(CollectionMutations.UPDATE_BOOKS, { loading: true })
 
       const sheetId = rootState.sheet.sheetId
 
@@ -168,24 +184,24 @@ export default {
           sheetId, state.idMap, group, page,
           { orderBy, orderDirection }
         )
-        commit('updateBooks', { items: books })
-        commit('updateCurrentPage', { page, totalResults })
-        commit('updateGroup', { group })
+        commit(CollectionMutations.UPDATE_BOOKS, { items: books })
+        commit(CollectionMutations.UPDATE_CURRENT_PAGE, { page, totalResults })
+        commit(CollectionMutations.UPDATE_GROUP, { group })
       } finally {
-        commit('updateBooks', { loading: false })
+        commit(CollectionMutations.UPDATE_BOOKS, { loading: false })
       }
     },
 
     async fetchGroups ({ commit, rootState }) {
-      commit('updateGroups', { loading: true, items: [] })
+      commit(CollectionMutations.UPDATE_GROUPS, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
       try {
         const groups = await getGroups(sheetId)
-        commit('updateGroups', { items: groups })
+        commit(CollectionMutations.UPDATE_GROUPS, { items: groups })
       } finally {
-        commit('updateGroups', { loading: false })
+        commit(CollectionMutations.UPDATE_GROUPS, { loading: false })
       }
     },
 
@@ -194,27 +210,27 @@ export default {
 
       try {
         const idMap = await getBookIds(sheetId)
-        commit('updateIdMap', idMap)
+        commit(CollectionMutations.UPDATE_ID_MAP, idMap)
       } catch (e) {
-        commit('updateIdMap', {})
+        commit(CollectionMutations.UPDATE_ID_MAP, {})
       }
     },
 
     async fetchImprints ({ commit, rootState }) {
-      commit('updateImprints', { loading: true, items: [] })
+      commit(CollectionMutations.UPDATE_IMPRINTS, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
       try {
         const imprints = await getImprints(sheetId)
-        commit('updateImprints', { items: imprints })
+        commit(CollectionMutations.UPDATE_IMPRINTS, { items: imprints })
       } finally {
-        commit('updateImprints', { loading: false })
+        commit(CollectionMutations.UPDATE_IMPRINTS, { loading: false })
       }
     },
 
     async fetchLastAdded ({ commit, dispatch, state, rootState }) {
-      commit('updateLastAdded', { loading: true, items: [] })
+      commit(CollectionMutations.UPDATE_LAST_ADDED, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
@@ -224,14 +240,14 @@ export default {
         }
 
         const lastAdded = await getBooks(sheetId, state.idMap, 1, { limit: 6 })
-        commit('updateLastAdded', { items: lastAdded })
+        commit(CollectionMutations.UPDATE_LAST_ADDED, { items: lastAdded })
       } finally {
-        commit('updateLastAdded', { loading: false })
+        commit(CollectionMutations.UPDATE_LAST_ADDED, { loading: false })
       }
     },
 
     async fetchLatestReadings ({ commit, dispatch, state, rootState }) {
-      commit('updateLatestReadings', { loading: true, items: [] })
+      commit(CollectionMutations.UPDATE_LATEST_READINGS, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
@@ -243,27 +259,27 @@ export default {
         const latestReadings = await getLatestReadings(sheetId, state.idMap, {
           limit: 6
         })
-        commit('updateLatestReadings', { items: latestReadings })
+        commit(CollectionMutations.UPDATE_LATEST_READINGS, { items: latestReadings })
       } finally {
-        commit('updateLatestReadings', { loading: false })
+        commit(CollectionMutations.UPDATE_LATEST_READINGS, { loading: false })
       }
     },
 
     async fetchStores ({ commit, rootState }) {
-      commit('updateStores', { loading: true, items: [] })
+      commit(CollectionMutations.UPDATE_STORES, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
       try {
         const stores = await getStores(sheetId)
-        commit('updateStores', { items: stores })
+        commit(CollectionMutations.UPDATE_STORES, { items: stores })
       } finally {
-        commit('updateStores', { loading: false })
+        commit(CollectionMutations.UPDATE_STORES, { loading: false })
       }
     },
 
     async search ({ commit, dispatch, state, rootState }, { query }) {
-      commit('updateSearch', { loading: true, results: [], query })
+      commit(CollectionMutations.UPDATE_SEARCH, { loading: true, results: [], query })
 
       const sheetId = rootState.sheet.sheetId
 
@@ -273,11 +289,11 @@ export default {
         }
 
         const results = await searchBooks(sheetId, state.idMap, query)
-        commit('updateSearch', { results })
+        commit(CollectionMutations.UPDATE_SEARCH, { results })
       } catch (e) {
-        commit('updateSearch', { results: [] })
+        commit(CollectionMutations.UPDATE_SEARCH, { results: [] })
       } finally {
-        commit('updateSearch', { loading: false })
+        commit(CollectionMutations.UPDATE_SEARCH, { loading: false })
       }
     }
   }

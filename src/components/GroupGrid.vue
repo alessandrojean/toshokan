@@ -29,7 +29,7 @@
         <span class="flex-1 truncate">
           {{ group.name }}
         </span>
-        <span aria-hidden="true" class="ml-2 bg-indigo-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-indigo-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+        <span aria-hidden="true" class="ml-2 bg-primary-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-primary-700 dark:text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
           {{ n(group.count, 'integer') }}
         </span>
       </router-link>

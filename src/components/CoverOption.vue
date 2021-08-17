@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      active ? 'ring-2 ring-indigo-500' : '',
+      active || checked ? 'ring-2 ring-offset-2 ring-primary-600 dark:ring-primary-500 dark:ring-offset-gray-700' : '',
       'relative shadow bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden aspect-w-2 aspect-h-3 cursor-pointer motion-safe:transition-shadow'
     ]"
   >
@@ -28,24 +28,29 @@
       </div>
       <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" alt="">
     </transition>
-    <div v-if="checked" class="bg-indigo-600 bg-opacity-70 absolute top-0 left-0 w-full h-full flex items-center justify-center flex-col">
-      <CheckCircleIcon class="h-8 w-8 text-white" />
+    <div
+      v-if="checked"
+      class="bg-gray-800 bg-opacity-40 absolute inset-0 p-2.5 flex items-start justify-start flex-col"
+    >
+      <div class="bg-white p-0.5 rounded-full">
+        <CheckIcon class="h-4 w-4 text-primary-600" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, toRefs } from 'vue'
+import { computed, onMounted, toRefs, watch } from 'vue'
 
 import useImageLoader from '@/composables/useImageLoader'
 
-import { CheckCircleIcon, PhotographIcon } from '@heroicons/vue/solid'
+import { CheckIcon, PhotographIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'CoverOption',
 
   components: {
-    CheckCircleIcon,
+    CheckIcon,
     PhotographIcon
   },
 
@@ -58,7 +63,9 @@ export default {
     }
   },
 
-  setup (props) {
+  emits: ['error'],
+
+  setup (props, context) {
     const { coverUrl } = toRefs(props)
 
     const thumbnailUrl = computed(() => {
@@ -74,6 +81,12 @@ export default {
     } = useImageLoader(thumbnailUrl)
 
     onMounted(loadImage)
+
+    watch(imageHasError, hasError => {
+      if (hasError) {
+        context.emit('error')
+      }
+    })
 
     return {
       imageHasError,

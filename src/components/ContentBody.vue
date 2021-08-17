@@ -22,7 +22,7 @@
 }
 
 .content-body  a {
-  @apply text-indigo-500 dark:text-indigo-400 font-semibold hover:underline rounded transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-offset-gray-900;
+  @apply text-primary-500 dark:text-primary-400 font-semibold hover:underline rounded transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900;
 }
 
 .content-body ol {
