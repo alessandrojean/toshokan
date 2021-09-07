@@ -12,7 +12,7 @@
         >
           <TabList
             as="aside"
-            class="z-10 flex flex-col space-y-2 mb-4 md:mb-0 pt-4 px-0"
+            class="flex flex-col space-y-2 mb-4 md:mb-0 pt-4 px-0"
           >
             <Tab
               v-for="tab in tabs"
@@ -29,11 +29,11 @@
           <TabPanels class="col-span-3 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-600">
             <TabPanel
               as="section"
-              class="relative overflow-hidden md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600"
+              class="relative overflow-hidden md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
-                  <h2 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                  <h2 class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
                     {{ t('dashboard.settings.appearence.title') }}
                   </h2>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -50,25 +50,7 @@
                         {{ t('dashboard.settings.appearence.locale.description') }}
                       </p>
                     </div>
-                    <div class="relative group">
-                      <span aria-hidden="true" class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                        <TranslateIcon class="w-5 h-5 text-gray-500 dark:text-gray-400 group-focus-within:text-gray-700 dark:group-focus-within:text-gray-200" />
-                      </span>
-                      <select
-                        class="select w-52 pl-10 h-auto"
-                        id="locale"
-                        @change="updateSetting('appearence.locale', $event.target.value)"
-                      >
-                        <option
-                          v-for="loc in availableLocales"
-                          :key="loc"
-                          :value="loc"
-                          :selected="loc === settings.appearence.locale"
-                        >
-                          {{ t('app.localeName', null, { locale: loc }) }}
-                        </option>
-                      </select>
-                    </div>
+                    <LocaleSelector v-model="settings.appearence.locale" />
                   </div>
                   <div class="preference">
                     <div class="preference-description">
@@ -139,6 +121,48 @@
                       </option>
                     </select>
                   </div>
+                  <SwitchGroup as="div" class="preference">
+                    <div class="preference-description">
+                      <SwitchLabel>
+                        {{ t('dashboard.settings.appearence.spoilerModeSynopsis.label') }}
+                      </SwitchLabel>
+                      <p>
+                        {{ t('dashboard.settings.appearence.spoilerModeSynopsis.description') }}
+                      </p>
+                    </div>
+                    <Switch
+                      v-model="settings.appearence.spoilerMode.synopsis"
+                      :class="settings.appearence.spoilerMode.synopsis ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                      class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                    >
+                      <span
+                        aria-hidden="true"
+                        :class="settings.appearence.spoilerMode.synopsis ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white transform rounded-full"
+                      />
+                    </Switch>
+                  </SwitchGroup>
+                  <SwitchGroup as="div" class="preference">
+                    <div class="preference-description">
+                      <SwitchLabel>
+                        {{ t('dashboard.settings.appearence.spoilerModeCover.label') }}
+                      </SwitchLabel>
+                      <p>
+                        {{ t('dashboard.settings.appearence.spoilerModeCover.description') }}
+                      </p>
+                    </div>
+                    <Switch
+                      v-model="settings.appearence.spoilerMode.cover"
+                      :class="settings.appearence.spoilerMode.cover ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                      class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                    >
+                      <span
+                        aria-hidden="true"
+                        :class="settings.appearence.spoilerMode.cover ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white transform rounded-full"
+                      />
+                    </Switch>
+                  </SwitchGroup>
                 </div>
               </div>
               <div class="border-t border-gray-200 dark:border-gray-600 px-4 py-5 sm:px-6 sm:py-3 flex justify-end">
@@ -154,11 +178,11 @@
 
             <TabPanel
               as="section"
-              class="md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600"
+              class="md:rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500"
             >
               <div class="px-4 py-5 space-y-6 sm:p-6">
                 <div>
-                  <h2 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                  <h2 class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
                     {{ t('dashboard.settings.privacy.title') }}
                   </h2>
                   <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -216,10 +240,20 @@ import { MutationTypes } from '@/store'
 import { CollectionIcon, ShieldCheckIcon } from '@heroicons/vue/outline'
 import { CogIcon, TranslateIcon } from '@heroicons/vue/solid'
 
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import {
+  Switch,
+  SwitchLabel,
+  SwitchGroup,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels
+} from '@headlessui/vue'
 
 import DisconnectModal from '@/components/DisconnectModal'
 import LoadingIndicator from '@/components/LoadingIndicator'
+import LocaleSelector from '@/components/LocaleSelector.vue'
 import SimpleHeader from '@/components/SimpleHeader'
 
 export default {
@@ -228,12 +262,16 @@ export default {
   components: {
     DisconnectModal,
     LoadingIndicator,
+    LocaleSelector,
     SimpleHeader,
+    Switch,
+    SwitchLabel,
+    SwitchGroup,
+    Tab,
     TabGroup,
     TabList,
-    Tab,
-    TabPanels,
     TabPanel,
+    TabPanels,
     CollectionIcon,
     ShieldCheckIcon,
     CogIcon,
@@ -241,7 +279,7 @@ export default {
   },
 
   setup () {
-    const { t, availableLocales, locale } = useI18n({ useScope: 'global' })
+    const { t, locale } = useI18n({ useScope: 'global' })
     const store = useStore()
 
     const settings = reactive({
@@ -249,7 +287,8 @@ export default {
         locale: locale.value,
         theme: store.state.theme,
         viewMode: store.state.collection.viewMode,
-        gridMode: store.state.collection.gridMode
+        gridMode: store.state.collection.gridMode,
+        spoilerMode: { ...store.state.collection.spoilerMode }
       }
     })
 
@@ -259,17 +298,20 @@ export default {
     }
 
     function saveAppearenceSettings () {
-      if (locale.value !== settings.appearence.locale) {
-        locale.value = settings.appearence.locale
+      const { appearence } = settings
+
+      if (locale.value !== appearence.locale) {
+        locale.value = appearence.locale
         store.dispatch('sheet/loadSheetData')
         store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
         store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
         store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
       }
 
-      store.commit(MutationTypes.UPDATE_THEME, settings.appearence.theme)
-      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, settings.appearence.viewMode)
-      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, settings.appearence.gridMode)
+      store.commit(MutationTypes.UPDATE_THEME, appearence.theme)
+      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, appearence.viewMode)
+      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, appearence.gridMode)
+      store.commit(MutationTypes.COLLECTION_UPDATE_SPOILER_MODE, appearence.spoilerMode)
     }
 
     const sheetLoading = computed(() => store.state.sheet.loading)
@@ -299,7 +341,6 @@ export default {
 
     return {
       t,
-      availableLocales,
       locale,
       settings,
       updateSetting,
@@ -316,7 +357,7 @@ export default {
 
 <style scoped>
 .aside-button {
-  @apply group border-l-4 border-transparent font-medium text-gray-700 dark:text-gray-400 md:text-sm flex items-center px-3 py-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 disabled:opacity-60 disabled:cursor-default;
+  @apply group border-l-4 border-transparent font-medium text-gray-700 dark:text-gray-400 md:text-sm flex items-center px-3 py-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:opacity-60 disabled:cursor-default;
 }
 
 .aside-button:focus,

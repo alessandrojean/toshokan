@@ -44,9 +44,9 @@ export default {
       title: 'Title',
       author: 'Author | Authors',
       authors: 'Authors',
-      imprint: 'Publisher',
-      collection: 'Group',
-      format: 'Size',
+      publisher: 'Publisher',
+      group: 'Group',
+      dimensions: 'Size',
       labelPrice: 'Label price',
       paidPrice: 'Paid price',
       store: 'Store',
@@ -90,9 +90,9 @@ export default {
         id: '9781934287729',
         title: 'MW',
         authors: 'Osamu Tezuka',
-        imprint: 'Vertical',
-        collection: 'Manga',
-        format: '16.5 x 20.9',
+        publisher: 'Vertical',
+        group: 'Manga',
+        dimensions: '16.5 x 20.9',
         labelPrice: '19.95',
         paidPrice: '15.95',
         store: 'Amazon',
@@ -282,7 +282,7 @@ export default {
         authorListComplete: '{authors} and {lastAuthor}',
         authorSeparator: ', ',
         status: 'Status: ',
-        collection: 'Group: ',
+        group: 'Group: ',
         store: 'Store: ',
         edit: 'Edit',
         options: {
@@ -360,7 +360,7 @@ export default {
     },
     library: {
       title: 'Library',
-      currentCollection: 'Current group: ',
+      currentGroup: 'Current group: ',
       sortingBy: 'Sorting by: ',
       filter: 'Filter',
       newBook: 'New book',
@@ -386,7 +386,7 @@ export default {
           compact: 'Compact',
           comfortable: 'Comfortable'
         },
-        collection: 'Group',
+        group: 'Group',
         sortDirection: {
           label: 'Sort direction',
           asc: 'Ascending',
@@ -450,9 +450,37 @@ export default {
       }
     },
     search: {
+      close: 'Close',
       title: 'Search',
       label: 'Search by',
-      placeholder: 'What you want to search for?'
+      placeholder: 'What you want to search for?',
+      results: 'Results',
+      resultCount: 'One result found | {count} results found',
+      noResultsFound: 'No results found for "{0}".',
+      searching: 'Searching',
+      clear: 'Clear search',
+      keywords: {
+        id: 'id',
+        code: 'code',
+        title: 'title',
+        group: 'group',
+        author: 'author',
+        publisher: 'publisher',
+        store: 'store',
+        notes: 'notes',
+        boughtAt: 'bought-at',
+        boughtBefore: 'bought-before',
+        boughtAfter: 'bought-after',
+        readAt: 'read-at',
+        readBefore: 'read-before',
+        readAfter: 'read-after',
+        createdAt: 'created-at',
+        createdBefore: 'created-before',
+        createdAfter: 'created-after',
+        updatedAt: 'updated-at',
+        updatedBefore: 'updated-before',
+        updatedAfter: 'updated-after'
+      }
     },
     settings: {
       title: 'Settings',
@@ -483,6 +511,18 @@ export default {
           label: 'Grid mode',
           description: `
             Define the card layout used to display the books when grid mode is active.
+          `
+        },
+        spoilerModeSynopsis: {
+          label: 'Hide the synopsis of unread books',
+          description: `
+            If enabled, the synopsis will be blurred to prevent spoilers.
+          `
+        },
+        spoilerModeCover: {
+          label: 'Hide the covers of unread books',
+          description: `
+            If enabled, the covers will be blurred to prevent spoilers.
           `
         }
       },

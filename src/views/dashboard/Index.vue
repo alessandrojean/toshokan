@@ -60,8 +60,8 @@ import useAppInfo from '@/composables/useAppInfo'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 
-import AppNavbar from '@/components/AppNavbar'
-import MobileNavbar from '@/components/MobileNavbar'
+import AppNavbar from '@/components/AppNavbar.vue'
+import MobileNavbar from '@/components/MobileNavbar.vue'
 
 export default {
   name: 'Dashboard',

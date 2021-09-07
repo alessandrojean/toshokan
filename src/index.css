@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
 @layer utilities {
   .has-ring-focus {
     @apply transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-700;
@@ -54,7 +60,7 @@
   }
 
   .checkbox-label {
-    @apply text-sm inline-flex items-center dark:text-gray-300;
+    @apply text-sm font-medium inline-flex items-center text-gray-700 dark:text-gray-300;
   }
 
   .checkbox {
@@ -77,14 +83,22 @@
       dark:hover:bg-gray-600 dark:active:bg-gray-500 
       dark:hover:border-gray-600 dark:hover:text-gray-200 
       focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
-      dark:focus-visible:ring-offset-gray-700 focus-visible:ring-primary-500
+      dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500
       disabled:cursor-default transition-shadow 
       motion-reduce:transition-none 
       disabled:opacity-50 disabled:bg-white dark:disabled:bg-gray-700 dark:disabled:border-gray-700;
   }
 
+  .button.is-small {
+    @apply text-xs px-2 py-1 rounded;
+  }
+
   .button svg {
     @apply -ml-1 mr-2 h-5 w-5 text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300;
+  }
+
+  .button.is-small svg {
+    @apply h-4 w-4 -ml-0.5 mr-1.5;
   }
 
   .button svg.is-right {

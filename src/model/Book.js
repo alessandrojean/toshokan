@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 
-import { IMPRINT_REPLACEMENTS } from '../services/cbl'
+import { PUBLISHER_REPLACEMENTS } from '../services/lookup/Cbl'
 import {
   ean as validateEan,
   isbn as validateIsbn,
@@ -9,16 +9,16 @@ import {
 
 import i18n from '../i18n'
 
-const { d, n, locale } = i18n.global
+const { n, locale } = i18n.global
 
 export const Columns = {
   ID: 0,
   CODE: 1,
-  COLLECTION: 2,
+  GROUP: 2,
   TITLE: 3,
   AUTHORS: 4,
-  IMPRINT: 5,
-  FORMAT: 6,
+  PUBLISHER: 5,
+  DIMENSIONS: 6,
   STATUS: 7,
   READ_AT: 8,
   LABEL_PRICE: 9,
@@ -36,11 +36,11 @@ export const Columns = {
 export const CollectionColumns = {
   ID: 'B',
   CODE: 'C',
-  COLLECTION: 'D',
+  GROUP: 'D',
   TITLE: 'E',
   AUTHORS: 'F',
-  IMPRINT: 'G',
-  FORMAT: 'H',
+  PUBLISHER: 'G',
+  DIMENSIONS: 'H',
   STATUS: 'I',
   READ_AT: 'J',
   LABEL_PRICE: 'K',
@@ -57,10 +57,11 @@ export const CollectionColumns = {
 
 export const PropertyToColumn = {
   title: CollectionColumns.TITLE,
-  imprint: CollectionColumns.IMPRINT,
+  publisher: CollectionColumns.PUBLISHER,
   status: CollectionColumns.STATUS,
   'paidPrice.value': CollectionColumns.PAID_PRICE,
   'labelPrice.value': CollectionColumns.LABEL_PRICE,
+  boughtAt: CollectionColumns.BOUGHT_AT,
   readAt: CollectionColumns.READ_AT,
   createdAt: CollectionColumns.CREATED_AT,
   updatedAt: CollectionColumns.UPDATED_AT
@@ -85,17 +86,19 @@ export function parseBook (value, index) {
     id: value[Columns.ID],
     code: value[Columns.CODE],
     codeType: getCodeType(value[Columns.CODE]),
-    collection: value[Columns.COLLECTION],
+    group: value[Columns.GROUP],
     title: value[Columns.TITLE],
     titleParts: splitTitle(value[Columns.TITLE]),
     authors: value[Columns.AUTHORS].split(/;\s+/g),
     authorsStr: value[Columns.AUTHORS],
-    imprint: value[Columns.IMPRINT],
-    format: value[Columns.FORMAT].split(' × ')
-      .map(measure => n(parseFloat(measure), 'format'))
+    publisher: value[Columns.PUBLISHER],
+    dimensions: value[Columns.DIMENSIONS].split(' × ')
+      .map(measure => n(parseFloat(measure), 'dimensions'))
       .join(' × '),
     status: value[Columns.STATUS],
-    readAt: value[Columns.READ_AT],
+    readAt: value[Columns.READ_AT].length > 0
+      ? new Date(value[Columns.READ_AT])
+      : null,
     labelPrice: {
       currency: labelPrice[0],
       value: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal')
@@ -110,7 +113,9 @@ export function parseBook (value, index) {
     paidPriceValue: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal'),
     store: value[Columns.STORE],
     coverUrl: value[Columns.COVER_URL],
-    boughtAt: value[Columns.BOUGHT_AT],
+    boughtAt: value[Columns.BOUGHT_AT].length > 0
+      ? new Date(value[Columns.BOUGHT_AT])
+      : null,
     favorite: value[Columns.FAVORITE],
     synopsis: value[Columns.SYNOPSIS],
     notes: value[Columns.NOTES],
@@ -133,17 +138,17 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
     id,
     code: getProperty(Columns.CODE),
     codeType: getCodeType(getProperty(Columns.CODE)),
-    collection: getProperty(Columns.COLLECTION),
+    group: getProperty(Columns.GROUP),
     title: getProperty(Columns.TITLE),
     titleParts: splitTitle(getProperty(Columns.TITLE)),
     authors: getProperty(Columns.AUTHORS).split(/;\s+/g),
     authorsStr: getProperty(Columns.AUTHORS),
-    imprint: getProperty(Columns.IMPRINT),
-    format: getProperty(Columns.FORMAT).split(' × ')
-      .map(measure => n(parseFloat(measure), 'format'))
+    publisher: getProperty(Columns.PUBLISHER),
+    dimensions: getProperty(Columns.DIMENSIONS).split(' × ')
+      .map(measure => n(parseFloat(measure), 'dimensions'))
       .join(' × '),
     status: getProperty(Columns.STATUS),
-    readAt: getProperty(Columns.READ_AT) || '',
+    readAt: getProperty(Columns.READ_AT),
     labelPrice: {
       currency: labelPrice[0],
       value: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal')
@@ -158,48 +163,53 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
     paidPriceValue: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal'),
     store: getProperty(Columns.STORE),
     coverUrl: getProperty(Columns.COVER_URL) || '',
-    boughtAt: getProperty(Columns.BOUGHT_AT) || '',
+    boughtAt: getProperty(Columns.BOUGHT_AT),
     favorite: getProperty(Columns.FAVORITE) || '',
     synopsis: getProperty(Columns.SYNOPSIS) || '',
     notes: getProperty(Columns.NOTES) || '',
-    createdAt: new Date(getProperty(Columns.CREATED_AT)),
-    updatedAt: new Date(getProperty(Columns.UPDATED_AT))
+    createdAt: getProperty(Columns.CREATED_AT),
+    updatedAt: getProperty(Columns.UPDATED_AT)
   }
+}
+
+function formatDateToSheet (date) {
+  return `=DATE(${date.getFullYear()}, ${date.getMonth() + 1}, ${date.getDate()})`
+}
+
+function formatDateTimeToSheet (date) {
+  return formatDateToSheet(date) + ' + ' +
+    `TIME(${date.getHours()}, ${date.getMinutes()}, ${date.getSeconds()})`
 }
 
 export function formatBook (book) {
   return [
     book.id || nanoid(),
     book.code.replace(/^(\d{3})(\d{2})(\d{4})(\d{3})(\d{1})$/, '$1-$2-$3-$4-$5'),
-    book.collection,
+    book.group,
     book.title,
     book.authors.join('; '),
-    book.imprint,
-    book.format.replace(
+    book.publisher,
+    book.dimensions.replace(
       /^(\d+(?:(?:\.|,)\d{1,2})?) (?:x|×) (\d+(?:(?:\.|,)\d{1,2})?)$/,
       (m, p1, p2) => {
-        return n(parseFloat(p1.replace(',', '.')), 'format', 'en-US') +
-          ' × ' + n(parseFloat(p2.replace(',', '.')), 'format', 'en-US')
+        return n(parseFloat(p1.replace(',', '.')), 'dimensions', 'en-US') +
+          ' × ' + n(parseFloat(p2.replace(',', '.')), 'dimensions', 'en-US')
       }
     ),
     book.status || BookStatus.UNREAD,
-    book.readAt ? book.readAt : '',
+    book.readAt ? formatDateToSheet(book.readAt) : '',
     book.labelPrice.currency + ' ' +
       n(parseFloat(book.labelPrice.value.replace(',', '.')), 'decimal', 'en-US'),
     book.paidPrice.currency + ' ' +
       n(parseFloat(book.paidPrice.value.replace(',', '.')), 'decimal', 'en-US'),
     book.store,
     book.coverUrl || '',
-    book.boughtAt ? book.boughtAt : '',
+    book.boughtAt ? formatDateToSheet(book.boughtAt) : '',
     book.favorite || BookFavorite.INACTIVE,
     book.synopsis || '',
     book.notes || '',
-    d(book.createdAt || new Date(), 'sheet', 'en-US')
-      .replace(',', '')
-      .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2'),
-    d(new Date(), 'sheet', 'en-US')
-      .replace(',', '')
-      .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2')
+    formatDateTimeToSheet(book.createdAt || new Date()),
+    formatDateTimeToSheet(new Date())
   ]
 }
 
@@ -238,11 +248,11 @@ export function parseBookFromCbl (cblBook) {
     authors: cblBook.Profissoes && cblBook.Profissoes.length >= cblBook.Authors.length
       ? cblBook.Authors.filter((_, i) => allowedRoles.includes(cblBook.Profissoes[i]))
       : cblBook.Authors,
-    imprint: IMPRINT_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
-    format: cblBook.Dimensao
+    publisher: PUBLISHER_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
+    dimensions: cblBook.Dimensao
       ? cblBook.Dimensao.replace(/(\d{2})(\d)?x(\d{2})(\d)?$/, (m, p1, p2, p3, p4) => {
-        return n(parseFloat(p1 + (p2 ? '.' + p2 : '')), 'format') + ' x ' +
-          n(parseFloat(p3 + (p4 ? '.' + p4 : '')), 'format')
+        return n(parseFloat(p1 + (p2 ? '.' + p2 : '')), 'dimensions') + ' x ' +
+          n(parseFloat(p3 + (p4 ? '.' + p4 : '')), 'dimensions')
       })
       : '',
     synopsis: cblBook.Sinopse || '',
@@ -250,20 +260,43 @@ export function parseBookFromCbl (cblBook) {
   }
 }
 
-export function parseBookFromOpenLibrary (openLibraryBook) {
+export function parseBookFromOpenLibrary (openLibraryBook, details) {
   const code = openLibraryBook.identifiers.isbn_13
     ? openLibraryBook.identifiers.isbn_13[0]
     : openLibraryBook.identifiers.isbn_10[0]
 
-  return {
+  let book = {
     code,
     codeType: code.length === 13 ? 'ISBN-13' : 'ISBN-10',
-    title: openLibraryBook.title,
+    title: openLibraryBook.title.trim()
+      .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
+      .replace(/#(\d{1})$/, '#0$1'),
     authors: (openLibraryBook.authors || []).map(author => author.name),
-    imprint: openLibraryBook.publishers.length > 0 ? openLibraryBook.publishers[0].name : '',
+    publisher: openLibraryBook.publishers.length > 0 ? openLibraryBook.publishers[0].name : '',
     coverUrl: openLibraryBook.cover ? openLibraryBook.cover.large : '',
     provider: 'Open Library'
   }
+
+  if (details) {
+    const physicalDimensions = details.physical_dimensions || ''
+    const dimensions = physicalDimensions
+      .replace(' centimeters', '')
+      .split(' x ')
+      .map(parseFloat)
+      .filter(dm => !isNaN(dm))
+
+    book = {
+      ...book,
+      synopsis: details.description?.type === '/type/text'
+        ? details.description.value
+        : '',
+      dimensions: physicalDimensions.includes('centimeters') && dimensions.length === 3
+        ? n(dimensions[1], 'dimensions') + ' x ' + n(dimensions[0], 'dimensions')
+        : ''
+    }
+  }
+
+  return book
 }
 
 export function parseBookFromGoogleBooks (googleBook) {
@@ -283,20 +316,22 @@ export function parseBookFromGoogleBooks (googleBook) {
   return {
     code: isbn13 ? isbn13.identifier : isbn10.identifier,
     codeType: isbn13 ? 'ISBN-13' : 'ISBN-10',
-    title: volumeInfo.title,
+    title: volumeInfo.title.trim()
+      .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
+      .replace(/#(\d{1})$/, '#0$1'),
     authors: volumeInfo.authors || [],
-    imprint: volumeInfo.publisher || '',
+    publisher: volumeInfo.publisher || '',
     synopsis: volumeInfo.description || '',
-    format: width && height
-      ? `${n(width, 'format')} x ${n(height, 'format')}`
+    dimensions: width && height
+      ? `${n(width, 'dimensions')} x ${n(height, 'dimensions')}`
       : '',
     provider: 'Google Books'
   }
 }
 
 export function bookCompare (a, b) {
-  return a.collection.localeCompare(b.collection, locale.value) ||
+  return a.group.localeCompare(b.group, locale.value) ||
     a.titleParts[0].localeCompare(b.titleParts[0], locale.value) ||
-    a.imprint.localeCompare(b.imprint, locale.value) ||
+    a.publisher.localeCompare(b.publisher, locale.value) ||
     (a.titleParts[1] || '01').localeCompare(b.titleParts[1] || '01', locale.value)
 }

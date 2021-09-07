@@ -23,7 +23,7 @@
               tabindex="-1"
             >
               <div>
-                <h3 id="step-1-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <h3 id="step-1-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
                   <span class="sr-only">{{ t('dashboard.newBook.step', [1, 4]) }}: </span>
                   {{ t('dashboard.newBook.autoFill.title') }}
                   <span class="sr-only">{{ t('dashboard.newBook.autoFill.titleSr') }}</span>
@@ -33,7 +33,7 @@
                 </p>
               </div>
               <form
-                role="form"
+                id="search-form"
                 :aria-label="t('dashboard.newBook.autoFill.ariaLabel')"
                 class="flex flex-col items-end"
                 @submit.prevent="search"
@@ -56,17 +56,20 @@
                     aria-labelledby="isbn-search-label search-provider-info"
                     ref="searchInput"
                   >
-                  <p class="hidden md:group-focus-within:flex absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
-                    <span class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md">
-                      <span class="sr-only">{{ t('dashboard.newBook.autoFill.press') }} </span>
-                      <kbd class="font-sans">{{ t('dashboard.newBook.autoFill.enter') }}</kbd>
-                      <span class="sr-only"> {{ t('dashboard.newBook.autoFill.toSearch') }}</span>
-                    </span>
-                  </p>
+                  <div class="key-tooltip absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
+                    <button
+                      type="submit"
+                      class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-700"
+                    >
+                      <kbd aria-hidden="true" class="font-sans">
+                        {{ t('dashboard.newBook.autoFill.enter') }}
+                      </kbd>
+                      <span class="sr-only">
+                        {{ t('dashboard.header.search.search' )}}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-                <button type="submit" class="sr-only">
-                  {{ t('dashboard.newBook.autoFill.search') }}
-                </button>
               </form>
 
               <BookSelector
@@ -116,7 +119,7 @@
               tabindex="-1"
             >
               <div>
-                <h3 id="step-2-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <h3 id="step-2-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
                   <span class="sr-only">
                     {{ t('dashboard.newBook.step', [step, 4]) }}
                   </span>
@@ -141,7 +144,7 @@
                 >
                   {{ t(`dashboard.newBook.metadata.${book.codeType.includes('ISBN') ? 'findCover' : 'review'}`) }}
                   <span aria-hidden="true">
-                    <ChevronRightIcon class="is-right" aria-hidden="true" />
+                    <ArrowSmRightIcon class="is-right" aria-hidden="true" />
                   </span>
                 </button>
 
@@ -152,7 +155,7 @@
                     @click.stop="step = 1"
                   >
                     <span aria-hidden="true">
-                      <ChevronLeftIcon aria-hidden="true" />
+                      <ArrowSmLeftIcon aria-hidden="true" />
                     </span>
                     {{ t('dashboard.newBook.goBack') }}
                   </button>
@@ -167,7 +170,7 @@
               tabindex="-1"
             >
               <div>
-                <h3 id="step-3-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+                <h3 id="step-3-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
                   <span class="sr-only">
                     {{ t('dashboard.newBook.step', [step, 4]) }}
                   </span>
@@ -193,7 +196,7 @@
                 >
                   {{ t('dashboard.newBook.cover.review') }}
                   <span aria-hidden="true">
-                    <ChevronRightIcon class="is-right" aria-hidden="true" />
+                    <ArrowSmRightIcon class="is-right" aria-hidden="true" />
                   </span>
                 </button>
 
@@ -203,7 +206,7 @@
                   @click.stop="step = 2"
                 >
                   <span aria-hidden="true">
-                    <ChevronLeftIcon aria-hidden="true" />
+                    <ArrowSmLeftIcon aria-hidden="true" />
                   </span>
                   {{ t('dashboard.newBook.goBack') }}
                 </button>
@@ -250,7 +253,7 @@
                   @click.stop="step = book.codeType.includes('ISBN') ? 3 : 2"
                 >
                   <span aria-hidden="true">
-                    <ChevronLeftIcon aria-hidden="true" />
+                    <ArrowSmLeftIcon aria-hidden="true" />
                   </span>
                   {{ t('dashboard.newBook.goBack') }}
                 </button>
@@ -305,8 +308,8 @@ import useMarkdown from '@/composables/useMarkdown'
 
 import {
   CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
+  ArrowSmLeftIcon,
+  ArrowSmRightIcon,
   SearchIcon
 } from '@heroicons/vue/solid'
 
@@ -328,8 +331,8 @@ export default {
     BookCreatedModal,
     BookOpenIcon,
     CheckIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
+    ArrowSmLeftIcon,
+    ArrowSmRightIcon,
     SearchIcon,
     Alert,
     BookCoverSelector,
@@ -344,22 +347,16 @@ export default {
     const mainEl = ref(null)
     const { t } = useI18n({ useScope: 'global' })
 
-    function toDateInputValue (date) {
-      const local = new Date(date)
-      local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-      return local.toISOString().slice(0, 10)
-    }
-
     const bookInitialState = {
       authors: [],
       authorsStr: '',
-      boughtAt: toDateInputValue(new Date()),
+      boughtAt: new Date(),
       code: '',
       codeType: '',
-      collection: '',
+      group: '',
       coverUrl: '',
-      format: '',
-      imprint: '',
+      dimensions: '',
+      publisher: '',
       labelPriceCurrency: 'BRL',
       labelPriceValue: '',
       notes: '',
@@ -552,9 +549,10 @@ function useRevisionStep (book) {
   }
 
   const boughtAt = computed(() => {
-    if (book.boughtAt && book.boughtAt.length > 0) {
+    if (book.boughtAt) {
       return d(
-        new Date(`${book.boughtAt}T00:00:00.000${timeZone.value.offsetStr}`),
+        // new Date(`${book.boughtAt}T00:00:00.000${timeZone.value.offsetStr}`),
+        book.boughtAt,
         'short',
         { timeZone: timeZone.value.name }
       )
@@ -610,21 +608,21 @@ function useRevisionStep (book) {
         property: 'authors'
       },
       {
-        title: t('book.properties.imprint'),
-        value: book.imprint,
-        property: 'imprint',
+        title: t('book.properties.publisher'),
+        value: book.publisher,
+        property: 'publisher',
         columns: 1
       },
       {
-        title: t('book.properties.collection'),
-        value: book.collection,
-        property: 'collection',
+        title: t('book.properties.group'),
+        value: book.group,
+        property: 'group',
         columns: 1
       },
       {
-        title: t('book.properties.format'),
-        value: book.format,
-        property: 'format'
+        title: t('book.properties.dimensions'),
+        value: book.dimensions,
+        property: 'dimensions'
       },
       {
         title: t('book.properties.labelPrice'),
@@ -682,5 +680,13 @@ function useRevisionStep (book) {
 
 div[id^="headlessui-radiogroup-option"] {
   @apply focus:outline-none;
+}
+
+#search-form .key-tooltip {
+  @apply hidden;
+}
+
+#search-form:focus-within .key-tooltip {
+  @apply md:flex;
 }
 </style>

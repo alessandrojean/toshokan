@@ -25,8 +25,8 @@
             :href="href"
             :aria-current="isExactActive ? 'page' : undefined"
             :class="[
-              isActive ? 'text-primary-600 dark:text-primary-400 font-semibold' : '',
-              'w-full sm:w-auto sm:p-2 text-gray-500 font-medium inline-flex space-y-1 flex-col items-center justify-center rounded-md'
+              isActive ? 'text-primary-600 dark:text-primary-400' : '',
+              'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
             ]"
             @click="navigate"
           >
@@ -43,8 +43,8 @@
         <Menu as="div" v-slot="{ open }">
           <MenuButton
             :class="[
-              $route.meta.more ? 'text-primary-600 dark:text-primary-400 font-semibold' : '',
-              'w-full sm:w-auto sm:p-2 text-gray-500 font-medium inline-flex space-y-1 flex-col items-center justify-center rounded-md'
+              $route.meta.more ? 'text-primary-600 dark:text-primary-400' : '',
+              'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
             ]"
           >
             <span aria-hidden="true">
@@ -136,8 +136,7 @@ import {
   DotsHorizontalIcon,
   HomeIcon,
   LibraryIcon,
-  PresentationChartLineIcon,
-  SearchIcon
+  PresentationChartLineIcon
 } from '@heroicons/vue/outline'
 
 import {
@@ -171,10 +170,21 @@ export default {
     const { t } = useI18n()
 
     const items = computed(() => [
-      { to: 'DashboardHome', title: t('dashboard.home.title'), icon: HomeIcon },
-      { to: 'DashboardLibrary', title: t('dashboard.library.title'), icon: LibraryIcon },
-      { to: 'DashboardSearch', title: t('dashboard.search.title'), icon: SearchIcon },
-      { to: 'DashboardStats', title: t('dashboard.stats.title'), icon: PresentationChartLineIcon }
+      {
+        to: 'DashboardHome',
+        title: t('dashboard.home.title'),
+        icon: HomeIcon
+      },
+      {
+        to: 'DashboardLibrary',
+        title: t('dashboard.library.title'),
+        icon: LibraryIcon
+      },
+      {
+        to: 'DashboardStats',
+        title: t('dashboard.stats.title'),
+        icon: PresentationChartLineIcon
+      }
     ])
 
     const store = useStore()

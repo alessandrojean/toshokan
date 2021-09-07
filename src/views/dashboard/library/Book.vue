@@ -1,9 +1,9 @@
 <template>
   <div class="bg-white dark:bg-gray-900">
     <div class="border-b dark:border-b-0 border-gray-300 hidden md:block">
-      <div class="max-w-7xl mx-auto md:px-6 lg:px-8 dark:mt-8">
+      <div class="max-w-7xl mx-auto md:px-6 lg:px-8 dark:mt-6">
         <!-- Breadcrumb -->
-        <div class="py-3 dark:py-0">
+        <div class="py-2.5 dark:py-0">
           <BookBreadcrumb
             :loading="!showBookInfo"
             :book="book"
@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-8">
+    <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-6">
       <!-- Main section -->
       <transition
         mode="out-in"
@@ -45,7 +45,7 @@
           </section>
 
           <!-- Book tabs -->
-          <section class="dark:bg-gray-800 md:dark:bg-transparent pt-6">
+          <section class="dark:bg-gray-800 md:dark:bg-transparent md:pt-6">
             <BookTabs
               :loading="!showBookInfo"
               :book="book"
@@ -59,7 +59,7 @@
           class="max-w-2xl mx-auto space-y-6 py-6 md:py-4 px-6 md:px-0"
         >
           <div>
-            <h2 class="text-xl font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+            <h2 class="text-xl font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
               {{ t('dashboard.details.editForm.title') }}
             </h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -98,7 +98,7 @@
           class="max-w-2xl mx-auto space-y-6 py-6 md:py-4 px-6 md:px-0"
         >
           <div>
-            <h2 class="text-xl font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+            <h2 class="text-xl font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
               {{ t('dashboard.details.coverForm.title') }}
             </h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -210,6 +210,7 @@ export default {
 
     watch(bookId, async newId => {
       if (newId && !loading.value) {
+        state.value = States.NONE
         await findTheBook(newId, redirectToHome)
       }
     })
@@ -290,7 +291,8 @@ export default {
     function toDateInputValue (date) {
       const local = new Date(date)
       local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-      return local.toISOString().slice(0, 10)
+
+      return local
     }
 
     async function toggleStatus () {

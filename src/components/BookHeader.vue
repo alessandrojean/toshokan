@@ -88,17 +88,17 @@
               </li>
               <li>
                 <router-link
-                  :to="{ name: 'DashboardLibrary', query: { group: book.collection } }"
+                  :to="{ name: 'DashboardLibrary', query: { group: book.group } }"
                   class="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
                 >
-                  {{ book.collection }}
+                  {{ book.group }}
                 </router-link>
               </li>
             </ul>
           </nav>
 
           <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
-          <h2 v-else class="md:truncate max-w-full text-2xl font-title font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:text-3xl">
+          <h2 v-else class="md:truncate max-w-full text-2xl font-display font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:text-3xl">
             {{ book.titleParts[0] }}
           </h2>
 
@@ -137,16 +137,16 @@
               {{ t(`book.${book.status.toLowerCase()}`) }}
             </li>
 
-            <!-- Book collection -->
+            <!-- Book group -->
             <li v-if="loading || !bookFound" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-36 mb-1 sm:mb-0 hidden sm:block md:hidden"></li>
             <li v-else class="mt-2 items-center text-sm text-gray-500 dark:text-gray-300 hidden sm:flex md:hidden">
               <span aria-hidden="true">
                 <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
               </span>
               <span class="sr-only">
-                {{ t('dashboard.details.header.collection') }}
+                {{ t('dashboard.details.header.group') }}
               </span>
-              {{ book.collection }}
+              {{ book.group }}
             </li>
 
             <!-- Book store -->

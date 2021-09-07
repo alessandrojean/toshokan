@@ -6,7 +6,7 @@ export function decimalComma (digits) {
   )
 }
 
-export const format = helpers.regex(
+export const dimensions = helpers.regex(
   /^\d+((,|\.)\d{1,2})? (x|×) \d+((,|\.)\d{1,2})?$/
 )
 
@@ -67,4 +67,27 @@ export function ean (ean) {
     .reduce((acm, cv) => acm + cv, 0)
 
   return (10 - (checkSum % 10)) % 10 === parseInt(ean.slice(-1), 10)
+}
+
+export function isoDate (dateString) {
+  if (!dateString.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) {
+    return false
+  }
+
+  const parts = dateString.split('-')
+  const day = parseInt(parts[2], 10)
+  const month = parseInt(parts[1], 10)
+  const year = parseInt(parts[0], 10)
+
+  if (year < 1000 || year > 3000 || month === 0 || month > 12) {
+    return false
+  }
+
+  const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+  if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+    monthLength[1] = 29
+  }
+
+  return day > 0 && day <= monthLength[month - 1]
 }

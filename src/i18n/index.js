@@ -76,7 +76,7 @@ const numberFormats = {
       currency: 'USD',
       notation: 'standard'
     },
-    format: {
+    dimensions: {
       style: 'decimal',
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
@@ -104,7 +104,7 @@ const numberFormats = {
       currency: 'BRL',
       notation: 'standard'
     },
-    format: {
+    dimensions: {
       style: 'decimal',
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,

@@ -92,58 +92,58 @@
 
     <div class="grid grid-cols-12 sm:grid-cols-2 gap-6">
       <div class="col-span-12 sm:col-span-1">
-        <label for="book-imprint" class="label">
-          {{ t('book.properties.imprint') }}
+        <label for="book-publisher" class="label">
+          {{ t('book.properties.publisher') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
-            id="book-imprint"
+            id="book-publisher"
             type="text"
-            :value="book.imprint"
-            @input="handleInput('imprint', $event.target.value)"
+            :value="book.publisher"
+            @input="handleInput('publisher', $event.target.value)"
             class="input pr-9"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.imprint')])"
-            list="imprints"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.publisher')])"
+            list="publishers"
             required
-            aria-describedby="book-imprint-error"
-            :aria-invalid="v$.imprint.$error"
+            aria-describedby="book-publisher-error"
+            :aria-invalid="v$.publisher.$error"
           >
-          <datalist id="imprints">
+          <datalist id="publishers">
             <option
-              v-for="imprint of imprintOptions"
-              :key="imprint.name"
-              :value="imprint.name"
+              v-for="publisher of publisherOptions"
+              :key="publisher.name"
+              :value="publisher.name"
             >
-              {{ imprint.name }}
+              {{ publisher.name }}
             </option>
           </datalist>
           <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
           </div>
         </div>
-        <p id="book-imprint-error" class="sr-only" aria-hidden="true">
-          {{ v$.imprint.$error ? v$.imprint.$errors[0].$message : '' }}
+        <p id="book-publisher-error" class="sr-only" aria-hidden="true">
+          {{ v$.publisher.$error ? v$.publisher.$errors[0].$message : '' }}
         </p>
       </div>
 
       <div class="col-span-12 sm:col-span-1">
         <label for="book-group" class="label">
-          {{ t('book.properties.collection') }}
+          {{ t('book.properties.group') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
             id="book-group"
             type="text"
-            :value="book.collection"
-            @input="handleInput('collection', $event.target.value)"
+            :value="book.group"
+            @input="handleInput('group', $event.target.value)"
             class="input pr-9"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.collection')])"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.group')])"
             list="groups"
             required
             aria-describedby="book-group-error"
-            :aria-invalid="v$.collection.$error"
+            :aria-invalid="v$.group.$error"
           >
           <datalist id="groups">
             <option
@@ -159,30 +159,30 @@
           </div>
         </div>
         <p id="book-group-error" class="sr-only" aria-hidden="true">
-          {{ v$.collection.$error ? v$.collection.$errors[0].$message : '' }}
+          {{ v$.group.$error ? v$.group.$errors[0].$message : '' }}
         </p>
       </div>
     </div>
 
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
       <div class="col-span-7 sm:col-span-4 md:col-span-1">
-        <label for="book-format" class="label">
-          {{ t('book.properties.format') }}
+        <label for="book-dimensions" class="label">
+          {{ t('book.properties.dimensions') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
-          id="book-format"
+          id="book-dimensions"
           type="text"
-          :value="book.format"
-          @input="handleInput('format', $event.target.value)"
+          :value="book.dimensions"
+          @input="handleInput('dimensions', $event.target.value)"
           class="input"
-          :placeholder="t('book.form.example.placeholder', [t('book.form.example.format')])"
+          :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
           required
-          aria-describedby="book-format-error"
-          :aria-invalid="v$.format.$error"
+          aria-describedby="book-dimensions-error"
+          :aria-invalid="v$.dimensions.$error"
         >
-        <p id="book-format-error" class="sr-only" aria-hidden="true">
-          {{ v$.format.$error ? v$.format.$errors[0].$message : '' }}
+        <p id="book-dimensions-error" class="sr-only" aria-hidden="true">
+          {{ v$.dimensions.$error ? v$.dimensions.$errors[0].$message : '' }}
         </p>
       </div>
 
@@ -329,7 +329,7 @@
         <input
           id="book-bought-at"
           type="date"
-          :value="book.boughtAt"
+          :value="toDateInputValue(book.boughtAt)"
           @input="handleInput('boughtAt', $event.target.value)"
           class="input"
           :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
@@ -413,7 +413,7 @@ import { useI18n } from 'vue-i18n'
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
-import { decimalComma, format } from '@/util/validators'
+import { decimalComma, dimensions } from '@/util/validators'
 
 import { SelectorIcon } from '@heroicons/vue/solid'
 
@@ -451,9 +451,9 @@ export default {
       t('book.form.blankField'),
       required
     )
-    const messageFormat = helpers.withMessage(
+    const messageDimensions = helpers.withMessage(
       t('book.form.invalidValue'),
-      format
+      dimensions
     )
     const messageDecimalComma = helpers.withMessage(
       t('book.form.invalidNumber'),
@@ -464,11 +464,11 @@ export default {
       code: { messageRequired },
       title: { messageRequired },
       authorsStr: { messageRequired },
-      imprint: { messageRequired },
-      collection: { messageRequired },
+      publisher: { messageRequired },
+      group: { messageRequired },
       labelPriceValue: { messageRequired, messageDecimalComma },
       paidPriceValue: { messageRequired, messageDecimalComma },
-      format: { messageRequired, messageFormat },
+      dimensions: { messageRequired, messageDimensions },
       store: { messageRequired }
     }
 
@@ -476,11 +476,11 @@ export default {
       code: t('book.properties.id'),
       title: t('book.properties.title'),
       authorsStr: t('book.properties.authors'),
-      imprint: t('book.properties.imprint'),
-      collection: t('book.properties.collection'),
+      publisher: t('book.properties.publisher'),
+      group: t('book.properties.group'),
       labelPriceValue: t('book.properties.labelPrice'),
       paidPriceValue: t('book.properties.paidPrice'),
-      format: t('book.properties.format'),
+      dimensions: t('book.properties.dimensions'),
       store: t('book.properties.store'),
       synopsis: t('book.properties.synopsis'),
       notes: t('book.properties.notes')
@@ -495,6 +495,8 @@ export default {
         newBook.codeType = getCodeType(value)
       } else if (property === 'authorsStr') {
         newBook.authors = value.split(/;\s+/g)
+      } else if (property === 'boughtAt') {
+        newBook.boughtAt = value.length === 10 ? new Date(value) : null
       }
 
       context.emit('update:book', newBook)
@@ -520,7 +522,7 @@ export default {
 
     const store = useStore()
 
-    const imprintOptions = computed(() => store.state.collection.imprints.items)
+    const publisherOptions = computed(() => store.state.collection.publishers.items)
     const storeOptions = computed(() => store.state.collection.stores.items)
     const groupOptions = computed(() => {
       return store.state.collection.groups.items
@@ -529,7 +531,7 @@ export default {
     })
 
     onMounted(async () => {
-      await store.dispatch('collection/fetchImprints')
+      await store.dispatch('collection/fetchPublishers')
       await store.dispatch('collection/fetchStores')
 
       if (groupOptions.value.length === 0) {
@@ -541,6 +543,12 @@ export default {
       handleInput('notes', '')
     })
 
+    function toDateInputValue (date) {
+      const local = new Date(date)
+      local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+      return local.toISOString().slice(0, 10)
+    }
+
     return {
       currencies,
       handleInput,
@@ -548,10 +556,11 @@ export default {
       v$,
       touch,
       reset,
-      imprintOptions,
+      publisherOptions,
       storeOptions,
       groupOptions,
       addNotes,
+      toDateInputValue,
       t
     }
   }

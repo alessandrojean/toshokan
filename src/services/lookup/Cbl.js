@@ -6,28 +6,28 @@ import i18n from '@/i18n'
 
 import Lookup from './Lookup'
 
-export default class Cbl extends Lookup {
-  IMPRINT_REPLACEMENTS = {
-    'Editora JBC': 'JBC',
-    INK: 'JBC',
-    'Japorama Editora e Comunicação': 'JBC',
-    'New Pop Editora': 'NewPOP',
-    'NewPOP Editora': 'NewPOP',
-    'Panini Brasil': 'Panini',
-    'Panini Comics': 'Panini',
-    'Bernardo Ferreira de Santana Carvalho': 'Panini',
-    CONRAD: 'Conrad',
-    'Editora Alto Astral': 'Alto Astral',
-    'Editora Draco': 'Draco',
-    'L&PM Editores': 'L&PM',
-    'Pipoca e Nanquim': 'Pipoca & Nanquim',
-    'Pipoca e Nanquim Editora LTDA': 'Pipoca & Nanquim',
-    'Darkside Books': 'DarkSide',
-    'Kleber de Sousa': 'Devir',
-    'Verus Editora': 'Verus',
-    'reginaldo f silva': 'ComixZone'
-  }
+export const PUBLISHER_REPLACEMENTS = {
+  'Editora JBC': 'JBC',
+  INK: 'JBC',
+  'Japorama Editora e Comunicação': 'JBC',
+  'New Pop Editora': 'NewPOP',
+  'NewPOP Editora': 'NewPOP',
+  'Panini Brasil': 'Panini',
+  'Panini Comics': 'Panini',
+  'Bernardo Ferreira de Santana Carvalho': 'Panini',
+  CONRAD: 'Conrad',
+  'Editora Alto Astral': 'Alto Astral',
+  'Editora Draco': 'Draco',
+  'L&PM Editores': 'L&PM',
+  'Pipoca e Nanquim': 'Pipoca & Nanquim',
+  'Pipoca e Nanquim Editora LTDA': 'Pipoca & Nanquim',
+  'Darkside Books': 'DarkSide',
+  'Kleber de Sousa': 'Devir',
+  'Verus Editora': 'Verus',
+  'reginaldo f silva': 'ComixZone'
+}
 
+export default class Cbl extends Lookup {
   FIELDS_TO_SELECT = [
     'Authors',
     'Colection',

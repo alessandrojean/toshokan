@@ -16,10 +16,10 @@
                   </template>
                 </th>
                 <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
-                  <span :class="sortProperty === 'imprint' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    {{ t('book.properties.imprint') }}
+                  <span :class="sortProperty === 'publisher' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
+                    {{ t('book.properties.publisher') }}
                   </span>
-                  <template v-if="sortProperty === 'imprint'">
+                  <template v-if="sortProperty === 'publisher'">
                     <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                     <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                   </template>
@@ -59,7 +59,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              <tr v-for="book in items" :key="book.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <tr v-for="book in items" :key="book.id" class="group hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
@@ -76,7 +76,7 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                  {{ book.imprint }}
+                  {{ book.publisher }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -90,10 +90,10 @@
                     {{ t(`book.${book.status.toLowerCase()}`) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ formatPrice(book.paidPrice) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ formatDate(book.createdAt) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -145,11 +145,11 @@
         <i18n-t
           keypath="pagination.text"
           tag="p"
-          class="mb-4 lg:mb-0 text-sm text-gray-700 dark:text-gray-400"
+          class="mb-4 lg:mb-0 text-sm text-gray-700 dark:text-gray-300"
         >
-          <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-          <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-          <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
+          <span class="font-semibold dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
+          <span class="font-semibold dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
+          <span class="font-semibold dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
         </i18n-t>
         <Paginator
           v-if="paginationInfo.total_pages > 1"

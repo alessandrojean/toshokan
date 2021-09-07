@@ -1,4 +1,5 @@
 import dedent from 'dedent'
+import searchQuery from 'search-query-parser'
 
 import i18n from '../i18n'
 
@@ -7,8 +8,11 @@ import {
   CollectionColumns,
   Columns,
   formatBook,
-  parseBookFromDataTable
+  parseBookFromDataTable,
+  PropertyToColumn
 } from '@/model/Book'
+
+import { isoDate as validateDate } from '@/util/validators'
 
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
@@ -79,7 +83,7 @@ export async function getSheetData (sheetId) {
     series: (response.result.valueRanges[5].values || [])
       .slice(0, 10)
       .map(row => ({ name: row[0], count: parseInt(row[1], 10) })),
-    imprints: (response.result.valueRanges[6].values || [])
+    publishers: (response.result.valueRanges[6].values || [])
       .slice(0, 10)
       .map(row => ({ name: row[0], count: parseInt(row[1], 10) }))
   }
@@ -137,7 +141,7 @@ export function getBooks (sheetId, idMap, page = 1, options = {}) {
   const limit = options.limit || PER_PAGE
 
   const where = options.group
-    ? `where ${CollectionColumns.COLLECTION} = "${options.group}"`
+    ? `where ${CollectionColumns.GROUP} = "${options.group}"`
     : ''
 
   const query = new window.google.visualization.Query(sheetUrl)
@@ -209,8 +213,8 @@ export async function getBooksFromGroup (sheetId, idMap, group, page = 1, option
   const sheetUrl = buildSheetUrl(sheetId)
   const query = new window.google.visualization.Query(sheetUrl)
   query.setQuery(dedent`
-    select count(${CollectionColumns.COLLECTION})
-    where ${CollectionColumns.COLLECTION} = "${group}"
+    select count(${CollectionColumns.GROUP})
+    where ${CollectionColumns.GROUP} = "${group}"
   `)
 
   return new Promise((resolve, reject) => {
@@ -302,7 +306,7 @@ export function getBooksFromCollection (sheetId, idMap, book) {
   query.setQuery(dedent`
     select *
     where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
-      and ${CollectionColumns.IMPRINT} = "${book.imprint}"
+      and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
     order by ${CollectionColumns.TITLE} asc
   `)
 
@@ -338,7 +342,7 @@ export function getBookNeighbors (sheetId, idMap, book) {
   query.setQuery(dedent`
     select *
     where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
-      and ${CollectionColumns.IMPRINT} = "${book.imprint}"
+      and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
     order by ${CollectionColumns.TITLE} asc
   `)
 
@@ -419,36 +423,266 @@ export function getColumnUniqueValues (sheetId, column, alphabetically) {
 }
 
 export async function getGroups (sheetId) {
-  return await getColumnUniqueValues(sheetId, CollectionColumns.COLLECTION)
+  return await getColumnUniqueValues(sheetId, CollectionColumns.GROUP)
 }
 
-export async function getImprints (sheetId) {
-  return await getColumnUniqueValues(sheetId, CollectionColumns.IMPRINT, true)
+export async function getPublishers (sheetId) {
+  return await getColumnUniqueValues(sheetId, CollectionColumns.PUBLISHER, true)
 }
 
 export async function getStores (sheetId) {
   return await getColumnUniqueValues(sheetId, CollectionColumns.STORE, true)
 }
 
-export function searchBooks (sheetId, idMap, searchTerm) {
+export function createSearchKeywords () {
+  return {
+    [t('dashboard.search.keywords.id')]: {
+      column: CollectionColumns.ID,
+      equals: true
+    },
+    [t('dashboard.search.keywords.code')]: {
+      column: CollectionColumns.CODE,
+      equals: true
+    },
+    [t('dashboard.search.keywords.title')]: {
+      column: CollectionColumns.TITLE
+    },
+    [t('dashboard.search.keywords.group')]: {
+      column: CollectionColumns.GROUP,
+      equals: true
+    },
+    [t('dashboard.search.keywords.author')]: {
+      column: CollectionColumns.AUTHORS
+    },
+    [t('dashboard.search.keywords.publisher')]: {
+      column: CollectionColumns.PUBLISHER
+    },
+    [t('dashboard.search.keywords.store')]: {
+      column: CollectionColumns.STORE
+    },
+    [t('dashboard.search.keywords.notes')]: {
+      column: CollectionColumns.NOTES
+    },
+    [t('dashboard.search.keywords.boughtAt')]: {
+      column: CollectionColumns.BOUGHT_AT,
+      date: true,
+      operation: '=',
+      inverseOperation: '!='
+    },
+    [t('dashboard.search.keywords.boughtBefore')]: {
+      column: CollectionColumns.BOUGHT_AT,
+      date: true,
+      operation: '<',
+      inverseOperation: '>='
+    },
+    [t('dashboard.search.keywords.boughtAfter')]: {
+      column: CollectionColumns.BOUGHT_AT,
+      date: true,
+      operation: '>',
+      inverseOperation: '<='
+    },
+    [t('dashboard.search.keywords.readAt')]: {
+      column: CollectionColumns.READ_AT,
+      date: true,
+      operation: '=',
+      inverseOperation: '!='
+    },
+    [t('dashboard.search.keywords.readBefore')]: {
+      column: CollectionColumns.READ_AT,
+      date: true,
+      operation: '<',
+      inverseOperation: '>='
+    },
+    [t('dashboard.search.keywords.readAfter')]: {
+      column: CollectionColumns.READ_AT,
+      date: true,
+      operation: '>',
+      inverseOperation: '<='
+    },
+    [t('dashboard.search.keywords.createdAt')]: {
+      column: CollectionColumns.CREATED_AT,
+      date: true,
+      withTime: true,
+      operation: '=',
+      inverseOperation: '!='
+    },
+    [t('dashboard.search.keywords.createdBefore')]: {
+      column: CollectionColumns.CREATED_AT,
+      date: true,
+      withTime: true,
+      operation: '<',
+      inverseOperation: '>='
+    },
+    [t('dashboard.search.keywords.createdAfter')]: {
+      column: CollectionColumns.CREATED_AT,
+      date: true,
+      withTime: true,
+      operation: '>',
+      inverseOperation: '<='
+    },
+    [t('dashboard.search.keywords.updatedAt')]: {
+      column: CollectionColumns.UPDATED_AT,
+      date: true,
+      withTime: true,
+      operation: '=',
+      inverseOperation: '!='
+    },
+    [t('dashboard.search.keywords.updatedBefore')]: {
+      column: CollectionColumns.UPDATED_AT,
+      date: true,
+      withTime: true,
+      operation: '<',
+      inverseOperation: '>='
+    },
+    [t('dashboard.search.keywords.updatedAfter')]: {
+      column: CollectionColumns.UPDATED_AT,
+      date: true,
+      withTime: true,
+      operation: '>',
+      inverseOperation: '<='
+    }
+  }
+}
+
+export function searchBooks (sheetId, idMap, searchTerm, sort) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const searchRegex = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const searchRegex = searchTerm
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     .toLowerCase()
 
-  searchTerm = searchTerm
-    .toLowerCase()
+  searchTerm = searchTerm.toLowerCase()
+
+  let sortBy = CollectionColumns.UPDATED_AT
+  let sortDirection = 'desc'
+
+  if (sort) {
+    sortBy = sort.sortBy ? PropertyToColumn[sort.sortBy] : sortBy
+    sortDirection = sort.sortDirection || sortDirection
+  }
+
+  const keywords = createSearchKeywords()
+
+  const searchOptions = {
+    keywords: Object.keys(keywords),
+    alwaysArray: true
+  }
+
+  const searchQueryObj = searchQuery.parse(searchTerm, searchOptions)
+  console.log(searchQueryObj)
 
   const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select *
-    where lower(${CollectionColumns.TITLE}) matches ".*${searchRegex}.*"
-      or lower(${CollectionColumns.AUTHORS}) matches ".*${searchRegex}.*"
-      or ${CollectionColumns.ID} = "${searchTerm}"
-      or ${CollectionColumns.CODE} = "${searchTerm}"
-    order by ${CollectionColumns.CREATED_AT} desc
-    limit 10
-  `)
+
+  if (typeof searchQueryObj === 'string') {
+    query.setQuery(dedent`
+      select *
+      where lower(${CollectionColumns.TITLE}) matches ".*${searchRegex}.*"
+        or lower(${CollectionColumns.AUTHORS}) matches ".*${searchRegex}.*"
+        or ${CollectionColumns.ID} = "${searchTerm}"
+        or ${CollectionColumns.CODE} = "${searchTerm}"
+      order by ${sortBy} ${sortDirection}
+    `)
+  } else {
+    const conditions = Object.entries(searchQueryObj)
+      .flatMap(([localeKeyword, values]) => {
+        const keywordInfo = keywords[localeKeyword]
+
+        if (!keywordInfo) {
+          return []
+        }
+
+        let tests = []
+
+        if (keywordInfo.equals) {
+          tests = values.map(v => `lower(${keywordInfo.column}) = "${v}"`)
+        } else if (keywordInfo.date) {
+          const isEquality = keywordInfo.operation === '='
+          const isUnique = values.length === 1 || isEquality
+          const isValidDate = isEquality
+            ? values.every(date => validateDate(date))
+            : validateDate(values[0])
+
+          if (isUnique && isValidDate) {
+            const column = keywordInfo.withTime
+              ? `toDate(${keywordInfo.column})`
+              : keywordInfo.column
+
+            const checks = values.map(date => {
+              const isoDate = date
+                .replace(/-(\d)-/, '0$1')
+                .replace(/-(\d)$/, '0$1')
+
+              return `${column} ${keywordInfo.operation} date "${isoDate}"`
+            })
+
+            tests = [`(${checks.join(' or ')})`]
+          }
+        } else {
+          tests = values.map(v => `lower(${keywordInfo.column}) matches ".*${v}.*"`)
+        }
+
+        return (values.length === 1 || keywordInfo.date)
+          ? tests
+          : [`(${tests.join(' or ')})`]
+      })
+
+    const excludingConditions = Object.entries(searchQueryObj.exclude)
+      .flatMap(([localeKeyword, values]) => {
+        const keywordInfo = keywords[localeKeyword]
+
+        if (!keywordInfo) {
+          return []
+        }
+
+        let tests = []
+
+        if (keywordInfo.equals) {
+          tests = values.map(v => `lower(${keywordInfo.column}) != "${v}"`)
+        } else if (keywordInfo.date) {
+          const isDifferent = keywordInfo.inverseOperation === '!='
+          const isUnique = values.length === 1 || isDifferent
+          const isValidDate = isDifferent
+            ? values.every(date => validateDate(date))
+            : validateDate(values[0])
+
+          if (isUnique && isValidDate) {
+            const column = keywordInfo.withTime
+              ? `toDate(${keywordInfo.column})`
+              : keywordInfo.column
+
+            const checks = values.map(date => {
+              const isoDate = date
+                .replace(/-(\d)-/, '0$1')
+                .replace(/-(\d)$/, '0$1')
+
+              return `${column} ${keywordInfo.inverseOperation} date "${isoDate}"`
+            })
+
+            tests = [`(${checks.join(' and ')})`]
+          }
+        } else {
+          tests = values.map(v => `not lower(${keywordInfo.column}) matches ".*${v}.*"`)
+        }
+
+        return (values.length === 1 || keywordInfo.date)
+          ? tests
+          : [`(${tests.join(' and ')})`]
+      })
+
+    conditions.push(...excludingConditions)
+
+    if (searchQueryObj.text) {
+      conditions.push(
+        `lower(${CollectionColumns.TITLE}) matches ".*${searchQueryObj.text}.*"`
+      )
+    }
+
+    query.setQuery(dedent`
+      select *
+      where ${conditions.join('\n  and ')}
+      order by ${sortBy} ${sortDirection}
+    `)
+  }
 
   return new Promise((resolve, reject) => {
     query.send(response => {

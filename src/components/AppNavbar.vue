@@ -10,13 +10,13 @@
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
-            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700"
+            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
               <LibraryIcon class="h-9 w-9 text-primary-500" aria-hidden="true" />
             </span>
             <span class="sr-only">{{ t('dashboard.header.links.start') }}</span>
-            <span class="text-gray-200 font-title font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
+            <span class="text-gray-200 font-display font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
               {{ t('app.name') }}
             </span>
           </router-link>
@@ -40,18 +40,18 @@
           </div>
         </div>
 
-        <div class="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
+        <div class="absolute inset-y-0 right-0 flex items-center sm:pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
           <!-- Search link -->
-          <router-link
+          <button
             v-if="showSearch"
-            :to="{ name: 'DashboardSearch' }"
-            class="hidden md:block lg:hidden bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+            @click="showSearchDialog"
+            class="lg:hidden p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span class="sr-only">{{ t('dashboard.header.search.link') }}</span>
             <span aria-hidden="true">
               <SearchIcon class="h-6 w-6" />
             </span>
-          </router-link>
+          </button>
 
           <!-- Search form -->
           <transition
@@ -62,53 +62,25 @@
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
           >
-            <form
-              role="form"
-              class="relative hidden lg:block mr-2 group"
+            <button
+              class="hidden lg:flex items-center pl-3 pr-2 py-2 bg-gray-700 hover:bg-gray-600 mr-2 group rounded-md space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800 motion-safe:transition-shadow"
               v-if="showSearch"
-              aria-labelledby="search-form-title"
-              @submit.prevent="handleSearch"
+              @click="showSearchDialog"
             >
-              <p class="sr-only" id="search-form-title" aria-hidden="true">
-                {{ t('dashboard.header.search.title') }}
-              </p>
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-                <SearchIcon class="w-4 h-4 text-gray-500 group-focus-within:text-gray-300 sm:text-sm" />
-              </div>
-              <label for="search-navbar" class="sr-only">
-                {{ t('dashboard.header.search.label' )}}
-              </label>
-              <input
-                ref="searchNavbar"
-                id="search-navbar"
-                type="text"
-                class="focus:outline-none focus:ring-primary-600 block w-full pl-9 pr-16 py-2 bg-gray-700 border-gray-700 rounded-md text-gray-300 text-sm"
-                :placeholder="t('dashboard.header.search.placeholder')"
-                v-model="searchQuery"
-                aria-describedby="navbar-search-enter-hint"
-              >
-              <div class="key-tooltip absolute right-2 inset-y-0 hidden sm:flex justify-center items-center">
-                <span class="ctrl-k text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                  <span class="sr-only">{{ t('dashboard.header.search.press') }} </span>
-                  <kbd class="font-sans">
-                    <abbr title="Control" class="no-underline" v-if="!isMac">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
-                    <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
-                  </kbd>
-                  <span class="sr-only"> {{ t('dashboard.header.search.plus') }} </span>
-                  <kbd class="font-sans">K</kbd>
-                  <span class="sr-only"> {{ t('dashboard.header.search.toFocus') }}</span>
-                </span>
-                <span id="navbar-search-enter-hint" class="enter text-gray-300 text-xs leading-5 px-1.5 border border-gray-500 rounded-md">
-                  <span class="sr-only">{{ t('dashboard.header.search.press') }} </span>
-                  <kbd class="font-sans">{{ t('dashboard.header.search.enter') }}</kbd>
-                  <span class="sr-only"> {{ t('dashboard.header.search.toSearch') }}</span>
-                </span>
-              </div>
-
-              <button type="submit" class="sr-only">
-                {{ t('dashboard.header.search.search' )}}
-              </button>
-            </form>
+              <span aria-hidden="true">
+                <SearchIcon class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 sm:text-sm" />
+              </span>
+              <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 w-56 text-left">
+                {{ t('dashboard.header.search.placeholder') }}
+              </span>
+              <span aria-hidden="true" class="ctrl-k text-gray-300 group-hover:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 bg-gray-700 group-hover:bg-gray-700 rounded-md">
+                <kbd class="font-sans">
+                  <abbr title="Control" class="no-underline" v-if="!isMac">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
+                  <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
+                </kbd>
+                <kbd class="font-sans">K</kbd>
+              </span>
+            </button>
           </transition>
 
           <!-- Profile dropdown -->
@@ -181,11 +153,16 @@
         </div>
       </div>
     </div>
+
+    <SearchDialog
+      :is-open="searchDialogIsOpen"
+      @close="closeSearchDialog"
+    />
   </nav>
 </template>
 
 <script>
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -204,6 +181,8 @@ import {
   SearchIcon
 } from '@heroicons/vue/solid'
 
+import SearchDialog from '@/components/SearchDialog.vue'
+
 export default {
   name: 'AppNavbar',
 
@@ -215,7 +194,8 @@ export default {
     CogIcon,
     LibraryIcon,
     LogoutIcon,
-    SearchIcon
+    SearchIcon,
+    SearchDialog
   },
 
   setup () {
@@ -271,20 +251,35 @@ export default {
     const isMac = ref(navigator.platform.toLowerCase().indexOf('mac') > -1)
 
     // Focus on search input by pressing Ctrl + K
-    const focusOnSearch = () => {
-      nextTick(() => {
-        searchNavbar.value.focus()
-      })
+    // const focusOnSearch = () => {
+    //   nextTick(() => {
+    //     searchNavbar.value.focus()
+    //   })
+    // }
+
+    const searchDialogIsOpen = ref(false)
+
+    function showSearchDialog () {
+      searchDialogIsOpen.value = true
+    }
+
+    function closeSearchDialog () {
+      searchDialogIsOpen.value = false
     }
 
     /**
      * @param {KeyboardEvent} event
      */
     const handleKeyDown = event => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'k' && showSearch.value) {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'k' &&
+        showSearch.value &&
+        !searchDialogIsOpen.value
+      ) {
         event.stopPropagation()
         event.preventDefault()
-        focusOnSearch()
+        showSearchDialog()
       }
     }
 
@@ -313,6 +308,9 @@ export default {
       searchQuery,
       showSearch,
       signOut,
+      searchDialogIsOpen,
+      showSearchDialog,
+      closeSearchDialog,
       isTransparent,
       t
     }
@@ -338,11 +336,13 @@ abbr[title].no-underline {
   @apply hidden;
 }
 
-#search-navbar:focus + .key-tooltip .enter {
-  @apply block;
+#search-navbar:focus + .key-tooltip .enter,
+#search-form:focus-within .key-tooltip .enter {
+  @apply md:block;
 }
 
-#search-navbar:focus + .key-tooltip .ctrl-k {
+#search-navbar:focus + .key-tooltip .ctrl-k,
+#search-form:focus-within .key-tooltip .ctrl-k {
   @apply hidden;
 }
 </style>

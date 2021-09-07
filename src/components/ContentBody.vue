@@ -10,11 +10,11 @@
 }
 
 .content-body h2 {
-  @apply font-title leading-5 font-semibold text-2xl text-gray-800 dark:text-gray-100;
+  @apply font-display leading-5 font-semibold text-2xl text-gray-800 dark:text-gray-100;
 }
 
 .content-body h3 {
-  @apply font-title leading-4 font-semibold text-xl text-gray-800 dark:text-gray-100;
+  @apply font-display leading-4 font-semibold text-xl text-gray-800 dark:text-gray-100;
 }
 
 .content-body strong {

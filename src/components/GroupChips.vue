@@ -8,7 +8,7 @@
   >
     <RadioGroup v-model="activeGroup">
       <RadioGroupLabel class="sr-only">
-        {{ t('book.properties.collection') }}
+        {{ t('book.properties.group') }}
       </RadioGroupLabel>
       <div class="w-full flex space-x-2 overflow-x-auto px-3 h-auto">
         <RadioGroupOption

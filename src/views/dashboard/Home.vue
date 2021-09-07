@@ -5,17 +5,17 @@
         <div class="flex-1 flex items-center space-x-4">
           <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
           <div>
-            <h1 class="text-2xl font-semibold font-title text-gray-900 dark:text-gray-100">
+            <h1 class="text-2xl font-semibold font-display text-gray-900 dark:text-gray-100">
               {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
-            <p v-if="isDev" class="text-sm text-gray-600 dark:text-gray-400">
+            <p v-if="isDev" class="text-sm text-gray-600 dark:text-gray-300">
               {{ t('footer.dev') }}
             </p>
           </div>
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <button
-            class="button md:text-base flex-1 md:flex-initial justify-center md:justify-start"
+            class="button flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading"
           >
@@ -25,7 +25,7 @@
             {{ t('dashboard.home.reload') }}
           </button>
           <button
-            class="button md:text-base is-primary flex-1 md:flex-initial justify-center md:justify-start"
+            class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
             @click="$router.push({ name: 'DashboardNewBook' })"
             :disabled="loading"
           >
@@ -47,7 +47,7 @@
           :aria-labelledby="loading? '' : 'overview-title'"
         >
           <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
-          <h2 v-else id="overview-title" class="font-medium font-title text-xl mb-3 dark:text-gray-200">
+          <h2 v-else id="overview-title" class="font-medium font-display text-xl mb-3 dark:text-gray-200">
             {{ t('dashboard.home.overview.title') }}
           </h2>
 
@@ -71,7 +71,7 @@
 
           <!-- Stats -->
           <div
-            class="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:grid-cols-4"
+            class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700"
             aria-hidden="true"
           >
             <StatCard

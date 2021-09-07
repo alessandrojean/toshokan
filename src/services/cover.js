@@ -158,14 +158,14 @@ export async function findCovers (book, forceAmazon) {
     return await AMAZON.find(book)
   }
 
-  const siteHandler = AVAILABLE_SITES.find(site => site.name === book.imprint)
+  const siteHandler = AVAILABLE_SITES.find(site => site.name === book.publisher)
 
   if (!siteHandler) {
     return await AMAZON.find(book)
   }
 
-  const imprintSiteResults = await siteHandler.find(book)
+  const publisherSiteResults = await siteHandler.find(book)
   const amazonResults = await AMAZON.find(book)
 
-  return imprintSiteResults.concat(amazonResults)
+  return publisherSiteResults.concat(amazonResults)
 }

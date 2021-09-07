@@ -1,5 +1,5 @@
 <template>
-  <figure class="aspect-w-1 aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-700 md:rounded-lg relative">
+  <figure class="aspect-w-1 aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative">
     <div class="p-9 flex items-center justify-center">
       <transition
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -14,7 +14,7 @@
           class="absolute bottom-0 hidden md:flex justify-center transform translate-y-1/2"
           aria-hidden="true"
         >
-          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md inline-flex divide-x divide-gray-200 dark:divide-gray-700">
+          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-md inline-flex divide-x divide-gray-200 dark:divide-gray-700">
             <span class="py-1 px-1.5 flex items-center justify-center" v-if="country">
               <img :src="countryFlagUrl" class="w-6 h-6 p-px">
             </span>
@@ -40,6 +40,7 @@
         <img
           v-if="showBookCover"
           :src="coverUrl"
+          :class="spoilerMode.cover && !isRead ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
           class="max-w-full max-h-full shadow-lg rounded"
         >
         <span
@@ -56,6 +57,7 @@
 
 <script>
 import { computed, onMounted, toRefs, watch } from 'vue'
+import { useStore } from 'vuex'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 import { BookmarkIcon, StarIcon } from '@heroicons/vue/solid'
@@ -139,6 +141,10 @@ export default {
       return `https://hatscripts.github.io/circle-flags/flags/${countryCode}.svg`
     })
 
+    const store = useStore()
+
+    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+
     return {
       coverUrl,
       showBookCover,
@@ -147,7 +153,8 @@ export default {
       isRead,
       isFavorite,
       country,
-      countryFlagUrl
+      countryFlagUrl,
+      spoilerMode
     }
   }
 }

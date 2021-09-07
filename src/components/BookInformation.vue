@@ -12,7 +12,7 @@
       <!-- Book title -->
       <h2
         v-if="showBookInfo"
-        class="font-semibold font-title text-2xl md:text-3xl dark:text-gray-100"
+        class="font-semibold font-display text-2xl md:text-3xl dark:text-gray-100"
       >
         {{ book.title }}
       </h2>
@@ -32,6 +32,7 @@
     <div
       v-if="showBookInfo"
       v-html="synopsisRendered"
+      :class="blurSynopsis ? 'md:filter md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto motion-safe:transition-all duration-100 ease-in-out' : ''"
       class="prose-sm md:prose leading-normal max-w-none dark:text-gray-300"
     />
     <div v-else class="flex flex-col space-y-2">
@@ -71,7 +72,7 @@
     </div>
 
     <!-- Book metadata -->
-    <div class="pt-4 border-t border-gray-300 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
+    <div class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-400">
       <ul v-if="showBookInfo">
         <li v-if="book.codeType !== 'N/A'">
           {{ `${book.codeType}: ${book.code}` }}
@@ -88,6 +89,73 @@
         <div class="motion-safe:animate-pulse w-52 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
         <div class="motion-safe:animate-pulse w-64 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
       </div>
+
+      <transition
+        mode="out-in"
+        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+      >
+        <ul
+          v-if="showBookInfo && book.codeType.includes('ISBN')"
+          class="flex"
+        >
+          <li v-if="country[0] === 'BR'">
+            <a
+              class="button is-small mr-2 mt-2"
+              target="_blank"
+              :href="'https://amazon.com.br/dp/' + isbn10"
+            >
+              <span aria-hidden="true">
+                <LinkIcon />
+              </span>
+              <span>Amazon.com.br</span>
+            </a>
+          </li>
+
+          <li v-if="country[0] === 'US'">
+            <a
+              class="button is-small mr-2 mt-2"
+              target="_blank"
+              :href="'https://amazon.com/dp/' + isbn10"
+            >
+              <span aria-hidden="true">
+                <LinkIcon />
+              </span>
+              <span>Amazon</span>
+            </a>
+          </li>
+
+          <li v-if="country[0] === 'JP'">
+            <a
+              class="button is-small mr-2 mt-2"
+              target="_blank"
+              :href="'https://amazon.co.jp/dp/' + isbn10"
+            >
+              <span aria-hidden="true">
+                <LinkIcon />
+              </span>
+              <span>Amazon.co.jp</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              class="button is-small mr-2 mt-2"
+              target="_blank"
+              :href="'https://openlibrary.org/isbn/' + book.code.replaceAll('-', '')"
+            >
+              <span aria-hidden="true">
+                <LinkIcon />
+              </span>
+              <span>Open Library</span>
+            </a>
+          </li>
+        </ul>
+      </transition>
     </div>
   </div>
 </template>
@@ -99,13 +167,18 @@ import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
 
-import { PencilIcon } from '@heroicons/vue/solid'
+import { LinkIcon, PencilIcon } from '@heroicons/vue/solid'
 
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
 import BookMenu from '@/components/BookMenu.vue'
 
+import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
+
+import { BookStatus } from '@/model/Book'
+
 export default {
   components: {
+    LinkIcon,
     PencilIcon,
     BookBreadcrumb,
     BookMenu
@@ -127,7 +200,7 @@ export default {
 
   setup (props) {
     const { book, loading } = toRefs(props)
-    const { t, d } = useI18n()
+    const { t, d, locale } = useI18n()
     const store = useStore()
 
     const showBookInfo = computed(() => {
@@ -205,6 +278,37 @@ export default {
         : ''
     })
 
+    const country = computed(() => {
+      if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
+        return []
+      }
+
+      return getIsbnCountry(book.value.code)
+    })
+
+    const isbn10 = computed(() => {
+      if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
+        return null
+      }
+
+      if (book.value.codeType === 'ISBN-10') {
+        return book.value.code
+      }
+
+      return convertIsbn13ToIsbn10(book.value.code)
+    })
+
+    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+
+    const isRead = computed(() => {
+      return book.value && book.value.status === BookStatus.READ
+    })
+
+    const blurSynopsis = computed(() => {
+      return showBookInfo.value && spoilerMode.value.synopsis &&
+        !isRead.value && book.value.synopsis.length > 0
+    })
+
     return {
       showBookInfo,
       authorsFormatted,
@@ -212,7 +316,13 @@ export default {
       readAt,
       createdAt,
       updatedAt,
-      t
+      t,
+      locale,
+      isbn10,
+      country,
+      isRead,
+      spoilerMode,
+      blurSynopsis
     }
   }
 }

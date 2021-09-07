@@ -6,7 +6,7 @@
           <span aria-hidden="true">
             <LibraryIcon class="h-9 w-9 text-primary-500" />
           </span>
-          <span class="text-gray-800 dark:text-gray-200 font-title font-semibold text-xl ml-3" aria-hidden="true">
+          <span class="text-gray-800 dark:text-gray-200 font-display font-semibold text-xl ml-3" aria-hidden="true">
             {{ t('app.name') }}
           </span>
         </h1>

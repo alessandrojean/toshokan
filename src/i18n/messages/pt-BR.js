@@ -44,9 +44,9 @@ export default {
       title: 'Título',
       author: 'Autor | Autores',
       authors: 'Autores',
-      imprint: 'Editora',
-      collection: 'Grupo',
-      format: 'Formato',
+      publisher: 'Editora',
+      group: 'Grupo',
+      dimensions: 'Dimensões',
       labelPrice: 'Preço de capa',
       paidPrice: 'Preço pago',
       store: 'Local da compra',
@@ -90,9 +90,9 @@ export default {
         id: '9788583621508',
         title: 'A Nova Ilha do Tesouro',
         authors: 'Osamu Tezuka',
-        imprint: 'NewPOP',
-        collection: 'Mangás',
-        format: '15 x 21',
+        publisher: 'NewPOP',
+        group: 'Mangás',
+        dimensions: '15 x 21',
         labelPrice: '26,90',
         paidPrice: '22,90',
         store: 'Amazon',
@@ -283,7 +283,7 @@ export default {
         authorListComplete: '{authors} e {lastAuthor}',
         authorSeparator: ', ',
         status: 'Estado: ',
-        collection: 'Grupo: ',
+        group: 'Grupo: ',
         store: 'Loja da compra: ',
         edit: 'Editar',
         options: {
@@ -361,7 +361,7 @@ export default {
     },
     library: {
       title: 'Biblioteca',
-      currentCollection: 'Grupo atual: ',
+      currentGroup: 'Grupo atual: ',
       sortingBy: 'Ordenando por: ',
       filter: 'Filtrar',
       newBook: 'Novo livro',
@@ -387,7 +387,7 @@ export default {
           compact: 'Compacto',
           comfortable: 'Confortável'
         },
-        collection: 'Grupo',
+        group: 'Grupo',
         sortDirection: {
           label: 'Sentido',
           asc: 'Crescente',
@@ -451,9 +451,37 @@ export default {
       }
     },
     search: {
+      close: 'Fechar',
       title: 'Pesquisa',
       label: 'Pesquisar por',
-      placeholder: 'O quê você deseja buscar?'
+      placeholder: 'O quê você deseja buscar?',
+      results: 'Resultados',
+      resultCount: 'Um resultado encontrado | {count} resultados encontrados',
+      noResultsFound: 'Nenhum resultado encontrado para "{0}".',
+      searching: 'Pesquisando',
+      clear: 'Limpar',
+      keywords: {
+        id: 'id',
+        code: 'código',
+        title: 'título',
+        group: 'grupo',
+        author: 'autor',
+        publisher: 'editora',
+        store: 'loja',
+        notes: 'observações',
+        boughtAt: 'comprado-em',
+        boughtBefore: 'comprado-antes-de',
+        boughtAfter: 'comprado-depois-de',
+        readAt: 'lido-em',
+        readBefore: 'lido-antes-de',
+        readAfter: 'lido-depois-de',
+        createdAt: 'criado-em',
+        createdBefore: 'criado-antes-de',
+        createdAfter: 'criado-depois-de',
+        updatedAt: 'atualizado-em',
+        updatedBefore: 'atualizado-antes-de',
+        updatedAfter: 'atualizado-depois-de'
+      }
     },
     settings: {
       title: 'Configurações',
@@ -484,6 +512,18 @@ export default {
           label: 'Modo da grade',
           description: `
             Defina o layout do card utilizado para exibir os livros no modo de grade.
+          `
+        },
+        spoilerModeSynopsis: {
+          label: 'Ocultar as sinopses de livros não lidos',
+          description: `
+            Se ativado, as sinopses serão desfocadas para prevenir spoilers.
+          `
+        },
+        spoilerModeCover: {
+          label: 'Ocultar as capas de livros não lidos',
+          description: `
+            Se ativado, as capas serão desfocadas para prevenir spoilers.
           `
         }
       },
@@ -692,7 +732,7 @@ export default {
 
           Você deve preencher esta informação manualmente sempre.
 
-        Formato
+        Dimensões
         : Relação de largura e altura, em centímetros. Você deve utilizar
           o caractere **x** para separar os valores, que
           podem ter no máximo um dígito na casa decimal.

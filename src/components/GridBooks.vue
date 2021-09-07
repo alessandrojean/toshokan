@@ -17,11 +17,11 @@
           <i18n-t
             keypath="pagination.text"
             tag="p"
-            class="text-sm text-gray-700 dark:text-gray-400 sm:mb-4 md:mb-0"
+            class="text-sm text-gray-700 dark:text-gray-300 sm:mb-4 md:mb-0"
           >
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.current_page }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_pages }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_results }} </span>
           </i18n-t>
         </div>
 
@@ -66,11 +66,11 @@
           <i18n-t
             keypath="pagination.text"
             tag="p"
-            class="text-sm text-gray-700 dark:text-gray-400 mb-4 md:mb-0"
+            class="text-sm text-gray-700 dark:text-gray-300 mb-4 md:mb-0"
           >
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.current_page }} </span>
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_pages }} </span>
-            <span class="font-medium dark:text-gray-200"> {{ paginationInfo.total_results }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.current_page }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_pages }} </span>
+            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_results }} </span>
           </i18n-t>
         </div>
 

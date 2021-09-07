@@ -24,7 +24,7 @@
     ref="loadedCard"
     :title="book.title"
   >
-    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-700">
+    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-900">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -47,7 +47,13 @@
             aria-hidden="true"
           />
         </div>
-        <img v-else class="object-cover w-full h-full" :src="thumbnailUrl" aria-hidden="true">
+        <img
+          v-else
+          :class="spoilerMode.cover && !isRead ? 'md:filter md:blur md:group-hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
+          class="object-cover w-full h-full"
+          :src="thumbnailUrl"
+          aria-hidden="true"
+        >
       </transition>
 
       <div v-if="isRead" class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2">
@@ -57,13 +63,13 @@
       </div>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
-        <span class="font-semibold font-title text-sm truncate max-w-full">{{ book.titleParts[0] }}</span>
+        <span class="font-semibold font-display text-sm truncate max-w-full">{{ book.titleParts[0] }}</span>
         <span class="font-medium text-xs">{{ volume }}</span>
       </div>
     </div>
 
     <div v-if="mode === 'comfortable'" class="mt-3">
-      <p class="text-sm font-title font-semibold truncate text-gray-900 dark:text-gray-200">{{ book.titleParts[0] }}</p>
+      <p class="text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">{{ book.titleParts[0] }}</p>
       <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">{{ volume }}</p>
     </div>
   </router-link>
@@ -146,6 +152,7 @@ export default {
 
     const store = useStore()
     const mode = computed(() => store.state.collection.gridMode)
+    const spoilerMode = computed(() => store.state.collection.spoilerMode)
 
     return {
       isFavorite,
@@ -156,6 +163,7 @@ export default {
       thumbnailUrl,
       volume,
       mode,
+      spoilerMode,
       t
     }
   }

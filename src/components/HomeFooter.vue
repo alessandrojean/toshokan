@@ -1,27 +1,7 @@
 <template>
   <footer class="footer">
     <div>
-      <label for="locale" class="sr-only">
-        {{ t('dashboard.settings.appearence.locale.label') }}
-      </label>
-      <div class="relative group">
-        <span aria-hidden="true" class="absolute inset-y-0 left-0 pl-3 flex items-center">
-          <TranslateIcon class="w-5 h-5 text-gray-500 dark:text-gray-400 group-focus-within:text-gray-700 dark:group-focus-within:text-gray-200" />
-        </span>
-        <select
-          class="select w-52 pl-10 h-auto"
-          id="locale"
-          v-model="locale"
-        >
-          <option
-            v-for="loc in availableLocales"
-            :key="loc"
-            :value="loc"
-          >
-            {{ t('app.localeName', null, { locale: loc }) }}
-          </option>
-        </select>
-      </div>
+      <LocaleSelector v-model="locale" />
     </div>
 
     <nav>
@@ -66,19 +46,19 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+import LocaleSelector from '@/components/LocaleSelector.vue'
+
 import useAppInfo from '@/composables/useAppInfo'
 
-import { TranslateIcon } from '@heroicons/vue/solid'
-
 export default {
-  components: { TranslateIcon },
+  components: { LocaleSelector },
 
   setup () {
     const { appVersion, gitHash, gitHubUrl } = useAppInfo()
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
-    const { t, locale, availableLocales } = useI18n({ useScope: 'global' })
+    const { t, locale } = useI18n({ useScope: 'global' })
 
     return {
       appVersion,
@@ -86,8 +66,7 @@ export default {
       gitHubUrl,
       isDev,
       t,
-      locale,
-      availableLocales
+      locale
     }
   }
 }

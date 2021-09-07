@@ -11,23 +11,23 @@
             </div>
           </template>
           <template v-else>
-            <h1 class="text-2xl md:text-3xl font-title font-semibold text-gray-900 dark:text-gray-100">
+            <h1 class="text-2xl md:text-3xl font-display font-semibold text-gray-900 dark:text-gray-100">
               {{ t('dashboard.library.title') }}
             </h1>
             <ul class="mt-1 flex flex-col items-start sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
-              <li class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
+              <li class="mt-2 flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <span aria-hidden="true">
-                  <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                  <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
                 </span>
                 <span class="sr-only">
-                  {{ t('dashboard.library.currentCollection') }}
+                  {{ t('dashboard.library.currentGroup') }}
                 </span>
                 {{ group }}
               </li>
 
-              <li class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-300">
+              <li class="mt-2 flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <span aria-hidden="true">
-                  <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                  <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
                 </span>
                 <span class="sr-only">
                   {{ t('dashboard.library.sortingBy') }}
@@ -45,7 +45,7 @@
           <template v-else>
             <button
               type="button"
-              class="button md:text-base flex-1 md:flex-initial justify-center md:justify-start"
+              class="button flex-1 md:flex-initial justify-center md:justify-start"
               @click.stop="filterOpen = true"
               v-if="!sheetIsEmpty"
               :disabled="loading"
@@ -57,7 +57,7 @@
             </button>
             <router-link
               :to="{ name: 'DashboardNewBook' }"
-              class="button md:text-base is-primary flex-1 md:flex-initial justify-center md:justify-start"
+              class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
             >
               <span aria-hidden="true">
                 <PlusIcon aria-hidden="true" />
@@ -199,7 +199,7 @@ export default {
 
     const sortPropertyNames = {
       title: t('book.properties.title'),
-      imprint: t('book.properties.imprint'),
+      publisher: t('book.properties.publisher'),
       status: t('book.properties.status'),
       readAt: t('book.properties.readAt'),
       'paidPrice.value': t('book.properties.paidPrice'),

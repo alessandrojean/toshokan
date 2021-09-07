@@ -9,11 +9,21 @@ import i18n from '@/i18n'
 export default class OpenLibrary extends Lookup {
   createAxios () {
     return axios.create({
-      baseURL: 'https://openlibrary.org/api/',
+      baseURL: 'https://openlibrary.org/',
       headers: {
         Accept: 'application/json'
       }
     })
+  }
+
+  async findDetails (isbn) {
+    try {
+      const { data } = await this.axios.get(`isbn/${isbn}.json`)
+
+      return data
+    } catch (e) {
+      return null
+    }
   }
 
   async search (isbn) {
@@ -28,7 +38,7 @@ export default class OpenLibrary extends Lookup {
     const bibKey = `ISBN:${isbn}`
 
     try {
-      const { data } = await this.axios.get('books', {
+      const { data } = await this.axios.get('api/books', {
         params: {
           bibkeys: bibKey,
           jscmd: 'data',
@@ -40,7 +50,9 @@ export default class OpenLibrary extends Lookup {
         return []
       }
 
-      return parseBookFromOpenLibrary(data[bibKey])
+      const details = await this.findDetails(isbn)
+
+      return parseBookFromOpenLibrary(data[bibKey], details)
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

@@ -136,7 +136,7 @@ export default {
        dark:text-gray-300 dark:disabled:bg-gray-700 dark:border-gray-700
        dark:hover:bg-gray-600 dark:active:bg-gray-500 dark:hover:border-gray-600
        dark:disabled:border-gray-700 dark:hover:text-gray-200
-       dark:focus-visible:ring-offset-gray-700;
+       dark:focus-visible:ring-offset-gray-800;
   }
 
   .pag-button.is-left {

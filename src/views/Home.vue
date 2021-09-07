@@ -6,7 +6,7 @@
       <section class="w-full">
         <div class="flex flex-col items-center pt-24 space-y-24">
           <div class="space-y-8">
-            <h2 class="text-gray-800 dark:text-gray-100 font-bold font-title text-center text-5xl">
+            <h2 class="text-gray-800 dark:text-gray-100 font-bold font-display text-center text-5xl">
               {{ t('home.leading1') }}<br>
               <span class="text-primary-600 dark:text-primary-500">
                 {{ t('home.leading2') }}
@@ -148,7 +148,7 @@ export default {
 }
 
 .features h2 {
-  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl;
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-display font-bold text-3xl;
 }
 
 .features-grid {
@@ -160,7 +160,7 @@ export default {
 }
 
 .feature h3 {
-  @apply text-gray-800 dark:text-gray-100 font-semibold font-title text-lg;
+  @apply text-gray-800 dark:text-gray-100 font-semibold font-display text-lg;
 }
 
 .feature p {
@@ -190,7 +190,7 @@ export default {
 }
 
 .functionality-description h2 {
-  @apply text-gray-800 dark:text-gray-100 font-title font-bold text-2xl;
+  @apply text-gray-800 dark:text-gray-100 font-display font-bold text-2xl;
 }
 
 .functionality-description p {
@@ -210,7 +210,7 @@ export default {
 }
 
 .cta h2 {
-  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-title font-bold text-3xl text-center;
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-display font-bold text-3xl text-center;
 }
 
 .cta .button-wrapper {

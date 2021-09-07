@@ -17,7 +17,7 @@
         >
           <button
             :class="[
-              'px-1 py-3.5 rounded-sm font-medium border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:cursor-default motion-safe:transition-shadow',
+              'px-1 py-4 rounded-sm font-medium border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:cursor-default motion-safe:transition-shadow',
               'hover:text-gray-800 dark:hover:text-gray-200 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
               selected ? 'text-primary-600 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-400 border-primary-600 dark:border-primary-400' : 'border-transparent'
             ]"
@@ -28,7 +28,7 @@
               v-if="tab.count !== undefined"
               :class="[
                 'ml-2 text-xs px-2.5 py-0.5 rounded-xl font-semibold',
-                selected ? 'bg-primary-100 dark:bg-primary-500 dark:bg-opacity-50 dark:text-primary-200' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                selected ? 'bg-primary-100 dark:bg-primary-500 dark:bg-opacity-50 dark:text-primary-50' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
               ]"
             >
               {{ n(tab.count, 'integer') }}
@@ -232,16 +232,16 @@ export default {
             : null
         },
         {
-          title: t('book.properties.imprint'),
-          value: book.value?.imprint
+          title: t('book.properties.publisher'),
+          value: book.value?.publisher
         },
         {
-          title: t('book.properties.collection'),
-          value: book.value?.collection
+          title: t('book.properties.group'),
+          value: book.value?.group
         },
         {
-          title: t('book.properties.format'),
-          value: book.value?.format
+          title: t('book.properties.dimensions'),
+          value: book.value?.dimensions + ' cm'
         },
         {
           title: t('book.properties.labelPrice'),
@@ -257,13 +257,13 @@ export default {
         },
         {
           title: t('book.properties.boughtAt'),
-          value: book.value?.boughtAt?.length > 0
+          value: book.value?.boughtAt
             ? formatDate(book.value.boughtAt)
             : null
         },
         {
           title: t('book.properties.readAt'),
-          value: book.value?.readAt?.length > 0
+          value: book.value?.readAt
             ? formatDate(book.value.readAt)
             : null
         }

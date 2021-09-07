@@ -4,7 +4,7 @@
     :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+    <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
       {{ t('dashboard.stats.booksBoughtAndRead.title') }}
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico de livros comprados por mês">
@@ -102,7 +102,7 @@ export default {
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
-              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
+              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
             }
           }
         },
@@ -110,7 +110,7 @@ export default {
           labels: {
             formatter: val => val.toFixed(0),
             style: {
-              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
+              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
             }
           }
         },
@@ -118,6 +118,9 @@ export default {
           labels: {
             colors: darkMode.value ? colors.gray[300] : colors.gray[600],
             useSeriesColors: false
+          },
+          onItemClick: {
+            toggleDataSeries: false
           }
         },
         dataLabels: {

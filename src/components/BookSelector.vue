@@ -22,10 +22,10 @@
           {{ book.provider }}
         </span>
         <span
-          v-if="book.imprint && book.imprint.length > 0"
+          v-if="book.publisher && book.publisher.length > 0"
           class="block text-gray-500 dark:text-gray-400"
         >
-          {{ book.imprint }}
+          {{ book.publisher }}
         </span>
       </div>
     </button>

@@ -61,7 +61,7 @@
 
     <template v-if="custom">
       <div class="border-t border-gray-200 dark:border-gray-700 pt-4" v-if="!hideCustomTitle">
-        <h3 class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+        <h3 class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
           {{ t('book.coverSelector.custom.title') }}
         </h3>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">

@@ -10,9 +10,9 @@ module.exports = {
       primary: colors.indigo
     },
     fontFamily: {
+      ...defaultTheme.fontFamily,
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
-      mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-      title: ['Poppins', ...defaultTheme.fontFamily.sans]
+      display: ['Poppins', ...defaultTheme.fontFamily.sans]
     },
     extend: {
       boxShadow: {
@@ -47,6 +47,7 @@ module.exports = {
       animation: ['motion-safe'],
       backgroundColor: ['even', 'odd', 'active', 'disabled'],
       backgroundImage: ['dark'],
+      blur: ['hover', 'group-hover', 'dark'],
       borderColor: ['active', 'disabled'],
       borderWidth: ['dark'],
       boxShadow: ['dark'],
@@ -62,9 +63,10 @@ module.exports = {
       ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],
       ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
       ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
-      textColor: ['disabled', 'group-focus-within', 'group-disabled'],
+      textColor: ['disabled', 'group-focus-within', 'group-focus-visible', 'group-disabled'],
       transform: ['motion-reduce'],
       transitionProperty: ['motion-safe', 'motion-reduce'],
+      userSelect: ['hover'],
       zIndex: ['focus-visible']
     }
   },

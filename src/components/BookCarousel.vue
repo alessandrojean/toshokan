@@ -18,7 +18,7 @@
 
   <section v-else-if="collectionItems.length > 0" aria-labelledby="last-added-title">
     <div class="flex justify-between items-center w-full mt-8 mb-3">
-      <h2 id="last-added-title" class="font-medium font-title text-xl dark:text-gray-200">
+      <h2 id="last-added-title" class="font-medium font-display text-xl dark:text-gray-200">
         {{ title }}
       </h2>
 

@@ -5,7 +5,7 @@ import {
   getBooks,
   getBooksFromGroup,
   getGroups,
-  getImprints,
+  getPublishers,
   getLatestReadings,
   getStores,
   searchBooks
@@ -19,17 +19,19 @@ function buildPaginationInfo ({ perPage, links, totalResults, page }) {
 }
 
 export const CollectionMutations = {
+  CLEAR_SEARCH: 'clearSearch',
   UPDATE_BOOKS: 'updateBooks',
   UPDATE_CURRENT_PAGE: 'updateCurrentPage',
   UPDATE_GRID_MODE: 'updateGridMode',
   UPDATE_GROUP: 'updateGroup',
   UPDATE_GROUPS: 'updateGroups',
   UPDATE_ID_MAP: 'updateIdMap',
-  UPDATE_IMPRINTS: 'updateImprints',
+  UPDATE_PUBLISHERS: 'updatePublishers',
   UPDATE_LAST_ADDED: 'updateLastAdded',
   UPDATE_LATEST_READINGS: 'updateLatestReadings',
   UPDATE_SEARCH: 'updateSearch',
   UPDATE_SORT: 'updateSort',
+  UPDATE_SPOILER_MODE: 'updateSpoilerMode',
   UPDATE_STORES: 'updateStores',
   UPDATE_VIEW_MODE: 'updateViewMode'
 }
@@ -42,14 +44,14 @@ export default {
       loading: false
     },
     currentPage: 1,
-    gridMode: localStorage.getItem('grid_mode') || 'compact',
+    gridMode: localStorage.getItem('grid_mode') || 'comfortable',
     group: localStorage.getItem('collection_group'),
     groups: {
       items: [],
       loading: false
     },
     idMap: {},
-    imprints: {
+    publishers: {
       items: [],
       loading: false
     },
@@ -66,6 +68,8 @@ export default {
     perPage: 18,
     search: {
       query: '',
+      sortBy: 'createdAt',
+      sortDirection: 'desc',
       results: [],
       loading: false
     },
@@ -75,9 +79,24 @@ export default {
     },
     sortBy: 'createdAt',
     sortDirection: 'desc',
-    viewMode: localStorage.getItem('view_mode') || 'table'
+    spoilerMode: {
+      synopsis: localStorage.getItem('spoiler_mode_synopsis') === 'true',
+      cover: localStorage.getItem('spoiler_mode_cover') === 'true'
+    },
+    viewMode: localStorage.getItem('view_mode') || 'grid'
   },
   mutations: {
+    [CollectionMutations.CLEAR_SEARCH]: function (state) {
+      state.search = {
+        ...state.search,
+        query: '',
+        sortBy: 'createdAt',
+        sortDirection: 'desc',
+        results: [],
+        loading: false
+      }
+    },
+
     [CollectionMutations.UPDATE_BOOKS]: function (state, books) {
       state.books = { ...state.books, ...books }
     },
@@ -125,8 +144,8 @@ export default {
       state.idMap = { ...state.idMap, ...idMap }
     },
 
-    [CollectionMutations.UPDATE_IMPRINTS]: function (state, imprints) {
-      state.imprints = { ...state.imprints, ...imprints }
+    [CollectionMutations.UPDATE_PUBLISHERS]: function (state, publishers) {
+      state.publishers = { ...state.publishers, ...publishers }
     },
 
     [CollectionMutations.UPDATE_LAST_ADDED]: function (state, lastAdded) {
@@ -144,6 +163,12 @@ export default {
     [CollectionMutations.UPDATE_SORT]: function (state, { sortBy, sortDirection }) {
       state.sortBy = sortBy
       state.sortDirection = sortDirection
+    },
+
+    [CollectionMutations.UPDATE_SPOILER_MODE]: function (state, spoilerMode) {
+      state.spoilerMode = { ...state.spoilerMode, ...spoilerMode }
+      localStorage.setItem('spoiler_mode_synopsis', spoilerMode.synopsis)
+      localStorage.setItem('spoiler_mode_cover', spoilerMode.cover)
     },
 
     [CollectionMutations.UPDATE_STORES]: function (state, stores) {
@@ -216,16 +241,16 @@ export default {
       }
     },
 
-    async fetchImprints ({ commit, rootState }) {
-      commit(CollectionMutations.UPDATE_IMPRINTS, { loading: true, items: [] })
+    async fetchPublishers ({ commit, rootState }) {
+      commit(CollectionMutations.UPDATE_PUBLISHERS, { loading: true, items: [] })
 
       const sheetId = rootState.sheet.sheetId
 
       try {
-        const imprints = await getImprints(sheetId)
-        commit(CollectionMutations.UPDATE_IMPRINTS, { items: imprints })
+        const publishers = await getPublishers(sheetId)
+        commit(CollectionMutations.UPDATE_PUBLISHERS, { items: publishers })
       } finally {
-        commit(CollectionMutations.UPDATE_IMPRINTS, { loading: false })
+        commit(CollectionMutations.UPDATE_PUBLISHERS, { loading: false })
       }
     },
 
@@ -278,7 +303,7 @@ export default {
       }
     },
 
-    async search ({ commit, dispatch, state, rootState }, { query }) {
+    async search ({ commit, dispatch, state, rootState }, { query, sortBy, sortDirection }) {
       commit(CollectionMutations.UPDATE_SEARCH, { loading: true, results: [], query })
 
       const sheetId = rootState.sheet.sheetId
@@ -288,7 +313,20 @@ export default {
           await dispatch('fetchIdMap')
         }
 
-        const results = await searchBooks(sheetId, state.idMap, query)
+        commit(CollectionMutations.UPDATE_SEARCH, {
+          sortBy: sortBy || state.search.sortBy,
+          sortDirection: sortDirection || state.search.sortDirection
+        })
+
+        const results = await searchBooks(
+          sheetId,
+          state.idMap,
+          query,
+          {
+            sortBy: state.search.sortBy,
+            sortDirection: state.search.sortDirection
+          }
+        )
         commit(CollectionMutations.UPDATE_SEARCH, { results })
       } catch (e) {
         commit(CollectionMutations.UPDATE_SEARCH, { results: [] })

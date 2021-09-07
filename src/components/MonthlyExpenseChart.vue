@@ -4,7 +4,7 @@
     :aria-labelledby="!loading ? 'monthly-expense-title' : ''"
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else id="monthly-expense-title" class="text-lg font-medium font-title leading-6 text-gray-900 dark:text-gray-100">
+    <h3 v-else id="monthly-expense-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
       {{ t('dashboard.stats.monthlyExpense') }}
     </h3>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico do gasto mensal">
@@ -107,7 +107,7 @@ export default {
               return value ? d(new Date(value), 'month') : value
             },
             style: {
-              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
+              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
             }
           },
           tooltip: { enabled: false }
@@ -120,7 +120,7 @@ export default {
               })
             },
             style: {
-              colors: darkMode.value ? colors.gray[400] : colors.gray[500]
+              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
             }
           }
         }

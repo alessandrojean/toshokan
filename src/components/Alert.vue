@@ -23,7 +23,7 @@
       <div class="space-y-2">
         <p
           v-if="title && title.length > 0"
-          :class="[titleTextColor, 'font-title font-semibold']"
+          :class="[titleTextColor, 'font-display font-semibold']"
         >
           {{ title }}
         </p>

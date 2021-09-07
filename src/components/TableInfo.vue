@@ -6,7 +6,7 @@
     aria-labelledby="table-info-title"
   >
     <div>
-      <h3 id="table-info-title" class="text-lg leading-6 font-medium font-title text-gray-900 dark:text-gray-200">
+      <h3 id="table-info-title" class="text-lg leading-6 font-medium font-display text-gray-900 dark:text-gray-200">
         <slot name="step-indicator"></slot>
         {{ title }}
       </h3>

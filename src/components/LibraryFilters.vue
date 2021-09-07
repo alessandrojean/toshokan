@@ -30,32 +30,24 @@
             leave-to="translate-y-full sm:translate-y-0 sm:translate-x-full"
           >
             <div class="relative w-screen sm:max-w-md">
-              <TransitionChild
-                as="template"
-                enter="motion-reduce:transition-none ease-in-out duration-500"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="motion-reduce:transition-none ease-in-out duration-500"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
+              <form
+                class="h-full flex flex-col sm:py-4 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none"
+                @submit.prevent="handleFilter"
               >
-                <div class="hidden sm:flex absolute top-0 left-0 -ml-8 pt-4 pr-2 sm:-ml-10 sm:pr-4">
-                  <button class="rounded-md text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600" @click="$emit('update:open', false)">
+                <div class="flex justify-between items-center pt-4 sm:pt-0 px-4 sm:px-6">
+                  <DialogTitle class="text-lg font-display font-medium text-gray-900 dark:text-gray-100">
+                    {{ t('dashboard.library.filters.title') }}
+                  </DialogTitle>
+
+                  <button
+                    class="hidden md:flex items-center justify-center -mr-2 w-10 h-10 p-2 rounded-md text-gray-300 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
+                    @click="$emit('update:open', false)"
+                  >
                     <span class="sr-only">{{ t('dashboard.library.filters.close') }}</span>
                     <XIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-              </TransitionChild>
-              <form
-                class="h-full flex flex-col sm:py-6 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none"
-                @submit.prevent="handleFilter"
-              >
-                <div class="pt-5 sm:pt-0 pb-4 sm:pb-0 px-4 sm:px-6 border-b sm:border-b-0 border-gray-300 dark:border-gray-700">
-                  <DialogTitle class="leading-3 text-lg font-title font-medium text-gray-900 dark:text-gray-100">
-                    {{ t('dashboard.library.filters.title') }}
-                  </DialogTitle>
-                </div>
-                <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-0 sm:mt-6 space-y-5 relative sm:flex-1 px-4 sm:px-6">
+                <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-6 mt-4 space-y-6 relative sm:flex-1 px-4 sm:px-6 border-t border-gray-300 dark:border-gray-600">
                   <div>
                     <RadioGroup v-model="viewMode">
                       <RadioGroupLabel class="label">
@@ -117,7 +109,7 @@
                   <div v-if="groups.length > 0">
                     <RadioGroup v-model="group">
                       <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.collection') }}
+                        {{ t('dashboard.library.filters.group') }}
                       </RadioGroupLabel>
 
                       <div class="w-full -mt-2">
@@ -188,7 +180,7 @@
                   </div>
                 </div>
 
-                <div class="flex justify-between sm:justify-end w-full py-3 sm:py-0 px-4 sm:px-6 border-t sm:border-t-0 border-gray-300 dark:border-gray-700">
+                <div class="flex justify-between sm:justify-end w-full pb-4 sm:pb-0 pt-4 px-4 sm:px-6 border-t border-gray-300 dark:border-gray-600">
                   <button
                     type="button"
                     class="button is-ghost justify-center sm:hidden -ml-4"
@@ -206,7 +198,7 @@
                   </button>
                   <button
                     type="submit"
-                    class="button md:text-base is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial md:w-1/2"
+                    class="button is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial"
                   >
                     {{ t('dashboard.library.filters.filter') }}
                   </button>
@@ -272,8 +264,9 @@ export default {
     const sortProperties = computed(() => {
       const properties = [
         { attr: 'title', title: t('book.properties.title') },
-        { attr: 'imprint', title: t('book.properties.imprint') },
+        { attr: 'publisher', title: t('book.properties.publisher') },
         { attr: 'status', title: t('book.properties.status') },
+        { attr: 'boughtAt', title: t('book.properties.boughtAt') },
         { attr: 'readAt', title: t('book.properties.readAt') },
         { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
         { attr: 'labelPrice.value', title: t('book.properties.labelPrice') },

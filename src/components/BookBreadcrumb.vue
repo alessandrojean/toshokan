@@ -31,10 +31,10 @@
       </li>
       <li>
         <router-link
-          :to="{ name: 'DashboardLibrary', query: { group: book.collection } }"
+          :to="{ name: 'DashboardLibrary', query: { group: book.group } }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
         >
-          {{ book.collection }}
+          {{ book.group }}
         </router-link>
       </li>
       <li aria-hidden="true" v-if="book.titleParts[1] && !hideHome">

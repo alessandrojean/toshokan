@@ -95,14 +95,6 @@ const routes = [
               title: () => t('app.routes.dashboard.library')
             }
           },
-          // {
-          //   path: 'book/:bookId',
-          //   name: 'BookDetails',
-          //   component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/BookDetails.vue'),
-          //   meta: {
-          //     title: () => t('app.routes.dashboard.details')
-          //   }
-          // },
           {
             path: 'book/:bookId',
             name: 'BookDetails',
@@ -120,14 +112,6 @@ const routes = [
             }
           }
         ]
-      },
-      {
-        path: 'search',
-        name: 'DashboardSearch',
-        component: () => import(/* webpackChunkName: "dashboard-search" */ '../views/dashboard/Search.vue'),
-        meta: {
-          title: () => t('app.routes.dashboard.search')
-        }
       },
       {
         path: 'stats',

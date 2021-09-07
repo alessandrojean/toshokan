@@ -5,7 +5,7 @@
         <span aria-hidden="true">
           <LibraryIcon class="h-14 w-14 mx-auto text-primary-500" aria-hidden="true" />
         </span>
-        <h1 class="mt-6 font-title text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 class="mt-6 font-display text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
           {{ t('signIn.title') }}
           <span class="sr-only">{{ t('signIn.titleSr') }}</span>
         </h1>
