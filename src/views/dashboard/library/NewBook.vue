@@ -102,14 +102,6 @@
                   {{ t('dashboard.newBook.autoFill.fillManually') }}
                 </button>
               </div>
-
-              <div>
-                <LoadingIndicator :loading="searching">
-                  <template v-slot:icon="{ cssClass }">
-                    <SearchIcon :class="cssClass" />
-                  </template>
-                </LoadingIndicator>
-              </div>
             </section>
 
             <section
@@ -211,14 +203,6 @@
                   {{ t('dashboard.newBook.goBack') }}
                 </button>
               </div>
-
-              <div>
-                <LoadingIndicator :loading="coverFinding">
-                  <template v-slot:icon="{ cssClass }">
-                    <SearchIcon :class="cssClass" />
-                  </template>
-                </LoadingIndicator>
-              </div>
             </section>
 
             <TableInfo
@@ -259,19 +243,9 @@
                 </button>
               </template>
 
-              <template v-slot:loading-indicator>
-                <div>
-                  <LoadingIndicator :loading="inserting">
-                    <template v-slot:icon="{ cssClass }">
-                      <BookOpenIcon :class="cssClass" />
-                    </template>
-                  </LoadingIndicator>
-                </div>
-              </template>
-
               <template v-slot:synopsis="{ value }">
                 <div
-                  class="prose prose-sm leading-normal dark:text-gray-300"
+                  class="prose prose-sm dark:prose-dark leading-normal"
                   v-html="renderMarkdown(value)"
                 />
               </template>
@@ -293,6 +267,11 @@
       @click:new="handleModalNew"
       @click:view="handleModalView"
     />
+
+    <LoadingIndicator
+      :loading="searching || coverFinding || inserting"
+      position="fixed"
+    />
   </div>
 </template>
 
@@ -313,8 +292,6 @@ import {
   SearchIcon
 } from '@heroicons/vue/solid'
 
-import { BookOpenIcon } from '@heroicons/vue/outline'
-
 import Alert from '@/components/Alert'
 import BookCoverSelector from '@/components/BookCoverSelector'
 import BookCreatedModal from '@/components/BookCreatedModal'
@@ -329,7 +306,6 @@ export default {
 
   components: {
     BookCreatedModal,
-    BookOpenIcon,
     CheckIcon,
     ArrowSmLeftIcon,
     ArrowSmRightIcon,
@@ -355,13 +331,16 @@ export default {
       codeType: '',
       group: '',
       coverUrl: '',
-      dimensions: '',
+      dimensions: [],
+      dimensionsStr: '',
       publisher: '',
       labelPriceCurrency: 'BRL',
-      labelPriceValue: '',
+      labelPriceValue: 0.0,
+      labelPriceValueStr: '',
       notes: '',
       paidPriceCurrency: 'BRL',
-      paidPriceValue: '',
+      paidPriceValue: 0.0,
+      paidPriceValueStr: '',
       store: '',
       synopsis: '',
       title: ''
@@ -545,7 +524,7 @@ function useRevisionStep (book) {
   const timeZone = computed(() => store.state.sheet.timeZone)
 
   function formatPrice ({ value, currency }) {
-    return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
+    return n(value, 'currency', { currency })
   }
 
   const boughtAt = computed(() => {
@@ -621,7 +600,9 @@ function useRevisionStep (book) {
       },
       {
         title: t('book.properties.dimensions'),
-        value: book.dimensions,
+        value: book.dimensions
+          .map(dm => n(dm, 'dimensions'))
+          .join(' × ') + ' cm',
         property: 'dimensions'
       },
       {

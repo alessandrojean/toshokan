@@ -1,6 +1,10 @@
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog as="div" static class="fixed z-20 inset-0 overflow-y-auto" @close="$emit('update:open', false)" :open="open">
+    <Dialog
+      as="div"
+      class="fixed z-20 inset-0 overflow-y-auto"
+      @close="$emit('update:open', false)"
+    >
       <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <TransitionChild
           as="template"
@@ -11,11 +15,17 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity" />
+          <DialogOverlay class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity backdrop-filter backdrop-blur-sm" />
         </TransitionChild>
 
         <!-- This element is to trick the browser into centering the modal contents. -->
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
+
         <TransitionChild
           as="template"
           enter="motion-reduce:transition-none motion-reduce:transform-none ease-out duration-300"
@@ -29,7 +39,7 @@
             <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
                 <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-gray-700 sm:mx-0 sm:h-10 sm:w-10" aria-hidden="true">
-                  <ExclamationIcon class="h-6 w-6 text-red-600" aria-hidden="true" />
+                  <TrashIcon class="h-6 w-6 text-red-600" aria-hidden="true" />
                 </div>
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <DialogTitle as="h3" class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100">
@@ -64,7 +74,7 @@
 <script>
 import { useI18n } from 'vue-i18n'
 
-import { ExclamationIcon } from '@heroicons/vue/outline'
+import { TrashIcon } from '@heroicons/vue/outline'
 
 import {
   Dialog,
@@ -78,7 +88,7 @@ export default {
   name: 'BookDeleteModal',
 
   components: {
-    ExclamationIcon,
+    TrashIcon,
     Dialog,
     DialogOverlay,
     DialogTitle,

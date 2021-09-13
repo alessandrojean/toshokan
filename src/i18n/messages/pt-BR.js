@@ -275,7 +275,11 @@ export default {
       }
     },
     details: {
-      zoom: 'Dar zoom na imagem',
+      zoom: {
+        view: 'Dar zoom na imagem',
+        title: 'Capa do livro',
+        close: 'Fechar'
+      },
       header: {
         library: 'Biblioteca',
         author: 'Autor: | Autores:',

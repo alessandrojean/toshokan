@@ -33,7 +33,7 @@
       v-if="showBookInfo"
       v-html="synopsisRendered"
       :class="blurSynopsis ? 'md:filter md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto motion-safe:transition-all duration-100 ease-in-out' : ''"
-      class="prose-sm md:prose leading-normal max-w-none dark:text-gray-300"
+      class="prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal max-w-none dark:text-gray-300"
     />
     <div v-else class="flex flex-col space-y-2">
       <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
@@ -103,7 +103,7 @@
           v-if="showBookInfo && book.codeType.includes('ISBN')"
           class="flex"
         >
-          <li v-if="country[0] === 'BR'">
+          <li v-if="country.countryCode === 'BR'">
             <a
               class="button is-small mr-2 mt-2"
               target="_blank"
@@ -116,7 +116,7 @@
             </a>
           </li>
 
-          <li v-if="country[0] === 'US'">
+          <li v-if="country.countryCode === 'US'">
             <a
               class="button is-small mr-2 mt-2"
               target="_blank"
@@ -129,7 +129,7 @@
             </a>
           </li>
 
-          <li v-if="country[0] === 'JP'">
+          <li v-if="country.countryCode === 'JP'">
             <a
               class="button is-small mr-2 mt-2"
               target="_blank"

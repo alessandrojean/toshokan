@@ -92,25 +92,25 @@ export function parseBook (value, index) {
     authors: value[Columns.AUTHORS].split(/;\s+/g),
     authorsStr: value[Columns.AUTHORS],
     publisher: value[Columns.PUBLISHER],
-    dimensions: value[Columns.DIMENSIONS].split(' × ')
-      .map(measure => n(parseFloat(measure), 'dimensions'))
-      .join(' × '),
+    dimensions: value[Columns.DIMENSIONS]
+      .split(' × ')
+      .map(measure => parseFloat(measure)),
     status: value[Columns.STATUS],
     readAt: value[Columns.READ_AT].length > 0
       ? new Date(value[Columns.READ_AT])
       : null,
     labelPrice: {
       currency: labelPrice[0],
-      value: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal')
+      value: labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0
     },
     paidPrice: {
       currency: paidPrice[0],
-      value: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal')
+      value: paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0
     },
     labelPriceCurrency: labelPrice[0],
-    labelPriceValue: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal'),
+    labelPriceValue: labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0,
     paidPriceCurrency: paidPrice[0],
-    paidPriceValue: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal'),
+    paidPriceValue: paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0,
     store: value[Columns.STORE],
     coverUrl: value[Columns.COVER_URL],
     boughtAt: value[Columns.BOUGHT_AT].length > 0
@@ -144,23 +144,23 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
     authors: getProperty(Columns.AUTHORS).split(/;\s+/g),
     authorsStr: getProperty(Columns.AUTHORS),
     publisher: getProperty(Columns.PUBLISHER),
-    dimensions: getProperty(Columns.DIMENSIONS).split(' × ')
-      .map(measure => n(parseFloat(measure), 'dimensions'))
-      .join(' × '),
+    dimensions: getProperty(Columns.DIMENSIONS)
+      .split(' × ')
+      .map(measure => parseFloat(measure)),
     status: getProperty(Columns.STATUS),
     readAt: getProperty(Columns.READ_AT),
     labelPrice: {
       currency: labelPrice[0],
-      value: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal')
+      value: labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0
     },
     paidPrice: {
       currency: paidPrice[0],
-      value: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal')
+      value: paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0
     },
     labelPriceCurrency: labelPrice[0],
-    labelPriceValue: n(labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0, 'decimal'),
+    labelPriceValue: labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0,
     paidPriceCurrency: paidPrice[0],
-    paidPriceValue: n(paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0, 'decimal'),
+    paidPriceValue: paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0,
     store: getProperty(Columns.STORE),
     coverUrl: getProperty(Columns.COVER_URL) || '',
     boughtAt: getProperty(Columns.BOUGHT_AT),
@@ -184,24 +184,20 @@ function formatDateTimeToSheet (date) {
 export function formatBook (book) {
   return [
     book.id || nanoid(),
-    book.code.replace(/^(\d{3})(\d{2})(\d{4})(\d{3})(\d{1})$/, '$1-$2-$3-$4-$5'),
+    book.code,
     book.group,
     book.title,
     book.authors.join('; '),
     book.publisher,
-    book.dimensions.replace(
-      /^(\d+(?:(?:\.|,)\d{1,2})?) (?:x|×) (\d+(?:(?:\.|,)\d{1,2})?)$/,
-      (m, p1, p2) => {
-        return n(parseFloat(p1.replace(',', '.')), 'dimensions', 'en-US') +
-          ' × ' + n(parseFloat(p2.replace(',', '.')), 'dimensions', 'en-US')
-      }
-    ),
+    book.dimensions
+      .map(dimension => n(dimension, 'dimensions', 'en-US'))
+      .join(' × '),
     book.status || BookStatus.UNREAD,
     book.readAt ? formatDateToSheet(book.readAt) : '',
     book.labelPrice.currency + ' ' +
-      n(parseFloat(book.labelPrice.value.replace(',', '.')), 'decimal', 'en-US'),
+      n(book.labelPrice.value, 'decimal', 'en-US'),
     book.paidPrice.currency + ' ' +
-      n(parseFloat(book.paidPrice.value.replace(',', '.')), 'decimal', 'en-US'),
+      n(book.paidPrice.value, 'decimal', 'en-US'),
     book.store,
     book.coverUrl || '',
     book.boughtAt ? formatDateToSheet(book.boughtAt) : '',
@@ -239,7 +235,7 @@ export function getCodeType (code) {
 export function parseBookFromCbl (cblBook) {
   const allowedRoles = ['Autor', 'Ilustrador', 'Roteirista']
 
-  return {
+  const book = {
     code: cblBook.RowKey,
     codeType: cblBook.RowKey.length === 13 ? 'ISBN-13' : 'ISBN-10',
     title: cblBook.Title.trim()
@@ -251,13 +247,22 @@ export function parseBookFromCbl (cblBook) {
     publisher: PUBLISHER_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
     dimensions: cblBook.Dimensao
       ? cblBook.Dimensao.replace(/(\d{2})(\d)?x(\d{2})(\d)?$/, (m, p1, p2, p3, p4) => {
-        return n(parseFloat(p1 + (p2 ? '.' + p2 : '')), 'dimensions') + ' x ' +
-          n(parseFloat(p3 + (p4 ? '.' + p4 : '')), 'dimensions')
+        return [
+          parseFloat(p1 + (p2 ? '.' + p2 : '')),
+          parseFloat(p3 + (p4 ? '.' + p4 : ''))
+        ]
       })
-      : '',
+      : [],
+    dimensionsStr: '',
     synopsis: cblBook.Sinopse || '',
     provider: 'CBL'
   }
+
+  book.dimensionsStr = book.dimensions
+    .map(dm => n(dm, 'dimensions'))
+    .join(' x ')
+
+  return book
 }
 
 export function parseBookFromOpenLibrary (openLibraryBook, details) {
@@ -291,7 +296,10 @@ export function parseBookFromOpenLibrary (openLibraryBook, details) {
         ? details.description.value
         : '',
       dimensions: physicalDimensions.includes('centimeters') && dimensions.length === 3
-        ? n(dimensions[1], 'dimensions') + ' x ' + n(dimensions[0], 'dimensions')
+        ? dimensions
+        : [],
+      dimensionsStr: physicalDimensions.includes('centimeters') && dimensions.length === 3
+        ? dimensions.map(dm => n(dm, 'dimensions')).join(' x ')
         : ''
     }
   }
@@ -323,6 +331,9 @@ export function parseBookFromGoogleBooks (googleBook) {
     publisher: volumeInfo.publisher || '',
     synopsis: volumeInfo.description || '',
     dimensions: width && height
+      ? [width, height]
+      : [],
+    dimensionsStr: width && height
       ? `${n(width, 'dimensions')} x ${n(height, 'dimensions')}`
       : '',
     provider: 'Google Books'

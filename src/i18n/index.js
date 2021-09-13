@@ -78,7 +78,7 @@ const numberFormats = {
     },
     dimensions: {
       style: 'decimal',
-      minimumFractionDigits: 1,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 1,
       useGrouping: false
     },
@@ -106,7 +106,7 @@ const numberFormats = {
     },
     dimensions: {
       style: 'decimal',
-      minimumFractionDigits: 1,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 1,
       useGrouping: false
     },

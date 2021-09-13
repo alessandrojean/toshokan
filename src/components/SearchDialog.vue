@@ -14,17 +14,17 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 motion-safe:transition-opacity" />
+        <DialogOverlay class="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 motion-safe:transition-opacity backdrop-filter backdrop-blur-sm" />
       </TransitionChild>
 
       <TransitionChild
         as="template"
         enter="motion-reduce:transition-none duration-300 ease-out"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
+        enter-from="opacity-0 scale-95"
+        enter-to="opacity-100 scale-100"
         leave="motion-reduce:transition-none duration-200 ease-in"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
+        leave-from="opacity-100 scale-100"
+        leave-to="opacity-0 scale-95"
       >
         <div class="flex flex-col w-full max-w-2xl overflow-hidden text-left motion-safe:transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
           <DialogTitle as="h3" class="sr-only">
@@ -135,7 +135,7 @@
                     </label>
 
                     <select
-                      class="select rounded-r-none w-full py-1.5 px-2.5 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:border-gray-300 dark:focus:border-gray-700 motion-safe:transition-shadow"
+                      class="select rounded-r-none w-full py-1.5 px-2.5"
                       v-model="sortBy"
                       id="search-sort-by"
                     >
@@ -150,7 +150,7 @@
                   </div>
 
                   <button
-                    class="button is-icon-only px-2 py-1.5 rounded-l-none"
+                    class="button is-icon-only px-2 py-1.5 rounded-l-none bg-gray-50 dark:bg-gray-800 dark:active:bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:active:border-gray-600 focus-visible:ring-offset-0 focus-visible:border-primary-500 dark:focus-visible:border-primary-500 focus-visible:ring-opacity-30 dark:focus-visible:ring-opacity-50"
                     @click="toggleSortDirection"
                   >
                     <span class="sr-only">

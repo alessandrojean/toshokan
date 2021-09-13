@@ -222,11 +222,10 @@
       @click:disconnect="handleDisconnect"
     />
 
-    <LoadingIndicator :loading="sheetLoading" animation="spin" position="fixed">
-      <template v-slot:icon="{ cssClass }">
-        <CogIcon :class="cssClass" />
-      </template>
-    </LoadingIndicator>
+    <LoadingIndicator
+      :loading="sheetLoading"
+      position="fixed"
+    />
   </div>
 </template>
 

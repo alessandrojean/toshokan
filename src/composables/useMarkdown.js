@@ -8,10 +8,9 @@ export default function useMarkdown () {
       'fence',
       'blockquote',
       'hr',
-      'list',
       'reference',
       'html_block',
-      'heading',
+      // 'heading',
       'lheading',
       'image'
     ])

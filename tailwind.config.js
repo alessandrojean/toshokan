@@ -7,7 +7,8 @@ module.exports = {
   theme: {
     colors: {
       ...defaultTheme.colors,
-      primary: colors.indigo
+      primary: colors.indigo,
+      secondary: colors.emerald
     },
     fontFamily: {
       ...defaultTheme.fontFamily,
@@ -22,7 +23,45 @@ module.exports = {
         's-40': '40vh',
         's-50': '50vh',
         's-60': '60vh'
-      }
+      },
+      typography: theme => ({
+        DEFAULT: {
+          css: {
+            'h1, h2, h3, h4, h5, h6': {
+              fontFamily: theme('fontFamily.display').join(', ')
+            },
+            a: {
+              color: theme('colors.primary.600'),
+              '&:hover': {
+                color: theme('colors.primary.800')
+              },
+              '&:focus': {
+                outline: `2px solid ${theme('colors.primary.600')}`
+              }
+            }
+          }
+        },
+        'dark': {
+          css: {
+            color: theme('colors.gray.300'),
+            'strong, h1, h2, h3, h4, h5, h6': {
+              color: theme('colors.gray.200')
+            },
+            a: {
+              color: theme('colors.primary.400'),
+              '&:hover': {
+                color: theme('colors.primary.300')
+              },
+              '&:focus': {
+                outline: `2px solid ${theme('colors.primary.500')}`
+              }
+            },
+            'ul > li::before': {
+              backgroundColor: theme('colors.gray.400')
+            }
+          }
+        }
+      })
     }
   },
   variantOrder: [
@@ -48,24 +87,27 @@ module.exports = {
       backgroundColor: ['even', 'odd', 'active', 'focus-visible', 'disabled'],
       backgroundImage: ['dark'],
       blur: ['hover', 'group-hover', 'dark'],
-      borderColor: ['active', 'disabled'],
-      borderWidth: ['dark'],
+      borderColor: ['active', 'focus-visible', 'group-focus-within', 'disabled'],
+      borderWidth: ['focus', 'dark'],
       boxShadow: ['dark'],
       cursor: ['disabled'],
       display: ['group-focus-within'],
+      fontWeight: ['dark'],
       invert: ['dark'],
       margin: ['dark'],
-      opacity: ['disabled', 'dark'],
+      opacity: ['focus-visible', 'focus-within', 'group-focus', 'disabled', 'dark'],
       outline: ['focus-visible'],
       padding: ['dark'],
       placeholderColor: ['hover'],
       ringColor: ['group-focus-visible', 'focus-visible'],
       ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],
       ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
+      ringOpacity: ['focus-visible'],
       ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
       textColor: ['disabled', 'focus-visible', 'group-focus-within', 'group-focus-visible', 'group-disabled'],
       transform: ['motion-reduce'],
       transitionProperty: ['motion-safe', 'motion-reduce'],
+      typography: ['dark'],
       userSelect: ['hover'],
       zIndex: ['focus-visible']
     }

@@ -60,10 +60,30 @@
                   v-if="showBookInfo"
                   :class="[
                     mt.class || '',
-                    'mt-1 md:mt-0 text-sm text-gray-900 dark:text-gray-200 md:col-span-2'
+                    'mt-1 md:mt-0 text-sm text-gray-900 dark:text-gray-200 md:col-span-2 inline-flex items-center'
                   ]"
                 >
-                  {{ mt.value }}
+                  <img
+                    v-if="mt.flagUrl"
+                    :src="mt.flagUrl"
+                    alt=""
+                    aria-hidden="true"
+                    class="inline-block w-5 h-5 mr-2.5"
+                  >
+                  <span>{{ mt.value }}</span>
+                  <div
+                    v-if="mt.badge && !mt.samePrice"
+                    :class="[
+                      mt.badge <= 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-800',
+                      'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
+                    ]"
+                  >
+                    <span aria-hidden="true">
+                      <TrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
+                      <TrendingUpIcon v-else class="w-4 h-4" />
+                    </span>
+                    <span>{{ n(mt.badge, 'percent') }}</span>
+                  </div>
                 </dd>
                 <div v-else class="mt-1 md:mt-0 motion-safe:animate-pulse w-44 h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
               </div>
@@ -73,7 +93,7 @@
 
         <!-- Book notes -->
         <TabPanel
-          class="prose-sm md:prose leading-normal dark:text-gray-300 max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
+          class="markdown prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal dark:text-gray-300 max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
           v-html="notesRendered"
           v-if="showBookInfo && book.notes.length > 0"
         />
@@ -100,6 +120,7 @@ import { computed, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
+import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
 import BookCard from '@/components/BookCard.vue'
@@ -115,7 +136,9 @@ export default {
     TabGroup,
     TabList,
     TabPanels,
-    TabPanel
+    TabPanel,
+    TrendingDownIcon,
+    TrendingUpIcon
   },
 
   props: {
@@ -177,7 +200,7 @@ export default {
 
       const { value, currency } = price
 
-      return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
+      return n(value, 'currency', { currency })
     }
 
     const timeZone = computed(() => store.state.sheet.timeZone)
@@ -212,13 +235,15 @@ export default {
       }
 
       const languageNames = new Intl.DisplayNames([locale.value], { type: 'language' })
-      const localizedName = languageNames.of(country.value[1])
+      const localizedName = languageNames.of(country.value.locale)
 
       return localizedName.charAt(0).toLocaleUpperCase(locale.value) +
         localizedName.slice(1)
     })
 
     const metadata = computed(() => {
+      const sameCurrency = book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
+
       return [
         {
           title: t('book.properties.id'),
@@ -229,7 +254,8 @@ export default {
           title: t('book.properties.language'),
           value: country.value
             ? language.value
-            : null
+            : null,
+          flagUrl: country.value?.flagUrl
         },
         {
           title: t('book.properties.publisher'),
@@ -241,7 +267,9 @@ export default {
         },
         {
           title: t('book.properties.dimensions'),
-          value: book.value?.dimensions + ' cm'
+          value: book.value?.dimensions
+            ?.map(dm => n(dm, 'dimensions'))
+            ?.join(' × ') + ' cm'
         },
         {
           title: t('book.properties.labelPrice'),
@@ -249,7 +277,13 @@ export default {
         },
         {
           title: t('book.properties.paidPrice'),
-          value: formatPrice(book.value?.paidPrice)
+          value: formatPrice(book.value?.paidPrice),
+          badge: sameCurrency
+            ? (book.value?.paidPrice?.value > book.value?.labelPrice?.value
+                ? book.value?.paidPrice?.value / book.value?.labelPrice.value
+                : 1 - book.value?.paidPrice?.value / book.value?.labelPrice.value)
+            : null,
+          samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
         },
         {
           title: t('book.properties.store'),

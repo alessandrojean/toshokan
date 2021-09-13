@@ -11,13 +11,13 @@
       aria-hidden="true"
       :class="[
         position,
-        'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75'
+        'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75',
+        'backdrop-filter backdrop-blur-sm'
       ]"
       v-if="loading"
     >
-      <slot
-        name="icon"
-        :css-class="[
+      <LoadingSpinIcon
+        :class="[
           `motion-safe:animate-${animation}`,
           'h-10 w-10 mx-auto text-primary-500'
         ]"
@@ -27,13 +27,17 @@
 </template>
 
 <script>
+import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+
 export default {
-  name: 'LoadingIndicator',
+  components: {
+    LoadingSpinIcon
+  },
 
   props: {
     animation: {
       type: String,
-      default: 'pulse'
+      default: 'spin'
     },
     loading: Boolean,
     position: {

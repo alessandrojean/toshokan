@@ -39,7 +39,7 @@
                 @click:update-cover="showCoverEditor"
                 @click:toggleFavorite="toggleFavorite"
                 @click:toggleStatus="toggleStatus"
-                @click:delete="deleteModalOpen = true"
+                @click:delete="openDeleteModal"
               />
             </div>
           </section>
@@ -176,7 +176,7 @@ export default {
   },
 
   setup () {
-    const { t } = useI18n()
+    const { t, n } = useI18n()
     const router = useRouter()
     const route = useRoute()
     const store = useStore()
@@ -241,7 +241,13 @@ export default {
 
     function showEditForm () {
       window.scroll({ top: 0, behavior: 'smooth' })
-      Object.assign(editingBook, book.value)
+      Object.assign(editingBook, book.value, {
+        dimensionsStr: book.value.dimensions
+          .map(dm => n(dm, 'dimensions'))
+          .join(' x '),
+        labelPriceValueStr: n(book.value.labelPrice.value, 'decimal'),
+        paidPriceValueStr: n(book.value.paidPrice.value, 'decimal')
+      })
       state.value = States.FORM
     }
 
@@ -344,6 +350,12 @@ export default {
       }
     }
 
+    function openDeleteModal () {
+      setTimeout(() => {
+        deleteModalOpen.value = true
+      })
+    }
+
     return {
       t,
       bookId,
@@ -366,6 +378,7 @@ export default {
       toggleStatus,
       toggleFavorite,
       deleteModalOpen,
+      openDeleteModal,
       handleDelete
     }
   }

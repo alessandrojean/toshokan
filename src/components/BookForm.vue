@@ -170,19 +170,24 @@
           {{ t('book.properties.dimensions') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
-        <input
-          id="book-dimensions"
-          type="text"
-          :value="book.dimensions"
-          @input="handleInput('dimensions', $event.target.value)"
-          class="input"
-          :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
-          required
-          aria-describedby="book-dimensions-error"
-          :aria-invalid="v$.dimensions.$error"
-        >
+        <div class="group relative">
+          <input
+            id="book-dimensions"
+            type="text"
+            :value="book.dimensionsStr"
+            @input="handleInput('dimensionsStr', $event.target.value)"
+            class="input pr-10"
+            :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
+            required
+            aria-describedby="book-dimensions-error"
+            :aria-invalid="v$.dimensionsStr.$error"
+          >
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" aria-hidden="true">
+            <span class="text-gray-500 dark:text-gray-400 sm:text-sm">cm</span>
+          </div>
+        </div>
         <p id="book-dimensions-error" class="sr-only" aria-hidden="true">
-          {{ v$.dimensions.$error ? v$.dimensions.$errors[0].$message : '' }}
+          {{ v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : '' }}
         </p>
       </div>
 
@@ -193,7 +198,7 @@
           {{ t('book.properties.labelPrice') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
-        <div class="relative">
+        <div class="relative group">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
           </div>
@@ -201,13 +206,13 @@
             id="book-label-price"
             type="text"
             inputmode="decimal"
-            :value="book.labelPriceValue"
-            @input="handleInput('labelPriceValue', $event.target.value)"
+            :value="book.labelPriceValueStr"
+            @input="handleInput('labelPriceValueStr', $event.target.value)"
             class="input pl-7 pr-12"
             :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
             required
             aria-describedby="book-label-price-error"
-            :aria-invalid="v$.labelPriceValue.$error"
+            :aria-invalid="v$.labelPriceValueStr.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-label-price-currency" class="sr-only">
@@ -215,7 +220,7 @@
             </label>
             <select
               id="book-label-price-currency"
-              class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
+              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-transparent dark:border-l-0 dark:focus:border-l dark:group-focus-within:border-primary-500 h-full bg-transparent shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('labelPriceCurrency', $event.target.value)"
               required
             >
@@ -231,7 +236,7 @@
           </div>
         </div>
         <p id="book-label-price-error" class="sr-only" aria-hidden="true">
-          {{ v$.labelPriceValue.$error ? v$.labelPriceValue.$errors[0].$message : '' }}
+          {{ v$.labelPriceValueStr.$error ? v$.labelPriceValueStr.$errors[0].$message : '' }}
         </p>
       </div>
 
@@ -242,7 +247,7 @@
           {{ t('book.properties.paidPrice') }}
           <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
-        <div class="relative">
+        <div class="relative group">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
             <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
           </div>
@@ -250,13 +255,13 @@
             id="book-paid-price"
             type="text"
             inputmode="decimal"
-            :value="book.paidPriceValue"
-            @input="handleInput('paidPriceValue', $event.target.value)"
+            :value="book.paidPriceValueStr"
+            @input="handleInput('paidPriceValueStr', $event.target.value)"
             class="input pl-7 pr-12"
             :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
             required
             aria-describedby="book-paid-price-error"
-            :aria-invalid="v$.paidPriceValue.$error"
+            :aria-invalid="v$.paidPriceValueStr.$error"
           >
           <div class="absolute inset-y-0 right-0 flex items-center">
             <label for="book-paid-price-currency" class="sr-only">
@@ -264,7 +269,7 @@
             </label>
             <select
               id="book-paid-price-currency"
-              class="select pl-2 pr-7 sm:text-sm border-transparent h-full bg-transparent dark:focus:bg-gray-700 shadow-none text-gray-500 dark:text-gray-300"
+              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-transparent dark:border-l-0 dark:focus:border-l dark:group-focus-within:border-primary-500 h-full bg-transparent shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('paidPriceCurrency', $event.target.value)"
               required
             >
@@ -280,7 +285,7 @@
           </div>
         </div>
         <p id="book-paid-price-error" class="sr-only" aria-hidden="true">
-          {{ v$.paidPriceValue.$error ? v$.paidPriceValue.$errors[0].$message : '' }}
+          {{ v$.paidPriceValueStr.$error ? v$.paidPriceValueStr.$errors[0].$message : '' }}
         </p>
       </div>
     </div>
@@ -466,9 +471,9 @@ export default {
       authorsStr: { messageRequired },
       publisher: { messageRequired },
       group: { messageRequired },
-      labelPriceValue: { messageRequired, messageDecimalComma },
-      paidPriceValue: { messageRequired, messageDecimalComma },
-      dimensions: { messageRequired, messageDimensions },
+      labelPriceValueStr: { messageRequired, messageDecimalComma },
+      paidPriceValueStr: { messageRequired, messageDecimalComma },
+      dimensionsStr: { messageRequired, messageDimensions },
       store: { messageRequired }
     }
 
@@ -478,9 +483,9 @@ export default {
       authorsStr: t('book.properties.authors'),
       publisher: t('book.properties.publisher'),
       group: t('book.properties.group'),
-      labelPriceValue: t('book.properties.labelPrice'),
-      paidPriceValue: t('book.properties.paidPrice'),
-      dimensions: t('book.properties.dimensions'),
+      labelPriceValueStr: t('book.properties.labelPrice'),
+      paidPriceValueStr: t('book.properties.paidPrice'),
+      dimensionsStr: t('book.properties.dimensions'),
       store: t('book.properties.store'),
       synopsis: t('book.properties.synopsis'),
       notes: t('book.properties.notes')
@@ -497,6 +502,13 @@ export default {
         newBook.authors = value.split(/;\s+/g)
       } else if (property === 'boughtAt') {
         newBook.boughtAt = value.length === 10 ? new Date(value) : null
+      } else if (property === 'dimensionsStr') {
+        newBook.dimensions = value.split(/\s*[Xx×]\s*/)
+          .map(dm => parseFloat(dm.replace(',', '.')))
+      } else if (property === 'labelPriceValueStr') {
+        newBook.labelPriceValue = parseFloat(value.replace(',', '.'))
+      } else if (property === 'paidPriceValueStr') {
+        newBook.paidPriceValue = parseFloat(value.replace(',', '.'))
       }
 
       context.emit('update:book', newBook)

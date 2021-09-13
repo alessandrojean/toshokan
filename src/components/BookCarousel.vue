@@ -29,7 +29,7 @@
       >
         {{ buttonText }}
         <span aria-hidden="true">
-          <ArrowNarrowRightIcon class="is-right" />
+          <ArrowSmRightIcon class="is-right" />
         </span>
       </router-link>
     </div>
@@ -59,14 +59,14 @@
 import { computed, onMounted, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import { ArrowNarrowRightIcon } from '@heroicons/vue/solid'
+import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 
 import BookCard from '@/components/BookCard'
 
 export default {
   name: 'LastAddedBooks',
 
-  components: { BookCard, ArrowNarrowRightIcon },
+  components: { BookCard, ArrowSmRightIcon },
 
   props: {
     collection: {

@@ -12,7 +12,7 @@
       class="z-30 absolute w-full h-full flex justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
     >
       <span aria-hidden="true">
-        <BookOpenIcon class="motion-safe:animate-pulse h-28 w-28 mx-auto text-primary-500" aria-hidden="true" />
+        <LoadingSpinIcon class="motion-safe:animate-spin h-10 w-10 mx-auto text-primary-500" aria-hidden="true" />
       </span>
     </div>
   </transition>
@@ -45,11 +45,11 @@ import { useI18n } from 'vue-i18n'
 
 import { MutationTypes } from '@/store'
 
-import { BookOpenIcon } from '@heroicons/vue/outline'
+import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 
 export default {
   components: {
-    BookOpenIcon
+    LoadingSpinIcon
   },
 
   setup () {

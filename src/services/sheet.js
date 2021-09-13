@@ -17,13 +17,17 @@ import { isoDate as validateDate } from '@/util/validators'
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
 const SHEET_DEV_SUFFIX = '-dev'
+const SHEET_USE_DEV_VERSION = true
 
 const { t } = i18n.global
 
 export async function findSheetId () {
   // Use a development only sheet to prevent issues during tests.
-  const fileName = SHEET_FILE_NAME +
-    (process.env.NODE_ENV === 'development' ? SHEET_DEV_SUFFIX : '')
+  const isDevEnvironment = process.env.NODE_ENV === 'development'
+  const sheetSuffix = (isDevEnvironment && SHEET_USE_DEV_VERSION)
+    ? SHEET_DEV_SUFFIX
+    : ''
+  const fileName = SHEET_FILE_NAME + sheetSuffix
 
   const response = await window.gapi.client.drive.files.list({
     q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
@@ -569,7 +573,6 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
   }
 
   const searchQueryObj = searchQuery.parse(searchTerm, searchOptions)
-  console.log(searchQueryObj)
 
   const query = new window.google.visualization.Query(sheetUrl)
 

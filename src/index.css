@@ -33,9 +33,15 @@
   }
 
   .input {
-    @apply text-sm block w-full py-2 px-3 border border-gray-300 bg-white 
-      rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500
-      focus:border-primary-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-gray-300;
+    @apply text-sm sm:text-sm block w-full py-2 px-3 dark:text-gray-300
+      border border-gray-300 dark:border-gray-600
+      bg-white dark:bg-gray-800
+      rounded-md shadow-sm
+      focus:outline-none focus:ring
+      focus:ring-opacity-30 dark:focus:ring-opacity-50
+      focus:ring-primary-600 dark:focus:ring-primary-500
+      focus:border-primary-500 dark:focus:border-primary-500
+      motion-safe:transition-colors;
   }
 
   textarea.input {
@@ -53,10 +59,15 @@
   }
 
   .select {
-    @apply text-sm block w-full py-2 px-3 border border-gray-300 bg-white 
-      rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:ring-2
-      focus:border-primary-500 sm:text-sm dark:bg-gray-700 
-      dark:border-gray-700 dark:text-gray-200;
+    @apply text-sm block w-full py-2 px-3 sm:text-sm dark:text-gray-200
+      border border-gray-300 dark:border-gray-600
+      bg-white dark:bg-gray-800
+      rounded-md shadow-sm 
+      focus:outline-none focus:ring
+      focus:ring-opacity-30 dark:focus:ring-opacity-50
+      focus:ring-primary-600 dark:focus:ring-primary-500
+      focus:border-primary-500 dark:focus:border-primary-500
+      motion-safe:transition-colors;
   }
 
   .checkbox-label {
@@ -155,8 +166,18 @@
     @apply text-white;
   }
 
-  .button.is-icon-only svg {
-    @apply mx-0;
+  @responsive {
+    .button.is-icon-only svg {
+      @apply mx-0;
+    }
+
+    .button.not-is-icon-only svg {
+      @apply -ml-0.5 mr-1.5;
+    }
+    
+    .button.not-is-icon-only svg.is-right {
+      @apply ml-2 -mr-1;
+    }
   }
 
   .button .icon.is-on-left {

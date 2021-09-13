@@ -149,7 +149,8 @@ const AVAILABLE_SITES = [
     searchWith: 'title',
     collection: 'product',
     queryParameter: 'slug',
-    queryTransformer: title => slugify(title)
+    queryTransformer: title => slugify(title),
+    find: wordpress
   }
 ]
 

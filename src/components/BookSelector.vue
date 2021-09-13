@@ -3,7 +3,7 @@
     <button
       v-for="book in options"
       :key="book.code"
-      class="rounded-md border border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 flex flex-col md:flex-row items-start md:items-center text-sm px-4 md:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 motion-safe:transition-shadow"
+      class="group rounded-md border dark:bg-gray-700 border-gray-300 dark:border-gray-700 dark:hover:border-gray-600 flex flex-col md:flex-row items-start md:items-center text-sm px-4 md:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 motion-safe:transition-shadow"
       @click="$emit('select', book)"
     >
       <div class="inline-flex flex-col text-left flex-1">
@@ -12,18 +12,18 @@
         </span>
         <span
           v-if="book.authors && book.authors.length > 0"
-          class="block text-gray-500 dark:text-gray-400 truncate"
+          class="block text-gray-500 dark:text-gray-300 truncate"
         >
           {{ formatAuthors(book.authors) }}
         </span>
       </div>
       <div class="mt-1 md:mt-0 inline-flex md:flex-col items-end space-x-2 md:space-x-0 md:space-y-0.5">
-        <span class="text-xs bg-primary-100 dark:bg-primary-800 dark:bg-opacity-80 text-primary-600 dark:text-primary-200 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide">
+        <span class="text-xs bg-primary-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-primary-600 dark:text-gray-200 dark:group-hover:text-gray-100 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide">
           {{ book.provider }}
         </span>
         <span
           v-if="book.publisher && book.publisher.length > 0"
-          class="block text-gray-500 dark:text-gray-400"
+          class="block text-gray-500 dark:text-gray-300"
         >
           {{ book.publisher }}
         </span>

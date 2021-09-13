@@ -2,7 +2,7 @@
   <div v-if="loading" class="motion-safe:animate-pulse">
     <div class="bg-gray-400 dark:bg-gray-600 shadow rounded-md aspect-w-2 aspect-h-3">
       <div class="w-full h-full flex justify-center items-center">
-        <PhotographIcon
+        <BookOpenIcon
           class="w-10 h-10 text-gray-300 dark:text-gray-500"
           aria-hidden="true"
         />
@@ -39,7 +39,7 @@
           class="w-full h-full flex justify-center items-center"
           aria-hidden="true"
         >
-          <PhotographIcon
+          <BookOpenIcon
             :class="[
               imageLoading ? 'motion-safe:animate-pulse' : '',
               'w-10 h-10 text-gray-400 dark:text-gray-500'
@@ -57,9 +57,13 @@
       </transition>
 
       <div v-if="isRead" class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2">
-        <span class="shadow bg-primary-500 text-primary-50 text-xs font-semibold px-2 py-0.5 rounded">
+        <!-- <span class="shadow bg-primary-500 text-primary-50 text-xs font-semibold px-2 py-0.5 rounded">
           {{ t('book.read') }}
-        </span>
+        </span> -->
+        <span class="sr-only">{{ t('book.read') }}</span>
+        <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
+          <BookmarkIcon class="w-5 h-5 text-primary-500" />
+        </div>
       </div>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
@@ -82,7 +86,8 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
-import { PhotographIcon } from '@heroicons/vue/solid'
+import { BookOpenIcon } from '@heroicons/vue/outline'
+import { BookmarkIcon } from '@heroicons/vue/solid'
 
 import { BookFavorite, BookStatus } from '@/model/Book'
 
@@ -90,7 +95,8 @@ export default {
   name: 'BookCard',
 
   components: {
-    PhotographIcon
+    BookOpenIcon,
+    BookmarkIcon
   },
 
   props: {

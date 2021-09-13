@@ -44,10 +44,10 @@
 
           <div v-else class="flex flex-col items-center p-3">
             <EmojiSadIcon class="h-24 w-24 text-gray-300 dark:text-gray-500 mb-3" aria-hidden="true" />
-            <p class="font-semibold text-lg text-gray-500 dark:text-gray-400">
+            <p class="font-semibold text-lg text-gray-700 dark:text-gray-400">
               {{ t('book.coverSelector.empty.title') }}
             </p>
-            <p v-if="custom" class="text-sm text-gray-500 dark:text-gray-400">
+            <p v-if="custom" class="text-sm text-gray-600 dark:text-gray-400">
               {{ t('book.coverSelector.empty.description') }}
             </p>
           </div>
@@ -83,25 +83,13 @@
           >
           <button
             type="button"
-            class="button md:hidden is-icon-only px-2"
+            class="button is-icon-only md:not-is-icon-only px-2 md:px-4"
             @click="addNewImage"
           >
             <span aria-hidden="true">
               <PlusIcon class="w-5 h-5" />
             </span>
-            <span class="sr-only">
-              {{ t('book.coverSelector.custom.add') }}
-            </span>
-          </button>
-          <button
-            type="button"
-            class="button hidden md:flex"
-            @click="addNewImage"
-          >
-            <span aria-hidden="true">
-              <PlusIcon class="w-5 h-5" />
-            </span>
-            <span class="hidden md:inline-block">
+            <span class="sr-only md:not-sr-only">
               {{ t('book.coverSelector.custom.add') }}
             </span>
           </button>

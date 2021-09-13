@@ -274,7 +274,11 @@ export default {
       }
     },
     details: {
-      zoom: 'Zoom in',
+      zoom: {
+        view: 'Zoom in',
+        title: 'Book cover',
+        close: 'Close'
+      },
       header: {
         library: 'Library',
         author: 'Author: | Authors:',

@@ -1,5 +1,5 @@
 <template>
-  <figure class="aspect-w-1 aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative">
+  <figure class="group aspect-w-1 aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative">
     <div class="p-9 flex items-center justify-center">
       <transition
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -14,9 +14,9 @@
           class="absolute bottom-0 hidden md:flex justify-center transform translate-y-1/2"
           aria-hidden="true"
         >
-          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-md inline-flex divide-x divide-gray-200 dark:divide-gray-700">
+          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-md inline-flex divide-x divide-gray-200 dark:divide-gray-600">
             <span class="py-1 px-1.5 flex items-center justify-center" v-if="country">
-              <img :src="countryFlagUrl" class="w-6 h-6 p-px">
+              <img :src="country.flagUrl" class="w-6 h-6 p-px">
             </span>
             <span class="py-1 px-1.5" v-if="isRead">
               <BookmarkIcon class="w-6 h-6 text-primary-600 dark:text-primary-500" />
@@ -25,6 +25,33 @@
               <StarIcon class="w-6 h-6 text-yellow-500 dark:text-yellow-300" />
             </span>
           </div>
+        </div>
+      </transition>
+
+      <transition
+        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+      >
+        <div
+          v-if="showBookCover && showBookInfo"
+          class="absolute right-2 top-2 hidden md:block"
+        >
+          <button
+            class="flex items-center justify-center rounded-md p-1.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500"
+            @click="openDialog"
+            :title="t('dashboard.details.zoom.view')"
+          >
+            <span aria-hidden="true">
+              <ZoomInIcon class="w-5 h-5" />
+            </span>
+            <span class="sr-only">
+              {{ t('dashboard.details.zoom.view') }}
+            </span>
+          </button>
         </div>
       </transition>
 
@@ -52,15 +79,25 @@
         </span>
       </transition>
     </div>
+
+    <BookCoverDialog
+      v-if="showBookCover && showBookInfo"
+      :cover-url="coverUrl"
+      :open="dialogOpen"
+      @close="closeDialog"
+    />
   </figure>
 </template>
 
 <script>
-import { computed, onMounted, toRefs, watch } from 'vue'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
-import { BookmarkIcon, StarIcon } from '@heroicons/vue/solid'
+import { BookmarkIcon, StarIcon, ZoomInIcon } from '@heroicons/vue/solid'
+
+import BookCoverDialog from '@/components/BookCoverDialog.vue'
 
 import useImageLoader from '@/composables/useImageLoader'
 
@@ -71,7 +108,9 @@ export default {
   components: {
     BookOpenIcon,
     BookmarkIcon,
-    StarIcon
+    StarIcon,
+    ZoomInIcon,
+    BookCoverDialog
   },
 
   props: {
@@ -132,18 +171,21 @@ export default {
       return getIsbnCountry(book.value.code)
     })
 
-    const countryFlagUrl = computed(() => {
-      if (!country.value) {
-        return null
-      }
-
-      const countryCode = country.value[0].toLowerCase()
-      return `https://hatscripts.github.io/circle-flags/flags/${countryCode}.svg`
-    })
-
     const store = useStore()
 
     const spoilerMode = computed(() => store.state.collection.spoilerMode)
+
+    const dialogOpen = ref(false)
+
+    function openDialog () {
+      dialogOpen.value = true
+    }
+
+    function closeDialog () {
+      dialogOpen.value = false
+    }
+
+    const { t } = useI18n()
 
     return {
       coverUrl,
@@ -153,8 +195,11 @@ export default {
       isRead,
       isFavorite,
       country,
-      countryFlagUrl,
-      spoilerMode
+      spoilerMode,
+      dialogOpen,
+      openDialog,
+      closeDialog,
+      t
     }
   }
 }

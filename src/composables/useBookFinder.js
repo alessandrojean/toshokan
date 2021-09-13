@@ -40,7 +40,6 @@ export default function useBookFinder () {
       bookFound.value = true
       book.value = theBook
     } catch (e) {
-      console.error(e)
       bookFound.value = false
       book.value = undefined
     }
