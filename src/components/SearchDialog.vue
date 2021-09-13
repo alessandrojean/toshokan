@@ -34,7 +34,7 @@
           <form
             :class="[
               'py-4 md:py-6 mx-4 md:mx-6 flex items-center space-x-3 md:space-x-4',
-              searchedOnce && !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
+              !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
             ]"
             @submit.prevent="handleSearch"
           >
@@ -52,20 +52,22 @@
               </transition>
             </span>
 
-            <label for="search-input" class="sr-only">
-              {{ t('dashboard.search.label') }}
-            </label>
+            <div class="flex-1">
+              <label for="search-input" class="sr-only">
+                {{ t('dashboard.search.label') }}
+              </label>
 
-            <input
-              type="search"
-              :value="searchQuery"
-              @input="debounce(() => { searchQuery = $event.target.value })"
-              id="search-input"
-              ref="searchInput"
-              class="flex-1 border-0 p-0 focus:ring-0 font-medium placeholder-gray-400 dark:placeholder-gray-500 dark:bg-gray-800 dark:text-gray-100 disabled:opacity-60"
-              :placeholder="t('dashboard.search.placeholder')"
-              @keyup.enter.prevent="search($event.target.value)"
-            >
+              <input
+                type="search"
+                :value="searchQuery"
+                @input="debounce(() => { searchQuery = $event.target.value })"
+                id="search-input"
+                ref="searchInput"
+                class="w-full border-0 p-0 focus:ring-0 font-medium placeholder-gray-400 dark:placeholder-gray-500 dark:bg-gray-800 dark:text-gray-100 disabled:opacity-60"
+                :placeholder="t('dashboard.search.placeholder')"
+                @keyup.enter.prevent="search($event.target.value)"
+              >
+            </div>
 
             <transition
               mode="out-in"
@@ -106,6 +108,7 @@
           </form>
 
           <transition
+            v-if="!searchLoading"
             mode="out-in"
             leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
             leave-from-class="opacity-100"
@@ -115,24 +118,24 @@
             enter-to-class="opacity-100"
           >
             <div
-              v-if="!searchLoading && searchResults.length > 0"
+              v-if="searchResults.length > 0"
               tabindex="-1"
               ref="results"
               class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 focus:outline-none"
             >
-              <div class="flex justify-between items-center">
+              <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:items-center">
                 <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-title">
                   {{ t('dashboard.search.results') }}
                 </h3>
 
-                <div class="flex -space-x-px">
-                  <div>
+                <div class="flex -space-x-px w-full sm:w-auto">
+                  <div class="flex-1 sm:flex-initial sm:w-56">
                     <label for="search-sort-by" class="sr-only">
                       {{ t('dashboard.library.filters.sortBy') }}
                     </label>
 
                     <select
-                      class="select rounded-r-none w-56 py-1.5 px-2.5 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:border-gray-300 dark:focus:border-gray-700 motion-safe:transition-shadow"
+                      class="select rounded-r-none w-full py-1.5 px-2.5 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:border-gray-300 dark:focus:border-gray-700 motion-safe:transition-shadow"
                       v-model="sortBy"
                       id="search-sort-by"
                     >
@@ -182,12 +185,41 @@
             </div>
 
             <div
-              v-else-if="!searchLoading && searchedOnce && searchResults.length === 0"
+              v-else-if="searchedOnce && searchResults.length === 0"
               class="py-10 mx-4 md:mx-6 mb-2 md:mb-0 md:text-lg text-gray-400 font-medium"
             >
               <i18n-t keypath="dashboard.search.noResultsFound" tag="p">
                 <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
               </i18n-t>
+            </div>
+
+            <div
+              v-else-if="searchHistory.length > 0"
+              class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 focus:outline-none"
+            >
+              <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-title">
+                {{ t('dashboard.search.history') }}
+              </h3>
+
+              <ul class="space-y-2">
+                <li
+                  v-for="historyItem in searchHistory"
+                  :key="historyItem"
+                >
+                  <SearchHistoryItem
+                    :search="historyItem"
+                    @click="search($event)"
+                    @click:remove="removeHistoryItem($event)"
+                  />
+                </li>
+              </ul>
+            </div>
+
+            <div
+              v-else
+              class="py-10 mx-4 md:mx-6 mb-2 md:mb-0 md:text-lg text-gray-400 font-medium"
+            >
+              <p>{{ t('dashboard.search.noHistory') }}</p>
             </div>
           </transition>
 
@@ -234,6 +266,7 @@ import {
 import { SearchIcon } from '@heroicons/vue/outline'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
 
 import { MutationTypes } from '@/store'
@@ -245,6 +278,7 @@ export default {
     DialogTitle,
     TransitionChild,
     TransitionRoot,
+    SearchHistoryItem,
     SearchIcon,
     SearchItem,
     SortAscendingIcon,
@@ -271,6 +305,7 @@ export default {
     const searchedTerm = ref('')
     const searchLoading = computed(() => store.state.collection.search.loading)
     const searchResults = computed(() => store.state.collection.search.results)
+    const searchHistory = computed(() => store.state.collection.search.history)
 
     const searchInput = ref(null)
     const results = ref(null)
@@ -376,6 +411,14 @@ export default {
       return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
+    function removeHistoryItem (item) {
+      const newHistory = searchHistory.value.filter(s => s !== item)
+
+      store.commit(MutationTypes.COLLECTION_UPDATE_SEARCH, {
+        history: newHistory
+      })
+    }
+
     return {
       t,
       closeDialog,
@@ -384,6 +427,7 @@ export default {
       searchedTerm,
       searchLoading,
       searchResults,
+      searchHistory,
       searchInput,
       results,
       handleSubmit,
@@ -393,7 +437,8 @@ export default {
       sortBy,
       sortDirection,
       toggleSortDirection,
-      sortProperties
+      sortProperties,
+      removeHistoryItem
     }
   }
 }

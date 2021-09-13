@@ -45,7 +45,7 @@ module.exports = {
   variants: {
     extend: {
       animation: ['motion-safe'],
-      backgroundColor: ['even', 'odd', 'active', 'disabled'],
+      backgroundColor: ['even', 'odd', 'active', 'focus-visible', 'disabled'],
       backgroundImage: ['dark'],
       blur: ['hover', 'group-hover', 'dark'],
       borderColor: ['active', 'disabled'],
@@ -63,7 +63,7 @@ module.exports = {
       ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],
       ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
       ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
-      textColor: ['disabled', 'group-focus-within', 'group-focus-visible', 'group-disabled'],
+      textColor: ['disabled', 'focus-visible', 'group-focus-within', 'group-focus-visible', 'group-disabled'],
       transform: ['motion-reduce'],
       transitionProperty: ['motion-safe', 'motion-reduce'],
       userSelect: ['hover'],

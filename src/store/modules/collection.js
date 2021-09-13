@@ -67,6 +67,9 @@ export default {
     paginationInfo: {},
     perPage: 18,
     search: {
+      history: localStorage.getItem('search_history')
+        ? JSON.parse(localStorage.getItem('search_history'))
+        : [],
       query: '',
       sortBy: 'createdAt',
       sortDirection: 'desc',
@@ -158,6 +161,10 @@ export default {
 
     [CollectionMutations.UPDATE_SEARCH]: function (state, search) {
       state.search = { ...state.search, ...search }
+
+      if (search.history) {
+        localStorage.setItem('search_history', JSON.stringify(search.history))
+      }
     },
 
     [CollectionMutations.UPDATE_SORT]: function (state, { sortBy, sortDirection }) {
@@ -327,7 +334,13 @@ export default {
             sortDirection: state.search.sortDirection
           }
         )
-        commit(CollectionMutations.UPDATE_SEARCH, { results })
+
+        const newHistory = [query].concat(state.search.history)
+
+        commit(CollectionMutations.UPDATE_SEARCH, {
+          results,
+          history: [...new Set(newHistory)].slice(0, 6)
+        })
       } catch (e) {
         commit(CollectionMutations.UPDATE_SEARCH, { results: [] })
       } finally {

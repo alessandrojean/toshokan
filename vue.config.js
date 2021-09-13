@@ -6,7 +6,7 @@ process.env.VUE_APP_GIT_HASH = gitDescribeSync().hash
 module.exports = {
   pwa: {
     name: 'Toshokan',
-    themeColor: '#673AB7',
+    themeColor: '#1F2937',
     manifestOptions: {
       icons: [
         {

@@ -1,7 +1,7 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="group px-4 py-4 sm:px-7 md:px-4 flex items-center bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 dark:hover:bg-primary-900 has-ring-focus rounded-md"
+    class="group px-4 py-4 sm:px-7 md:px-4 flex items-center bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 dark:hover:bg-gray-600 has-ring-focus rounded-md"
     ref="searchItem"
   >
     <div class="mr-4 w-12">
