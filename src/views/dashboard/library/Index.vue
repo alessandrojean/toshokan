@@ -13,9 +13,3 @@
     </transition>
   </router-view>
 </template>
-
-<script>
-export default {
-  name: 'DashboardLibrary'
-}
-</script>

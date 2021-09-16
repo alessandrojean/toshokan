@@ -13,7 +13,7 @@
       <slot name="icon" css-class="text-white h-6 w-6 md:h-8 md:w-8"></slot>
     </div>
     <div class="flex-1">
-      <p class="text-gray-400 dark:text-gray-300 font-semibold text-xs mb-0">{{ title }}</p>
+      <p class="text-gray-500 dark:text-gray-300 font-semibold text-xs mb-0">{{ title }}</p>
       <div class="flex justify-between w-full">
         <transition
           mode="out-in"
@@ -27,7 +27,7 @@
           <p class="font-semibold dark:text-gray-50 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue">
             {{ value || '' }}
           </p>
-          <div v-else class="h-5 sm:h-6 mt-1 bg-gray-500 dark:bg-gray-700 rounded w-32 lg:w-24"></div>
+          <div v-else class="h-5 sm:h-6 mt-1 bg-gray-300 dark:bg-gray-700 rounded w-32 lg:w-24"></div>
         </transition>
       </div>
     </div>

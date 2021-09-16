@@ -8,20 +8,33 @@
   }
 }
 
-@layer utilities {
-  .has-ring-focus {
-    @apply transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-700;
-  }
-}
-
 @layer components {
+  .has-ring-focus {
+    @apply motion-safe:transition-shadow;
+  }
+
+  .has-ring-focus:focus {
+    @apply outline-none;
+  }
+
+  .has-ring-focus:focus-visible {
+    @apply ring-2 ring-offset-2
+      ring-primary-600 dark:ring-primary-500
+      dark:ring-offset-gray-700;
+  }
+
   .jump-to {
     @apply sr-only;
   }
   
   .jump-to:focus-visible {
-    @apply w-auto h-auto fixed z-10 px-3 py-2 left-2 top-2 bg-white dark:bg-gray-600 text-primary-600 dark:text-white font-medium rounded outline-none ring-2 ring-offset-2 dark:ring-offset-gray-800 ring-primary-600;
-    clip: unset;
+    @apply not-sr-only fixed left-2 top-2 z-10 
+      px-3 py-2 bg-white dark:bg-gray-600 
+      text-primary-600 dark:text-white 
+      font-medium rounded outline-none 
+      ring-2 ring-offset-2 
+      dark:ring-offset-gray-800 
+      ring-primary-600 dark:ring-primary-500;
   }
 
   abbr.required {
@@ -29,19 +42,27 @@
   }
 
   .label {
-    @apply mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300;
+    @apply mb-1 block text-sm font-medium 
+      text-gray-700 dark:text-gray-300;
   }
 
-  .input {
-    @apply text-sm sm:text-sm block w-full py-2 px-3 dark:text-gray-300
+  .input,
+  .select {
+    @apply text-sm sm:text-sm block 
+      w-full py-2 px-3 dark:text-gray-300
       border border-gray-300 dark:border-gray-600
-      bg-white dark:bg-gray-800
+      bg-white dark:bg-gray-850
       rounded-md shadow-sm
-      focus:outline-none focus:ring
-      focus:ring-opacity-30 dark:focus:ring-opacity-50
-      focus:ring-primary-600 dark:focus:ring-primary-500
-      focus:border-primary-500 dark:focus:border-primary-500
       motion-safe:transition-colors;
+  }
+
+  .input:focus,
+  .select:focus,
+  .select[aria-expanded="true"] {
+    @apply outline-none ring
+      ring-opacity-30 dark:ring-opacity-50
+      ring-primary-600 dark:ring-primary-500
+      border-primary-500 dark:border-primary-500;
   }
 
   textarea.input {
@@ -52,52 +73,62 @@
   input::-webkit-calendar-picker-indicator,
   input:hover::-webkit-calendar-picker-indicator,
   input:focus::-webkit-calendar-picker-indicator {
-    display: none;
-    width: 0px;
-    height: 0px;
-    opacity: 0;
-  }
-
-  .select {
-    @apply text-sm block w-full py-2 px-3 sm:text-sm dark:text-gray-200
-      border border-gray-300 dark:border-gray-600
-      bg-white dark:bg-gray-800
-      rounded-md shadow-sm 
-      focus:outline-none focus:ring
-      focus:ring-opacity-30 dark:focus:ring-opacity-50
-      focus:ring-primary-600 dark:focus:ring-primary-500
-      focus:border-primary-500 dark:focus:border-primary-500
-      motion-safe:transition-colors;
+    @apply hidden w-0 h-0 opacity-0;
   }
 
   .checkbox-label {
-    @apply text-sm font-medium inline-flex items-center text-gray-700 dark:text-gray-300;
+    @apply text-sm font-medium 
+      inline-flex items-center 
+      text-gray-700 dark:text-gray-300;
   }
 
   .checkbox {
-    @apply rounded border-gray-300 dark:border-gray-700
-      text-primary-600 shadow-sm focus:outline-none focus:ring-2
-      focus:ring-primary-500 dark:ring-offset-gray-700
-      dark:bg-gray-600;
+    @apply rounded text-primary-600 dark:bg-gray-600
+      border-gray-300 dark:border-gray-700 shadow-sm;
+  }
+
+  .checkbox:focus {
+    @apply outline-none ring-2
+      ring-primary-500 dark:ring-offset-gray-700;
   }
 
   .checkbox:checked {
-    @apply dark:bg-primary-600;
+    @apply dark:bg-primary-500;
   }
 
   .button {
-    @apply group relative inline-flex items-center px-4 py-2 
-      border border-gray-300 dark:border-gray-700 dark:active:border-gray-500
+    @apply group relative
+      inline-flex items-center px-4 py-2 
+      border border-gray-300 dark:border-gray-700
       rounded-md shadow-sm text-sm font-medium 
       text-gray-700 dark:text-gray-300 
-      bg-white hover:bg-gray-50 dark:bg-gray-700 active:bg-gray-100
-      dark:hover:bg-gray-600 dark:active:bg-gray-500 
-      dark:hover:border-gray-600 dark:hover:text-gray-200 
-      focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
-      dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500
-      disabled:cursor-default transition-shadow 
-      motion-reduce:transition-none 
-      disabled:opacity-50 disabled:bg-white dark:disabled:bg-gray-700 dark:disabled:border-gray-700;
+      bg-white dark:bg-gray-700 
+      motion-safe:transition-shadow;
+  }
+
+  .button:hover {
+    @apply bg-gray-50 dark:bg-gray-600
+      dark:border-gray-600 dark:text-gray-200;
+  }
+
+  .button:active {
+    @apply bg-gray-100 dark:bg-gray-500 dark:border-gray-500;
+  }
+
+  .button:focus {
+    @apply outline-none;
+  }
+
+  .button:focus-visible {
+    @apply ring-2 ring-offset-2
+      ring-primary-600 dark:ring-primary-500
+      dark:ring-offset-gray-900;
+  }
+
+  .button:disabled {
+    @apply cursor-default
+      bg-white dark:bg-gray-700
+      dark:border-gray-700;
   }
 
   .button.is-small {
@@ -105,7 +136,12 @@
   }
 
   .button svg {
-    @apply -ml-1 mr-2 h-5 w-5 text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300;
+    @apply -ml-1 mr-2 h-5 w-5 
+      text-gray-500 dark:text-gray-400;
+  }
+
+  .button:hover svg {
+    @apply dark:text-gray-300;
   }
 
   .button.is-small svg {
@@ -117,53 +153,74 @@
   }
 
   .button.is-ghost {
-    @apply bg-transparent shadow-none border-transparent hover:bg-gray-100
-      text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 
-      dark:hover:bg-gray-700 dark:hover:border-gray-700;
+    @apply bg-transparent shadow-none border-transparent 
+      text-primary-600 dark:text-primary-400;
   }
 
-  .button.is-ghost.is-darker {
-    @apply hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:border-gray-600 dark:active:border-gray-600;
+  .button.is-ghost:hover {
+    @apply bg-gray-100 dark:bg-gray-700
+      text-primary-800 dark:text-gray-200
+      dark:border-gray-700;
   }
 
-  .button.is-primary {
-    @apply border-transparent text-white bg-primary-600 
-      hover:bg-primary-700 hover:border-primary-700
-      active:bg-primary-800 active:border-primary-800
-      disabled:opacity-50 disabled:bg-primary-600;
+  .button.is-ghost.is-darker:hover {
+    @apply bg-gray-200 dark:bg-gray-600 dark:border-gray-600;
   }
 
-  .button.is-danger {
-    @apply border-transparent text-white bg-red-600 hover:bg-red-700 
-      hover:border-red-700 active:bg-red-800 active:border-red-800
-      disabled:opacity-50 disabled:bg-red-600;
-  }
-
-  .button.is-link {
-    @apply hover:underline;
-  }
-
-  .button.is-active {
-    @apply z-10 bg-primary-50 hover:bg-primary-100 active:bg-primary-200 
-      dark:bg-primary-900 dark:hover:bg-primary-800 dark:active:bg-primary-700
-      border-primary-500 dark:border-primary-600 dark:hover:border-primary-500
-      text-primary-600 dark:text-primary-100;
+  .button.is-ghost.is-darker:active {
+    @apply dark:border-gray-600;
   }
 
   .button.is-ghost svg {
-    @apply text-primary-500 dark:text-primary-400 dark:group-hover:text-primary-300;
+    @apply text-primary-500 dark:text-primary-400;
   }
 
   .button.is-ghost:hover svg {
-    @apply dark:text-primary-300;
+    @apply text-primary-600 dark:text-gray-200;
   }
 
-  .button.is-active svg {
-    @apply text-primary-500 dark:text-primary-200 dark:group-hover:text-primary-300;
+  .button.is-primary {
+    @apply border-transparent text-white bg-primary-600;
+  }
+
+  .button.is-primary:hover {
+    @apply bg-primary-700 border-primary-700;
+  }
+
+  .button.is-primary:active {
+    @apply bg-primary-800 border-primary-800;
+  }
+
+  .button.is-primary:disabled {
+    @apply opacity-50 bg-primary-600;
   }
 
   .button.is-primary svg {
     @apply text-white;
+  }
+
+  .button.is-danger {
+    @apply border-transparent text-white bg-red-600;
+  }
+
+  .button.is-danger:hover {
+    @apply bg-red-700 border-red-700;
+  }
+
+  .button.is-danger:active {
+    @apply bg-red-800 border-red-800;
+  }
+
+  .button.is-danger:disabled {
+    @apply opacity-50 bg-red-600;
+  }
+
+  .button.is-danger svg {
+    @apply text-white;
+  }
+
+  .button.is-link:hover {
+    @apply underline;
   }
 
   @responsive {
@@ -189,17 +246,24 @@
   }
 
   .chip {
-    @apply cursor-pointer inline-block motion-safe:transition-colors duration-300 
-      text-sm px-3 py-1 dark:text-gray-200 rounded-full
-      border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700
-      hover:bg-gray-100 dark:hover:bg-gray-600;
+    @apply text-sm px-3 py-1 cursor-pointer rounded-full
+      inline-block motion-safe:transition-colors duration-300 
+      bg-white dark:bg-gray-700 dark:text-gray-200 
+      border border-gray-300 dark:border-gray-700;
+  }
+
+  .chip:hover {
+    @apply bg-gray-100 dark:bg-gray-600;
   }
 
   .chip.is-active {
     @apply bg-primary-100 dark:bg-primary-900 
       text-primary-600 dark:text-primary-100 
-      border-primary-500 dark:border-primary-500
-      hover:bg-primary-200 dark:hover:bg-primary-800 dark:hover:border-primary-400;
+      border-primary-500 dark:border-primary-500;
+  }
+
+  .chip.is-active:hover {
+    @apply bg-primary-200 dark:bg-primary-800 dark:border-primary-400;
   }
 
   .chip.is-square {

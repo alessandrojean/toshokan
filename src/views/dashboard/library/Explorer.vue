@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 items-center">
           <template v-if="sheetLoading">
             <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"></div>
@@ -11,10 +11,10 @@
             </div>
           </template>
           <template v-else>
-            <h1 class="text-2xl md:text-3xl font-display font-semibold text-gray-900 dark:text-gray-100">
+            <h1 class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100">
               {{ t('dashboard.library.title') }}
             </h1>
-            <ul class="mt-1 flex flex-col items-start sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
+            <ul class="mt-1 flex flex-col md:flex-row items-start sm:flex-wrap md:mt-0 sm:space-x-6">
               <li class="mt-2 flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <span aria-hidden="true">
                   <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />

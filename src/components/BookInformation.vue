@@ -75,13 +75,13 @@
     <div class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-400">
       <ul v-if="showBookInfo">
         <li v-if="book.codeType !== 'N/A'">
-          {{ `${book.codeType}: ${book.code}` }}
+          {{ book.codeType }}: <span>{{ book.code }}</span>
         </li>
         <li>
-          {{ `${t('book.properties.createdAt')}: ${createdAt}` }}
+          {{ t('book.properties.createdAt') }}: <span>{{ createdAt }}</span>
         </li>
         <li>
-          {{ `${t('book.properties.updatedAt')}: ${updatedAt}` }}
+          {{ t('book.properties.updatedAt') }}: <span>{{ updatedAt }}</span>
         </li>
       </ul>
       <div v-else class="flex flex-col space-y-1">

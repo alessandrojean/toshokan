@@ -30,6 +30,9 @@
                 class="self-stretch"
               >
                 <router-link
+                  :exact="item.exact"
+                  :exact-active-class="item.exact ? 'is-active' : undefined"
+                  :active-class="!item.exact ? 'is-active' : undefined"
                   :to="{ name: item.name }"
                   class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
                 >
@@ -209,7 +212,8 @@ export default {
     const navigation = computed(() => [
       {
         name: 'DashboardHome',
-        title: t('dashboard.header.links.dashboard')
+        title: t('dashboard.header.links.dashboard'),
+        exact: true
       },
       {
         name: 'DashboardLibrary',
@@ -248,14 +252,7 @@ export default {
 
     const signOut = () => store.dispatch('auth/signOut')
 
-    const isMac = ref(navigator.platform.toLowerCase().indexOf('mac') > -1)
-
-    // Focus on search input by pressing Ctrl + K
-    // const focusOnSearch = () => {
-    //   nextTick(() => {
-    //     searchNavbar.value.focus()
-    //   })
-    // }
+    const isMac = ref(navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1)
 
     const searchDialogIsOpen = ref(false)
 
@@ -319,11 +316,7 @@ export default {
 </script>
 
 <style scoped>
-.nav-link.router-link-active {
-  @apply bg-gray-900 text-white hover:bg-gray-900;
-}
-
-.nav-mobile-link.router-link-active {
+.nav-link.is-active {
   @apply bg-gray-900 text-white hover:bg-gray-900;
 }
 

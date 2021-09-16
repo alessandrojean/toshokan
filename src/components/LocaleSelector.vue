@@ -8,7 +8,7 @@
       {{ t('dashboard.settings.appearence.locale.label') }}
     </ListboxLabel>
 
-    <ListboxButton class="flex px-3 py-2 text-sm font-normal rounded-md border border-gray-300 dark:border-gray-600 relative w-56 cursor-default dark:text-gray-200 focus:outline-none focus-visible:border-primary-500 dark:focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-opacity-30 dark:focus-visible:ring-opacity-50">
+    <ListboxButton class="select relative w-56">
       <span class="flex items-center">
         <img
           :src="createFlagUrl(localeFlags[modelValue])"

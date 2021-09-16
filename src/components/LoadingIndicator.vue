@@ -12,7 +12,7 @@
       :class="[
         position,
         'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75',
-        'backdrop-filter backdrop-blur-sm'
+        blur ? 'backdrop-filter backdrop-blur-sm' : ''
       ]"
       v-if="loading"
     >
@@ -39,6 +39,10 @@ export default {
       type: String,
       default: 'spin'
     },
+    blur: {
+      type: Boolean,
+      default: true
+    },
     loading: Boolean,
     position: {
       type: String,
@@ -47,7 +51,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

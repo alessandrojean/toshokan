@@ -17,6 +17,7 @@
       >
         <router-link
           custom
+          :exact="item.exact"
           :to="{ name: item.to }"
           v-slot="{ href, navigate, isActive, isExactActive }"
         >
@@ -25,7 +26,7 @@
             :href="href"
             :aria-current="isExactActive ? 'page' : undefined"
             :class="[
-              isActive ? 'text-primary-600 dark:text-primary-400' : '',
+              (item.exact ? isExactActive : isActive) ? 'text-primary-600 dark:text-primary-400' : '',
               'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
             ]"
             @click="navigate"
@@ -173,7 +174,8 @@ export default {
       {
         to: 'DashboardHome',
         title: t('dashboard.home.title'),
-        icon: HomeIcon
+        icon: HomeIcon,
+        exact: true
       },
       {
         to: 'DashboardLibrary',

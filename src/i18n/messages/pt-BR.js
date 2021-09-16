@@ -83,6 +83,7 @@ export default {
       invalidValue: 'Valor inválido.',
       invalidNumber: 'Número inválido.',
       required: 'Obrigatório',
+      optional: 'Opcional',
       markdown: 'O Markdown é suportado neste campo.',
       addNotes: 'Adicionar observações sobre este livro',
       example: {

@@ -1,3 +1,4 @@
+import { getFlagUrl } from '.'
 import { isbn as validateIsbn } from './validators'
 
 export function convertIsbn13ToIsbn10 (isbn13) {
@@ -48,10 +49,6 @@ const REGISTRATION_GROUPS = {
   99905: ['BO', 'es'],
   99954: ['BO', 'es'],
   99974: ['BO', 'es']
-}
-
-function getFlagUrl (countryCode) {
-  return `https://hatscripts.github.io/circle-flags/flags/${countryCode.toLowerCase()}.svg`
 }
 
 export function getIsbnCountry (isbn) {

@@ -8,7 +8,11 @@ module.exports = {
     colors: {
       ...defaultTheme.colors,
       primary: colors.indigo,
-      secondary: colors.emerald
+      secondary: colors.emerald,
+      gray: {
+        ...defaultTheme.colors.gray,
+        850: '#17202D'
+      }
     },
     fontFamily: {
       ...defaultTheme.fontFamily,
@@ -88,6 +92,7 @@ module.exports = {
       backgroundImage: ['dark'],
       blur: ['hover', 'group-hover', 'dark'],
       borderColor: ['active', 'focus-visible', 'group-focus-within', 'disabled'],
+      borderRadius: ['dark'],
       borderWidth: ['focus', 'dark'],
       boxShadow: ['dark'],
       cursor: ['disabled'],

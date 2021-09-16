@@ -1,6 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-gray-900">
-    <div class="border-b dark:border-b-0 border-gray-300 hidden md:block">
+  <div
+    :class="state === States.NONE ? 'bg-white' : 'bg-transparent'"
+    class="dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out"
+  >
+    <div class="border-b dark:border-b-0 border-gray-300 hidden md:block bg-white dark:bg-transparent">
       <div class="max-w-7xl mx-auto md:px-6 lg:px-8 dark:mt-6">
         <!-- Breadcrumb -->
         <div class="py-2.5 dark:py-0">
@@ -22,7 +25,10 @@
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
       >
-        <div v-if="state === States.NONE" class="md:space-y-8">
+        <div
+          v-if="state === States.NONE"
+          class="md:space-y-8 bg-white dark:bg-transparent"
+        >
           <section class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8">
             <!-- Book cover -->
             <div class="lg:col-span-3">
@@ -56,9 +62,9 @@
 
         <section
           v-else-if="state === States.FORM"
-          class="max-w-2xl mx-auto space-y-6 py-6 md:py-4 px-6 md:px-0"
+          class="max-w-2xl mx-auto space-y-6 my-6 md:my-4 bg-white dark:bg-gray-800 md:rounded-lg shadow-md overflow-hidden"
         >
-          <div>
+          <div class="border-b border-gray-200 dark:border-gray-600 mx-4 md:mx-6 pt-4 md:pt-5 pb-2">
             <h2 class="text-xl font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
               {{ t('dashboard.details.editForm.title') }}
             </h2>
@@ -71,9 +77,10 @@
             ref="editForm"
             :book="editingBook"
             @update:book="Object.assign(editingBook, $event)"
+            class="px-4 md:px-6"
           />
 
-          <div class="flex flex-row-reverse">
+          <div class="flex flex-row-reverse justify-start bg-gray-50 dark:bg-gray-800 px-4 md:px-6 dark:px-0 md:dark:px-0 dark:mx-4 md:dark:mx-6 py-3 dark:py-4 dark:border-t dark:border-gray-600">
             <button
               type="button"
               class="button is-primary ml-2"
@@ -85,7 +92,7 @@
 
             <button
               type="button"
-              class="button"
+              class="button is-ghost"
               @click.stop="hideEditForm"
             >
               {{ t('dashboard.details.editForm.cancel') }}
@@ -95,9 +102,9 @@
 
         <section
           v-else-if="state === States.COVER"
-          class="max-w-2xl mx-auto space-y-6 py-6 md:py-4 px-6 md:px-0"
+          class="max-w-2xl mx-auto space-y-6 my-6 md:my-4 bg-white dark:bg-gray-800 md:rounded-lg shadow-md overflow-hidden"
         >
-          <div>
+          <div class="border-b border-gray-200 dark:border-gray-600 mx-4 md:mx-6 pt-4 md:pt-5 pb-2">
             <h2 class="text-xl font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
               {{ t('dashboard.details.coverForm.title') }}
             </h2>
@@ -110,9 +117,10 @@
             custom
             v-model:cover-url="editingBook.coverUrl"
             :book="editingBook"
+            class="px-4 md:px-6"
           />
 
-          <div class="flex flex-row-reverse">
+          <div class="flex flex-row-reverse justify-start bg-gray-50 dark:bg-gray-800 px-4 md:px-6 dark:px-0 md:dark:px-0 dark:mx-4 md:dark:mx-6 py-3 dark:py-4 dark:border-t dark:border-gray-600">
             <button
               type="button"
               class="button is-primary ml-2"
@@ -124,7 +132,7 @@
 
             <button
               type="button"
-              class="button"
+              class="button is-ghost"
               @click.stop="hideCoverEditor"
             >
               {{ t('dashboard.details.coverForm.cancel') }}

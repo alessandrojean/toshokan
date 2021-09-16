@@ -3,12 +3,12 @@
     <SimpleHeader :title="t('dashboard.settings.title')" />
 
     <div class="flex-1">
-      <div class="max-w-7xl mx-auto py-6 px-4 md:px-8">
+      <div class="max-w-7xl mx-auto py-6 md:px-8">
         <TabGroup
           vertical
           :default-index="0"
           as="div"
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-md md:grid md:grid-cols-4"
+          class="bg-white dark:bg-gray-800 md:rounded-lg shadow-md md:grid md:grid-cols-4"
         >
           <TabList
             as="aside"

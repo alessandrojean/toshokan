@@ -8,7 +8,6 @@
       <div class="col-span-7 sm:col-span-5 md:col-span-1">
         <label for="book-code" class="label">
           {{ t('book.properties.id') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <input
           id="book-code"
@@ -30,7 +29,6 @@
     <div>
       <label for="book-title" class="label">
         {{ t('book.properties.title') }}
-        <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-title"
@@ -51,7 +49,6 @@
     <div>
       <label for="book-authors" class="label">
         {{ t('book.properties.authors') }}
-        <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
       </label>
       <input
         id="book-authors"
@@ -64,7 +61,7 @@
         :aria-invalid="v$.authorsStr.$error"
         required
       >
-      <p id="book-authors-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
+      <p id="book-authors-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
         {{ t('book.form.authorsHint') }}
       </p>
       <p id="book-authors-error" class="sr-only" aria-hidden="true">
@@ -73,8 +70,11 @@
     </div>
 
     <div>
-      <label for="book-synopsis" class="label">
-        {{ t('book.properties.synopsis') }}
+      <label for="book-synopsis" class="label flex justify-between items-baseline">
+        <span>{{ t('book.properties.synopsis') }}</span>
+        <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
+          {{ t('book.form.optional') }}
+        </span>
       </label>
       <textarea
         id="book-synopsis"
@@ -85,7 +85,7 @@
         aria-describedby="book-synopsis-hint"
         rows="5"
       />
-      <p id="book-synopsis-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
+      <p id="book-synopsis-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
         {{ t('book.form.markdown') }}
       </p>
     </div>
@@ -94,7 +94,6 @@
       <div class="col-span-12 sm:col-span-1">
         <label for="book-publisher" class="label">
           {{ t('book.properties.publisher') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -130,7 +129,6 @@
       <div class="col-span-12 sm:col-span-1">
         <label for="book-group" class="label">
           {{ t('book.properties.group') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -168,7 +166,6 @@
       <div class="col-span-7 sm:col-span-4 md:col-span-1">
         <label for="book-dimensions" class="label">
           {{ t('book.properties.dimensions') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -196,7 +193,6 @@
       <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-label-price" class="label">
           {{ t('book.properties.labelPrice') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative group">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -220,7 +216,7 @@
             </label>
             <select
               id="book-label-price-currency"
-              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-transparent dark:border-l-0 dark:focus:border-l dark:group-focus-within:border-primary-500 h-full bg-transparent shadow-none text-gray-500 dark:text-gray-300"
+              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-500 h-full shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('labelPriceCurrency', $event.target.value)"
               required
             >
@@ -245,7 +241,6 @@
       <div class="col-span-9 sm:col-span-5 md:col-span-1">
         <label for="book-paid-price" class="label">
           {{ t('book.properties.paidPrice') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="relative group">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
@@ -269,7 +264,7 @@
             </label>
             <select
               id="book-paid-price-currency"
-              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-transparent dark:border-l-0 dark:focus:border-l dark:group-focus-within:border-primary-500 h-full bg-transparent shadow-none text-gray-500 dark:text-gray-300"
+              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-500 h-full shadow-none text-gray-500 dark:text-gray-300"
               @change="handleInput('paidPriceCurrency', $event.target.value)"
               required
             >
@@ -294,7 +289,6 @@
       <div class="col-span-12 sm:col-span-6">
         <label for="book-store" class="label">
           {{ t('book.properties.store') }}
-          <abbr :title="t('book.form.required')" class="required" aria-hidden="true">*</abbr>
         </label>
         <div class="group relative">
           <input
@@ -328,8 +322,11 @@
       </div>
 
       <div class="col-span-7 sm:col-span-5 md:col-span-6">
-        <label for="book-bought-at" class="label">
-          {{ t('book.properties.boughtAt') }}
+        <label for="book-bought-at" class="label flex justify-between items-baseline">
+          <span>{{ t('book.properties.boughtAt') }}</span>
+          <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
+            {{ t('book.form.optional') }}
+          </span>
         </label>
         <input
           id="book-bought-at"
@@ -361,8 +358,11 @@
     </div>
 
     <div v-if="addNotes">
-      <label for="book-notes" class="label">
-        {{ t('book.properties.notes') }}
+      <label for="book-notes" class="label flex justify-between items-baseline">
+        <span>{{ t('book.properties.notes') }}</span>
+        <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
+          {{ t('book.form.optional') }}
+        </span>
       </label>
       <textarea
         id="book-notes"
@@ -373,19 +373,10 @@
         aria-describedby="book-notes-hint"
         rows="5"
       />
-      <p id="book-notes-hint" class="mt-1 text-xs text-gray-400" aria-hidden="true">
+      <p id="book-notes-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
         {{ t('book.form.markdown') }}
       </p>
     </div>
-
-    <i18n-t
-      keypath="book.form.requiredHint"
-      tag="p"
-      class="mt-1 text-xs text-gray-400"
-      aria-hidden="true"
-    >
-      <abbr :title="t('book.form.required')" class="required">*</abbr>
-    </i18n-t>
 
     <Alert
       type="error"

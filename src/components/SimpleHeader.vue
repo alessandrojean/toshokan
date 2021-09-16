@@ -1,8 +1,8 @@
 <template>
   <header class="bg-white shadow dark:bg-gray-800">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div v-if="loading" class="motion-safe:animate-pulse h-8 bg-gray-400 dark:bg-gray-600 rounded w-56"></div>
-      <h1 v-else class="text-2xl md:text-3xl font-display font-semibold text-gray-900 dark:text-gray-100">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+      <div v-if="loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-56"></div>
+      <h1 v-else class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100">
         {{ title }}
       </h1>
       <p class="text-gray-500 dark:text-gray-400" v-if="subtitle">

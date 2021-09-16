@@ -76,7 +76,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard/Index.vue'),
     children: [
       {
-        path: 'home',
+        path: '',
         name: 'DashboardHome',
         component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/dashboard/Home.vue'),
         meta: {
@@ -85,7 +85,7 @@ const routes = [
       },
       {
         path: 'library',
-        component: () => import(/* webpackChunkName: "dashboard-collection" */ '../views/dashboard/library/Index.vue'),
+        component: () => import(/* webpackChunkName: "dashboard-library" */ '../views/dashboard/library/Index.vue'),
         children: [
           {
             path: '',
@@ -191,7 +191,7 @@ router.beforeEach(async (to, from, next) => {
   if (!store.getters['auth/isStarted']) {
     try {
       const isSignedIn = await store.dispatch('auth/initApp')
-      next(isSignedIn && to.path === '/sign-in' ? '/dashboard/home' : undefined)
+      next(isSignedIn && to.path === '/sign-in' ? '/dashboard' : undefined)
     } catch (e) {
       next('/sign-in')
     }

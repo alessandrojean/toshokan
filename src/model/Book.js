@@ -235,6 +235,10 @@ export function getCodeType (code) {
 export function parseBookFromCbl (cblBook) {
   const allowedRoles = ['Autor', 'Ilustrador', 'Roteirista']
 
+  const dimensions = cblBook.Dimensao
+    ? cblBook.Dimensao.match(/(\d{2})(\d)?x(\d{2})(\d)?$/)
+    : null
+
   const book = {
     code: cblBook.RowKey,
     codeType: cblBook.RowKey.length === 13 ? 'ISBN-13' : 'ISBN-10',
@@ -245,13 +249,11 @@ export function parseBookFromCbl (cblBook) {
       ? cblBook.Authors.filter((_, i) => allowedRoles.includes(cblBook.Profissoes[i]))
       : cblBook.Authors,
     publisher: PUBLISHER_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
-    dimensions: cblBook.Dimensao
-      ? cblBook.Dimensao.replace(/(\d{2})(\d)?x(\d{2})(\d)?$/, (m, p1, p2, p3, p4) => {
-        return [
-          parseFloat(p1 + (p2 ? '.' + p2 : '')),
-          parseFloat(p3 + (p4 ? '.' + p4 : ''))
+    dimensions: dimensions
+      ? [
+          parseFloat(dimensions[1] + (dimensions[2] ? '.' + dimensions[2] : '')),
+          parseFloat(dimensions[3] + (dimensions[4] ? '.' + dimensions[4] : ''))
         ]
-      })
       : [],
     dimensionsStr: '',
     synopsis: cblBook.Sinopse || '',
@@ -261,6 +263,8 @@ export function parseBookFromCbl (cblBook) {
   book.dimensionsStr = book.dimensions
     .map(dm => n(dm, 'dimensions'))
     .join(' x ')
+
+  console.log(book)
 
   return book
 }
@@ -296,10 +300,13 @@ export function parseBookFromOpenLibrary (openLibraryBook, details) {
         ? details.description.value
         : '',
       dimensions: physicalDimensions.includes('centimeters') && dimensions.length === 3
-        ? dimensions
+        ? dimensions.slice(0, 2).reverse()
         : [],
       dimensionsStr: physicalDimensions.includes('centimeters') && dimensions.length === 3
-        ? dimensions.map(dm => n(dm, 'dimensions')).join(' x ')
+        ? (dimensions.slice(0, 2)
+            .reverse()
+            .map(dm => n(dm, 'dimensions'))
+            .join(' x '))
         : ''
     }
   }

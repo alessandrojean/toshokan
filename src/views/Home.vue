@@ -7,17 +7,30 @@
         <div class="flex flex-col items-center pt-24 space-y-24">
           <div class="space-y-8">
             <h2 class="text-gray-800 dark:text-gray-100 font-bold font-display text-center text-5xl">
-              {{ t('home.leading1') }}<br>
+              {{ t('home.leading1') }}<br class="hidden md:block">
               <span class="text-primary-600 dark:text-primary-500">
-                {{ t('home.leading2') }}
+                {{ ' ' + t('home.leading2') }}
               </span>
             </h2>
             <p class="w-full text-gray-500 dark:text-gray-400 text-center max-w-2xl text-lg">
               {{ t('home.shortDescription') }}
             </p>
           </div>
-          <figure class="w-full flex justify-center">
-            <img class="border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg" src="@/assets/home/screenshot-library.png" alt="">
+          <figure class="w-full flex flex-col justify-center border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
+            <div
+              aria-hidden="true"
+              class="bg-gray-800 py-2.5 px-4 flex justify-between items-center border-b border-gray-600"
+            >
+              <p class="text-sm text-gray-100 font-medium leading-tight">
+                {{ t('app.name') }}
+              </p>
+              <div class="space-x-2 flex">
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
+              </div>
+            </div>
+            <img class="" src="@/assets/home/screenshot-library.png" alt="">
           </figure>
         </div>
       </section>

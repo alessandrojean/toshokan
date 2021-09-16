@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-5 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
           <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
           <div>
-            <h1 class="text-2xl font-semibold font-display text-gray-900 dark:text-gray-100">
+            <h1 class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100">
               {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
             <p v-if="isDev" class="text-sm text-gray-600 dark:text-gray-300">

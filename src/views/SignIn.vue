@@ -110,7 +110,7 @@ export default {
 
     const redirectToDashboard = () => {
       if (signedIn.value) {
-        router.replace('/dashboard/home')
+        router.replace('/dashboard')
       }
     }
 

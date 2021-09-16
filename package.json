@@ -1,6 +1,6 @@
 {
   "name": "toshokan",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -34,15 +34,15 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.13",
-    "@vue/cli-plugin-eslint": "~4.5.13",
-    "@vue/cli-plugin-pwa": "~4.5.13",
-    "@vue/cli-plugin-router": "~4.5.13",
-    "@vue/cli-plugin-vuex": "~4.5.13",
-    "@vue/cli-service": "~4.5.13",
+    "@vue/cli-plugin-babel": "^5.0.0-beta.4",
+    "@vue/cli-plugin-eslint": "^5.0.0-beta.4",
+    "@vue/cli-plugin-pwa": "^5.0.0-beta.4",
+    "@vue/cli-plugin-router": "^5.0.0-beta.4",
+    "@vue/cli-plugin-vuex": "^5.0.0-beta.4",
+    "@vue/cli-service": "^5.0.0-beta.4",
     "@vue/compiler-sfc": "^3.2.11",
     "@vue/eslint-config-standard": "^6.1.0",
-    "autoprefixer": "^9",
+    "autoprefixer": "^10.3.4",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.24.2",
@@ -51,7 +51,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^7.17.0",
     "git-describe": "^4.1.0",
-    "postcss": "^7",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+    "postcss": "^8.3.6",
+    "tailwindcss": "^2.2.15"
   }
 }

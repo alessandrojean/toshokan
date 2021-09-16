@@ -1,9 +1,9 @@
 <template>
   <transition
-    leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+    leave-active-class="motion-safe:transition duration-100 ease-in"
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
-    enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+    enter-active-class="motion-safe:transition duration-200 ease-out"
     enter-from-class="opacity-0"
     enter-to-class="opacity-100"
   >
@@ -11,19 +11,19 @@
       v-if="show"
       role="alert"
       :class="[
-        'alert-' + type,
         backgroundColor,
         baseTextColor,
-        'dark:text-gray-100 p-3 text-sm rounded-md flex space-x-3'
+        borderColor,
+        'dark:bg-gray-700 border-l-4 dark:border-l-0 dark:rounded-md dark:text-gray-100 p-3 text-sm flex space-x-3'
       ]"
     >
-      <XCircleIcon v-if="type === 'error'" class="h-5 w-5 text-red-600 dark:text-red-500" aria-hidden="true" />
-      <InformationCircleIcon v-else-if="type === 'info'" class="h-5 w-5 text-blue-500 dark:text-blue-500" aria-hidden="true" />
+      <XCircleIcon v-if="type === 'error'" class="h-5 w-5 text-red-500 dark:text-red-400" aria-hidden="true" />
+      <InformationCircleIcon v-else-if="type === 'info'" class="h-5 w-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
       <ExclamationIcon v-else class="h-5 w-5 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
-      <div class="space-y-2">
+      <div class="space-y-2 dark:text-gray-200">
         <p
           v-if="title && title.length > 0"
-          :class="[titleTextColor, 'font-display font-semibold']"
+          :class="[titleTextColor, 'font-display font-medium dark:text-gray-100']"
         >
           {{ title }}
         </p>
@@ -88,33 +88,30 @@ export default {
 
     const titleTextColor = computed(() => {
       if (type.value === 'error') {
-        return 'text-red-800 dark:text-red-500'
+        return 'text-red-800'
       } else if (type.value === 'info') {
-        return 'text-blue-800 dark:text-blue-500'
+        return 'text-blue-800'
       } else {
-        return 'text-yellow-800 dark:text-yellow-500'
+        return 'text-yellow-800'
+      }
+    })
+
+    const borderColor = computed(() => {
+      if (type.value === 'error') {
+        return 'border-red-500'
+      } else if (type.value === 'info') {
+        return 'border-blue-500'
+      } else {
+        return 'border-yellow-400'
       }
     })
 
     return {
       backgroundColor,
       baseTextColor,
-      titleTextColor
+      titleTextColor,
+      borderColor
     }
   }
 }
 </script>
-
-<style scoped>
-html.dark .alert-error {
-  background: linear-gradient(to right, rgba(239, 68, 68, 0.25), rgba(55, 65, 81, 0.6) 25%);
-}
-
-html.dark .alert-info {
-  background: linear-gradient(to right, rgba(59, 130, 246, 0.25), rgba(55, 65, 81, 0.6) 25%);
-}
-
-html.dark .alert-warning {
-  background: linear-gradient(to right, rgba(245, 158, 11, 0.25), rgba(55, 65, 81, 0.6) 25%);
-}
-</style>

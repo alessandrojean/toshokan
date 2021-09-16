@@ -124,7 +124,7 @@
               class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 focus:outline-none"
             >
               <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 justify-between sm:items-center">
-                <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-title">
+                <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-display">
                   {{ t('dashboard.search.results') }}
                 </h3>
 
@@ -135,7 +135,7 @@
                     </label>
 
                     <select
-                      class="select rounded-r-none w-full py-1.5 px-2.5"
+                      class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
                       v-model="sortBy"
                       id="search-sort-by"
                     >
@@ -150,7 +150,7 @@
                   </div>
 
                   <button
-                    class="button is-icon-only px-2 py-1.5 rounded-l-none bg-gray-50 dark:bg-gray-800 dark:active:bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:active:border-gray-600 focus-visible:ring-offset-0 focus-visible:border-primary-500 dark:focus-visible:border-primary-500 focus-visible:ring-opacity-30 dark:focus-visible:ring-opacity-50"
+                    class="relative focus:z-10 button is-icon-only px-2 py-1.5 rounded-l-none bg-gray-50 dark:bg-gray-800 dark:active:bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:active:border-gray-600 focus-visible:ring focus-visible:ring-offset-0 focus-visible:border-primary-500 dark:focus-visible:border-primary-500 focus-visible:ring-opacity-30 dark:focus-visible:ring-opacity-50"
                     @click="toggleSortDirection"
                   >
                     <span class="sr-only">

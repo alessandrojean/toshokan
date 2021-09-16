@@ -18,7 +18,7 @@
         </span>
       </div>
       <div class="mt-1 md:mt-0 inline-flex md:flex-col items-end space-x-2 md:space-x-0 md:space-y-0.5">
-        <span class="text-xs bg-primary-100 dark:bg-gray-600 dark:group-hover:bg-gray-500 text-primary-600 dark:text-gray-200 dark:group-hover:text-gray-100 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide">
+        <span class="text-xs bg-primary-100 dark:bg-transparent text-primary-600 dark:text-gray-200 dark:group-hover:text-gray-100 font-semibold px-2 py-0.5 dark:p-0 rounded text uppercase tracking-wide">
           {{ book.provider }}
         </span>
         <span
@@ -70,7 +70,7 @@ export default {
       return formattedAuthors
     }
 
-    return { formatAuthors }
+    return { formatAuthors, t }
   }
 }
 </script>
