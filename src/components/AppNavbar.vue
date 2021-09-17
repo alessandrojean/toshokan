@@ -91,7 +91,10 @@
             <div>
               <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none transition-shadow motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700">
                 <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>
-                <img class="h-8 w-8 rounded-full" :src="profileImageUrl" alt="">
+                <div
+                  class="w-8 h-8 rounded-full bg-cover shadow-avatar"
+                  :style="{ backgroundImage: `url('${profileImageUrl}')` }"
+                />
               </MenuButton>
             </div>
             <transition

@@ -331,8 +331,8 @@
         <input
           id="book-bought-at"
           type="date"
-          :value="toDateInputValue(book.boughtAt)"
-          @input="handleInput('boughtAt', $event.target.value)"
+          :value="book.boughtAtStr"
+          @input="handleInput('boughtAtStr', $event.target.value)"
           class="input"
           :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
         >
@@ -491,7 +491,7 @@ export default {
         newBook.codeType = getCodeType(value)
       } else if (property === 'authorsStr') {
         newBook.authors = value.split(/;\s+/g)
-      } else if (property === 'boughtAt') {
+      } else if (property === 'boughtAtStr') {
         newBook.boughtAt = value.length === 10 ? new Date(value) : null
       } else if (property === 'dimensionsStr') {
         newBook.dimensions = value.split(/\s*[Xx×]\s*/)
@@ -547,6 +547,10 @@ export default {
     })
 
     function toDateInputValue (date) {
+      if (!date) {
+        return ''
+      }
+
       const local = new Date(date)
       local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
       return local.toISOString().slice(0, 10)

@@ -21,6 +21,7 @@ module.exports = {
     },
     extend: {
       boxShadow: {
+        avatar: 'inset 0 0px 4px 0 rgba(0, 0, 0, 0.25)',
         top: '0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)'
       },
       height: {

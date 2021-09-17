@@ -3,7 +3,10 @@
     <header class="bg-white shadow dark:bg-gray-800">
       <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
-          <img :src="profileImageUrl" class="h-12 w-12 rounded-full" alt="">
+          <div
+            class="w-12 h-12 rounded-full shadow-avatar bg-cover"
+            :style="{ backgroundImage: `url('${profileImageUrl}')` }"
+          />
           <div>
             <h1 class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100">
               {{ t('dashboard.home.hello', { name: profileName }) }}

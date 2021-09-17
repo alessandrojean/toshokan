@@ -173,7 +173,7 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
 }
 
 function formatDateToSheet (date) {
-  return `=DATE(${date.getFullYear()}, ${date.getMonth() + 1}, ${date.getDate()})`
+  return `=DATE(${date.getUTCFullYear()}, ${date.getUTCMonth() + 1}, ${date.getUTCDate()})`
 }
 
 function formatDateTimeToSheet (date) {

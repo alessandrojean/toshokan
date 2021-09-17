@@ -26,7 +26,6 @@
       <footer class="mt-8 space-y-8 flex flex-col items-center">
         <p class="font-mono text-gray-400 text-xs dark:text-gray-500">
           {{ t('footer.version', { version: appVersion }) }}
-          (<a :href="gitHubUrl" target="_blank" class="hover:text-primary-500 hover:underline dark:hover:text-gray-200">{{ gitHash }}</a>)
         </p>
       </footer>
     </div>
@@ -52,7 +51,7 @@ export default {
   },
 
   setup () {
-    const { appVersion, gitHash, gitHubUrl } = useAppInfo()
+    const { appVersion } = useAppInfo()
 
     const store = useStore()
     const signedIn = computed(() => store.state.auth.signedIn)
@@ -61,8 +60,6 @@ export default {
 
     return {
       appVersion,
-      gitHash,
-      gitHubUrl,
       signedIn,
       t
     }

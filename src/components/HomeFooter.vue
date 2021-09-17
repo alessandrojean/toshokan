@@ -32,7 +32,6 @@
     <div class="text-center">
       <p>
         {{ t('footer.version', { version: appVersion }) }}
-        (<a :href="gitHubUrl" target="_blank">{{ gitHash }}</a>)
       </p>
 
       <p v-if="isDev">
@@ -54,7 +53,7 @@ export default {
   components: { LocaleSelector },
 
   setup () {
-    const { appVersion, gitHash, gitHubUrl } = useAppInfo()
+    const { appVersion } = useAppInfo()
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
@@ -62,8 +61,6 @@ export default {
 
     return {
       appVersion,
-      gitHash,
-      gitHubUrl,
       isDev,
       t,
       locale

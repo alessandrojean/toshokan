@@ -60,7 +60,6 @@
 
           <p class="text-center text-gray-600 text-sm dark:text-gray-400">
             {{ t('footer.version', { version: appVersion }) }}
-            <span class="text-xs">(<a :href="gitHubUrl" target="_blank" class="rounded-sm font-mono hover:text-primary-500 hover:underline dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500">{{ gitHash }}</a>)</span>
           </p>
 
           <p v-if="!isDev" class="text-center text-xs text-gray-600 dark:text-gray-500 mt-1" lang="en">
@@ -103,7 +102,7 @@ export default {
 
     const isDev = ref(process.env.NODE_ENV === 'development')
 
-    const { appVersion, gitHash, gitHubUrl } = useAppInfo()
+    const { appVersion } = useAppInfo()
 
     const started = computed(() => store.state.auth.started)
     const signedIn = computed(() => store.state.auth.signedIn)
@@ -122,8 +121,6 @@ export default {
 
     return {
       appVersion,
-      gitHash,
-      gitHubUrl,
       isDev,
       started,
       signedIn,

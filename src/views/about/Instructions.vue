@@ -42,43 +42,43 @@ export default {
           iso4217link: 'https://en.wikipedia.org/wiki/ISO_4217',
           figure1: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-01.png')}" />
+              <img src="${require('@/assets/about/new-book-step-01.png').default}" />
               <legend>${t('about.instructions.legend1')}</legend>
             </figure>
           `,
           figure2: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-02.png')}" />
+              <img src="${require('@/assets/about/new-book-step-02.png').default}" />
               <legend>${t('about.instructions.legend2')}</legend>
             </figure>
           `,
           figure3: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-03.png')}" />
+              <img src="${require('@/assets/about/new-book-step-03.png').default}" />
               <legend>${t('about.instructions.legend3')}</legend>
             </figure>
           `,
           figure4: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-04.png')}" />
+              <img src="${require('@/assets/about/new-book-step-04.png').default}" />
               <legend>${t('about.instructions.legend4')}</legend>
             </figure>
           `,
           figure5: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-05.png')}" />
+              <img src="${require('@/assets/about/new-book-step-05.png').default}" />
               <legend>${t('about.instructions.legend5')}</legend>
             </figure>
           `,
           figure6: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-06.png')}" />
+              <img src="${require('@/assets/about/new-book-step-06.png').default}" />
               <legend>${t('about.instructions.legend6')}</legend>
             </figure>
           `,
           figure7: dedent`
             <figure>
-              <img src="${require('@/assets/about/new-book-step-07.png')}" />
+              <img src="${require('@/assets/about/new-book-step-07.png').default}" />
               <legend>${t('about.instructions.legend7')}</legend>
             </figure>
           `

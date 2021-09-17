@@ -17,7 +17,6 @@
       >
         <router-link
           custom
-          :exact="item.exact"
           :to="{ name: item.to }"
           v-slot="{ href, navigate, isActive, isExactActive }"
         >
@@ -80,10 +79,13 @@
             <MenuItems as="ul" class="fixed md:absolute z-40 inset-x-0 bottom-0 py-1 origin-bottom bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-t-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="pb-1 w-full">
                 <div class="flex px-4 py-2.5 space-x-4">
-                  <img :src="profileImageUrl" class="rounded-full w-10 h-10">
+                  <div
+                    class="rounded-full w-10 h-10 bg-contain shadow-avatar"
+                    :style="{ backgroundImage: `url('${profileImageUrl}')` }"
+                  />
                   <div class="flex-1 flex flex-col justify-center text-sm text-gray-700 dark:text-gray-300">
-                    <span class="font-semibold">{{ profileName }}</span>
-                    <span class="text-xs dark:text-gray-400">{{ profileEmail }}</span>
+                    <span class="font-semibold font-display truncate">{{ profileName }}</span>
+                    <span class="text-xs dark:text-gray-400 truncate">{{ profileEmail }}</span>
                   </div>
                 </div>
               </div>
@@ -195,11 +197,16 @@ export default {
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
 
+    function signOut () {
+      store.dispatch('auth/signOut')
+    }
+
     return {
       items,
       profileEmail,
       profileImageUrl,
       profileName,
+      signOut,
       t
     }
   }

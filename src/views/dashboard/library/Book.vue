@@ -254,7 +254,10 @@ export default {
           .map(dm => n(dm, 'dimensions'))
           .join(' x '),
         labelPriceValueStr: n(book.value.labelPrice.value, 'decimal'),
-        paidPriceValueStr: n(book.value.paidPrice.value, 'decimal')
+        paidPriceValueStr: n(book.value.paidPrice.value, 'decimal'),
+        boughtAtStr: book.value.boughtAt
+          ? book.value.boughtAt.toISOString().substring(0, 10)
+          : ''
       })
       state.value = States.FORM
     }

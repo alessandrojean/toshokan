@@ -320,10 +320,13 @@ export default {
     const mainEl = ref(null)
     const { t } = useI18n({ useScope: 'global' })
 
+    const now = new Date()
+
     const bookInitialState = {
       authors: [],
       authorsStr: '',
-      boughtAt: new Date(),
+      boughtAt: now,
+      boughtAtStr: now.toISOString().substring(0, 10),
       code: '',
       codeType: '',
       group: '',
