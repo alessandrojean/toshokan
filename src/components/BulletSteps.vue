@@ -12,9 +12,11 @@
       :key="i"
       :class="[
         'ring-4 w-2.5 h-2.5 rounded-lg',
-        modelValue < i + 1 ? 'bg-gray-300 dark:bg-gray-600': '',
-        modelValue > i + 1 ? 'bg-primary-600 dark:bg-primary-500' : '',
-        modelValue === i + 1 ? 'bg-primary-600 dark:bg-primary-100 ring-primary-200 dark:ring-primary-500 dark:ring-opacity-60' : 'ring-white dark:ring-transparent'
+        modelValue < i + 1 ? 'bg-primary-400': '',
+        modelValue > i + 1 ? 'bg-primary-100' : '',
+        modelValue === i + 1
+          ? 'bg-white ring-primary-400'
+          : 'ring-primary-600 dark:ring-primary-500'
       ]"
       aria-hidden="true"
     />

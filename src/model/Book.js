@@ -178,10 +178,13 @@ function formatDateToSheet (date) {
 
 function formatDateTimeToSheet (date) {
   return formatDateToSheet(date) + ' + ' +
-    `TIME(${date.getHours()}, ${date.getMinutes()}, ${date.getSeconds()})`
+    `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
 }
 
 export function formatBook (book) {
+  const now = new Date()
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+
   return [
     book.id || nanoid(),
     book.code,
@@ -204,8 +207,8 @@ export function formatBook (book) {
     book.favorite || BookFavorite.INACTIVE,
     book.synopsis || '',
     book.notes || '',
-    formatDateTimeToSheet(book.createdAt || new Date()),
-    formatDateTimeToSheet(new Date())
+    formatDateTimeToSheet(book.createdAt || now),
+    formatDateTimeToSheet(now)
   ]
 }
 
@@ -248,6 +251,7 @@ export function parseBookFromCbl (cblBook) {
     authors: cblBook.Profissoes && cblBook.Profissoes.length >= cblBook.Authors.length
       ? cblBook.Authors.filter((_, i) => allowedRoles.includes(cblBook.Profissoes[i]))
       : cblBook.Authors,
+    authorsStr: '',
     publisher: PUBLISHER_REPLACEMENTS[cblBook.Imprint] || cblBook.Imprint,
     dimensions: dimensions
       ? [
@@ -260,11 +264,11 @@ export function parseBookFromCbl (cblBook) {
     provider: 'CBL'
   }
 
+  book.authorsStr = book.authors.join('; ')
+
   book.dimensionsStr = book.dimensions
     .map(dm => n(dm, 'dimensions'))
     .join(' x ')
-
-  console.log(book)
 
   return book
 }
@@ -281,10 +285,13 @@ export function parseBookFromOpenLibrary (openLibraryBook, details) {
       .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
       .replace(/#(\d{1})$/, '#0$1'),
     authors: (openLibraryBook.authors || []).map(author => author.name),
+    authorsStr: '',
     publisher: openLibraryBook.publishers.length > 0 ? openLibraryBook.publishers[0].name : '',
     coverUrl: openLibraryBook.cover ? openLibraryBook.cover.large : '',
     provider: 'Open Library'
   }
+
+  book.authorsStr = book.authors.join('; ')
 
   if (details) {
     const physicalDimensions = details.physical_dimensions || ''
@@ -335,6 +342,7 @@ export function parseBookFromGoogleBooks (googleBook) {
       .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
       .replace(/#(\d{1})$/, '#0$1'),
     authors: volumeInfo.authors || [],
+    authorsStr: volumeInfo.authors ? volumeInfo.authors.join('; ') : '',
     publisher: volumeInfo.publisher || '',
     synopsis: volumeInfo.description || '',
     dimensions: width && height

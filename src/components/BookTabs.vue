@@ -8,7 +8,7 @@
     enter-to-class="opacity-100"
   >
     <TabGroup as="div" v-if="!loading">
-      <TabList class="flex md:justify-center px-6 max-w-full overflow-x-auto md:overflow-x-visible overflow-y-hidden md:overflow-y-visible border-b border-gray-300 dark:border-gray-600 space-x-8 text-gray-500 dark:text-gray-400 text-sm md:text-base">
+      <TabList class="flex flex-nowrap md:justify-center px-6 max-w-full overflow-x-auto md:overflow-x-visible overflow-y-hidden md:overflow-y-visible border-b border-gray-300 dark:border-gray-600 space-x-8 text-gray-500 dark:text-gray-400 text-sm md:text-base">
         <Tab
           v-for="(tab, i) in tabs"
           :key="i"
@@ -17,7 +17,7 @@
         >
           <button
             :class="[
-              'px-1 py-4 rounded-sm font-medium border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:cursor-default motion-safe:transition-shadow',
+              'flex-shrink-0 px-1 py-4 rounded-sm font-medium border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:cursor-default motion-safe:transition-shadow',
               'hover:text-gray-800 dark:hover:text-gray-200 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
               selected ? 'text-primary-600 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-400 border-primary-600 dark:border-primary-400' : 'border-transparent'
             ]"

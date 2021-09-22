@@ -29,7 +29,7 @@
           </button>
           <button
             class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
-            @click="$router.push({ name: 'DashboardNewBook' })"
+            @click="openCreateDialog"
             :disabled="loading"
           >
             <span aria-hidden="true">
@@ -171,6 +171,11 @@
         </section>
       </div>
     </div>
+
+    <BookCreateDialog
+      :is-open="createDialogOpen"
+      @close="closeCreateDialog"
+    />
   </div>
 </template>
 
@@ -193,6 +198,7 @@ import { PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
 import BetaWarning from '@/components/BetaWarning'
 import BookCarousel from '@/components/BookCarousel'
+import BookCreateDialog from '@/components/BookCreateDialog.vue'
 import GroupGrid from '@/components/GroupGrid'
 import StatCard from '@/components/StatCard'
 
@@ -202,6 +208,7 @@ export default {
   components: {
     BetaWarning,
     BookCarousel,
+    BookCreateDialog,
     GroupGrid,
     StatCard,
     BookOpenIcon,
@@ -234,6 +241,16 @@ export default {
       store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
     }
 
+    const createDialogOpen = ref(false)
+
+    function openCreateDialog () {
+      createDialogOpen.value = true
+    }
+
+    function closeCreateDialog () {
+      createDialogOpen.value = false
+    }
+
     return {
       sheetIsEmpty,
       loading,
@@ -242,6 +259,9 @@ export default {
       stats,
       isDev,
       reload,
+      createDialogOpen,
+      openCreateDialog,
+      closeCreateDialog,
       n,
       t
     }

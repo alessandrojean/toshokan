@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="overflow-x-auto -mx-5 md:-mx-8 lg:mx-0">
+    <div class="overflow-x-auto -mx-5 md:-mx-8 lg:mx-0 lg:shadow-lg">
       <div class="align-middle inline-block min-w-full">
-        <div class="shadow overflow-hidden border-b border-gray-200 dark:border-gray-600 lg:rounded-t-lg">
+        <div class="overflow-hidden border-b border-gray-200 dark:border-gray-600 lg:rounded-t-lg">
           <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
@@ -15,16 +15,7 @@
                     <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                   </template>
                 </th>
-                <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
-                  <span :class="sortProperty === 'publisher' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
-                    {{ t('book.properties.publisher') }}
-                  </span>
-                  <template v-if="sortProperty === 'publisher'">
-                    <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
-                    <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
-                  </template>
-                </th>
-                <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
+                <th scope="col" class="align-text-bottom space-x-1 pr-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'status' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
                     {{ t('book.properties.status') }}
                   </span>
@@ -33,7 +24,7 @@
                     <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                   </template>
                 </th>
-                <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
+                <th scope="col" class="align-text-bottom space-x-1 pr-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'paidPrice.value' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
                     {{ t('book.properties.paidPrice') }}
                   </span>
@@ -42,7 +33,7 @@
                     <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                   </template>
                 </th>
-                <th scope="col" class="align-text-bottom space-x-1 px-6 py-3 text-left text-xs uppercase tracking-wider">
+                <th scope="col" class="align-text-bottom space-x-1 pr-6 py-3 text-left text-xs uppercase tracking-wider">
                   <span :class="sortProperty === 'createdAt' ? 'font-semibold text-gray-700 dark:text-gray-100' : 'font-medium text-gray-500 dark:text-gray-300'">
                     {{ t('book.properties.createdAt') }}
                   </span>
@@ -51,7 +42,7 @@
                     <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100" aria-hidden="true" />
                   </template>
                 </th>
-                <th scope="col" class="relative px-6 py-3">
+                <th scope="col" class="relative pr-6 py-3">
                   <span class="sr-only">
                     {{ t('dashboard.library.items.tableColumns.actions') }}
                   </span>
@@ -70,15 +61,12 @@
                         {{ book.titleParts[0] }}
                       </div>
                       <div class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ volumeText(book) }}
+                        {{ volumeText(book) }} &middot; {{ book.publisher }}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                  {{ book.publisher }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="pr-6 py-4 whitespace-nowrap">
                   <span
                     :class="[
                       book.status === BookStatus.READ
@@ -90,18 +78,23 @@
                     {{ t(`book.${book.status.toLowerCase()}`) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                <td class="pr-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ formatPrice(book.paidPrice) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                <td class="pr-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ formatDate(book.createdAt) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td class="pr-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <router-link
                     :to="{ name: 'BookDetails', params: { bookId: book.id } }"
-                    class="button is-ghost bg-transparent hover:underline -mr-4"
+                    class="button justify-center w-10 h-10 p-2 -mr-2 is-ghost is-icon-only bg-transparent"
                   >
-                    {{ t('dashboard.library.items.view') }}
+                    <span class="sr-only">
+                      {{ t('dashboard.library.items.view') }}
+                    </span>
+                    <span aria-hidden="true">
+                      <DotsHorizontalIcon />
+                    </span>
                   </router-link>
                 </td>
               </tr>
@@ -111,7 +104,7 @@
       </div>
     </div>
 
-    <div class="-mx-5 md:-mx-8 lg:mx-0 bg-white px-4 py-4 lg:py-3 flex items-center justify-between lg:rounded-b-lg shadow sm:px-6 dark:bg-gray-800">
+    <div class="shadow-lg -mx-5 md:-mx-8 lg:mx-0 bg-white px-4 py-4 lg:py-3 flex items-center justify-between lg:rounded-b-lg sm:px-6 dark:bg-gray-800">
       <nav
         role="navigation"
         aria-label="Paginação do conteúdo"
@@ -168,6 +161,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/vue/outline'
+import { DotsHorizontalIcon } from '@heroicons/vue/solid'
 
 import Paginator from './Paginator.vue'
 
@@ -179,6 +173,7 @@ export default {
   components: {
     ArrowSmDownIcon,
     ArrowSmUpIcon,
+    DotsHorizontalIcon,
     Paginator
   },
 
@@ -204,7 +199,7 @@ export default {
     }
 
     function formatPrice ({ currency, value }) {
-      return n(parseFloat(value.replace(',', '.')), 'currency', { currency })
+      return n(value, 'currency', { currency })
     }
 
     function handlePage (page) {

@@ -303,6 +303,42 @@ export function getBookById (sheetId, idMap, id) {
   })
 }
 
+export function getBookByCode (sheetId, idMap, code) {
+  const sheetUrl = buildSheetUrl(sheetId)
+
+  const query = new window.google.visualization.Query(sheetUrl)
+  query.setQuery(dedent`
+    select *
+    where ${CollectionColumns.CODE} = "${code}"
+  `)
+
+  return new Promise((resolve, reject) => {
+    query.send(response => {
+      if (response.isError()) {
+        reject(new Error('Error in query: ' + response.getMessage()))
+        return
+      }
+
+      const dataTable = response.getDataTable()
+
+      const rows = dataTable.getNumberOfRows()
+
+      if (rows === 0) {
+        resolve(null)
+        return
+      }
+
+      const books = []
+
+      for (let i = 0; i < rows; i++) {
+        books.push(parseBookFromDataTable(dataTable, idMap, i))
+      }
+
+      resolve(books)
+    })
+  })
+}
+
 export function getBooksFromCollection (sheetId, idMap, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 

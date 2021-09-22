@@ -29,6 +29,9 @@ module.exports = {
         's-50': '50vh',
         's-60': '60vh'
       },
+      spacing: {
+        '2px': '2px'
+      },
       typography: theme => ({
         DEFAULT: {
           css: {

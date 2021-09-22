@@ -197,7 +197,7 @@
               v-else-if="searchHistory.length > 0"
               class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 focus:outline-none"
             >
-              <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-title">
+              <h3 class="text-gray-700 dark:text-gray-200 font-semibold font-display">
                 {{ t('dashboard.search.history') }}
               </h3>
 

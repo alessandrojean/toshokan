@@ -52,30 +52,7 @@
       leave-to-class="transform opacity-0 translate-y-full md:translate-y-0 md:scale-95"
     >
       <MenuItems as="ul" class="z-30 py-1 origin-bottom md:origin-top-right fixed md:absolute left-0 md:left-auto bottom-0 md:bottom-auto inset-x-0 md:w-56 right-0 md:right-0 mt-2 rounded-t-2xl md:rounded-t-md md:rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none divide-y divide-gray-200 dark:divide-gray-600">
-        <div class="py-1 sm:hidden md:block">
-          <MenuItem v-slot="{ active }">
-            <button
-              type="button"
-              :class="[
-                active ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200',
-                'flex items-center px-4 py-2.5 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
-              ]"
-              @click="$emit('click:updateCover', $event)"
-            >
-              <span aria-hidden="true">
-                <PhotographIcon
-                  :class="[
-                    active ? 'text-gray-500 dark:text-gray-300' : 'text-gray-400 dark:text-gray-400',
-                    'w-5 h-5 inline-block mr-3'
-                  ]"
-                  aria-hidden="true"
-                />
-              </span>
-              {{ t('dashboard.details.header.options.updateCover') }}
-            </button>
-          </MenuItem>
-        </div>
-        <div class="py-1">
+        <div class="pb-1">
           <MenuItem v-slot="{ active }">
             <button
               type="button"
@@ -159,7 +136,6 @@ import {
   BookmarkIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
-  PhotographIcon,
   StarIcon,
   TrashIcon
 } from '@heroicons/vue/solid'
@@ -178,7 +154,6 @@ export default {
     BookmarkIcon,
     ChevronDownIcon,
     DotsHorizontalIcon,
-    PhotographIcon,
     StarIcon,
     TrashIcon,
     Menu,
@@ -195,8 +170,7 @@ export default {
   emits: [
     'click:delete',
     'click:toggleFavorite',
-    'click:toggleStatus',
-    'click:updateCover'
+    'click:toggleStatus'
   ],
 
   setup (props) {

@@ -1,73 +1,9 @@
 <template>
   <div class="flex flex-col">
-    <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
-        <div class="flex-1 items-center">
-          <template v-if="sheetLoading">
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"></div>
-            <div class="flex space-x-2">
-              <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
-              <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
-            </div>
-          </template>
-          <template v-else>
-            <h1 class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100">
-              {{ t('dashboard.library.title') }}
-            </h1>
-            <ul class="mt-1 flex flex-col md:flex-row items-start sm:flex-wrap md:mt-0 sm:space-x-6">
-              <li class="mt-2 flex items-center text-sm text-gray-600 dark:text-gray-300">
-                <span aria-hidden="true">
-                  <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
-                </span>
-                <span class="sr-only">
-                  {{ t('dashboard.library.currentGroup') }}
-                </span>
-                {{ group }}
-              </li>
-
-              <li class="mt-2 flex items-center text-sm text-gray-600 dark:text-gray-300">
-                <span aria-hidden="true">
-                  <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 dark:text-gray-400" aria-hidden="true" />
-                </span>
-                <span class="sr-only">
-                  {{ t('dashboard.library.sortingBy') }}
-                </span>
-                {{ sortPropertyName }}
-              </li>
-            </ul>
-          </template>
-        </div>
-        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
-          <template v-if="sheetLoading">
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"></div>
-            <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"></div>
-          </template>
-          <template v-else>
-            <button
-              type="button"
-              class="button flex-1 md:flex-initial justify-center md:justify-start"
-              @click.stop="filterOpen = true"
-              v-if="!sheetIsEmpty"
-              :disabled="loading"
-            >
-              <span aria-hidden="true">
-                <FilterIcon aria-hidden="true" />
-              </span>
-              {{ t('dashboard.library.filter') }}
-            </button>
-            <router-link
-              :to="{ name: 'DashboardNewBook' }"
-              class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
-            >
-              <span aria-hidden="true">
-                <PlusIcon aria-hidden="true" />
-              </span>
-              {{ t('dashboard.library.newBook') }}
-            </router-link>
-          </template>
-        </div>
-      </div>
-    </header>
+    <LibraryHeader
+      @click:new="openCreateDialog"
+      @click:filter="filterOpen = true"
+    />
 
     <div class="flex-1">
       <section
@@ -144,7 +80,10 @@
       @filter="handleFilter"
     />
 
-    <!-- <GroupChips /> -->
+    <BookCreateDialog
+      :is-open="createDialogOpen"
+      @close="closeCreateDialog"
+    />
   </div>
 </template>
 
@@ -156,31 +95,26 @@ import { useI18n } from 'vue-i18n'
 
 import { MutationTypes } from '@/store'
 
-import {
-  ArchiveIcon,
-  FilterIcon,
-  PlusIcon,
-  SwitchVerticalIcon
-} from '@heroicons/vue/solid'
-
+import { PlusIcon } from '@heroicons/vue/solid'
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
 
+import BookCreateDialog from '@/components/BookCreateDialog.vue'
 import GridBooks from '@/components/GridBooks'
 import LibraryFilters from '@/components/LibraryFilters'
+import LibraryHeader from '@/components/LibraryHeader.vue'
 import TableBooks from '@/components/TableBooks'
 
 export default {
   name: 'DashboardLibraryExplorer',
 
   components: {
+    BookCreateDialog,
     GridBooks,
     LibraryFilters,
+    LibraryHeader,
     TableBooks,
-    ArchiveIcon,
     ExclamationCircleIcon,
-    FilterIcon,
-    PlusIcon,
-    SwitchVerticalIcon
+    PlusIcon
   },
 
   setup () {
@@ -332,6 +266,16 @@ export default {
       }
     }
 
+    const createDialogOpen = ref(false)
+
+    function openCreateDialog () {
+      createDialogOpen.value = true
+    }
+
+    function closeCreateDialog () {
+      createDialogOpen.value = false
+    }
+
     return {
       filterOpen,
       sheetIsEmpty,
@@ -346,12 +290,11 @@ export default {
       sortPropertyName,
       viewMode,
       handleFilter,
+      createDialogOpen,
+      openCreateDialog,
+      closeCreateDialog,
       t
     }
   }
 }
 </script>
-
-<style>
-
-</style>

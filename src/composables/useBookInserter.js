@@ -1,13 +1,37 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 
-import { insertBook as sheetInsertBook } from '@/services/sheet'
+import {
+  getBookByCode,
+  insertBook as sheetInsertBook
+} from '@/services/sheet'
 
 import { MutationTypes } from '@/store'
 
 export default function useBookInserter (book) {
   const store = useStore()
   const inserting = ref(false)
+
+  const sheetId = computed(() => store.state.sheet.sheetId)
+  const idMap = computed(() => store.state.collection.idMap)
+
+  async function checkIfExists (code) {
+    try {
+      if (Object.keys(idMap.value).length === 0) {
+        await store.dispatch('collection/fetchIdMap')
+      }
+
+      const books = await getBookByCode(sheetId.value, idMap.value, code)
+
+      if (!books || books.length === 0) {
+        return null
+      }
+
+      return books.map(b => b.id)
+    } catch (e) {
+      return null
+    }
+  }
 
   async function insertBook () {
     inserting.value = true
@@ -29,8 +53,10 @@ export default function useBookInserter (book) {
     await store.dispatch('sheet/loadSheetData')
     await store.dispatch('collection/fetchGroups')
     await store.dispatch('collection/fetchIdMap')
-    store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
-    store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
+    await store.dispatch('collection/fetchBooks')
+    await store.dispatch('collection/fetchLastAdded')
+    // store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
+    // store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
 
     inserting.value = false
     store.commit(MutationTypes.SHEET_UPDATE_LOADING, false)
@@ -39,6 +65,7 @@ export default function useBookInserter (book) {
   }
 
   return {
+    checkIfExists,
     insertBook,
     inserting
   }

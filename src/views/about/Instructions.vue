@@ -43,43 +43,43 @@ export default {
           figure1: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-01.png').default}" />
-              <legend>${t('about.instructions.legend1')}</legend>
+              <figcaption>${t('about.instructions.legend1')}</figcaption>
             </figure>
           `,
           figure2: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-02.png').default}" />
-              <legend>${t('about.instructions.legend2')}</legend>
+              <figcaption>${t('about.instructions.legend2')}</figcaption>
             </figure>
           `,
           figure3: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-03.png').default}" />
-              <legend>${t('about.instructions.legend3')}</legend>
+              <figcaption>${t('about.instructions.legend3')}</figcaption>
             </figure>
           `,
           figure4: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-04.png').default}" />
-              <legend>${t('about.instructions.legend4')}</legend>
+              <figcaption>${t('about.instructions.legend4')}</figcaption>
             </figure>
           `,
           figure5: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-05.png').default}" />
-              <legend>${t('about.instructions.legend5')}</legend>
+              <figcaption>${t('about.instructions.legend5')}</figcaption>
             </figure>
           `,
           figure6: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-06.png').default}" />
-              <legend>${t('about.instructions.legend6')}</legend>
+              <figcaption>${t('about.instructions.legend6')}</figcaption>
             </figure>
           `,
           figure7: dedent`
             <figure>
               <img src="${require('@/assets/about/new-book-step-07.png').default}" />
-              <legend>${t('about.instructions.legend7')}</legend>
+              <figcaption>${t('about.instructions.legend7')}</figcaption>
             </figure>
           `
         })

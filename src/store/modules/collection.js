@@ -191,6 +191,7 @@ export default {
     async fetchBooks ({ commit, dispatch, state, rootState }, page) {
       commit(CollectionMutations.UPDATE_BOOKS, { loading: true })
 
+      page = page || state.currentPage
       const sheetId = rootState.sheet.sheetId
 
       try {

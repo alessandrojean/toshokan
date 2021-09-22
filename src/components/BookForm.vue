@@ -50,23 +50,57 @@
       <label for="book-authors" class="label">
         {{ t('book.properties.authors') }}
       </label>
-      <input
-        id="book-authors"
-        type="text"
-        :value="book.authorsStr"
-        @input="handleInput('authorsStr', $event.target.value)"
-        class="input"
-        :placeholder="t('book.form.example.placeholder', [t('book.form.example.authors')])"
-        aria-describedby="book-authors-hint book-authors-error"
-        :aria-invalid="v$.authorsStr.$error"
-        required
-      >
-      <p id="book-authors-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
-        {{ t('book.form.authorsHint') }}
-      </p>
+      <div class="flex space-x-2">
+        <input
+          id="book-authors"
+          type="text"
+          v-model="tempAuthor"
+          class="input"
+          :placeholder="t('book.form.example.placeholder', [t('book.form.example.authors')])"
+          aria-describedby="book-authors-error"
+          :aria-invalid="v$.authorsStr.$error"
+          @keydown.enter.prevent="addAuthor"
+        >
+
+        <button
+          type="button"
+          class="button px-2 sm:px-4 is-icon-only sm:not-is-icon-only"
+          @click="addAuthor"
+        >
+          <span aria-hidden="true">
+            <PlusIcon />
+          </span>
+          <span class="sr-only sm:not-sr-only">
+            {{ t('book.form.addAuthor') }}
+          </span>
+        </button>
+      </div>
       <p id="book-authors-error" class="sr-only" aria-hidden="true">
         {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
       </p>
+
+      <ul class="flex mt-2 select-none" v-if="book.authors.length > 0">
+        <li
+          v-for="(author, i) of book.authors"
+          :key="i"
+          class="flex items-center text-sm bg-primary-100 dark:bg-gray-700 rounded-md px-2 py-0.5 mr-2 mt-2 font-medium text-primary-700 dark:text-gray-200"
+        >
+          <span>{{ author }}</span>
+          <button
+            type="button"
+            :title="t('book.form.removeAuthor')"
+            class="text-primary-400 dark:text-gray-400 hover:text-primary-600 dark:hover:text-gray-200 focus-visible:text-primary-600 dark:focus-visible:text-gray-200 p-1 ml-1 -mr-1 rounded-md has-ring-focus focus-visible:ring-offset-primary-100 dark:focus-visible:ring-offset-gray-700"
+            @click="removeAuthor(i)"
+          >
+            <span class="sr-only">
+              {{ t('book.form.removeAuthor') }}
+            </span>
+            <span aria-hidden="true">
+              <XIcon class="w-3 h-3" />
+            </span>
+          </button>
+        </li>
+      </ul>
     </div>
 
     <div>
@@ -380,7 +414,7 @@
 
     <Alert
       type="error"
-      :show="v$.$error"
+      :show="v$.$errors.length > 0"
       :title="
         t(
           'book.form.error.title',
@@ -411,7 +445,7 @@ import { helpers, required } from '@vuelidate/validators'
 
 import { decimalComma, dimensions } from '@/util/validators'
 
-import { SelectorIcon } from '@heroicons/vue/solid'
+import { PlusIcon, SelectorIcon, XIcon } from '@heroicons/vue/solid'
 
 import { getCodeType } from '@/model/Book'
 
@@ -422,21 +456,24 @@ export default {
 
   components: {
     Alert,
-    SelectorIcon
+    PlusIcon,
+    SelectorIcon,
+    XIcon
   },
 
-  emits: ['update:book'],
+  emits: ['error', 'update:book'],
 
   props: {
     book: {
       type: Object,
       required: true
     },
-    editing: Boolean
+    editing: Boolean,
+    touchOnMount: Boolean
   },
 
   setup (props, context) {
-    const { book } = toRefs(props)
+    const { book, touchOnMount } = toRefs(props)
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
     const { t, locale } = useI18n()
 
@@ -485,7 +522,7 @@ export default {
     const v$ = useVuelidate(rules, bookState)
 
     function handleInput (property, value) {
-      const newBook = { ...book.value, [property]: value }
+      const newBook = { ...bookState, [property]: value }
 
       if (property === 'code') {
         newBook.codeType = getCodeType(value)
@@ -502,7 +539,35 @@ export default {
         newBook.paidPriceValue = parseFloat(value.replace(',', '.'))
       }
 
+      Object.assign(bookState, newBook)
+
+      if (v$.value[property]) {
+        v$.value[property].$touch()
+      }
+
+      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
       context.emit('update:book', newBook)
+    }
+
+    const tempAuthor = ref('')
+
+    function addAuthor () {
+      if (!bookState.authors.includes(tempAuthor.value.trim())) {
+        bookState.authors.push(tempAuthor.value.trim())
+        bookState.authorsStr = bookState.authors.join('; ')
+        v$.value.authorsStr.$touch()
+      }
+
+      tempAuthor.value = ''
+      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
+    }
+
+    function removeAuthor (i) {
+      bookState.authors.splice(i, 1)
+      bookState.authorsStr = bookState.authors.join('; ')
+
+      v$.value.authorsStr.$touch()
+      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
     }
 
     function touch (book) {
@@ -531,6 +596,13 @@ export default {
       return store.state.collection.groups.items
         .slice()
         .sort((a, b) => a.name.localeCompare(b, locale.value))
+    })
+
+    onMounted(() => {
+      if (touchOnMount.value) {
+        v$.value.$touch()
+        context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
+      }
     })
 
     onMounted(async () => {
@@ -568,6 +640,9 @@ export default {
       groupOptions,
       addNotes,
       toDateInputValue,
+      tempAuthor,
+      addAuthor,
+      removeAuthor,
       t
     }
   }

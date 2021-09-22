@@ -86,6 +86,8 @@ export default {
       optional: 'Optional',
       markdown: 'This field supports Markdown.',
       addNotes: 'Add notes about this book',
+      addAuthor: 'Add',
+      removeAuthor: 'Remove this author',
       example: {
         placeholder: 'eg. {0}',
         id: '9781934287729',
@@ -117,7 +119,11 @@ export default {
     },
     createdModal: {
       title: 'Book created with success',
-      message: 'The book metadata was inserted in the sheet.',
+      message: dedent`
+        The book metadata was inserted in the sheet. You can view the
+        page of the book created or repeat the creation process and add
+        another book to the sheet.
+      `,
       view: 'View',
       newBook: 'New book'
     }
@@ -309,6 +315,10 @@ export default {
         title: 'Book information',
         dateUnknown: 'Unknown'
       },
+      editDialog: {
+        title: 'Edit book',
+        description: 'Update the required information at the sheet.'
+      },
       editForm: {
         title: 'Book metadata',
         description: `
@@ -409,6 +419,7 @@ export default {
     },
     newBook: {
       title: 'New book',
+      description: 'Fill out the information below to create the book in the spreadsheet.',
       step: 'Step {0} of {1}',
       goBack: 'Previous step',
       autoFill: {
@@ -428,7 +439,33 @@ export default {
         search: 'Search',
         error: 'There was an error during the search.',
         noResults: 'No results found.',
-        fillManually: 'Fill manually'
+        fillManually: 'Fill manually',
+        editInfo: 'Edit book info',
+        isbnAlert: {
+          title: 'What is an ISBN?',
+          body: dedent`
+            The ISBN is an international book identification system that
+            gives a unique numeric identifier for each item, allowing the
+            classification by title, authors, country, publisher and edition.
+
+            This code can be normally found next to the barcode. The search
+            accepts both versions of the code, the 10-digit and the 13-digit.
+            Books recently published usually have a 13-digit version.
+
+            If the book does not have an ISBN, you can manually fill in the
+            information needed to create the item in the spreadsheet.
+
+            *[ISBN]: International Standard Book Number
+          `,
+          additionalInfo: 'Additional information',
+          wikipediaLink: 'https://en.wikipedia.org/wiki/International_Standard_Book_Number'
+        },
+        existAlert: {
+          title: 'A book with this ISBN already exists',
+          body: 'You can make a copy if it\'s your need.',
+          actionView: 'View',
+          actionMakeCopy: 'Make a copy'
+        }
       },
       metadata: {
         title: 'Book information',

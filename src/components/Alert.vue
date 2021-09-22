@@ -10,16 +10,19 @@
     <div
       v-if="show"
       role="alert"
+      :data-type="type"
       :class="[
         backgroundColor,
         baseTextColor,
         borderColor,
-        'dark:bg-gray-700 border-l-4 dark:border-l-0 dark:rounded-md dark:text-gray-100 p-3 text-sm flex space-x-3'
+        'dark:bg-gray-700 border-l-4 dark:border-l-0 dark:rounded-md dark:text-gray-100 px-3 py-5 text-sm flex space-x-3'
       ]"
     >
-      <XCircleIcon v-if="type === 'error'" class="h-5 w-5 text-red-500 dark:text-red-400" aria-hidden="true" />
-      <InformationCircleIcon v-else-if="type === 'info'" class="h-5 w-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
-      <ExclamationIcon v-else class="h-5 w-5 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
+      <div class="flex-shrink-0">
+        <XCircleIcon v-if="type === 'error'" class="h-5 w-5 text-red-500 dark:text-red-400" aria-hidden="true" />
+        <InformationCircleIcon v-else-if="type === 'info'" class="h-5 w-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
+        <ExclamationIcon v-else class="h-5 w-5 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
+      </div>
       <div class="space-y-2 dark:text-gray-200">
         <p
           v-if="title && title.length > 0"
@@ -28,6 +31,12 @@
           {{ title }}
         </p>
         <slot></slot>
+        <div
+          v-if="$slots.actions"
+          class="flex pt-3 space-x-3 alert-actions -ml-2.5"
+        >
+          <slot name="actions"></slot>
+        </div>
       </div>
     </div>
   </transition>
@@ -82,7 +91,7 @@ export default {
       } else if (type.value === 'info') {
         return 'text-blue-700'
       } else {
-        return 'text-yellow-700'
+        return 'text-yellow-900'
       }
     })
 
@@ -115,3 +124,27 @@ export default {
   }
 }
 </script>
+
+<style>
+.alert-actions a,
+.alert-actions button {
+  @apply font-semibold rounded-md px-2.5 py-1.5 motion-safe:transition-shadow;
+}
+
+.alert-actions a:hover,
+.alert-actions a:focus-visible,
+.alert-actions button:hover,
+.alert-actions button:focus-visible {
+  @apply underline;
+}
+
+.alert-actions a:focus,
+.alert-actions button:focus {
+  @apply outline-none;
+}
+
+.alert-actions a:focus-visible,
+.alert-actions button:focus-visible {
+  @apply ring-2 ring-current;
+}
+</style>

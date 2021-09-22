@@ -1,7 +1,7 @@
 <template>
   <!-- <div class="bg-white dark:bg-transparent"> -->
   <div>
-    <SimpleHeader :title="t('dashboard.newBook.title')" />
+    <SimpleHeader :title="c" />
     <!-- <div class="max-w-2xl mx-auto md:px-6 lg:px-8 py-6 md:py-12"> -->
     <div
       class="relative max-w-2xl mx-auto bg-white dark:bg-gray-800 my-6 md:my-12 md:rounded-lg shadow-md overflow-hidden has-ring-focus focus-visible:ring-offset-gray-100 dark:focus-visible:ring-offset-gray-900"

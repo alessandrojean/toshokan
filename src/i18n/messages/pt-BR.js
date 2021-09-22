@@ -86,6 +86,8 @@ export default {
       optional: 'Opcional',
       markdown: 'O Markdown é suportado neste campo.',
       addNotes: 'Adicionar observações sobre este livro',
+      addAuthor: 'Adicionar',
+      removeAuthor: 'Remover este autor',
       example: {
         placeholder: 'ex. {0}',
         id: '9788583621508',
@@ -117,7 +119,11 @@ export default {
     },
     createdModal: {
       title: 'Livro adicionado com sucesso',
-      message: 'Os metadados do livro foram inseridos na planilha.',
+      message: dedent`
+        Os metadados do livro foram inseridos na planilha. Você pode
+        visualizar a página do livro recém-criado ou repetir o processo
+        de criação e adicionar mais um livro logo em sequência.
+      `,
       view: 'Visualizar',
       newBook: 'Novo livro'
     }
@@ -310,6 +316,10 @@ export default {
         title: 'Informações do livro',
         dateUnknown: 'Desconhecida'
       },
+      editDialog: {
+        title: 'Edição do livro',
+        description: 'Preencha as informações abaixo para alterar os dados do livro.'
+      },
       editForm: {
         title: 'Metadados do livro',
         description: `
@@ -410,10 +420,11 @@ export default {
     },
     newBook: {
       title: 'Novo livro',
+      description: 'Preencha as informações abaixo para inserir o livro na planilha.',
       step: 'Etapa {0} de {1}',
       goBack: 'Voltar uma etapa',
       autoFill: {
-        title: 'Preenchimento automático',
+        title: 'Busca',
         titleSr: 'a partir do ISBN',
         description: `
           Obtenha automaticamente os metadados do livro a partir de seu ISBN.
@@ -429,7 +440,36 @@ export default {
         search: 'Pesquisar',
         error: 'Houve um erro durante a pesquisa',
         noResults: 'Nenhum resultado encontrado.',
-        fillManually: 'Preencher manualmente'
+        fillManually: 'Preencher manualmente',
+        editInfo: 'Editar informações',
+        isbnAlert: {
+          title: 'O que é o ISBN?',
+          body: dedent`
+            O ISBN é um sistema internacional de identificação de livros
+            que atribui um identificador numérico único para cada item,
+            permitindo a classificação por título, autores, país, editora
+            e edição.
+
+            Este código pode ser normalmente encontrado na página de expediente
+            do livro, junto a ficha catalográfica, ou próximo ao código de
+            barras. A busca aceita ambas as versões do código, a com 10
+            dígitos e a com 13 dígitos, sendo esta última a mais utilizada
+            recentemente.
+
+            Caso o livro não possua um ISBN, você pode preencher as informações
+            para a criação do item na planilha de modo manual.
+
+            *[ISBN]: International Standard Book Number
+          `,
+          additionalInfo: 'Informações adicionais',
+          wikipediaLink: 'https://pt.wikipedia.org/wiki/International_Standard_Book_Number'
+        },
+        existAlert: {
+          title: 'Já existe um livro com este ISBN',
+          body: 'Você pode optar por criar uma cópia se for de seu interesse.',
+          actionView: 'Visualizar',
+          actionMakeCopy: 'Criar uma cópia'
+        }
       },
       metadata: {
         title: 'Informações do livro',

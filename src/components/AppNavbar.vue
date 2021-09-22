@@ -238,9 +238,7 @@ export default {
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
 
-    const showSearch = computed(() => {
-      return route.name !== 'DashboardSearch' && !store.state.sheet.loading
-    })
+    const showSearch = computed(() => !store.state.sheet.loading)
 
     const handleSearch = () => {
       router.push({
