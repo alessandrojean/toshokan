@@ -1,15 +1,15 @@
 <template>
   <a
     href="#"
-    class="search-history-item group has-ring-focus"
+    class="search-history-item relative group has-ring-focus"
     @click="$emit('click', search)"
   >
     <span aria-hidden="true">
-      <ClockIcon class="w-6 h-6 text-gray-500 dark:text-gray-400 group-hover:text-white group-focus-visible:text-white" />
+      <ClockIcon class="w-6 h-6 text-gray-500 dark:text-gray-400 group-hover:text-primary-100 dark:group-hover:text-white group-focus-visible:text-primary-100 dark:group-focus-visible:text-white" />
     </span>
     <span class="flex-1 truncate">{{ search }}</span>
     <button
-      class="rounded has-ring-focus text-gray-500 dark:text-gray-400 group-hover:text-white group-focus-visible:text-white dark:focus-visible:text-white"
+      class="absolute right-3 sm:right-6 md:right-3 p-1 rounded has-ring-focus text-gray-500 dark:text-gray-400 group-hover:text-white hover:bg-primary-400 dark:hover:bg-gray-500 group-focus-visible:text-white dark:focus-visible:text-white"
       :title="t('dashboard.search.removeFromHistory')"
       @click.stop="$emit('click:remove', search)"
     >

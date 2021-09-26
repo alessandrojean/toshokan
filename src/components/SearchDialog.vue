@@ -170,7 +170,7 @@
                 </div>
               </div>
 
-              <ul class="space-y-2">
+              <ul class="divide-y divide-gray-200">
                 <li
                   v-for="result in searchResults"
                   :key="result.id"

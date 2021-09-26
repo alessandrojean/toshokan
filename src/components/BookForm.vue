@@ -79,7 +79,7 @@
         {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
       </p>
 
-      <ul class="flex mt-2 select-none" v-if="book.authors.length > 0">
+      <ul class="flex flex-wrap mt-2 select-none" v-if="book.authors.length > 0">
         <li
           v-for="(author, i) of book.authors"
           :key="i"
@@ -480,6 +480,10 @@ export default {
     const bookState = reactive({ ...book.value })
     const addNotes = ref(book.value.notes.length > 0)
 
+    function forceUpdateBook () {
+      Object.assign(bookState, { ...book })
+    }
+
     const messageRequired = helpers.withMessage(
       t('book.form.blankField'),
       required
@@ -643,6 +647,7 @@ export default {
       tempAuthor,
       addAuthor,
       removeAuthor,
+      forceUpdateBook,
       t
     }
   }

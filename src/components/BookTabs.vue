@@ -17,9 +17,11 @@
         >
           <button
             :class="[
-              'flex-shrink-0 px-1 py-4 rounded-sm font-medium border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:cursor-default motion-safe:transition-shadow',
-              'hover:text-gray-800 dark:hover:text-gray-200 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
-              selected ? 'text-primary-600 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-400 border-primary-600 dark:border-primary-400' : 'border-transparent'
+              'flex-shrink-0 px-1 py-4 font-medium border-b-2 -mb-px has-ring-focus dark:focus-visible:ring-offset-gray-900 disabled:cursor-default',
+              'disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
+              selected
+                ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
+                : 'hover:text-gray-800 dark:hover:text-gray-300 border-transparent hover:border-gray-300 dark:hover:border-gray-600'
             ]"
             :disabled="disabled"
           >
@@ -70,7 +72,15 @@
                     aria-hidden="true"
                     class="inline-block w-5 h-5 mr-2.5"
                   >
-                  <span>{{ mt.value }}</span>
+
+                  <time
+                    v-if="mt.time"
+                    :datetime="mt.value.toISOString()"
+                  >
+                    {{ formatDate(mt.value) }}
+                  </time>
+                  <span v-else>{{ mt.value }}</span>
+
                   <div
                     v-if="mt.badge && !mt.samePrice"
                     :class="[
@@ -291,15 +301,13 @@ export default {
         },
         {
           title: t('book.properties.boughtAt'),
-          value: book.value?.boughtAt
-            ? formatDate(book.value.boughtAt)
-            : null
+          value: book.value?.boughtAt,
+          time: true
         },
         {
           title: t('book.properties.readAt'),
-          value: book.value?.readAt
-            ? formatDate(book.value.readAt)
-            : null
+          value: book.value?.readAt,
+          time: true
         }
       ]
     })

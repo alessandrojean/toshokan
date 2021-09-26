@@ -1,10 +1,10 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="group px-4 py-4 sm:px-7 md:px-4 flex items-center bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 dark:hover:bg-gray-600 has-ring-focus rounded-md"
+    class="group py-4 flex items-center has-ring-focus rounded-md"
     ref="searchItem"
   >
-    <div class="mr-4 w-12">
+    <div class="mr-4 w-12 lg:w-16">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -16,35 +16,41 @@
       >
         <div
           v-if="imageLoading || imageHasError || thumbnailUrl.length === 0"
-          class="w-12 h-12 flex justify-center items-center"
+          class="aspect-w-2 aspect-h-3"
           aria-hidden="true"
         >
-          <PhotographIcon
-            :class="[
-              imageLoading ? 'motion-safe:animate-pulse' : '',
-              'w-7 h-7 text-gray-500 dark:text-gray-500 group-hover:text-white'
-            ]"
-            aria-hidden="true"
-          />
+          <div class="flex justify-center items-center w-full h-full bg-gray-100 dark:bg-gray-700 rounded-md shadow-md">
+            <PhotographIcon
+              :class="[
+                imageLoading ? 'motion-safe:animate-pulse' : '',
+                'w-7 h-7 text-gray-500 dark:text-gray-400'
+              ]"
+            />
+          </div>
         </div>
         <img
           v-else
           :src="thumbnailUrl"
           :class="spoilerMode.cover && !isRead ? 'md:filter md:blur-sm md:group-hover:blur-none motion-safe:transition-all duration-100 ease-in-out' : ''"
-          class="w-12 h-12 object-cover rounded"
+          class="w-full object-cover rounded-md shadow-md"
         >
       </transition>
     </div>
-    <div class="flex-1 flex flex-col">
-      <span class="text-sm font-semibold dark:text-gray-200 group-hover:text-white">
+    <div class="flex-1 flex flex-col space-y-1.5">
+      <span class="text-sm font-semibold dark:text-gray-100">
         {{ result.title }}
       </span>
-      <span class="text-xs text-gray-500 dark:text-gray-400 group-hover:text-white dark:group-hover:text-gray-200">
-        {{ result.group }} · {{ result.publisher }}
+      <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+        {{ authorsFormatted }}
+      </span>
+      <span class="text-sm text-gray-300 dark:text-gray-400">
+        <span class="text-gray-600 dark:text-gray-400">{{ result.group }}</span>
+        {{ ' · ' }}
+        <span class="text-gray-600 dark:text-gray-400">{{ result.publisher }}</span>
       </span>
     </div>
     <span aria-hidden="true">
-      <ChevronRightIcon class="w-6 h-6 text-gray-500 group-hover:text-white dark:text-gray-400 dark:group-hover:text-gray-200" aria-hidden="true" />
+      <ChevronRightIcon class="w-5 h-5 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-gray-100" aria-hidden="true" />
     </span>
   </router-link>
 </template>
@@ -52,6 +58,7 @@
 <script>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
@@ -107,13 +114,37 @@ export default {
       return result.value && result.value.status === BookStatus.READ
     })
 
+    const { t } = useI18n()
+
+    const authorsFormatted = computed(() => {
+      const separator = t('dashboard.details.header.authorSeparator')
+      let authors = (result.value.authors || []).join(separator)
+
+      if (result.value.authors && result.value.authors.length >= 2) {
+        const firstAuthors = (result.value.authors || [])
+          .slice(0, -1)
+          .join(separator)
+
+        authors = t(
+          'dashboard.details.header.authorListComplete',
+          {
+            authors: firstAuthors,
+            lastAuthor: result.value.authors[result.value.authors.length - 1]
+          }
+        )
+      }
+
+      return authors
+    })
+
     return {
       searchItem,
       imageHasError,
       imageLoading,
       thumbnailUrl,
       spoilerMode,
-      isRead
+      isRead,
+      authorsFormatted
     }
   }
 }

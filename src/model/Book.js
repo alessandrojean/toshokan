@@ -181,9 +181,19 @@ function formatDateTimeToSheet (date) {
     `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
 }
 
+function fixDate (date, timezoneOffset) {
+  if (date) {
+    date.setMinutes(date.getMinutes() - timezoneOffset)
+  }
+
+  return date
+}
+
 export function formatBook (book) {
   const now = new Date()
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+
+  const offset = now.getTimezoneOffset()
 
   return [
     book.id || nanoid(),
@@ -196,18 +206,18 @@ export function formatBook (book) {
       .map(dimension => n(dimension, 'dimensions', 'en-US'))
       .join(' × '),
     book.status || BookStatus.UNREAD,
-    book.readAt ? formatDateToSheet(book.readAt) : '',
+    book.readAt ? formatDateToSheet(fixDate(book.readAt, offset)) : '',
     book.labelPrice.currency + ' ' +
       n(book.labelPrice.value, 'decimal', 'en-US'),
     book.paidPrice.currency + ' ' +
       n(book.paidPrice.value, 'decimal', 'en-US'),
     book.store,
     book.coverUrl || '',
-    book.boughtAt ? formatDateToSheet(book.boughtAt) : '',
+    book.boughtAt ? formatDateToSheet(fixDate(book.boughtAt, offset)) : '',
     book.favorite || BookFavorite.INACTIVE,
     book.synopsis || '',
     book.notes || '',
-    formatDateTimeToSheet(book.createdAt || now),
+    formatDateTimeToSheet(fixDate(book.createdAt, offset) || now),
     formatDateTimeToSheet(now)
   ]
 }

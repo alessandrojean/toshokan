@@ -15,44 +15,57 @@
       <div
         :class="[
           checked
-            ? 'border-primary-600 dark:border-primary-500'
-            : 'dark:bg-gray-700 border-gray-300 dark:border-gray-700 dark:hover:border-gray-600',
-          'cursor-pointer group rounded-md border flex flex-col md:flex-row items-start md:items-center text-sm px-4 md:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 motion-safe:transition-shadow'
+            ? 'border-primary-600 dark:border-primary-400 shadow'
+            : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700',
+          'cursor-pointer group rounded-md border flex flex-col md:flex-row items-start md:items-center text-sm px-4 md:px-5 py-4 has-ring-focus dark:focus-visible:ring-offset-gray-800'
         ]"
       >
-        <div
-          aria-hidden="true"
-          :class="[
-            checked
-              ? 'bg-primary-600 dark:bg-primary-500 border-primary-600 dark:border-primary-500'
-              : 'bg-white border-gray-300',
-            'w-4 h-4 -ml-2 mr-4 border rounded-xl flex items-center justify-center'
-          ]"
-        >
-          <span class="inline-block w-1.5 h-1.5 bg-white rounded-xl"></span>
-        </div>
-        <div class="inline-flex flex-col text-left flex-grow">
-          <RadioGroupLabel as="span" class="block font-medium truncate dark:text-gray-200">
+        <div class="inline-flex flex-col text-left flex-grow space-y-1">
+          <RadioGroupLabel as="span" class="block font-semibold truncate dark:text-gray-100">
             {{ book.title }}
           </RadioGroupLabel>
           <RadioGroupDescription
             as="span"
             v-if="book.authors && book.authors.length > 0"
-            class="block text-gray-500 dark:text-gray-300 truncate"
+            class="block text-gray-600 dark:text-gray-300 truncate font-medium"
           >
             {{ formatAuthors(book.authors) }}
           </RadioGroupDescription>
+          <div class="flex items-center space-x-3 text-xs">
+            <span
+              :class="[
+                !checked ? 'group-hover:border-gray-300 dark:group-hover:border-gray-500' : '',
+                'text-xs bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 group-hover:text-gray-600 dark:group-hover:text-gray-100 font-medium px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600'
+              ]"
+            >
+              {{ book.provider }}
+            </span>
+            <span
+              v-if="book.publisher && book.publisher.length > 0"
+              :class="[
+                !checked ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300' : '',
+                'block text-gray-500 dark:text-gray-400'
+              ]"
+            >
+              {{ book.publisher }}
+            </span>
+          </div>
         </div>
-        <div class="flex-shrink-0 mt-1 md:mt-0 inline-flex md:flex-col items-end space-x-2 md:space-x-0 md:space-y-0.5">
-          <span class="text-xs bg-primary-100 dark:bg-transparent text-primary-600 dark:text-gray-200 dark:group-hover:text-gray-100 font-semibold px-2 py-0.5 dark:p-0 rounded text uppercase tracking-wide">
-            {{ book.provider }}
-          </span>
+        <div
+          aria-hidden="true"
+          :class="[
+            checked
+              ? 'bg-primary-600 dark:bg-primary-500 border-primary-600 dark:border-primary-500'
+              : 'bg-white dark:bg-gray-700 dark:group-hover:bg-gray-500 border-gray-300 dark:border-gray-700 group-hover:border-gray-400 dark:group-hover:border-gray-500',
+            'w-4 lg:w-5 h-4 lg:h-5 ml-4 lg:ml-5 border rounded-xl flex items-center justify-center'
+          ]"
+        >
           <span
-            v-if="book.publisher && book.publisher.length > 0"
-            class="block text-gray-500 dark:text-gray-300"
-          >
-            {{ book.publisher }}
-          </span>
+            :class="[
+              checked ? 'bg-white' : 'bg-white dark:bg-gray-700 dark:group-hover:bg-gray-500',
+              'inline-block w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-xl'
+            ]"
+          />
         </div>
       </div>
     </RadioGroupOption>

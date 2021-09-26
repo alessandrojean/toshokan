@@ -18,7 +18,8 @@ export default {
     timeZone: {
       name: 'America/Sao_Paulo',
       offset: -3,
-      offsetStr: '-03:00'
+      offsetStr: '-03:00',
+      timezoneOffset: 180
     }
   },
   getters: {

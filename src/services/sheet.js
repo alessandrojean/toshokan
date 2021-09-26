@@ -115,7 +115,8 @@ export async function getSheetData (sheetId) {
     offsetStr: offset.toLocaleString('en-US', {
       minimumIntegerDigits: 2,
       signDisplay: 'always'
-    }) + ':00'
+    }) + ':00',
+    timezoneOffset: -offset * 60
   }
 
   return { stats, timeZone }
@@ -383,6 +384,7 @@ export function getBookNeighbors (sheetId, idMap, book) {
     select *
     where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
       and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
+      and ${CollectionColumns.GROUP} = "${book.group}"
     order by ${CollectionColumns.TITLE} asc
   `)
 

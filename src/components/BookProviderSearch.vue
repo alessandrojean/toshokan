@@ -245,4 +245,11 @@ export default {
 #search-form:focus-within .key-tooltip {
   @apply md:flex;
 }
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
 </style>

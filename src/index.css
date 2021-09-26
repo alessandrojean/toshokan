@@ -99,7 +99,7 @@
   .button {
     @apply group relative
       inline-flex items-center px-4 py-2 
-      border border-gray-300 dark:border-gray-700
+      border border-gray-300 dark:border-gray-600
       rounded-md shadow-sm text-sm font-medium 
       text-gray-700 dark:text-gray-300 
       bg-white dark:bg-gray-700 
@@ -108,11 +108,11 @@
 
   .button:hover {
     @apply bg-gray-50 dark:bg-gray-600
-      dark:border-gray-600 dark:text-gray-200;
+      dark:border-gray-500 dark:text-gray-200;
   }
 
   .button:active {
-    @apply bg-gray-100 dark:bg-gray-500 dark:border-gray-500;
+    @apply bg-gray-100 dark:bg-gray-700 dark:border-gray-600;
   }
 
   .button:focus {
@@ -128,7 +128,7 @@
   .button:disabled {
     @apply cursor-default opacity-50
       bg-white dark:bg-gray-700
-      dark:border-gray-700;
+      dark:border-gray-600;
   }
 
   .button.is-small {
@@ -184,18 +184,25 @@
   }
 
   .button.is-primary:hover {
-    @apply bg-primary-700 border-primary-700;
+    @apply text-white 
+      bg-primary-700 dark:bg-primary-500
+      border-primary-700 dark:border-primary-500;
   }
 
   .button.is-primary:active {
-    @apply bg-primary-800 border-primary-800;
+    @apply text-white 
+      bg-primary-800 dark:bg-primary-700
+      border-primary-800 dark:border-primary-700;
   }
 
   .button.is-primary:disabled {
-    @apply opacity-50 bg-primary-600;
+    @apply opacity-50 bg-primary-600 border-primary-600;
   }
 
-  .button.is-primary svg {
+  .button.is-primary svg,
+  .button.is-primary:hover svg,
+  .button.is-primary:active svg,
+  .button.is-primary:disabled svg {
     @apply text-white;
   }
 

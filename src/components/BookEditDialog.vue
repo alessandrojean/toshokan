@@ -56,14 +56,14 @@
           </div>
 
           <TabGroup>
-            <TabList class="flex px-4 md:px-6 space-x-6 border-b border-gray-200 dark:border-gray-600">
+            <TabList class="flex px-4 md:px-6 space-x-6 border-b border-gray-300 dark:border-gray-600">
               <Tab as="template" v-slot="{ selected }">
                 <button
                   :class="[
                     'flex items-center justify-center px-1 py-3 -mb-px text-sm font-medium has-ring-focus border-b-2',
                     selected
-                      ? 'text-primary-600 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-300 border-primary-600 dark:border-primary-300'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
+                      ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
+                      : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
                   ]"
                 >
                   <span
@@ -81,8 +81,8 @@
                   :class="[
                     'flex items-center justify-center px-1 py-3 -mb-px text-sm font-medium has-ring-focus border-b-2',
                     selected
-                      ? 'text-primary-600 dark:text-primary-300 hover:text-primary-600 dark:hover:text-primary-300 border-primary-600 dark:border-primary-300'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
+                      ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
+                      : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
                   ]"
                 >
                   {{ t('dashboard.details.coverForm.title') }}
@@ -90,24 +90,29 @@
               </Tab>
             </TabList>
 
-            <TabPanels class="flex-grow overflow-y-auto px-4 md:px-6 py-4 md:py-6">
-              <TabPanel class="has-ring-focus rounded-md">
-                <BookForm
-                  ref="editForm"
-                  touch-on-mount
-                  :book="editingBook"
-                  @update:book="Object.assign(editingBook, $event)"
-                  @error="setEditFormInvalid"
-                />
-              </TabPanel>
-              <TabPanel class="has-ring-focus rounded-md">
-                <BookCoverSelector
-                  custom
-                  hide-custom-title
-                  v-model:cover-url="editingBook.coverUrl"
-                  :book="editingBook"
-                />
-              </TabPanel>
+            <TabPanels as="template">
+              <div
+                class="flex-grow overflow-y-auto px-4 md:px-6 py-4 md:py-6"
+                ref="main"
+              >
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookForm
+                    ref="editForm"
+                    touch-on-mount
+                    :book="editingBook"
+                    @update:book="Object.assign(editingBook, $event)"
+                    @error="setEditFormInvalid"
+                  />
+                </TabPanel>
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookCoverSelector
+                    custom
+                    hide-custom-title
+                    v-model:cover-url="editingBook.coverUrl"
+                    :book="editingBook"
+                  />
+                </TabPanel>
+              </div>
             </TabPanels>
           </TabGroup>
 
@@ -136,7 +141,7 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, watch } from 'vue'
+import { nextTick, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -222,13 +227,20 @@ export default {
     const editForm = ref(null)
 
     async function handleEdit () {
-      // const { error, book: editedBook } = editForm.value.touch(editingBook)
-
       if (!editFormInvalid.value) {
         context.emit('edit', editingBook)
         closeDialog()
+      } else {
+        nextTick(() => {
+          main.value.scroll({
+            top: main.value.scrollHeight,
+            behavior: 'smooth'
+          })
+        })
       }
     }
+
+    const main = ref(null)
 
     return {
       t,
@@ -237,7 +249,8 @@ export default {
       editFormInvalid,
       setEditFormInvalid,
       editingBook,
-      handleEdit
+      handleEdit,
+      main
     }
   }
 }

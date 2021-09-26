@@ -72,7 +72,7 @@
               :class="[
                 'flex-1 relative flex items-baseline justify-center py-3 text-sm font-medium has-ring-focus',
                 step === i + 1
-                  ? 'text-primary-600 dark:text-primary-300'
+                  ? 'text-primary-600 dark:text-gray-100'
                   : 'text-gray-400 dark:text-gray-400'
               ]"
             >
@@ -80,7 +80,7 @@
                 :class="[
                   step === i + 1
                     ? 'text-gray-500 dark:text-gray-300'
-                    : 'text-gray-400',
+                    : 'text-gray-400 dark:text-gray-500',
                   'text-xs mr-2'
                 ]"
               >
@@ -90,7 +90,7 @@
               <span
                 v-if="step === i + 1"
                 aria-hidden="true"
-                class="bg-primary-600 dark:bg-primary-300 h-2px absolute -bottom-px left-0 w-full"
+                class="bg-primary-600 dark:bg-primary-400 h-2px absolute -bottom-px left-0 w-full"
               />
             </li>
           </ul>
@@ -332,6 +332,7 @@ export default {
       bookInvalid.value = false
       searchBookSelected.value = null
       Object.assign(book, bookInitialState)
+      form.value?.forceUpdateBook()
     }
 
     function closeDialog () {
@@ -341,7 +342,7 @@ export default {
 
       context.emit('close')
 
-      nextTick(() => resetSteps())
+      setTimeout(() => resetSteps(), 400)
     }
 
     const { isOpen } = toRefs(props)

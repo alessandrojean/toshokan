@@ -78,10 +78,16 @@
           {{ book.codeType }}: <span>{{ book.code }}</span>
         </li>
         <li>
-          {{ t('book.properties.createdAt') }}: <span>{{ createdAt }}</span>
+          {{ t('book.properties.createdAt') }}:
+          <time :datetime="book.createdAt.toISOString()">
+            {{ createdAt }}
+          </time>
         </li>
         <li>
-          {{ t('book.properties.updatedAt') }}: <span>{{ updatedAt }}</span>
+          {{ t('book.properties.updatedAt') }}:
+          <time :datetime="book.updatedAt.toISOString()">
+            {{ updatedAt }}
+          </time>
         </li>
       </ul>
       <div v-else class="flex flex-col space-y-1">
@@ -245,14 +251,6 @@ export default {
     const timeZone = computed(() => store.state.sheet.timeZone)
 
     function formatDate (date, format = 'short') {
-      if (typeof date === 'string' && date.length > 0) {
-        return d(
-          new Date(`${date}T00:00:00.000${timeZone.value.offsetStr}`),
-          format,
-          { timeZone: timeZone.value.name }
-        )
-      }
-
       if (date instanceof Date) {
         return d(date, format, { timeZone: timeZone.value.name })
       }

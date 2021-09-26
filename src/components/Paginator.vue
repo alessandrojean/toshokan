@@ -128,15 +128,20 @@ export default {
 @layer components {
   .pag-button {
     @apply relative inline-flex items-center px-2 py-2 border border-gray-300
-       bg-white text-sm font-medium text-gray-500 hover:bg-gray-50
+       bg-white text-sm font-medium text-gray-500
        disabled:cursor-default disabled:opacity-50 disabled:bg-white
        active:bg-gray-100 focus:outline-none focus-visible:ring-2
        focus-visible:ring-offset-2 focus-visible:ring-primary-500
        focus-visible:z-20 motion-safe:transition-shadow dark:bg-gray-700
-       dark:text-gray-300 dark:disabled:bg-gray-700 dark:border-gray-700
-       dark:hover:bg-gray-600 dark:active:bg-gray-500 dark:hover:border-gray-600
-       dark:disabled:border-gray-700 dark:hover:text-gray-200
+       dark:text-gray-300 dark:disabled:bg-gray-700 dark:border-gray-600
+       dark:active:bg-gray-700 dark:hover:border-gray-500
+       dark:disabled:border-gray-700
        dark:focus-visible:ring-offset-gray-800;
+  }
+
+  .pag-button:hover:not(:disabled) {
+    @apply z-10 bg-gray-50 dark:bg-gray-600
+      dark:text-gray-200;
   }
 
   .pag-button.is-left {
