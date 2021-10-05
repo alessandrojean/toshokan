@@ -144,8 +144,18 @@ export default {
       termsOfUse: 'Terms of Use'
     },
     version: 'Toshokan v{version}',
+    copyright: '© {year} Alessandro Jean. All rights reserved.',
     dev: 'Development environment',
-    lastUpdate: 'Latest update in {0}.'
+    lastUpdate: 'Latest update in {0}.',
+    donate: {
+      actionDonate: 'Make a donation',
+      actionClose: 'Close',
+      description: dedent`
+        If the project is helping you and you want to make a donation,
+        use the codes available below. We really appreciate it and we
+        will be eternally grateful.
+      `
+    }
   },
   pagination: {
     text: 'Page {0} of {1} with {2} items',
@@ -376,6 +386,7 @@ export default {
     library: {
       title: 'Library',
       currentGroup: 'Current group: ',
+      allGroups: 'All groups',
       sortingBy: 'Sorting by: ',
       filter: 'Filter',
       newBook: 'New book',
@@ -391,6 +402,8 @@ export default {
         close: 'Close panel',
         closeMobile: 'Close',
         filter: 'Filtrar',
+        visualization: 'Display',
+        books: 'Books',
         viewMode: {
           label: 'Display mode',
           table: 'Table',

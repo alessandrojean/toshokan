@@ -122,8 +122,13 @@ export default {
     },
 
     [CollectionMutations.UPDATE_GROUP]: function (state, { group, totalResults }) {
-      state.group = group || ''
-      localStorage.setItem('collection_group', group)
+      state.group = group || null
+
+      if (group) {
+        localStorage.setItem('collection_group', group)
+      } else {
+        localStorage.removeItem('collection_group')
+      }
 
       if (totalResults) {
         const paginationInfo = buildPaginationInfo({
@@ -206,8 +211,8 @@ export default {
         let group = state.group
         const groupData = state.groups.items.find(grp => grp.name === group)
 
-        if (!groupData && state.groups.items.length > 0) {
-          group = state.groups.items[0].name
+        if (!groupData) {
+          group = null
         }
 
         const orderBy = PropertyToColumn[state.sortBy]

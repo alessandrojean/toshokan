@@ -22,11 +22,11 @@
       <TransitionChild
         as="template"
         enter="motion-reduce:transition-none duration-300 ease-out"
-        enter-from="opacity-0 scale-95"
-        enter-to="opacity-100 scale-100"
+        enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
+        enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
         leave="motion-reduce:transition-none duration-200 ease-in"
-        leave-from="opacity-100 scale-100"
-        leave-to="opacity-0 scale-95"
+        leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
+        leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
       >
         <div class="relative flex flex-col w-full max-w-2xl h-full overflow-hidden text-left motion-safe:transition-all transform bg-white dark:bg-gray-800 sm:shadow-xl sm:rounded-lg">
           <div class="relative overflow-hidden bg-primary-600 dark:bg-primary-500 flex-shrink-0 flex items-center px-4 md:px-6 py-4 md:py-5">
@@ -69,10 +69,8 @@
                   <span
                     v-if="editFormInvalid"
                     aria-hidden="true"
-                    class="mr-3 text-red-500 dark:text-red-400"
-                  >
-                    <ExclamationCircleIcon class="w-5 h-5" />
-                  </span>
+                    class="mr-2 bg-red-500 dark:bg-red-400 w-1.5 h-1.5 rounded-md"
+                  />
                   {{ t('dashboard.details.editForm.title') }}
                 </button>
               </Tab>
@@ -158,7 +156,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { CheckIcon, ExclamationCircleIcon, XIcon } from '@heroicons/vue/solid'
+import { CheckIcon, XIcon } from '@heroicons/vue/solid'
 
 import BookCoverSelector from '@/components/BookCoverSelector.vue'
 import BookForm from '@/components/BookForm.vue'
@@ -181,7 +179,6 @@ export default {
     BookCoverSelector,
     BookForm,
     CheckIcon,
-    ExclamationCircleIcon,
     XIcon
   },
 

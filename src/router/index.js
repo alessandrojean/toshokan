@@ -100,15 +100,8 @@ const routes = [
             name: 'BookDetails',
             component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/Book.vue'),
             meta: {
-              title: () => t('app.routes.dashboard.details')
-            }
-          },
-          {
-            path: 'new',
-            name: 'DashboardNewBook',
-            component: () => import(/* webpackChunkName: "dashboard-new-book" */ '../views/dashboard/library/NewBook.vue'),
-            meta: {
-              title: () => t('app.routes.dashboard.newBook')
+              title: () => t('app.routes.dashboard.details'),
+              blurNavbar: true
             }
           }
         ]

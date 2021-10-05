@@ -36,18 +36,23 @@
         >
       </transition>
     </div>
-    <div class="flex-1 flex flex-col space-y-1.5">
-      <span class="text-sm font-semibold dark:text-gray-100">
-        {{ result.title }}
-      </span>
-      <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
-        {{ authorsFormatted }}
-      </span>
-      <span class="text-sm text-gray-300 dark:text-gray-400">
-        <span class="text-gray-600 dark:text-gray-400">{{ result.group }}</span>
-        {{ ' · ' }}
-        <span class="text-gray-600 dark:text-gray-400">{{ result.publisher }}</span>
-      </span>
+    <div class="flex-1 flex flex-col space-y-3">
+      <div class="w-full">
+        <span class="text-sm font-display font-medium dark:text-gray-100 block w-full truncate">
+          {{ result.title }}
+        </span>
+        <span class="text-sm font-medium text-gray-600 dark:text-gray-300 block w-full truncate">
+          {{ authorsFormatted }}
+        </span>
+      </div>
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="text-xxs bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600">
+          {{ result.group }}
+        </span>
+        <span class="block text-gray-500 dark:text-gray-400">
+          {{ result.publisher }}
+        </span>
+      </div>
     </div>
     <span aria-hidden="true">
       <ChevronRightIcon class="w-5 h-5 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-gray-100" aria-hidden="true" />

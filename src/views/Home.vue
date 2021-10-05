@@ -19,9 +19,9 @@
           <figure class="w-full flex flex-col justify-center border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
             <div
               aria-hidden="true"
-              class="bg-gray-800 py-2.5 px-4 flex justify-between items-center border-b border-gray-600"
+              class="bg-gray-800 py-2.5 px-4 flex justify-between items-center"
             >
-              <p class="text-sm text-gray-100 font-medium leading-tight">
+              <p class="text-sm text-gray-400 font-medium leading-tight select-none">
                 {{ t('app.name') }}
               </p>
               <div class="space-x-2 flex">

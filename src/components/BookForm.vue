@@ -79,28 +79,43 @@
         {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
       </p>
 
-      <ul class="flex flex-wrap mt-2 select-none" v-if="book.authors.length > 0">
-        <li
-          v-for="(author, i) of book.authors"
-          :key="i"
-          class="flex items-center text-sm bg-primary-100 dark:bg-gray-700 rounded-md px-2 py-0.5 mr-2 mt-2 font-medium text-primary-700 dark:text-gray-200"
-        >
-          <span>{{ author }}</span>
-          <button
-            type="button"
-            :title="t('book.form.removeAuthor')"
-            class="text-primary-400 dark:text-gray-400 hover:text-primary-600 dark:hover:text-gray-200 focus-visible:text-primary-600 dark:focus-visible:text-gray-200 p-1 ml-1 -mr-1 rounded-md has-ring-focus focus-visible:ring-offset-primary-100 dark:focus-visible:ring-offset-gray-700"
-            @click="removeAuthor(i)"
-          >
-            <span class="sr-only">
-              {{ t('book.form.removeAuthor') }}
+      <Draggable
+        v-if="book.authors.length > 0"
+        tag="ul"
+        class="flex flex-wrap mt-2 select-none"
+        ghost-class="opacity-50"
+        handle=".handle"
+        :modelValue="book.authors"
+        :item-key="author => author"
+        :disabled="book.authors.length === 1"
+        @update:modelValue="handleAuthorsDragAndDrop"
+      >
+        <template #item="{ element: author, index }">
+          <li class="flex items-center text-sm bg-primary-100 dark:bg-gray-700 rounded-md px-2 py-0.5 mr-2 mt-2 font-medium text-primary-700 dark:text-gray-200">
+            <span
+              v-if="book.authors.length > 1"
+              class="handle hidden md:block text-primary-500 dark:text-gray-400 cursor-move p-1 -ml-1 mr-1"
+              aria-hidden="true"
+            >
+              <MenuIcon class="w-3 h-3" />
             </span>
-            <span aria-hidden="true">
-              <XIcon class="w-3 h-3" />
-            </span>
-          </button>
-        </li>
-      </ul>
+            <span>{{ author }}</span>
+            <button
+              type="button"
+              :title="t('book.form.removeAuthor')"
+              class="text-primary-400 dark:text-gray-400 hover:text-primary-600 dark:hover:text-gray-200 focus-visible:text-primary-600 dark:focus-visible:text-gray-200 p-1 ml-1 -mr-1 rounded-md has-ring-focus focus-visible:ring-offset-primary-100 dark:focus-visible:ring-offset-gray-700"
+              @click="removeAuthor(index)"
+            >
+              <span class="sr-only">
+                {{ t('book.form.removeAuthor') }}
+              </span>
+              <span aria-hidden="true">
+                <XIcon class="w-3 h-3" />
+              </span>
+            </button>
+          </li>
+        </template>
+      </Draggable>
     </div>
 
     <div>
@@ -445,7 +460,8 @@ import { helpers, required } from '@vuelidate/validators'
 
 import { decimalComma, dimensions } from '@/util/validators'
 
-import { PlusIcon, SelectorIcon, XIcon } from '@heroicons/vue/solid'
+import { MenuIcon, PlusIcon, SelectorIcon, XIcon } from '@heroicons/vue/solid'
+import Draggable from 'vuedraggable'
 
 import { getCodeType } from '@/model/Book'
 
@@ -456,6 +472,8 @@ export default {
 
   components: {
     Alert,
+    Draggable,
+    MenuIcon,
     PlusIcon,
     SelectorIcon,
     XIcon
@@ -564,6 +582,7 @@ export default {
 
       tempAuthor.value = ''
       context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
+      context.emit('update:book', { ...bookState })
     }
 
     function removeAuthor (i) {
@@ -572,6 +591,16 @@ export default {
 
       v$.value.authorsStr.$touch()
       context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
+      context.emit('update:book', { ...bookState })
+    }
+
+    function handleAuthorsDragAndDrop (newAuthors) {
+      bookState.authors = newAuthors
+      bookState.authorsStr = bookState.authors.join('; ')
+
+      v$.value.authorsStr.$touch()
+      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
+      context.emit('update:book', { ...bookState })
     }
 
     function touch (book) {
@@ -647,6 +676,7 @@ export default {
       tempAuthor,
       addAuthor,
       removeAuthor,
+      handleAuthorsDragAndDrop,
       forceUpdateBook,
       t
     }

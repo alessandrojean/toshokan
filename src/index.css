@@ -83,8 +83,8 @@
   }
 
   .checkbox {
-    @apply rounded text-primary-600 dark:bg-gray-600
-      border-gray-300 dark:border-gray-700 shadow-sm;
+    @apply rounded text-primary-600 dark:bg-gray-850
+      border-gray-300 dark:border-gray-600 shadow-sm;
   }
 
   .checkbox:focus {
@@ -93,7 +93,7 @@
   }
 
   .checkbox:checked {
-    @apply dark:bg-primary-500;
+    @apply dark:bg-primary-500 dark:border-primary-500;
   }
 
   .button {

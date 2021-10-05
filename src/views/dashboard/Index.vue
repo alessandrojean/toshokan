@@ -24,42 +24,20 @@
       </router-view>
     </main>
 
-    <footer class="hidden sm:block bg-white dark:bg-gray-800 shadow border-t border-gray-200 dark:border-gray-700 py-4 px-4 sm:px-6 lg:px-8" role="contentinfo">
-      <div class="max-w-7xl mx-auto text-center space-y-2">
-        <span aria-hidden="true">
-          <BookOpenIcon class="h-8 w-8 mx-auto text-gray-400 dark:text-gray-600" aria-hidden="true" />
-        </span>
-
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ t('footer.version', { version: appVersion }) }}
-        </p>
-
-        <p v-if="!isDev" class="text-xs text-gray-600 dark:text-gray-400" lang="en">
-          <a href="https://www.netlify.com/" target="_blank" class="rounded-sm hover:underline hover:text-primary-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800 focus-visible:ring-primary-500">This site is powered by Netlify</a>
-          <img src="@/assets/netlify-logo.svg" alt="Netlify logo" class="h-3.5 w-3.5 inline-block align-text-bottom ml-1"/>
-        </p>
-
-        <p v-else class="text-xs text-gray-600 dark:text-gray-400">
-          {{ t('footer.dev') }}
-        </p>
-      </div>
-    </footer>
+    <DashboardFooter />
   </div>
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { MutationTypes } from '@/store'
 
-import useAppInfo from '@/composables/useAppInfo'
-
-import { BookOpenIcon } from '@heroicons/vue/outline'
-
 import AppNavbar from '@/components/AppNavbar.vue'
+import DashboardFooter from '@/components/DashboardFooter.vue'
 import MobileNavbar from '@/components/MobileNavbar.vue'
 
 export default {
@@ -67,17 +45,13 @@ export default {
 
   components: {
     AppNavbar,
-    MobileNavbar,
-    BookOpenIcon
+    DashboardFooter,
+    MobileNavbar
   },
 
   setup () {
     const store = useStore()
     const router = useRouter()
-
-    const isDev = ref(process.env.NODE_ENV === 'development')
-
-    const { appVersion } = useAppInfo()
 
     const signedIn = computed(() => store.state.auth.signedIn)
     const loadedOnce = computed(() => store.state.sheet.loadedOnce)
@@ -105,8 +79,6 @@ export default {
     const { t } = useI18n()
 
     return {
-      appVersion,
-      isDev,
       loadSheetData,
       signedIn,
       t

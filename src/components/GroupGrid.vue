@@ -4,8 +4,8 @@
     aria-labelledby="groups-title"
     class="w-full mb-3 mt-8"
   >
-    <div v-if="sheetLoading || loading" class="motion-safe:animate-pulse h-7 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
-    <h2 v-else id="groups-title" class="font-medium font-display text-xl mb-3 dark:text-gray-200">
+    <div v-if="sheetLoading || loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
+    <h2 v-else id="groups-title" class="font-medium font-display text-lg mb-2 dark:text-gray-200">
       {{ t('dashboard.home.groups') }}
     </h2>
 

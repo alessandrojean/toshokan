@@ -20,22 +20,24 @@
           'cursor-pointer group rounded-md border flex flex-col md:flex-row items-start md:items-center text-sm px-4 md:px-5 py-4 has-ring-focus dark:focus-visible:ring-offset-gray-800'
         ]"
       >
-        <div class="inline-flex flex-col text-left flex-grow space-y-1">
-          <RadioGroupLabel as="span" class="block font-semibold truncate dark:text-gray-100">
-            {{ book.title }}
-          </RadioGroupLabel>
-          <RadioGroupDescription
-            as="span"
-            v-if="book.authors && book.authors.length > 0"
-            class="block text-gray-600 dark:text-gray-300 truncate font-medium"
-          >
-            {{ formatAuthors(book.authors) }}
-          </RadioGroupDescription>
+        <div class="inline-flex flex-col text-left flex-grow space-y-2">
+          <div class="w-full">
+            <RadioGroupLabel as="span" class="block w-full truncate font-medium font-display dark:text-gray-100">
+              {{ book.title }}
+            </RadioGroupLabel>
+            <RadioGroupDescription
+              as="span"
+              v-if="book.authors && book.authors.length > 0"
+              class="block w-full truncate text-gray-600 dark:text-gray-300 font-medium"
+            >
+              {{ formatAuthors(book.authors) }}
+            </RadioGroupDescription>
+          </div>
           <div class="flex items-center space-x-3 text-xs">
             <span
               :class="[
                 !checked ? 'group-hover:border-gray-300 dark:group-hover:border-gray-500' : '',
-                'text-xs bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 group-hover:text-gray-600 dark:group-hover:text-gray-100 font-medium px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600'
+                'text-xxs font-semibold bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 group-hover:text-gray-600 dark:group-hover:text-gray-100 px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600'
               ]"
             >
               {{ book.provider }}
@@ -56,13 +58,13 @@
           :class="[
             checked
               ? 'bg-primary-600 dark:bg-primary-500 border-primary-600 dark:border-primary-500'
-              : 'bg-white dark:bg-gray-700 dark:group-hover:bg-gray-500 border-gray-300 dark:border-gray-700 group-hover:border-gray-400 dark:group-hover:border-gray-500',
+              : 'bg-white dark:bg-gray-900 dark:group-hover:bg-gray-850 border-gray-300 dark:border-gray-600 group-hover:border-gray-400 dark:group-hover:border-gray-500',
             'w-4 lg:w-5 h-4 lg:h-5 ml-4 lg:ml-5 border rounded-xl flex items-center justify-center'
           ]"
         >
           <span
             :class="[
-              checked ? 'bg-white' : 'bg-white dark:bg-gray-700 dark:group-hover:bg-gray-500',
+              checked ? 'bg-white' : 'bg-white dark:bg-gray-850 dark:group-hover:bg-gray-850',
               'inline-block w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-xl'
             ]"
           />

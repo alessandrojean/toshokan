@@ -24,7 +24,7 @@
               <span class="sr-only">
                 {{ t('dashboard.library.currentGroup') }}
               </span>
-              {{ group }}
+              {{ group || t('dashboard.library.allGroups') }}
             </button>
 
             <button

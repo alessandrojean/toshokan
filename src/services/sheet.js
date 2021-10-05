@@ -218,8 +218,8 @@ export async function getBooksFromGroup (sheetId, idMap, group, page = 1, option
   const sheetUrl = buildSheetUrl(sheetId)
   const query = new window.google.visualization.Query(sheetUrl)
   query.setQuery(dedent`
-    select count(${CollectionColumns.GROUP})
-    where ${CollectionColumns.GROUP} = "${group}"
+    select count(${group ? CollectionColumns.GROUP : CollectionColumns.ID})
+    ${group ? `where ${CollectionColumns.GROUP} = "${group}"` : ''}
   `)
 
   return new Promise((resolve, reject) => {
@@ -348,6 +348,7 @@ export function getBooksFromCollection (sheetId, idMap, book) {
     select *
     where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
       and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
+      and ${CollectionColumns.GROUP} = "${book.group}"
     order by ${CollectionColumns.TITLE} asc
   `)
 

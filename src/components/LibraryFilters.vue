@@ -47,136 +47,181 @@
                     <XIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-                <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible py-4 sm:py-6 mt-4 space-y-6 relative sm:flex-1 px-4 sm:px-6 border-t border-gray-300 dark:border-gray-600">
-                  <div>
-                    <RadioGroup v-model="viewMode">
-                      <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.viewMode.label' )}}
-                      </RadioGroupLabel>
-
-                      <div class="w-full">
-                        <RadioGroupOption
-                          value="table"
-                          v-slot="{ checked }"
-                          class="inline-block mr-2 has-ring-focus rounded"
+                <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible mt-4 relative sm:flex-1 border-t border-gray-300 dark:border-gray-600">
+                  <div class="divide-y divide-gray-200 dark:divide-gray-600 border-b border-gray-200 dark:border-gray-600">
+                    <Disclosure
+                      as="div"
+                      class="py-4"
+                      v-slot="{ open }"
+                      default-open
+                    >
+                      <DisclosureButton class="w-full flex justify-between items-center font-medium px-4 sm:px-6 rounded has-ring-focus dark:text-gray-200">
+                        <span>
+                          {{ t('dashboard.library.filters.books') }}
+                        </span>
+                        <span aria-hidden="true">
+                          <ChevronUpIcon
+                            :class="open ? 'transform rotate-180' : ''"
+                            class="w-5 h-5 text-gray-500"
+                          />
+                        </span>
+                      </DisclosureButton>
+                      <DisclosurePanel class="space-y-6 pt-4 px-4 sm:px-6">
+                        <RadioGroup
+                          v-if="groups.length > 0"
+                          v-model="group"
+                          as="div"
                         >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.viewMode.table') }}
-                          </span>
-                        </RadioGroupOption>
-                        <RadioGroupOption
-                          value="grid"
-                          v-slot="{ checked }"
-                          class="inline-block has-ring-focus rounded"
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.group') }}
+                          </RadioGroupLabel>
+
+                          <div class="w-full -mt-2">
+                            <RadioGroupOption
+                              v-for="grp of groups"
+                              :key="grp.name"
+                              :value="grp.name"
+                              v-slot="{ checked }"
+                              class="mr-2 mt-2 inline-block has-ring-focus rounded"
+                            >
+                              <span
+                                :class="[
+                                  'chip is-square',
+                                  checked ? 'is-active' : ''
+                                ]"
+                                @click="resetGroup(checked)"
+                              >
+                                {{ grp.name }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+
+                        <RadioGroup v-model="sortDirection" as="div">
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.sortDirection.label') }}
+                          </RadioGroupLabel>
+
+                          <div class="w-full">
+                            <RadioGroupOption
+                              value="asc"
+                              v-slot="{ checked }"
+                              class="inline-block mr-2 has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.sortDirection.asc') }}
+                              </span>
+                            </RadioGroupOption>
+                            <RadioGroupOption
+                              value="desc"
+                              v-slot="{ checked }"
+                              class="inline-block has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.sortDirection.desc') }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+
+                        <RadioGroup v-model="sortProperty" as="div">
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.sortBy') }}
+                          </RadioGroupLabel>
+
+                          <div class="w-full -mt-2">
+                            <RadioGroupOption
+                              v-for="sortOption of sortProperties"
+                              :key="sortOption.attr"
+                              :value="sortOption.attr"
+                              v-slot="{ checked }"
+                              class="mr-2 mt-2 inline-block has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ sortOption.title }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+                      </DisclosurePanel>
+                    </Disclosure>
+
+                    <Disclosure
+                      as="div"
+                      class="py-4"
+                      v-slot="{ open }"
+                    >
+                      <DisclosureButton class="w-full flex justify-between items-center font-medium px-4 sm:px-6 rounded has-ring-focus dark:text-gray-200">
+                        <span>
+                          {{ t('dashboard.library.filters.visualization') }}
+                        </span>
+                        <span aria-hidden="true">
+                          <ChevronUpIcon
+                            :class="open ? 'transform rotate-180' : ''"
+                            class="w-5 h-5 text-gray-500"
+                          />
+                        </span>
+                      </DisclosureButton>
+                      <DisclosurePanel class="space-y-6 pt-4 px-4 sm:px-6">
+                        <RadioGroup v-model="viewMode" as="div">
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.viewMode.label' )}}
+                          </RadioGroupLabel>
+
+                          <div class="w-full">
+                            <RadioGroupOption
+                              value="table"
+                              v-slot="{ checked }"
+                              class="inline-block mr-2 has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.viewMode.table') }}
+                              </span>
+                            </RadioGroupOption>
+                            <RadioGroupOption
+                              value="grid"
+                              v-slot="{ checked }"
+                              class="inline-block has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.viewMode.grid') }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+
+                        <RadioGroup
+                          v-if="viewMode === 'grid'"
+                          v-model="gridMode"
+                          as="div"
                         >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.viewMode.grid') }}
-                          </span>
-                        </RadioGroupOption>
-                      </div>
-                    </RadioGroup>
-                  </div>
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.gridMode.label') }}
+                          </RadioGroupLabel>
 
-                  <div v-if="viewMode === 'grid'">
-                    <RadioGroup v-model="gridMode">
-                      <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.gridMode.label') }}
-                      </RadioGroupLabel>
-
-                      <div class="w-full">
-                        <RadioGroupOption
-                          value="compact"
-                          v-slot="{ checked }"
-                          class="inline-block mr-2 has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.gridMode.compact') }}
-                          </span>
-                        </RadioGroupOption>
-                        <RadioGroupOption
-                          value="comfortable"
-                          v-slot="{ checked }"
-                          class="inline-block has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.gridMode.comfortable') }}
-                          </span>
-                        </RadioGroupOption>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div v-if="groups.length > 0">
-                    <RadioGroup v-model="group">
-                      <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.group') }}
-                      </RadioGroupLabel>
-
-                      <div class="w-full -mt-2">
-                        <RadioGroupOption
-                          v-for="grp of groups"
-                          :key="grp.name"
-                          :value="grp.name"
-                          v-slot="{ checked }"
-                          class="mr-2 mt-2 inline-block has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ grp.name }}
-                          </span>
-                        </RadioGroupOption>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div>
-                    <RadioGroup v-model="sortDirection">
-                      <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.sortDirection.label') }}
-                      </RadioGroupLabel>
-
-                      <div class="w-full">
-                        <RadioGroupOption
-                          value="asc"
-                          v-slot="{ checked }"
-                          class="inline-block mr-2 has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.sortDirection.asc') }}
-                          </span>
-                        </RadioGroupOption>
-                        <RadioGroupOption
-                          value="desc"
-                          v-slot="{ checked }"
-                          class="inline-block has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ t('dashboard.library.filters.sortDirection.desc') }}
-                          </span>
-                        </RadioGroupOption>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div>
-                    <RadioGroup v-model="sortProperty">
-                      <RadioGroupLabel class="label">
-                        {{ t('dashboard.library.filters.sortBy') }}
-                      </RadioGroupLabel>
-
-                      <div class="w-full -mt-2">
-                        <RadioGroupOption
-                          v-for="sortOption of sortProperties"
-                          :key="sortOption.attr"
-                          :value="sortOption.attr"
-                          v-slot="{ checked }"
-                          class="mr-2 mt-2 inline-block has-ring-focus rounded"
-                        >
-                          <span :class="['chip is-square', checked ? 'is-active' : '']">
-                            {{ sortOption.title }}
-                          </span>
-                        </RadioGroupOption>
-                      </div>
-                    </RadioGroup>
+                          <div class="w-full">
+                            <RadioGroupOption
+                              value="compact"
+                              v-slot="{ checked }"
+                              class="inline-block mr-2 has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.gridMode.compact') }}
+                              </span>
+                            </RadioGroupOption>
+                            <RadioGroupOption
+                              value="comfortable"
+                              v-slot="{ checked }"
+                              class="inline-block has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t('dashboard.library.filters.gridMode.comfortable') }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+                      </DisclosurePanel>
+                    </Disclosure>
                   </div>
                 </div>
 
@@ -221,6 +266,9 @@ import {
   Dialog,
   DialogOverlay,
   DialogTitle,
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
   RadioGroup,
   RadioGroupLabel,
   RadioGroupOption,
@@ -228,16 +276,20 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { XIcon } from '@heroicons/vue/solid'
+import { ChevronUpIcon, XIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'LibraryFilters',
 
   components: {
+    ChevronUpIcon,
     XIcon,
     Dialog,
     DialogOverlay,
     DialogTitle,
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
     RadioGroup,
     RadioGroupLabel,
     RadioGroupOption,
@@ -302,6 +354,12 @@ export default {
       })
     }
 
+    function resetGroup (checked) {
+      if (checked) {
+        setTimeout(() => { group.value = null })
+      }
+    }
+
     return {
       gridMode,
       group,
@@ -311,6 +369,7 @@ export default {
       sortProperties,
       viewMode,
       handleFilter,
+      resetGroup,
       t,
       n
     }

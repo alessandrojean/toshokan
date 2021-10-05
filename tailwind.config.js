@@ -12,7 +12,8 @@ module.exports = {
       gray: {
         ...defaultTheme.colors.gray,
         850: '#17202D'
-      }
+      },
+      picpay: '#21c25e'
     },
     fontFamily: {
       ...defaultTheme.fontFamily,
@@ -23,6 +24,9 @@ module.exports = {
       boxShadow: {
         avatar: 'inset 0 0px 4px 0 rgba(0, 0, 0, 0.25)',
         top: '0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)'
+      },
+      fontSize: {
+        'xxs': '.7rem'
       },
       height: {
         's-40': '40vh',

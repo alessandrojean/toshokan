@@ -12,16 +12,25 @@
       <!-- Book title -->
       <h2
         v-if="showBookInfo"
-        class="font-semibold font-display text-2xl md:text-3xl dark:text-gray-100"
+        class="font-bold dark:font-semibold font-display text-2xl md:text-3xl dark:text-gray-100"
       >
-        {{ book.title }}
+        {{ mainTitle }}
       </h2>
       <div v-else class="motion-safe:animate-pulse w-72 h-8 mb-2 bg-gray-400 dark:bg-gray-600 rounded"></div>
+
+      <!-- Book subtitle -->
+      <p
+        v-if="showBookInfo && subtitle.length > 0"
+        class="italic font-semibold dark:font-medium font-display text-md md:text-xl text-gray-600 dark:text-gray-300 -mt-1 mb-2"
+      >
+        {{ subtitle }}
+      </p>
 
       <!-- Book authors -->
       <p
         v-if="showBookInfo"
-        class="font-medium text-gray-500 dark:text-gray-400 text-md md:text-lg"
+        :class="subtitle.length === 0 ? 'md:text-lg' : ''"
+        class="font-medium text-gray-500 dark:text-gray-400 text-md"
       >
         {{ authorsFormatted }}
       </p>
@@ -32,7 +41,7 @@
     <div
       v-if="showBookInfo"
       v-html="synopsisRendered"
-      :class="blurSynopsis ? 'md:filter md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto transition-all duration-100 ease-in-out motion-reduce:transition-none' : ''"
+      :class="blurSynopsis ? 'md:filter md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto' : ''"
       class="prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal max-w-none dark:text-gray-300"
     />
     <div v-else class="flex flex-col space-y-2">
@@ -59,16 +68,57 @@
       </button>
       <div v-else class="motion-safe:animate-pulse flex-1 md:flex-initial md:w-28 h-11 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
-      <BookMenu
+      <button
         v-if="showBookInfo"
-        :book="book"
-        :disabled="disabled"
-        @click:delete="$emit('click:delete', $event)"
-        @click:toggleFavorite="$emit('click:toggleFavorite', $event)"
-        @click:toggleStatus="$emit('click:toggleStatus', $event)"
-        @click:updateCover="$emit('click:updateCover', $event)"
-      />
-      <div v-else class="motion-safe:animate-pulse w-10 md:w-28 h-11 bg-gray-400 dark:bg-gray-600 rounded"></div>
+        class="button is-icon-only px-2.5"
+        :title="
+          t('dashboard.details.header.options.markAs', {
+            status: t(isRead ? 'book.unread' : 'book.read').toLowerCase() }
+          )
+        "
+        @click="$emit('click:toggleStatus', $event)"
+      >
+        <span aria-hidden="true">
+          <BookmarkSolidIcon v-if="isRead" />
+          <BookmarkOutlineIcon v-else />
+        </span>
+        <span class="sr-only">
+          {{
+            t('dashboard.details.header.options.markAs', {
+              status: t(isRead ? 'book.unread' : 'book.read').toLowerCase() }
+            )
+          }}
+        </span>
+      </button>
+
+      <button
+        v-if="showBookInfo"
+        class="button is-icon-only px-2.5"
+        :title="t(`dashboard.details.header.options.${isFavorite ? 'removeFromFavorites' : 'addToFavorites' }`)"
+        @click="$emit('click:toggleFavorite', $event)"
+      >
+        <span aria-hidden="true">
+          <StarSolidIcon v-if="isFavorite" />
+          <StarOutlineIcon v-else />
+        </span>
+        <span class="sr-only">
+          {{ t(`dashboard.details.header.options.${isFavorite ? 'removeFromFavorites' : 'addToFavorites' }`) }}
+        </span>
+      </button>
+
+      <button
+        v-if="showBookInfo"
+        class="button is-icon-only px-2.5"
+        :title="t('dashboard.details.header.options.delete')"
+        @click="$emit('click:delete', $event)"
+      >
+        <span aria-hidden="true">
+          <TrashIcon />
+        </span>
+        <span class="sr-only">
+          {{ t('dashboard.details.header.options.delete') }}
+        </span>
+      </button>
     </div>
 
     <!-- Book metadata -->
@@ -106,58 +156,30 @@
         enter-to-class="opacity-100"
       >
         <ul
-          v-if="showBookInfo && book.codeType.includes('ISBN')"
-          class="flex"
+          v-if="showBookInfo && externalLinks.length > 0"
+          class="flex flex-wrap"
         >
-          <li v-if="country.countryCode === 'BR'">
+          <li
+            v-for="link in externalLinks"
+            :key="link.url"
+          >
             <a
-              class="button is-small mr-2 mt-2"
+              class="book-external-link group has-ring-focus"
               target="_blank"
-              :href="'https://amazon.com.br/dp/' + isbn10"
+              :href="link.url"
             >
               <span aria-hidden="true">
-                <LinkIcon />
+                <component
+                  v-if="link.icon"
+                  :is="link.icon"
+                  class="w-4 h-4"
+                />
+                <GlobeAltIcon
+                  v-else
+                  class="w-4 h-4"
+                />
               </span>
-              <span>Amazon.com.br</span>
-            </a>
-          </li>
-
-          <li v-if="country.countryCode === 'US'">
-            <a
-              class="button is-small mr-2 mt-2"
-              target="_blank"
-              :href="'https://amazon.com/dp/' + isbn10"
-            >
-              <span aria-hidden="true">
-                <LinkIcon />
-              </span>
-              <span>Amazon</span>
-            </a>
-          </li>
-
-          <li v-if="country.countryCode === 'JP'">
-            <a
-              class="button is-small mr-2 mt-2"
-              target="_blank"
-              :href="'https://amazon.co.jp/dp/' + isbn10"
-            >
-              <span aria-hidden="true">
-                <LinkIcon />
-              </span>
-              <span>Amazon.co.jp</span>
-            </a>
-          </li>
-
-          <li>
-            <a
-              class="button is-small mr-2 mt-2"
-              target="_blank"
-              :href="'https://openlibrary.org/isbn/' + book.code.replaceAll('-', '')"
-            >
-              <span aria-hidden="true">
-                <LinkIcon />
-              </span>
-              <span>Open Library</span>
+              <span>{{ link.title }}</span>
             </a>
           </li>
         </ul>
@@ -173,21 +195,39 @@ import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
 
-import { LinkIcon, PencilIcon } from '@heroicons/vue/solid'
+import {
+  BookmarkIcon as BookmarkSolidIcon,
+  GlobeAltIcon,
+  PencilIcon,
+  StarIcon as StarSolidIcon
+} from '@heroicons/vue/solid'
+import {
+  BookmarkIcon as BookmarkOutlineIcon,
+  StarIcon as StarOutlineIcon,
+  TrashIcon
+} from '@heroicons/vue/outline'
+
+import AmazonIcon from '@/components/icons/AmazonIcon.vue'
+import PaniniIcon from '@/components/icons/PaniniIcon.vue'
 
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
-import BookMenu from '@/components/BookMenu.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 
-import { BookStatus } from '@/model/Book'
+import { BookFavorite, BookStatus } from '@/model/Book'
 
 export default {
   components: {
-    LinkIcon,
+    AmazonIcon,
+    BookmarkOutlineIcon,
+    BookmarkSolidIcon,
+    GlobeAltIcon,
+    PaniniIcon,
     PencilIcon,
-    BookBreadcrumb,
-    BookMenu
+    StarOutlineIcon,
+    StarSolidIcon,
+    TrashIcon,
+    BookBreadcrumb
   },
 
   props: {
@@ -242,7 +282,7 @@ export default {
       }
 
       if (book.value.synopsis.length === 0) {
-        return t('book.emptySynopsis')
+        return `<em>${t('book.emptySynopsis')}</em>`
       }
 
       return renderMarkdown(book.value.synopsis)
@@ -302,10 +342,69 @@ export default {
       return book.value && book.value.status === BookStatus.READ
     })
 
+    const isFavorite = computed(() => {
+      return book.value?.favorite === BookFavorite.ACTIVE
+    })
+
     const blurSynopsis = computed(() => {
       return showBookInfo.value && spoilerMode.value.synopsis &&
         !isRead.value && book.value.synopsis.length > 0
     })
+
+    const externalLinks = computed(() => {
+      if (!book.value?.codeType?.includes('ISBN')) {
+        return []
+      }
+
+      const bookCode = book.value ? book.value.code.replaceAll('-', '') : ''
+
+      const links = [{
+        title: 'Open Library',
+        url: 'https://openlibrary.org/isbn/' + bookCode
+      }]
+
+      const amazonLinks = {
+        BR: { title: 'Amazon.com.br', url: 'https://amazon.com.br' },
+        US: { title: 'Amazon', url: 'https://amazon.com' },
+        JP: { title: 'Amazon.co.jp', url: 'https://amazon.co.jp' }
+      }
+
+      if (amazonLinks[country.value?.countryCode]) {
+        const amazonData = amazonLinks[country.value.countryCode]
+
+        links.push({
+          title: amazonData.title,
+          url: `${amazonData.url}/dp/${isbn10.value}`,
+          icon: AmazonIcon
+        })
+      }
+
+      if (country.value?.countryCode === 'BR' && book.value?.publisher?.includes('Panini')) {
+        links.push({
+          title: 'Loja Panini',
+          url: `https://loja.panini.com.br/panini/solucoes/busca.aspx?t=${bookCode}`,
+          icon: PaniniIcon
+        })
+      }
+
+      return links.sort((a, b) => a.title.localeCompare(b.title, locale.value))
+    })
+
+    const mainTitle = computed(() => {
+      if (!book.value) {
+        return ''
+      }
+
+      const { title, titleParts } = book.value
+
+      if (titleParts[2]) {
+        return title.substring(0, title.indexOf(titleParts[2]) - 2).trim()
+      }
+
+      return title
+    })
+
+    const subtitle = computed(() => book.value?.titleParts[2] || '')
 
     return {
       showBookInfo,
@@ -319,9 +418,37 @@ export default {
       isbn10,
       country,
       isRead,
+      isFavorite,
       spoilerMode,
-      blurSynopsis
+      blurSynopsis,
+      externalLinks,
+      mainTitle,
+      subtitle
     }
   }
 }
 </script>
+
+<style scoped>
+.book-external-link {
+  @apply flex items-center px-2 py-1
+    mr-2 mt-2 space-x-1.5 rounded
+    bg-gray-100 dark:bg-gray-700 dark:text-gray-300
+    font-medium text-sm;
+}
+
+.book-external-link:hover,
+.book-external-link:focus-visible {
+  @apply bg-gray-200 dark:bg-gray-600
+    text-gray-800 dark:text-gray-100;
+}
+
+.book-external-link svg {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.book-external-link:hover svg,
+.book-external-link:focus-visible svg {
+  @apply text-gray-600 dark:text-gray-300;
+}
+</style>

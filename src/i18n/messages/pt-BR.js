@@ -144,8 +144,18 @@ export default {
       termsOfUse: 'Termos de Uso'
     },
     version: 'Toshokan v{version}',
+    copyright: '© {year} Alessandro Jean. Todos os direitos reservados.',
     dev: 'Ambiente de desenvolvimento',
-    lastUpdate: 'Última atualização feita em {0}.'
+    lastUpdate: 'Última atualização feita em {0}.',
+    donate: {
+      actionDonate: 'Fazer uma doação',
+      actionClose: 'Fechar',
+      description: dedent`
+        Se o projeto está te ajudando e você deseja fazer uma doação,
+        utilize os códigos disponíveis abaixo. Agradecemos bastante
+        a sua colaboração e seremos eternamente gratos.
+      `
+    }
   },
   pagination: {
     text: 'Página {0} de {1} de {2} resultados',
@@ -377,6 +387,7 @@ export default {
     library: {
       title: 'Biblioteca',
       currentGroup: 'Grupo atual: ',
+      allGroups: 'Todos os grupos',
       sortingBy: 'Ordenando por: ',
       filter: 'Filtrar',
       newBook: 'Novo livro',
@@ -392,6 +403,8 @@ export default {
         close: 'Fechar painel',
         closeMobile: 'Fechar',
         filter: 'Filtrar',
+        visualization: 'Visualização',
+        books: 'Livros',
         viewMode: {
           label: 'Modo de visualização',
           table: 'Tabela',
@@ -472,7 +485,7 @@ export default {
         }
       },
       metadata: {
-        title: 'Informações do livro',
+        title: 'Informações',
         description: `
           Metadados que serão cadastrados na planilha.
         `,
