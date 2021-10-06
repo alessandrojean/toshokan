@@ -54,7 +54,7 @@
         </transition>
       </div>
 
-      <p class="mt-2 text-xs text-gray-400" aria-hidden="true">
+      <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" aria-hidden="true">
         {{ t('book.coverSelector.about') }}
       </p>
     </div>

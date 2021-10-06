@@ -57,7 +57,12 @@
 
           <TabGroup>
             <TabList class="flex px-4 md:px-6 space-x-6 border-b border-gray-300 dark:border-gray-600">
-              <Tab as="template" v-slot="{ selected }">
+              <Tab
+                v-for="tab of tabs"
+                :key="tab.title"
+                as="template"
+                v-slot="{ selected }"
+              >
                 <button
                   :class="[
                     'flex items-center justify-center px-1 py-3 -mb-px text-sm font-medium has-ring-focus border-b-2',
@@ -67,23 +72,11 @@
                   ]"
                 >
                   <span
-                    v-if="editFormInvalid"
+                    v-if="tab.error"
                     aria-hidden="true"
                     class="mr-2 bg-red-500 dark:bg-red-400 w-1.5 h-1.5 rounded-md"
                   />
-                  {{ t('dashboard.details.editForm.title') }}
-                </button>
-              </Tab>
-              <Tab as="template" v-slot="{ selected }">
-                <button
-                  :class="[
-                    'flex items-center justify-center px-1 py-3 -mb-px text-sm font-medium has-ring-focus border-b-2',
-                    selected
-                      ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
-                      : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
-                  ]"
-                >
-                  {{ t('dashboard.details.coverForm.title') }}
+                  <span>{{ tab.title }}</span>
                 </button>
               </Tab>
             </TabList>
@@ -97,8 +90,8 @@
                   <BookForm
                     ref="editForm"
                     touch-on-mount
-                    :book="editingBook"
-                    @update:book="Object.assign(editingBook, $event)"
+                    :modelValue="editingBook"
+                    @update:modelValue="Object.assign(editingBook, $event)"
                     @error="setEditFormInvalid"
                   />
                 </TabPanel>
@@ -108,6 +101,12 @@
                     hide-custom-title
                     v-model:cover-url="editingBook.coverUrl"
                     :book="editingBook"
+                  />
+                </TabPanel>
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookReading
+                    :modelValue="editingBook"
+                    @update:modelValue="Object.assign(editingBook, $event)"
                   />
                 </TabPanel>
               </div>
@@ -139,7 +138,7 @@
 </template>
 
 <script>
-import { nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -160,6 +159,7 @@ import { CheckIcon, XIcon } from '@heroicons/vue/solid'
 
 import BookCoverSelector from '@/components/BookCoverSelector.vue'
 import BookForm from '@/components/BookForm.vue'
+import BookReading from '@/components/BookReading.vue'
 
 import cloneDeep from 'lodash.clonedeep'
 
@@ -178,6 +178,7 @@ export default {
     TransitionRoot,
     BookCoverSelector,
     BookForm,
+    BookReading,
     CheckIcon,
     XIcon
   },
@@ -239,6 +240,15 @@ export default {
 
     const main = ref(null)
 
+    const tabs = computed(() => [
+      {
+        title: t('dashboard.details.editForm.title'),
+        error: editFormInvalid.value
+      },
+      { title: t('dashboard.details.coverForm.title') },
+      { title: t('dashboard.details.readingForm.title') }
+    ])
+
     return {
       t,
       closeDialog,
@@ -247,7 +257,8 @@ export default {
       setEditFormInvalid,
       editingBook,
       handleEdit,
-      main
+      main,
+      tabs
     }
   }
 }

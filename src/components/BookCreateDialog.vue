@@ -133,8 +133,8 @@
                 v-else-if="step === 2"
                 class="max-w-xl mx-auto"
                 ref="form"
-                :book="book"
-                @update:book="Object.assign(book, $event)"
+                :model-value="book"
+                @update:modelValue="Object.assign(book, $event)"
                 @error="setBookInvalid"
               />
               <BookCoverSelector

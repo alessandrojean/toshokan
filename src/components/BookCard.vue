@@ -23,6 +23,7 @@
     class="group focus:outline-none"
     ref="loadedCard"
     :title="book.title"
+    :aria-current="current ? 'page' : undefined"
   >
     <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-900">
       <transition
@@ -56,14 +57,19 @@
         >
       </transition>
 
-      <div v-if="isRead" class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2">
-        <!-- <span class="shadow bg-primary-500 text-primary-50 text-xs font-semibold px-2 py-0.5 rounded">
-          {{ t('book.read') }}
-        </span> -->
-        <span class="sr-only">{{ t('book.read') }}</span>
-        <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
-          <BookmarkIcon class="w-5 h-5 text-primary-500" />
-        </div>
+      <div
+        v-if="isRead || current"
+        class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2"
+      >
+        <template v-if="!current">
+          <span class="sr-only">{{ t('book.read') }}</span>
+          <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
+            <BookmarkIcon class="w-5 h-5 text-primary-500" />
+          </div>
+        </template>
+        <span v-else class="current-volume">
+          {{ t('book.currentVolume') }}
+        </span>
       </div>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
@@ -103,6 +109,7 @@ export default {
     book: {
       type: Object
     },
+    current: Boolean,
     loading: {
       type: Boolean,
       required: true
@@ -179,5 +186,12 @@ export default {
 <style scoped>
 .book-gradient {
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+}
+
+.current-volume {
+  @apply px-1.5 py-px rounded
+    text-xxs uppercase font-bold tracking-wide
+    bg-primary-100
+    text-primary-600;
 }
 </style>

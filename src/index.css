@@ -58,11 +58,14 @@
 
   .input:focus,
   .select:focus,
-  .select[aria-expanded="true"] {
-    @apply outline-none ring
+  .select[aria-expanded="true"],
+  .checkbox:focus,
+  .radio:focus,
+  .has-input-focus:focus {
+    @apply outline-none ring ring-offset-0
       ring-opacity-30 dark:ring-opacity-50
       ring-primary-600 dark:ring-primary-500
-      border-primary-500 dark:border-primary-500;
+      border-primary-500 dark:border-primary-400;
   }
 
   textarea.input {
@@ -76,23 +79,18 @@
     @apply hidden w-0 h-0 opacity-0;
   }
 
-  .checkbox-label {
-    @apply text-sm font-medium 
-      inline-flex items-center 
-      text-gray-700 dark:text-gray-300;
+  .checkbox,
+  .radio {
+    @apply text-primary-600 dark:bg-gray-850
+      border-gray-400 dark:border-gray-500 shadow-sm;
   }
 
   .checkbox {
-    @apply rounded text-primary-600 dark:bg-gray-850
-      border-gray-300 dark:border-gray-600 shadow-sm;
+    @apply rounded;
   }
 
-  .checkbox:focus {
-    @apply outline-none ring-2
-      ring-primary-500 dark:ring-offset-gray-700;
-  }
-
-  .checkbox:checked {
+  .checkbox:checked,
+  .radio:checked {
     @apply dark:bg-primary-500 dark:border-primary-500;
   }
 

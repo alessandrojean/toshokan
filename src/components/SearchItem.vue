@@ -1,10 +1,10 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="group py-4 flex items-center has-ring-focus rounded-md"
+    class="group py-4 flex items-center has-ring-focus rounded-md space-x-4"
     ref="searchItem"
   >
-    <div class="mr-4 w-12 lg:w-16">
+    <div class="w-12 lg:w-16 flex-shrink-0">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -36,14 +36,14 @@
         >
       </transition>
     </div>
-    <div class="flex-1 flex flex-col space-y-3">
+    <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
-        <span class="text-sm font-display font-medium dark:text-gray-100 block w-full truncate">
+        <h4 class="text-sm font-display font-medium dark:text-gray-100 inline-block w-full truncate">
           {{ result.title }}
-        </span>
-        <span class="text-sm font-medium text-gray-600 dark:text-gray-300 block w-full truncate">
+        </h4>
+        <p class="text-sm font-medium text-gray-600 dark:text-gray-300 inline-block w-full truncate">
           {{ authorsFormatted }}
-        </span>
+        </p>
       </div>
       <div class="flex items-center space-x-3 text-xs">
         <span class="text-xxs bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600">
@@ -54,7 +54,7 @@
         </span>
       </div>
     </div>
-    <span aria-hidden="true">
+    <span aria-hidden="true" class="flex-shrink-0">
       <ChevronRightIcon class="w-5 h-5 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-gray-100" aria-hidden="true" />
     </span>
   </router-link>

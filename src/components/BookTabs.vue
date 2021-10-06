@@ -118,6 +118,7 @@
             :key="colItem.id"
             :book="colItem"
             :loading="!showBookInfo"
+            :current="colItem.id === book.id"
           />
         </TabPanel>
       </TabPanels>
@@ -181,7 +182,7 @@ export default {
         return []
       }
 
-      return collection.value.filter(colItem => colItem.id !== book.value.id)
+      return collection.value
     })
 
     const tabs = computed(() => {

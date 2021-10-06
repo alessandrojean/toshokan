@@ -38,6 +38,7 @@ export default {
     single: 'Single volume',
     read: 'Read',
     unread: 'Unread',
+    currentVolume: 'Current',
     emptySynopsis: 'The book synopsis is empty.',
     properties: {
       id: 'ID',
@@ -87,6 +88,7 @@ export default {
       markdown: 'This field supports Markdown.',
       addNotes: 'Add notes about this book',
       addAuthor: 'Add',
+      addAuthorPlaceholder: 'Add an author…',
       removeAuthor: 'Remove this author',
       example: {
         placeholder: 'eg. {0}',
@@ -344,6 +346,20 @@ export default {
         `,
         cancel: 'Cancel',
         finish: 'Finish'
+      },
+      readingForm: {
+        title: 'Reading',
+        description: `
+          The reading date are used to compute the statistics of the
+          monthly read books. Make them precise, if possible.
+        `,
+        options: {
+          notReadYet: 'I have not read the book yet',
+          readToday: 'I finished the reading today',
+          readOtherDate: 'I finished the reading at other date'
+        },
+        fieldHelp: 'Leave it blank if you don\'t remember.',
+        actionClear: 'Clear'
       }
     },
     home: {

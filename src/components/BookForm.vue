@@ -5,427 +5,222 @@
     class="space-y-6"
   >
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
-      <div class="col-span-7 sm:col-span-5 md:col-span-1">
-        <label for="book-code" class="label">
-          {{ t('book.properties.id') }}
-        </label>
-        <input
-          id="book-code"
-          type="text"
-          :value="book.code"
-          @input="handleInput('code', $event.target.value)"
-          class="input"
-          :placeholder="t('book.form.example.placeholder', [t('book.form.example.id')])"
-          required
-          aria-describedby="book-code-error"
-          :aria-invalid="v$.code.$error"
-        >
-        <p id="book-code-error" class="sr-only" aria-hidden="true">
-          {{ v$.code.$error ? v$.code.$errors[0].$message : '' }}
-        </p>
-      </div>
-    </div>
-
-    <div>
-      <label for="book-title" class="label">
-        {{ t('book.properties.title') }}
-      </label>
-      <input
-        id="book-title"
-        type="text"
-        :value="book.title"
-        @input="handleInput('title', $event.target.value)"
-        class="input"
-        :placeholder="t('book.form.example.placeholder', [t('book.form.example.title')])"
+      <TextField
         required
-        aria-describedby="book-title-error"
-        :aria-invalid="v$.title.$error"
-      >
-      <p id="book-title-error" class="sr-only" aria-hidden="true">
-        {{ v$.title.$error ? v$.title.$errors[0].$message : '' }}
-      </p>
-    </div>
-
-    <div>
-      <label for="book-authors" class="label">
-        {{ t('book.properties.authors') }}
-      </label>
-      <div class="flex space-x-2">
-        <input
-          id="book-authors"
-          type="text"
-          v-model="tempAuthor"
-          class="input"
-          :placeholder="t('book.form.example.placeholder', [t('book.form.example.authors')])"
-          aria-describedby="book-authors-error"
-          :aria-invalid="v$.authorsStr.$error"
-          @keydown.enter.prevent="addAuthor"
-        >
-
-        <button
-          type="button"
-          class="button px-2 sm:px-4 is-icon-only sm:not-is-icon-only"
-          @click="addAuthor"
-        >
-          <span aria-hidden="true">
-            <PlusIcon />
-          </span>
-          <span class="sr-only sm:not-sr-only">
-            {{ t('book.form.addAuthor') }}
-          </span>
-        </button>
-      </div>
-      <p id="book-authors-error" class="sr-only" aria-hidden="true">
-        {{ v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : '' }}
-      </p>
-
-      <Draggable
-        v-if="book.authors.length > 0"
-        tag="ul"
-        class="flex flex-wrap mt-2 select-none"
-        ghost-class="opacity-50"
-        handle=".handle"
-        :modelValue="book.authors"
-        :item-key="author => author"
-        :disabled="book.authors.length === 1"
-        @update:modelValue="handleAuthorsDragAndDrop"
-      >
-        <template #item="{ element: author, index }">
-          <li class="flex items-center text-sm bg-primary-100 dark:bg-gray-700 rounded-md px-2 py-0.5 mr-2 mt-2 font-medium text-primary-700 dark:text-gray-200">
-            <span
-              v-if="book.authors.length > 1"
-              class="handle hidden md:block text-primary-500 dark:text-gray-400 cursor-move p-1 -ml-1 mr-1"
-              aria-hidden="true"
-            >
-              <MenuIcon class="w-3 h-3" />
-            </span>
-            <span>{{ author }}</span>
-            <button
-              type="button"
-              :title="t('book.form.removeAuthor')"
-              class="text-primary-400 dark:text-gray-400 hover:text-primary-600 dark:hover:text-gray-200 focus-visible:text-primary-600 dark:focus-visible:text-gray-200 p-1 ml-1 -mr-1 rounded-md has-ring-focus focus-visible:ring-offset-primary-100 dark:focus-visible:ring-offset-gray-700"
-              @click="removeAuthor(index)"
-            >
-              <span class="sr-only">
-                {{ t('book.form.removeAuthor') }}
-              </span>
-              <span aria-hidden="true">
-                <XIcon class="w-3 h-3" />
-              </span>
-            </button>
-          </li>
-        </template>
-      </Draggable>
-    </div>
-
-    <div>
-      <label for="book-synopsis" class="label flex justify-between items-baseline">
-        <span>{{ t('book.properties.synopsis') }}</span>
-        <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
-          {{ t('book.form.optional') }}
-        </span>
-      </label>
-      <textarea
-        id="book-synopsis"
-        :value="book.synopsis"
-        @input="handleInput('synopsis', $event.target.value)"
-        class="input"
-        :placeholder="t('book.form.example.synopsis')"
-        aria-describedby="book-synopsis-hint"
-        rows="5"
+        class="col-span-7 sm:col-span-5 md:col-span-1"
+        :label="t('book.properties.id')"
+        :model-value="modelValue.code"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.id')])"
+        :error="v$.code.$error ? v$.code.$errors[0].$message : ''"
+        @update:model-value="handleInput('code', $event)"
       />
-      <p id="book-synopsis-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
-        {{ t('book.form.markdown') }}
-      </p>
     </div>
+
+    <TextField
+      required
+      :label="t('book.properties.title')"
+      :model-value="modelValue.title"
+      :placeholder="t('book.form.example.placeholder', [t('book.form.example.title')])"
+      :error="v$.title.$error ? v$.title.$errors[0].$message : ''"
+      @update:model-value="handleInput('title', $event)"
+    />
+
+    <TagField
+      required
+      input-class="pl-9"
+      prefix-class="ml-2.5 pointer-events-none"
+      break-character=";"
+      :label="t('book.properties.authors')"
+      :model-value="modelValue.authors"
+      :placeholder="t('book.form.addAuthorPlaceholder')"
+      :error="v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : ''"
+      :remove-action="t('book.form.removeAuthor')"
+      @update:model-value="handleInput('authors', $event)"
+    >
+      <template #prefix>
+        <UserAddIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 group-focus-within:text-gray-600 dark:group-focus-within:text-gray-300" />
+      </template>
+    </TagField>
+
+    <MarkdownField
+      class="col-span-12 sm:col-span-1"
+      :label="t('book.properties.synopsis')"
+      :model-value="modelValue.synopsis"
+      :placeholder="t('book.form.example.synopsis')"
+      @update:model-value="handleInput('synopsis', $event)"
+    />
 
     <div class="grid grid-cols-12 sm:grid-cols-2 gap-6">
-      <div class="col-span-12 sm:col-span-1">
-        <label for="book-publisher" class="label">
-          {{ t('book.properties.publisher') }}
-        </label>
-        <div class="group relative">
-          <input
-            id="book-publisher"
-            type="text"
-            :value="book.publisher"
-            @input="handleInput('publisher', $event.target.value)"
-            class="input pr-9"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.publisher')])"
-            list="publishers"
-            required
-            aria-describedby="book-publisher-error"
-            :aria-invalid="v$.publisher.$error"
-          >
-          <datalist id="publishers">
-            <option
-              v-for="publisher of publisherOptions"
-              :key="publisher.name"
-              :value="publisher.name"
-            >
-              {{ publisher.name }}
-            </option>
-          </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-            <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
-          </div>
-        </div>
-        <p id="book-publisher-error" class="sr-only" aria-hidden="true">
-          {{ v$.publisher.$error ? v$.publisher.$errors[0].$message : '' }}
-        </p>
-      </div>
+      <TextField
+        required
+        class="col-span-12 sm:col-span-1"
+        :label="t('book.properties.publisher')"
+        :model-value="modelValue.publisher"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.publisher')])"
+        :error="v$.publisher.$error ? v$.publisher.$errors[0].$message : ''"
+        :list="publisherOptions"
+        :list-text="option => option.name"
+        :list-value="option => option.name"
+        @update:model-value="handleInput('publisher', $event)"
+      />
 
-      <div class="col-span-12 sm:col-span-1">
-        <label for="book-group" class="label">
-          {{ t('book.properties.group') }}
-        </label>
-        <div class="group relative">
-          <input
-            id="book-group"
-            type="text"
-            :value="book.group"
-            @input="handleInput('group', $event.target.value)"
-            class="input pr-9"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.group')])"
-            list="groups"
-            required
-            aria-describedby="book-group-error"
-            :aria-invalid="v$.group.$error"
-          >
-          <datalist id="groups">
-            <option
-              v-for="group of groupOptions"
-              :key="group.name"
-              :value="group.name"
-            >
-              {{ group.name }}
-            </option>
-          </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-            <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
-          </div>
-        </div>
-        <p id="book-group-error" class="sr-only" aria-hidden="true">
-          {{ v$.group.$error ? v$.group.$errors[0].$message : '' }}
-        </p>
-      </div>
+      <TextField
+        required
+        class="col-span-12 sm:col-span-1"
+        :label="t('book.properties.group')"
+        :model-value="modelValue.group"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.group')])"
+        :error="v$.group.$error ? v$.group.$errors[0].$message : ''"
+        :list="groupOptions"
+        :list-text="option => option.name"
+        :list-value="option => option.name"
+        @update:model-value="handleInput('group', $event)"
+      />
     </div>
 
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
-      <div class="col-span-7 sm:col-span-4 md:col-span-1">
-        <label for="book-dimensions" class="label">
-          {{ t('book.properties.dimensions') }}
-        </label>
-        <div class="group relative">
-          <input
-            id="book-dimensions"
-            type="text"
-            :value="book.dimensionsStr"
-            @input="handleInput('dimensionsStr', $event.target.value)"
-            class="input pr-10"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
-            required
-            aria-describedby="book-dimensions-error"
-            :aria-invalid="v$.dimensionsStr.$error"
-          >
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" aria-hidden="true">
-            <span class="text-gray-500 dark:text-gray-400 sm:text-sm">cm</span>
-          </div>
-        </div>
-        <p id="book-dimensions-error" class="sr-only" aria-hidden="true">
-          {{ v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : '' }}
-        </p>
-      </div>
+      <TextField
+        required
+        class="col-span-7 sm:col-span-4 md:col-span-1"
+        input-class="pr-10"
+        suffix-class="pointer-events-none"
+        :label="t('book.properties.dimensions')"
+        :model-value="modelValue.dimensionsStr"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
+        :error="v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : ''"
+        @update:model-value="handleInput('dimensionsStr', $event)"
+      >
+        <template #suffix>
+          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pr-3">cm</span>
+        </template>
+      </TextField>
 
       <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
 
-      <div class="col-span-9 sm:col-span-5 md:col-span-1">
-        <label for="book-label-price" class="label">
-          {{ t('book.properties.labelPrice') }}
-        </label>
-        <div class="relative group">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-            <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
-          </div>
-          <input
-            id="book-label-price"
-            type="text"
-            inputmode="decimal"
-            :value="book.labelPriceValueStr"
-            @input="handleInput('labelPriceValueStr', $event.target.value)"
-            class="input pl-7 pr-12"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
+      <TextField
+        required
+        class="col-span-9 sm:col-span-5 md:col-span-1"
+        input-class="pl-7 pr-12"
+        prefix-class="pointer-events-none"
+        input-mode="decimal"
+        :label="t('book.properties.labelPrice')"
+        :model-value="modelValue.labelPriceValueStr"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
+        :error="v$.labelPriceValueStr.$error ? v$.labelPriceValueStr.$errors[0].$message : ''"
+        @update:model-value="handleInput('labelPriceValueStr', $event)"
+      >
+        <template #prefix>
+          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pl-3">$</span>
+        </template>
+        <template #suffix>
+          <label for="book-label-price-currency" class="sr-only">
+            {{ t('book.properties.currency') }}
+          </label>
+          <select
+            id="book-label-price-currency"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-400 h-full shadow-none text-gray-500 dark:text-gray-300"
+            @change="handleInput('labelPriceCurrency', $event.target.value)"
             required
-            aria-describedby="book-label-price-error"
-            :aria-invalid="v$.labelPriceValueStr.$error"
           >
-          <div class="absolute inset-y-0 right-0 flex items-center">
-            <label for="book-label-price-currency" class="sr-only">
-              {{ t('book.properties.currency') }}
-            </label>
-            <select
-              id="book-label-price-currency"
-              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-500 h-full shadow-none text-gray-500 dark:text-gray-300"
-              @change="handleInput('labelPriceCurrency', $event.target.value)"
-              required
+            <option
+              v-for="currency of currencies"
+              :key="currency"
+              :value="currency"
+              :selected="modelValue.labelPriceCurrency === currency"
             >
-              <option
-                v-for="currency of currencies"
-                :key="currency"
-                :value="currency"
-                :selected="book.labelPriceCurrency === currency"
-              >
-                {{ currency }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <p id="book-label-price-error" class="sr-only" aria-hidden="true">
-          {{ v$.labelPriceValueStr.$error ? v$.labelPriceValueStr.$errors[0].$message : '' }}
-        </p>
-      </div>
+              {{ currency }}
+            </option>
+          </select>
+        </template>
+      </TextField>
 
       <div aria-hidden="true" class="sm:hidden col-span-3"></div>
 
-      <div class="col-span-9 sm:col-span-5 md:col-span-1">
-        <label for="book-paid-price" class="label">
-          {{ t('book.properties.paidPrice') }}
-        </label>
-        <div class="relative group">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-            <span class="text-gray-500 dark:text-gray-400 sm:text-sm">$</span>
-          </div>
-          <input
-            id="book-paid-price"
-            type="text"
-            inputmode="decimal"
-            :value="book.paidPriceValueStr"
-            @input="handleInput('paidPriceValueStr', $event.target.value)"
-            class="input pl-7 pr-12"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
+      <TextField
+        required
+        class="col-span-9 sm:col-span-5 md:col-span-1"
+        input-class="pl-7 pr-12"
+        prefix-class="pointer-events-none"
+        input-mode="decimal"
+        :label="t('book.properties.paidPrice')"
+        :model-value="modelValue.paidPriceValueStr"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
+        :error="v$.paidPriceValueStr.$error ? v$.paidPriceValueStr.$errors[0].$message : ''"
+        @update:model-value="handleInput('paidPriceValueStr', $event)"
+      >
+        <template #prefix>
+          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pl-3">$</span>
+        </template>
+        <template #suffix>
+          <label for="book-paid-price-currency" class="sr-only">
+            {{ t('book.properties.currency') }}
+          </label>
+          <select
+            id="book-paid-price-currency"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-400 h-full shadow-none text-gray-500 dark:text-gray-300"
+            @change="handleInput('paidPriceCurrency', $event.target.value)"
             required
-            aria-describedby="book-paid-price-error"
-            :aria-invalid="v$.paidPriceValueStr.$error"
           >
-          <div class="absolute inset-y-0 right-0 flex items-center">
-            <label for="book-paid-price-currency" class="sr-only">
-              {{ t('book.properties.currency') }}
-            </label>
-            <select
-              id="book-paid-price-currency"
-              class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-500 h-full shadow-none text-gray-500 dark:text-gray-300"
-              @change="handleInput('paidPriceCurrency', $event.target.value)"
-              required
+            <option
+              v-for="currency of currencies"
+              :key="currency"
+              :value="currency"
+              :selected="modelValue.paidPriceCurrency === currency"
             >
-              <option
-                v-for="currency of currencies"
-                :key="currency"
-                :value="currency"
-                :selected="book.paidPriceCurrency === currency"
-              >
-                {{ currency }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <p id="book-paid-price-error" class="sr-only" aria-hidden="true">
-          {{ v$.paidPriceValueStr.$error ? v$.paidPriceValueStr.$errors[0].$message : '' }}
-        </p>
-      </div>
+              {{ currency }}
+            </option>
+          </select>
+        </template>
+      </TextField>
     </div>
 
     <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 sm:col-span-6">
-        <label for="book-store" class="label">
-          {{ t('book.properties.store') }}
-        </label>
-        <div class="group relative">
-          <input
-            id="book-store"
-            type="text"
-            :value="book.store"
-            @input="handleInput('store', $event.target.value)"
-            class="input pr-8"
-            :placeholder="t('book.form.example.placeholder', [t('book.form.example.store')])"
-            list="stores"
-            required
-            aria-describedby="book-store-error"
-            :aria-invalid="v$.store.$error"
-          >
-          <datalist id="stores">
-            <option
-              v-for="store of storeOptions"
-              :key="store.name"
-              :value="store.name"
-            >
-              {{ store.name }}
-            </option>
-          </datalist>
-          <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-            <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
-          </div>
-        </div>
-        <p id="book-store-error" class="sr-only" aria-hidden="true">
-          {{ v$.store.$error ? v$.store.$errors[0].$message : '' }}
-        </p>
-      </div>
+      <TextField
+        required
+        class="col-span-12 sm:col-span-6"
+        :label="t('book.properties.store')"
+        :model-value="modelValue.store"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.store')])"
+        :error="v$.store.$error ? v$.store.$errors[0].$message : ''"
+        :list="storeOptions"
+        :list-text="option => option.name"
+        :list-value="option => option.name"
+        @update:model-value="handleInput('store', $event)"
+      />
 
-      <div class="col-span-7 sm:col-span-5 md:col-span-6">
-        <label for="book-bought-at" class="label flex justify-between items-baseline">
-          <span>{{ t('book.properties.boughtAt') }}</span>
-          <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
-            {{ t('book.form.optional') }}
-          </span>
-        </label>
-        <input
-          id="book-bought-at"
-          type="date"
-          :value="book.boughtAtStr"
-          @input="handleInput('boughtAtStr', $event.target.value)"
-          class="input"
-          :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
-        >
-      </div>
+      <TextField
+        class="col-span-7 sm:col-span-5 md:col-span-6"
+        input-type="date"
+        :label="t('book.properties.boughtAt')"
+        :model-value="modelValue.boughtAtStr"
+        :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
+        @update:model-value="handleInput('boughtAtStr', $event)"
+      />
     </div>
 
-    <div>
+    <div class="flex items-center space-x-2.5">
+      <input
+        type="checkbox"
+        class="checkbox"
+        name="add-notes"
+        id="add-notes"
+        v-model="addNotes"
+      >
       <label
         for="add-notes"
-        class="checkbox-label"
+        class="label mb-0"
       >
-        <input
-          type="checkbox"
-          class="checkbox"
-          name="add-notes"
-          id="add-notes"
-          v-model="addNotes"
-        >
-        <span class="ml-2">
-          {{ t('book.form.addNotes') }}
-        </span>
+        {{ t('book.form.addNotes') }}
       </label>
     </div>
 
-    <div v-if="addNotes">
-      <label for="book-notes" class="label flex justify-between items-baseline">
-        <span>{{ t('book.properties.notes') }}</span>
-        <span class="font-normal text-gray-500 dark:text-gray-400 text-xs">
-          {{ t('book.form.optional') }}
-        </span>
-      </label>
-      <textarea
-        id="book-notes"
-        :value="book.notes"
-        @input="handleInput('notes', $event.target.value)"
-        class="input"
-        :placeholder="t('book.form.example.notes')"
-        aria-describedby="book-notes-hint"
-        rows="5"
-      />
-      <p id="book-notes-hint" class="mt-2 text-xs text-gray-400" aria-hidden="true">
-        {{ t('book.form.markdown') }}
-      </p>
-    </div>
+    <MarkdownField
+      v-if="addNotes"
+      :label="t('book.properties.notes')"
+      :model-value="modelValue.notes"
+      :placeholder="t('book.form.example.notes')"
+      @update:model-value="handleInput('notes', $event)"
+    />
 
     <Alert
       type="error"
@@ -458,40 +253,41 @@ import { useI18n } from 'vue-i18n'
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
-import { decimalComma, dimensions } from '@/util/validators'
+import { UserAddIcon } from '@heroicons/vue/solid'
 
-import { MenuIcon, PlusIcon, SelectorIcon, XIcon } from '@heroicons/vue/solid'
-import Draggable from 'vuedraggable'
+import { decimalComma, dimensions } from '@/util/validators'
 
 import { getCodeType } from '@/model/Book'
 
 import Alert from '@/components/Alert'
+import MarkdownField from '@/components/fields/MarkdownField.vue'
+import TagField from '@/components/fields/TagField.vue'
+import TextField from '@/components/fields/TextField.vue'
 
 export default {
   name: 'BookForm',
 
   components: {
     Alert,
-    Draggable,
-    MenuIcon,
-    PlusIcon,
-    SelectorIcon,
-    XIcon
+    MarkdownField,
+    TagField,
+    TextField,
+    UserAddIcon
   },
 
-  emits: ['error', 'update:book'],
+  emits: ['error', 'update:modelValue'],
 
   props: {
-    book: {
+    editing: Boolean,
+    modelValue: {
       type: Object,
       required: true
     },
-    editing: Boolean,
     touchOnMount: Boolean
   },
 
   setup (props, context) {
-    const { book, touchOnMount } = toRefs(props)
+    const { modelValue: book, touchOnMount } = toRefs(props)
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
     const { t, locale } = useI18n()
 
@@ -548,10 +344,17 @@ export default {
 
       if (property === 'code') {
         newBook.codeType = getCodeType(value)
-      } else if (property === 'authorsStr') {
-        newBook.authors = value.split(/;\s+/g)
+      } else if (property === 'authors') {
+        newBook.authorsStr = value.join('; ')
+        property = 'authorsStr'
       } else if (property === 'boughtAtStr') {
         newBook.boughtAt = value.length === 10 ? new Date(value) : null
+
+        if (newBook.boughtAt) {
+          newBook.boughtAt.setMinutes(
+            newBook.boughtAt.getMinutes() + newBook.boughtAt.getTimezoneOffset()
+          )
+        }
       } else if (property === 'dimensionsStr') {
         newBook.dimensions = value.split(/\s*[Xx×]\s*/)
           .map(dm => parseFloat(dm.replace(',', '.')))
@@ -568,39 +371,7 @@ export default {
       }
 
       context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      context.emit('update:book', newBook)
-    }
-
-    const tempAuthor = ref('')
-
-    function addAuthor () {
-      if (!bookState.authors.includes(tempAuthor.value.trim())) {
-        bookState.authors.push(tempAuthor.value.trim())
-        bookState.authorsStr = bookState.authors.join('; ')
-        v$.value.authorsStr.$touch()
-      }
-
-      tempAuthor.value = ''
-      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      context.emit('update:book', { ...bookState })
-    }
-
-    function removeAuthor (i) {
-      bookState.authors.splice(i, 1)
-      bookState.authorsStr = bookState.authors.join('; ')
-
-      v$.value.authorsStr.$touch()
-      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      context.emit('update:book', { ...bookState })
-    }
-
-    function handleAuthorsDragAndDrop (newAuthors) {
-      bookState.authors = newAuthors
-      bookState.authorsStr = bookState.authors.join('; ')
-
-      v$.value.authorsStr.$touch()
-      context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      context.emit('update:book', { ...bookState })
+      context.emit('update:modelValue', newBook)
     }
 
     function touch (book) {
@@ -639,8 +410,13 @@ export default {
     })
 
     onMounted(async () => {
-      await store.dispatch('collection/fetchPublishers')
-      await store.dispatch('collection/fetchStores')
+      if (publisherOptions.value.length === 0) {
+        await store.dispatch('collection/fetchPublishers')
+      }
+
+      if (storeOptions.value.length === 0) {
+        await store.dispatch('collection/fetchStores')
+      }
 
       if (groupOptions.value.length === 0) {
         await store.dispatch('collection/fetchGroups')
@@ -673,10 +449,6 @@ export default {
       groupOptions,
       addNotes,
       toDateInputValue,
-      tempAuthor,
-      addAuthor,
-      removeAuthor,
-      handleAuthorsDragAndDrop,
       forceUpdateBook,
       t
     }

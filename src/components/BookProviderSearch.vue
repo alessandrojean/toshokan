@@ -17,7 +17,7 @@
           type="search"
           inputmode="numeric"
           id="book-isbn"
-          class="input text-lg pl-10 md:pr-16"
+          class="input text-lg pl-10 md:pr-16 rounded-full"
           :placeholder="t('dashboard.newBook.autoFill.placeholder')"
           v-model="isbnQuery"
           @keyup.enter.prevent="search"

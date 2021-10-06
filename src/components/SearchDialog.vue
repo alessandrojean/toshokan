@@ -174,7 +174,6 @@
                 <li
                   v-for="result in searchResults"
                   :key="result.id"
-                  class="result"
                 >
                   <SearchItem
                     :result="result"

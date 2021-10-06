@@ -38,6 +38,7 @@ export default {
     single: 'Volume único',
     read: 'Lido',
     unread: 'Não lido',
+    currentVolume: 'Volume atual',
     emptySynopsis: 'A sinopse do livro não foi preenchida.',
     properties: {
       id: 'Identificação',
@@ -87,6 +88,7 @@ export default {
       markdown: 'O Markdown é suportado neste campo.',
       addNotes: 'Adicionar observações sobre este livro',
       addAuthor: 'Adicionar',
+      addAuthorPlaceholder: 'Adicionar um autor…',
       removeAuthor: 'Remover este autor',
       example: {
         placeholder: 'ex. {0}',
@@ -331,7 +333,7 @@ export default {
         description: 'Preencha as informações abaixo para alterar os dados do livro.'
       },
       editForm: {
-        title: 'Metadados do livro',
+        title: 'Metadados',
         description: `
           Edite as informações necessárias na planilha.
         `,
@@ -345,6 +347,20 @@ export default {
         `,
         cancel: 'Cancelar',
         finish: 'Concluir'
+      },
+      readingForm: {
+        title: 'Leitura',
+        description: `
+          As datas de leitura são usadas para computar as estatísticas
+          de livros lidos mensalmente. Defina-as de maneira precisa, se possível.
+        `,
+        options: {
+          notReadYet: 'Ainda não li o livro',
+          readToday: 'Terminei a leitura do livro hoje',
+          readOtherDate: 'Terminei a leitura do livro em outra data'
+        },
+        fieldHelp: 'Deixe em branco caso desconheça.',
+        actionClear: 'Limpar'
       }
     },
     home: {
