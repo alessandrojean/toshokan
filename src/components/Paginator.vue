@@ -2,14 +2,13 @@
   <nav
     role="navigation"
     class="relative rounded-md shadow-sm"
-    aria-label="Paginação dos conteúdos"
   >
     <ul class="z-0 inline-flex -space-x-px">
       <li>
         <button
           type="button"
-          class="pag-button is-left"
-          @click.stop="$emit('page', 1)"
+          class="pag-button is-left has-ring-focus"
+          @click.stop="changePage(1)"
           :disabled="!paginationInfo.has_previous_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.firstPage') }}</span>
@@ -22,8 +21,8 @@
       <li>
         <button
           type="button"
-          class="pag-button"
-          @click.stop="$emit('page', paginationInfo.previous_page)"
+          class="pag-button has-ring-focus"
+          @click.stop="changePage(paginationInfo.previous_page)"
           :disabled="!paginationInfo.has_previous_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.previousPage') }}</span>
@@ -40,15 +39,19 @@
         <button
           type="button"
           :class="[
-            paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page ? 'is-current' : '',
-            'pag-button is-number'
+            isCurrent(pageIdx) ? 'is-current' : '',
+            'pag-button is-number has-ring-focus'
           ]"
-          :aria-current="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page"
+          :aria-current="isCurrent(pageIdx) ? 'page' : ''"
           :disabled="!enabled"
-          @click.stop="$emit('page', paginationInfo.first_page + pageIdx - 1)"
+          @click.stop="changePage(paginationInfo.first_page + pageIdx - 1)"
         >
-          <span class="sr-only" v-if="paginationInfo.first_page + pageIdx - 1 === paginationInfo.current_page">{{ t('pagination.current') }}</span>
-          <span class="sr-only">{{ t('pagination.goToPage') }}</span>
+          <span class="sr-only" v-if="isCurrent(pageIdx)">
+            {{ t('pagination.current') }}
+          </span>
+          <span class="sr-only">
+            {{ t('pagination.goToPage') }}
+          </span>
           {{ paginationInfo.first_page + pageIdx - 1 }}
         </button>
       </li>
@@ -56,8 +59,8 @@
       <li>
         <button
           type="button"
-          class="pag-button"
-          @click.stop="$emit('page', paginationInfo.next_page)"
+          class="pag-button has-ring-focus"
+          @click.stop="changePage(paginationInfo.next_page)"
           :disabled="!paginationInfo.has_next_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.nextPage') }}</span>
@@ -70,8 +73,8 @@
       <li>
         <button
           type="button"
-          class="pag-button is-right"
-          @click.stop="$emit('page', paginationInfo.total_pages)"
+          class="pag-button is-right has-ring-focus"
+          @click.stop="changePage(paginationInfo.total_pages)"
           :disabled="!paginationInfo.has_next_page || !enabled"
         >
           <span class="sr-only">{{ t('pagination.lastPage') }}</span>
@@ -110,7 +113,9 @@ export default {
     paginationInfo: Object
   },
 
-  setup (props) {
+  emits: ['page'],
+
+  setup (props, context) {
     const { paginationInfo } = toRefs(props)
 
     const links = computed(() => {
@@ -119,50 +124,73 @@ export default {
 
     const { t } = useI18n()
 
-    return { links, t }
+    function isCurrent (idx) {
+      return paginationInfo.value.current_page === paginationInfo.value.first_page + idx - 1
+    }
+
+    function changePage (page) {
+      if (page !== paginationInfo.value.current_page) {
+        context.emit('page', page)
+      }
+    }
+
+    return { links, t, isCurrent, changePage }
   }
 }
 </script>
 
 <style scoped>
-@layer components {
-  .pag-button {
-    @apply relative inline-flex items-center px-2 py-2 border border-gray-300
-       bg-white text-sm font-medium text-gray-500
-       disabled:cursor-default disabled:opacity-50 disabled:bg-white
-       active:bg-gray-100 focus:outline-none focus-visible:ring-2
-       focus-visible:ring-offset-2 focus-visible:ring-primary-500
-       focus-visible:z-20 motion-safe:transition-shadow dark:bg-gray-700
-       dark:text-gray-300 dark:disabled:bg-gray-700 dark:border-gray-600
-       dark:active:bg-gray-700 dark:hover:border-gray-500
-       dark:disabled:border-gray-700
-       dark:focus-visible:ring-offset-gray-800;
-  }
+.pag-button {
+  @apply relative inline-flex items-center
+    px-2 py-2 text-sm font-medium
+    border border-gray-300 dark:border-gray-600
+    bg-white dark:bg-gray-700
+    text-gray-500 dark:text-gray-300;
+}
 
-  .pag-button:hover:not(:disabled) {
-    @apply z-10 bg-gray-50 dark:bg-gray-600
-      dark:text-gray-200;
-  }
+.pag-button:disabled {
+  @apply cursor-default opacity-50
+    bg-white dark:bg-gray-700 dark:border-gray-700;
+}
 
-  .pag-button.is-left {
-    @apply rounded-l-md;
-  }
+.pag-button:focus {
+  @apply outline-none;
+}
 
-  .pag-button.is-right {
-    @apply rounded-r-md;
-  }
+.pag-button:not(:disabled):hover {
+  @apply z-10 bg-gray-50 dark:bg-gray-600
+    dark:text-gray-200 dark:border-gray-500;
+}
 
-  .pag-button.is-number {
-    @apply px-4;
-  }
+.pag-button:not(:disabled):active {
+  @apply bg-gray-100 dark:bg-gray-700;
+}
 
-  .pag-button.is-current {
-    @apply z-10 bg-primary-50 border-primary-500 text-primary-600
-      hover:bg-primary-100 active:bg-primary-200 dark:bg-primary-900
-      dark:text-primary-200 dark:hover:bg-primary-800
-      dark:hover:border-primary-400 dark:active:bg-primary-700
-      disabled:bg-primary-50 dark:disabled:bg-primary-900
-      disabled:border-primary-500 dark:disabled:border-primary-500;
-  }
+.pag-button:focus-visible {
+  @apply dark:ring-offset-gray-800;
+}
+
+.pag-button.is-left {
+  @apply rounded-l-md;
+}
+
+.pag-button.is-right {
+  @apply rounded-r-md;
+}
+
+.pag-button.is-number {
+  @apply px-4;
+}
+
+.pag-button.is-current,
+.pag-button.is-current:hover,
+.pag-button.is-current:active {
+  @apply z-20 cursor-default bg-primary-50 dark:bg-primary-900
+    border-primary-500 text-primary-600 dark:text-primary-200;
+}
+
+.pag-button.is-current:disabled {
+  @apply bg-primary-50 dark:bg-primary-900
+    border-primary-500 dark:border-primary-500;
 }
 </style>

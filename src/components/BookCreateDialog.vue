@@ -18,7 +18,7 @@
         leave-to="opacity-0"
       >
         <div
-          class="hidden sm:block fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-none backdrop-filter backdrop-blur-sm"
+          class="hidden sm:block dialog-overlay"
           @click="closeDialog"
         />
       </TransitionChild>

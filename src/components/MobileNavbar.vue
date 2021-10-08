@@ -40,8 +40,8 @@
 
       <!-- More menu -->
       <li class="flex-1 sm:hidden">
-        <Menu as="div" v-slot="{ open }">
-          <MenuButton
+        <Popover as="div" v-slot="{ open }">
+          <PopoverButton
             :class="[
               $route.meta.more ? 'text-primary-600 dark:text-primary-400' : '',
               'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
@@ -53,7 +53,7 @@
             <span class="text-xs motion-safe:transition-colors duration-500">
               {{ t('dashboard.header.menu.more') }}
             </span>
-          </MenuButton>
+          </PopoverButton>
           <transition
             enter-active-class="transition motion-reduce:transition-none ease-out duration-300"
             enter-from-class="opacity-0"
@@ -62,10 +62,9 @@
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
           >
-            <div
-              v-if="open"
-              aria-hidden="true"
-              class="md:hidden fixed z-30 inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 transition-opacity"
+            <PopoverOverlay
+              :class="!open ? 'hidden' : 'md:hidden'"
+              class="dialog-overlay"
             />
           </transition>
           <transition
@@ -76,7 +75,11 @@
             leave-from-class="transform translate-y-0 opacity-100"
             leave-to-class="transform translate-y-full opacity-0"
           >
-            <MenuItems as="ul" class="fixed md:absolute z-40 inset-x-0 bottom-0 py-1 origin-bottom bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-t-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <PopoverPanel
+              as="ul"
+              class="fixed md:absolute z-40 inset-x-0 bottom-0 py-1 origin-bottom bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-t-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              v-slot="{ close }"
+            >
               <div class="pb-1 w-full">
                 <div class="flex px-4 py-2.5 space-x-4">
                   <div
@@ -90,41 +93,31 @@
                 </div>
               </div>
               <div class="py-1">
-                <MenuItem v-slot="{ active }">
-                  <router-link
-                    :to="{ name: 'DashboardSettings' }"
-                    :class="[
-                      active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                      'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
-                    ]"
-                  >
-                    <span aria-hidden="true">
-                      <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                    </span>
-                    {{ t('dashboard.header.menu.settings') }}
-                  </router-link>
-                </MenuItem>
+                <router-link
+                  :to="{ name: 'DashboardSettings' }"
+                  class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700 hover:bg-gray-100"
+                  @click="close"
+                >
+                  <span aria-hidden="true">
+                    <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                  </span>
+                  {{ t('dashboard.header.menu.settings') }}
+                </router-link>
               </div>
               <div class="pt-1">
-                <MenuItem v-slot="{ active }">
-                  <button
-                    type="button"
-                    :class="[
-                      active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                      'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
-                    ]"
-                    @click.stop="signOut"
-                  >
-                    <span aria-hidden="true">
-                      <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
-                    </span>
-                    {{ t('dashboard.header.menu.signOut') }}
-                  </button>
-                </MenuItem>
+                <PopoverButton
+                  class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700 hover:bg-gray-100"
+                  @click="signOut(close)"
+                >
+                  <span aria-hidden="true">
+                    <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
+                  </span>
+                  {{ t('dashboard.header.menu.signOut') }}
+                </PopoverButton>
               </div>
-            </MenuItems>
+            </PopoverPanel>
           </transition>
-        </Menu>
+        </Popover>
       </li>
     </ul>
   </nav>
@@ -149,10 +142,10 @@ import {
 } from '@heroicons/vue/solid'
 
 import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems
+  Popover,
+  PopoverButton,
+  PopoverOverlay,
+  PopoverPanel
 } from '@headlessui/vue'
 
 export default {
@@ -163,10 +156,10 @@ export default {
     CogIcon,
     LibraryIconSolid,
     LogoutIcon,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems
+    Popover,
+    PopoverButton,
+    PopoverOverlay,
+    PopoverPanel
   },
 
   setup () {
@@ -197,8 +190,9 @@ export default {
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
 
-    function signOut () {
-      store.dispatch('auth/signOut')
+    async function signOut (close) {
+      await store.dispatch('auth/signOut')
+      close()
     }
 
     return {

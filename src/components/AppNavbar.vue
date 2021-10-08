@@ -253,7 +253,11 @@ export default {
 
     const signOut = () => store.dispatch('auth/signOut')
 
-    const isMac = ref(navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1)
+    const isMac = ref(
+      navigator.userAgentData
+        ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+        : navigator.platform.toLowerCase().indexOf('mac') > -1
+    )
 
     const searchDialogIsOpen = ref(false)
 

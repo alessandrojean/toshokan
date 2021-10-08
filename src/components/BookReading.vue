@@ -56,7 +56,7 @@
             <template #suffix>
               <button
                 @click="clearDate"
-                class="p-px mr-1.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus-visible:text-gray-700 dark:focus-visible:text-gray-300 rounded has-ring-focus dark:focus-visible:ring-offset-gray-850"
+                class="p-px mr-1.5 bg-white dark:bg-gray-850 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus-visible:text-gray-700 dark:focus-visible:text-gray-300 rounded has-ring-focus dark:focus-visible:ring-offset-gray-850"
                 :title="t('dashboard.details.readingForm.actionClear')"
               >
                 <span class="sr-only">

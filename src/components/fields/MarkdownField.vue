@@ -6,7 +6,7 @@
     v-slot="{ inputId, ariaDescribedBy }"
   >
     <div :class="['markdown-editor', hasFocus ? 'has-focus' : '']">
-      <TabGroup @change="changedTab">
+      <TabGroup @change="changedTab" as="div">
         <TabPanels as="div" class="relative z-0">
           <TabPanel class="tab-panel">
             <textarea

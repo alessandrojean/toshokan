@@ -1,7 +1,7 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="group py-4 flex items-center has-ring-focus rounded-md space-x-4"
+    class="result group has-ring-focus"
     ref="searchItem"
   >
     <div class="w-12 lg:w-16 flex-shrink-0">
@@ -19,7 +19,7 @@
           class="aspect-w-2 aspect-h-3"
           aria-hidden="true"
         >
-          <div class="flex justify-center items-center w-full h-full bg-gray-100 dark:bg-gray-700 rounded-md shadow-md">
+          <div class="empty-cover">
             <PhotographIcon
               :class="[
                 imageLoading ? 'motion-safe:animate-pulse' : '',
@@ -31,31 +31,33 @@
         <img
           v-else
           :src="thumbnailUrl"
-          :class="spoilerMode.cover && !isRead ? 'md:filter md:blur-sm md:group-hover:blur-none motion-safe:transition-all duration-100 ease-in-out' : ''"
-          class="w-full object-cover rounded-md shadow-md"
+          :class="[
+            'result-cover',
+            spoilerMode.cover && !isRead ? 'is-hidden' : ''
+          ]"
         >
       </transition>
     </div>
     <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
-        <h4 class="text-sm font-display font-medium dark:text-gray-100 inline-block w-full truncate">
+        <h4 class="result-title">
           {{ result.title }}
         </h4>
-        <p class="text-sm font-medium text-gray-600 dark:text-gray-300 inline-block w-full truncate">
+        <p class="result-authors">
           {{ authorsFormatted }}
         </p>
       </div>
       <div class="flex items-center space-x-3 text-xs">
-        <span class="text-xxs bg-white dark:bg-transparent text-gray-500 dark:text-gray-200 font-semibold px-2 py-0.5 rounded text uppercase tracking-wide border border-gray-200 dark:border-gray-600">
+        <span class="result-group">
           {{ result.group }}
         </span>
-        <span class="block text-gray-500 dark:text-gray-400">
+        <span class="result-publisher">
           {{ result.publisher }}
         </span>
       </div>
     </div>
     <span aria-hidden="true" class="flex-shrink-0">
-      <ChevronRightIcon class="w-5 h-5 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-gray-100" aria-hidden="true" />
+      <ChevronRightIcon class="chevron" />
     </span>
   </router-link>
 </template>
@@ -154,3 +156,55 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.result {
+  @apply py-4 flex items-center rounded-md space-x-4;
+}
+
+.result-title {
+  @apply text-sm font-display font-medium w-full truncate
+    dark:text-gray-100 inline-block;
+}
+
+.result-authors {
+  @apply text-sm font-medium inline-block w-full truncate
+    text-gray-600 dark:text-gray-300;
+}
+
+.result-group {
+  @apply text-xxs font-semibold uppercase tracking-wide
+    px-2 py-0.5 rounded
+    bg-white dark:bg-transparent
+    text-gray-500 dark:text-gray-200
+    group-hover:text-gray-700 dark:group-hover:text-gray-200
+    border border-gray-200 dark:border-gray-600
+    group-hover:border-gray-300 dark:group-hover:border-gray-500;
+}
+
+.result-publisher {
+  @apply block text-gray-500 dark:text-gray-400
+    group-hover:text-gray-700 dark:group-hover:text-gray-300;
+}
+
+.result-cover {
+  @apply w-full object-cover rounded-md
+    shadow group-hover:shadow-md;
+}
+
+.result-cover.is-hidden {
+  @apply md:filter md:blur-sm md:group-hover:blur-none
+    motion-safe:transition-all duration-100 ease-in-out;
+}
+
+.empty-cover {
+  @apply flex justify-center items-center w-full h-full
+    bg-gray-100 dark:bg-gray-700 rounded-md
+    shadow group-hover:shadow-md;
+}
+
+.chevron {
+  @apply w-5 h-5 text-gray-500 dark:text-gray-400
+    group-hover:text-primary-600 dark:group-hover:text-gray-100;
+}
+</style>

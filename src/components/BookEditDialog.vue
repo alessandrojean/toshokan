@@ -16,7 +16,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="hidden sm:block fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-90 motion-safe:transition-opacity backdrop-filter backdrop-blur-sm" />
+        <DialogOverlay class="hidden sm:block dialog-overlay" />
       </TransitionChild>
 
       <TransitionChild
