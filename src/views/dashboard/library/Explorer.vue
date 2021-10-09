@@ -252,7 +252,8 @@ export default {
 
       if (store.state.collection.group !== filters.group ||
           store.state.collection.sortBy !== filters.sortProperty ||
-          store.state.collection.sortDirection !== filters.sortDirection) {
+          store.state.collection.sortDirection !== filters.sortDirection ||
+          store.state.collection.futureItems !== filters.futureItems) {
         const totalResults = store.state.collection.paginationInfo.total_results
         store.commit(MutationTypes.COLLECTION_UPDATE_CURRENT_PAGE, { page: 1, totalResults })
 
@@ -261,6 +262,10 @@ export default {
           sortBy: filters.sortProperty,
           sortDirection: filters.sortDirection
         })
+        store.commit(
+          MutationTypes.COLLECTION_UPDATE_FUTURE_ITEMS,
+          filters.futureItems
+        )
 
         store.dispatch('collection/fetchBooks', 1)
       }

@@ -58,15 +58,23 @@
       </transition>
 
       <div
-        v-if="isRead || current"
+        v-if="isRead || current || isFuture"
         class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2"
       >
-        <template v-if="!current">
+        <template v-if="!current && !isFuture">
           <span class="sr-only">{{ t('book.read') }}</span>
           <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
             <BookmarkIcon class="w-5 h-5 text-primary-500" />
           </div>
         </template>
+        <span v-else-if="!current" class="future-item">
+          <span aria-hidden="true">
+            <ClockIcon class="w-3.5 h-3.5" />
+          </span>
+          <span>
+            {{ t('book.futureItem') }}
+          </span>
+        </span>
         <span v-else class="current-volume">
           {{ t('book.currentVolume') }}
         </span>
@@ -93,7 +101,7 @@ import { useI18n } from 'vue-i18n'
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
-import { BookmarkIcon } from '@heroicons/vue/solid'
+import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
 
 import { BookFavorite, BookStatus } from '@/model/Book'
 
@@ -102,7 +110,8 @@ export default {
 
   components: {
     BookOpenIcon,
-    BookmarkIcon
+    BookmarkIcon,
+    ClockIcon
   },
 
   props: {
@@ -122,6 +131,13 @@ export default {
 
     const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
     const isRead = computed(() => book.value.status === BookStatus.READ)
+
+    const now = new Date()
+
+    const isFuture = computed(() => {
+      return book.value && book.value.boughtAt &&
+        book.value.boughtAt.getTime() > now.getTime()
+    })
 
     const thumbnailUrl = computed(() => {
       return book.value
@@ -170,6 +186,7 @@ export default {
     return {
       isFavorite,
       isRead,
+      isFuture,
       loadedCard,
       imageHasError,
       imageLoading,
@@ -188,10 +205,15 @@ export default {
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
 }
 
-.current-volume {
+.current-volume,
+.future-item {
   @apply px-1.5 py-px rounded
     text-xxs uppercase font-bold tracking-wide
-    bg-primary-100
-    text-primary-600;
+    bg-primary-100 dark:bg-gray-850
+    text-primary-600 dark:text-gray-300;
+}
+
+.future-item {
+  @apply flex items-center space-x-1.5;
 }
 </style>

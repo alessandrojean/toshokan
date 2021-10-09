@@ -12,9 +12,12 @@
       <!-- Book title -->
       <h2
         v-if="showBookInfo"
-        class="font-bold dark:font-semibold font-display text-2xl md:text-3xl dark:text-gray-100"
+        class="book-title"
       >
-        {{ mainTitle }}
+        <span aria-hidden="true" v-if="isFuture">
+          <ClockIcon class="w-5 h-5 text-gray-400 dark:text-gray-500" />
+        </span>
+        <span>{{ mainTitle }}</span>
       </h2>
       <div v-else class="motion-safe:animate-pulse w-72 h-8 mb-2 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
@@ -203,6 +206,7 @@ import {
 } from '@heroicons/vue/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
+  ClockIcon,
   StarIcon as StarOutlineIcon,
   TrashIcon
 } from '@heroicons/vue/outline'
@@ -221,6 +225,7 @@ export default {
     AmazonIcon,
     BookmarkOutlineIcon,
     BookmarkSolidIcon,
+    ClockIcon,
     GlobeAltIcon,
     PaniniIcon,
     PencilIcon,
@@ -346,6 +351,13 @@ export default {
       return book.value?.favorite === BookFavorite.ACTIVE
     })
 
+    const now = new Date()
+
+    const isFuture = computed(() => {
+      return book.value && book.value.boughtAt &&
+        book.value.boughtAt.getTime() > now.getTime()
+    })
+
     const blurSynopsis = computed(() => {
       return showBookInfo.value && spoilerMode.value.synopsis &&
         !isRead.value && book.value.synopsis.length > 0
@@ -419,6 +431,7 @@ export default {
       country,
       isRead,
       isFavorite,
+      isFuture,
       spoilerMode,
       blurSynopsis,
       externalLinks,
@@ -430,6 +443,12 @@ export default {
 </script>
 
 <style scoped>
+.book-title {
+  @apply font-bold dark:font-semibold font-display
+    text-2xl md:text-3xl dark:text-gray-100
+    flex items-center space-x-2;
+}
+
 .book-external-link {
   @apply flex items-center px-2 py-1
     mr-2 mt-2 space-x-1.5 rounded

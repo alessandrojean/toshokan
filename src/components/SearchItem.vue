@@ -41,7 +41,10 @@
     <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
         <h4 class="result-title">
-          {{ result.title }}
+          <span aria-hidden="true" v-if="isFuture">
+            <ClockIcon class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+          </span>
+          <span>{{ result.title }}</span>
         </h4>
         <p class="result-authors">
           {{ authorsFormatted }}
@@ -69,12 +72,20 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
-import { ChevronRightIcon, PhotographIcon } from '@heroicons/vue/outline'
+import {
+  ChevronRightIcon,
+  ClockIcon,
+  PhotographIcon
+} from '@heroicons/vue/outline'
 
 import { BookStatus } from '@/model/Book'
 
 export default {
-  components: { ChevronRightIcon, PhotographIcon },
+  components: {
+    ChevronRightIcon,
+    ClockIcon,
+    PhotographIcon
+  },
 
   props: {
     result: {
@@ -121,6 +132,13 @@ export default {
       return result.value && result.value.status === BookStatus.READ
     })
 
+    const now = new Date()
+
+    const isFuture = computed(() => {
+      return result.value && result.value.boughtAt &&
+        result.value.boughtAt.getTime() > now.getTime()
+    })
+
     const { t } = useI18n()
 
     const authorsFormatted = computed(() => {
@@ -151,6 +169,7 @@ export default {
       thumbnailUrl,
       spoilerMode,
       isRead,
+      isFuture,
       authorsFormatted
     }
   }
@@ -163,7 +182,8 @@ export default {
 }
 
 .result-title {
-  @apply text-sm font-display font-medium w-full truncate
+  @apply flex items-center space-x-1.5
+    text-sm font-display font-medium w-full truncate
     dark:text-gray-100 inline-block;
 }
 

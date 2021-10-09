@@ -61,16 +61,9 @@
                 v-for="tab of tabs"
                 :key="tab.title"
                 as="template"
-                v-slot="{ selected }"
+                :disabled="tab.disabled"
               >
-                <button
-                  :class="[
-                    'flex items-center justify-center px-1 py-3 -mb-px text-sm font-medium has-ring-focus border-b-2',
-                    selected
-                      ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
-                      : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
-                  ]"
-                >
+                <button class="tab-button has-ring-focus">
                   <span
                     v-if="tab.error"
                     aria-hidden="true"
@@ -240,13 +233,23 @@ export default {
 
     const main = ref(null)
 
+    const now = new Date()
+
+    const isFuture = computed(() => {
+      return editingBook.boughtAt &&
+        editingBook.boughtAt.getTime() > now.getTime()
+    })
+
     const tabs = computed(() => [
       {
         title: t('dashboard.details.editForm.title'),
         error: editFormInvalid.value
       },
       { title: t('dashboard.details.coverForm.title') },
-      { title: t('dashboard.details.readingForm.title') }
+      {
+        title: t('dashboard.details.readingForm.title'),
+        disabled: isFuture.value
+      }
     ])
 
     return {
@@ -263,3 +266,30 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.tab-button {
+  @apply flex items-center justify-center px-1 py-3 -mb-px
+    text-sm font-medium border-b-2 border-transparent
+    text-gray-600 dark:text-gray-400;
+}
+
+.tab-button:not(:disabled):hover {
+  @apply border-gray-300 dark:border-gray-600
+    text-gray-800 dark:text-gray-300;
+}
+
+.tab-button[aria-selected="true"] {
+  @apply text-primary-600 dark:text-gray-100
+     border-primary-600 dark:border-primary-400
+}
+
+.tab-button[aria-selected="true"]:hover {
+  @apply text-primary-600 dark:text-gray-100
+    border-primary-600 dark:border-primary-400;
+}
+
+.tab-button:disabled {
+  @apply opacity-50 cursor-default;
+}
+</style>

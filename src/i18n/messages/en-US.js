@@ -40,6 +40,7 @@ export default {
     unread: 'Unread',
     currentVolume: 'Current',
     emptySynopsis: 'The book synopsis is empty.',
+    futureItem: 'Future item',
     properties: {
       id: 'ID',
       title: 'Title',
@@ -436,7 +437,13 @@ export default {
           asc: 'Ascending',
           desc: 'Descending'
         },
-        sortBy: 'Sort by'
+        sortBy: 'Sort by',
+        futureItems: {
+          label: 'Future itens',
+          indiferent: 'Doesn\'t matter',
+          only: 'Only',
+          hide: 'Hide'
+        }
       },
       empty: {
         title: 'Your library is empty',

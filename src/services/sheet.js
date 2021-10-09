@@ -145,8 +145,19 @@ export function getBooks (sheetId, idMap, page = 1, options = {}) {
   const orderDirection = options.orderDirection || 'desc'
   const limit = options.limit || PER_PAGE
 
-  const where = options.group
-    ? `where ${CollectionColumns.GROUP} = "${options.group}"`
+  const conditions = []
+
+  if (options.group) {
+    conditions.push(`${CollectionColumns.GROUP} = "${options.group}"`)
+  }
+
+  if (options.futureItems === 'only' || options.futureItems === 'hide') {
+    const comparation = options.futureItems === 'only' ? '>' : '<='
+    conditions.push(`${CollectionColumns.BOUGHT_AT} ${comparation} now()`)
+  }
+
+  const where = conditions.length > 0
+    ? `where ${conditions.join(' and ')}`
     : ''
 
   const query = new window.google.visualization.Query(sheetUrl)

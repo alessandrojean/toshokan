@@ -183,13 +183,16 @@ export default {
 }
 
 .pag-button.is-current,
-.pag-button.is-current:hover,
-.pag-button.is-current:active {
+.pag-button.is-current:not(:disabled):hover,
+.pag-button.is-current:not(:disabled):active {
   @apply z-20 cursor-default bg-primary-50 dark:bg-primary-900
-    border-primary-500 text-primary-600 dark:text-primary-200;
+    border-primary-500 dark:border-primary-500
+    text-primary-600 dark:text-primary-200;
 }
 
-.pag-button.is-current:disabled {
+.pag-button.is-current:disabled,
+.pag-button.is-current:disabled:hover,
+.pag-button.is-current:disabled:active {
   @apply bg-primary-50 dark:bg-primary-900
     border-primary-500 dark:border-primary-500;
 }

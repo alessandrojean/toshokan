@@ -115,6 +115,7 @@ export default {
       readAt: t('book.properties.readAt'),
       'paidPrice.value': t('book.properties.paidPrice'),
       'labelPrice.value': t('book.properties.labelPrice'),
+      boughtAt: t('book.properties.boughtAt'),
       createdAt: t('book.properties.createdAt'),
       updatedAt: t('book.properties.updatedAt')
     }

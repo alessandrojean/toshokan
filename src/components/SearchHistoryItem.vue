@@ -54,7 +54,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .history-item {
   @apply flex items-center relative
     text-gray-800 dark:text-gray-200

@@ -97,6 +97,26 @@
                           </div>
                         </RadioGroup>
 
+                        <RadioGroup v-model="futureItems" as="div">
+                          <RadioGroupLabel class="label">
+                            {{ t('dashboard.library.filters.futureItems.label') }}
+                          </RadioGroupLabel>
+
+                          <div class="w-full">
+                            <RadioGroupOption
+                              v-for="option of ['indiferent', 'only', 'hide']"
+                              :key="option"
+                              :value="option"
+                              v-slot="{ checked }"
+                              class="inline-block mr-2 has-ring-focus rounded"
+                            >
+                              <span :class="['chip is-square', checked ? 'is-active' : '']">
+                                {{ t(`dashboard.library.filters.futureItems.${option}`) }}
+                              </span>
+                            </RadioGroupOption>
+                          </div>
+                        </RadioGroup>
+
                         <RadioGroup v-model="sortDirection" as="div">
                           <RadioGroupLabel class="label">
                             {{ t('dashboard.library.filters.sortDirection.label') }}
@@ -312,6 +332,7 @@ export default {
     const group = ref(store.state.collection.group)
     const sortProperty = ref(store.state.collection.sortBy)
     const sortDirection = ref(store.state.collection.sortDirection)
+    const futureItems = ref(store.state.collection.futureItems)
 
     const sortProperties = computed(() => {
       const properties = [
@@ -340,6 +361,7 @@ export default {
         group.value = store.state.collection.group
         sortProperty.value = store.state.collection.sortBy
         sortDirection.value = store.state.collection.sortDirection
+        futureItems.value = store.state.collection.futureItems
       }
     })
 
@@ -350,7 +372,8 @@ export default {
         gridMode: gridMode.value,
         group: group.value,
         sortProperty: sortProperty.value,
-        sortDirection: sortDirection.value
+        sortDirection: sortDirection.value,
+        futureItems: futureItems.value
       })
     }
 
@@ -366,6 +389,7 @@ export default {
       groups,
       sortProperty,
       sortDirection,
+      futureItems,
       sortProperties,
       viewMode,
       handleFilter,

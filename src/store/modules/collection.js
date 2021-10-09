@@ -22,6 +22,7 @@ export const CollectionMutations = {
   CLEAR_SEARCH: 'clearSearch',
   UPDATE_BOOKS: 'updateBooks',
   UPDATE_CURRENT_PAGE: 'updateCurrentPage',
+  UPDATE_FUTURE_ITEMS: 'updateFutureItems',
   UPDATE_GRID_MODE: 'updateGridMode',
   UPDATE_GROUP: 'updateGroup',
   UPDATE_GROUPS: 'updateGroups',
@@ -44,6 +45,7 @@ export default {
       loading: false
     },
     currentPage: 1,
+    futureItems: 'hide',
     gridMode: localStorage.getItem('grid_mode') || 'comfortable',
     group: localStorage.getItem('collection_group'),
     groups: {
@@ -114,6 +116,10 @@ export default {
 
       state.currentPage = page
       state.paginationInfo = { ...state.paginationInfo, ...paginationInfo }
+    },
+
+    [CollectionMutations.UPDATE_FUTURE_ITEMS]: function (state, futureItems) {
+      state.futureItems = futureItems
     },
 
     [CollectionMutations.UPDATE_GRID_MODE]: function (state, gridMode) {
@@ -217,10 +223,11 @@ export default {
 
         const orderBy = PropertyToColumn[state.sortBy]
         const orderDirection = state.sortDirection
+        const futureItems = state.futureItems
 
         const { books, totalResults } = await getBooksFromGroup(
           sheetId, state.idMap, group, page,
-          { orderBy, orderDirection }
+          { futureItems, orderBy, orderDirection }
         )
         commit(CollectionMutations.UPDATE_BOOKS, { items: books })
         commit(CollectionMutations.UPDATE_CURRENT_PAGE, { page, totalResults })
