@@ -60,6 +60,7 @@ export default {
       currency: 'Currency',
       synopsis: 'Synopsis',
       notes: 'Notes',
+      tags: 'Tags',
       language: 'Language'
     },
     coverSelector: {
@@ -91,6 +92,9 @@ export default {
       addAuthor: 'Add',
       addAuthorPlaceholder: 'Add an author…',
       removeAuthor: 'Remove this author',
+      addTag: 'Add',
+      addTagPlaceholder: 'Add a tag…',
+      removeTag: 'Remove this tag',
       example: {
         placeholder: 'eg. {0}',
         id: '9781934287729',
@@ -305,6 +309,7 @@ export default {
         authorListIncomplete: '{authors} and more {number}',
         authorListComplete: '{authors} and {lastAuthor}',
         authorSeparator: ', ',
+        authorLastSeparator: ' and ',
         status: 'Status: ',
         group: 'Group: ',
         store: 'Store: ',
@@ -361,6 +366,9 @@ export default {
         },
         fieldHelp: 'Leave it blank if you don\'t remember.',
         actionClear: 'Clear'
+      },
+      organizationForm: {
+        title: 'Organization'
       }
     },
     home: {
@@ -549,6 +557,7 @@ export default {
         publisher: 'publisher',
         store: 'store',
         notes: 'notes',
+        tag: 'tag',
         boughtAt: 'bought-at',
         boughtBefore: 'bought-before',
         boughtAfter: 'bought-after',

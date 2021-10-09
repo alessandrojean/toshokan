@@ -33,9 +33,20 @@
       <p
         v-if="showBookInfo"
         :class="subtitle.length === 0 ? 'md:text-lg' : ''"
-        class="font-medium text-gray-500 dark:text-gray-400 text-md"
+        class="author-list"
       >
-        {{ authorsFormatted }}
+        <template v-for="(author, idx) of book.authors" :key="idx">
+          <a
+            href="#"
+            class="author has-ring-focus"
+            @click="searchByAuthor(author)"
+          >
+            {{ author }}
+          </a>
+          <span v-if="book.authors.length > 1 && idx < book.authors.length - 1">
+            {{ idx === book.authors.length - 2 ? lastSeparator : separator }}
+          </span>
+        </template>
       </p>
       <div v-else class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-44"></div>
     </div>
@@ -192,7 +203,7 @@
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
+import { computed, inject, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -256,27 +267,6 @@ export default {
 
     const showBookInfo = computed(() => {
       return !loading.value && book.value
-    })
-
-    const authorsFormatted = computed(() => {
-      const separator = t('dashboard.details.header.authorSeparator')
-      let authors = (book.value.authors || []).join(separator)
-
-      if (book.value.authors && book.value.authors.length >= 2) {
-        const firstAuthors = (book.value.authors || [])
-          .slice(0, -1)
-          .join(separator)
-
-        authors = t(
-          'dashboard.details.header.authorListComplete',
-          {
-            authors: firstAuthors,
-            lastAuthor: book.value.authors[book.value.authors.length - 1]
-          }
-        )
-      }
-
-      return authors
     })
 
     const { renderMarkdown } = useMarkdown()
@@ -418,9 +408,23 @@ export default {
 
     const subtitle = computed(() => book.value?.titleParts[2] || '')
 
+    const separator = computed(() => {
+      return t('dashboard.details.header.authorSeparator')
+    })
+
+    const lastSeparator = computed(() => {
+      return t('dashboard.details.header.authorLastSeparator')
+    })
+
+    const showSearchDialog = inject('showSearchDialog')
+
+    function searchByAuthor (author) {
+      const query = `${t('dashboard.search.keywords.author')}:"${author}"`
+      showSearchDialog(query)
+    }
+
     return {
       showBookInfo,
-      authorsFormatted,
       synopsisRendered,
       readAt,
       createdAt,
@@ -436,7 +440,10 @@ export default {
       blurSynopsis,
       externalLinks,
       mainTitle,
-      subtitle
+      subtitle,
+      separator,
+      lastSeparator,
+      searchByAuthor
     }
   }
 }
@@ -446,6 +453,23 @@ export default {
 .book-title {
   @apply font-bold dark:font-semibold font-display
     text-2xl md:text-3xl dark:text-gray-100;
+}
+
+.author-list {
+  @apply font-medium text-gray-500 dark:text-gray-400 text-base;
+}
+
+.author {
+  @apply rounded;
+}
+
+.author:hover,
+.author:focus-visible {
+  @apply text-gray-700 dark:text-gray-200;
+}
+
+.author:focus-visible {
+  @apply dark:ring-offset-gray-900;
 }
 
 .book-external-link {
@@ -459,6 +483,10 @@ export default {
 .book-external-link:focus-visible {
   @apply bg-gray-200 dark:bg-gray-600
     text-gray-800 dark:text-gray-100;
+}
+
+.book-external-link:focus-visible {
+  @apply dark:ring-offset-gray-900;
 }
 
 .book-external-link svg {

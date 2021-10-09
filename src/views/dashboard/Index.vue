@@ -25,11 +25,17 @@
     </main>
 
     <DashboardFooter />
+
+    <SearchDialog
+      ref="searchDialog"
+      :is-open="searchDialogIsOpen"
+      @close="closeSearchDialog"
+    />
   </div>
 </template>
 
 <script>
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -39,6 +45,7 @@ import { MutationTypes } from '@/store'
 import AppNavbar from '@/components/AppNavbar.vue'
 import DashboardFooter from '@/components/DashboardFooter.vue'
 import MobileNavbar from '@/components/MobileNavbar.vue'
+import SearchDialog from '@/components/SearchDialog.vue'
 
 export default {
   name: 'Dashboard',
@@ -46,7 +53,8 @@ export default {
   components: {
     AppNavbar,
     DashboardFooter,
-    MobileNavbar
+    MobileNavbar,
+    SearchDialog
   },
 
   setup () {
@@ -78,10 +86,71 @@ export default {
 
     const { t } = useI18n()
 
+    const showSearch = computed(() => !store.state.sheet.loading)
+    const searchDialog = ref(null)
+    const searchDialogIsOpen = ref(false)
+
+    const searchShortcutDisabled = ref(false)
+
+    function showSearchDialog (query) {
+      if (!searchShortcutDisabled.value) {
+        searchDialogIsOpen.value = true
+
+        if (typeof query === 'string') {
+          searchDialog.value?.search(query)
+        }
+      }
+    }
+
+    function closeSearchDialog () {
+      searchDialogIsOpen.value = false
+    }
+
+    function disableSearchShortcut () {
+      searchShortcutDisabled.value = true
+    }
+
+    function enableSearchShortcut () {
+      searchShortcutDisabled.value = false
+    }
+
+    provide('showSearchDialog', showSearchDialog)
+    provide('disableSearchShortcut', disableSearchShortcut)
+    provide('enableSearchShortcut', enableSearchShortcut)
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    const handleKeyDown = event => {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'k' &&
+        showSearch.value &&
+        !searchDialogIsOpen.value &&
+        !searchShortcutDisabled.value
+      ) {
+        event.stopPropagation()
+        event.preventDefault()
+        showSearchDialog()
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('keydown', handleKeyDown)
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('keydown', handleKeyDown)
+    })
+
     return {
       loadSheetData,
       signedIn,
-      t
+      t,
+      searchDialog,
+      searchDialogIsOpen,
+      showSearchDialog,
+      closeSearchDialog
     }
   }
 }

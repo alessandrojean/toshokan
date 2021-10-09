@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import { inject, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { TrashIcon } from '@heroicons/vue/outline'
@@ -102,13 +103,22 @@ export default {
 
   emits: ['update:open', 'click:delete'],
 
-  setup (_, context) {
+  setup (props, context) {
     function handleDelete (event) {
       context.emit('update:open', false)
       context.emit('click:delete', event)
     }
 
     const { t } = useI18n()
+
+    const { open } = toRefs(props)
+
+    const disableSearchShortcut = inject('disableSearchShortcut')
+    const enableSearchShortcut = inject('enableSearchShortcut')
+
+    watch(open, newOpen => {
+      newOpen ? disableSearchShortcut() : enableSearchShortcut()
+    })
 
     return { handleDelete, t }
   }

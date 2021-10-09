@@ -29,8 +29,9 @@ export const Columns = {
   FAVORITE: 14,
   SYNOPSIS: 15,
   NOTES: 16,
-  CREATED_AT: 17,
-  UPDATED_AT: 18
+  TAGS: 17,
+  CREATED_AT: 18,
+  UPDATED_AT: 19
 }
 
 export const CollectionColumns = {
@@ -51,8 +52,9 @@ export const CollectionColumns = {
   FAVORITE: 'P',
   SYNOPSIS: 'Q',
   NOTES: 'R',
-  CREATED_AT: 'S',
-  UPDATED_AT: 'T'
+  TAGS: 'S',
+  CREATED_AT: 'T',
+  UPDATED_AT: 'U'
 }
 
 export const PropertyToColumn = {
@@ -119,6 +121,9 @@ export function parseBook (value, index) {
     favorite: value[Columns.FAVORITE],
     synopsis: value[Columns.SYNOPSIS],
     notes: value[Columns.NOTES],
+    tags: value[Columns.TAGS].length > 0
+      ? value[Columns.TAGS].split(/,\s*/).map(t => t.toUpperCase())
+      : [],
     createdAt: new Date(value[Columns.CREATED_AT]),
     updatedAt: new Date(value[Columns.UPDATED_AT])
   }
@@ -167,6 +172,9 @@ export function parseBookFromDataTable (dataTable, idMap, i) {
     favorite: getProperty(Columns.FAVORITE) || '',
     synopsis: getProperty(Columns.SYNOPSIS) || '',
     notes: getProperty(Columns.NOTES) || '',
+    tags: getProperty(Columns.TAGS)
+      ? getProperty(Columns.TAGS).split(/,\s*/).map(t => t.toUpperCase())
+      : [],
     createdAt: getProperty(Columns.CREATED_AT),
     updatedAt: getProperty(Columns.UPDATED_AT)
   }
@@ -217,6 +225,7 @@ export function formatBook (book) {
     book.favorite || BookFavorite.INACTIVE,
     book.synopsis || '',
     book.notes || '',
+    book.tags.join(', ').toUpperCase(),
     formatDateTimeToSheet(fixDate(book.createdAt, offset) || now),
     formatDateTimeToSheet(now)
   ]

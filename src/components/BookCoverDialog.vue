@@ -68,6 +68,7 @@ import {
 } from '@headlessui/vue'
 
 import { XIcon } from '@heroicons/vue/solid'
+import { inject, toRefs, watch } from 'vue-demi'
 
 export default {
   components: {
@@ -91,8 +92,17 @@ export default {
 
   emits: ['close'],
 
-  setup () {
+  setup (props) {
     const { t } = useI18n()
+
+    const { open } = toRefs(props)
+
+    const disableSearchShortcut = inject('disableSearchShortcut')
+    const enableSearchShortcut = inject('enableSearchShortcut')
+
+    watch(open, newOpen => {
+      newOpen ? disableSearchShortcut() : enableSearchShortcut()
+    })
 
     return { t }
   }

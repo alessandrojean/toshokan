@@ -267,7 +267,7 @@
 </template>
 
 <script>
-import { computed, nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { computed, inject, nextTick, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
@@ -433,10 +433,15 @@ export default {
       bookInvalid.value = value
     }
 
+    const disableSearchShortcut = inject('disableSearchShortcut')
+    const enableSearchShortcut = inject('enableSearchShortcut')
+
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
         Object.assign(book, bookInitialState)
       }
+
+      newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
     })
 
     const searchBookSelected = ref(null)

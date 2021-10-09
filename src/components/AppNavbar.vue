@@ -159,18 +159,13 @@
         </div>
       </div>
     </div>
-
-    <SearchDialog
-      :is-open="searchDialogIsOpen"
-      @close="closeSearchDialog"
-    />
   </nav>
 </template>
 
 <script>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -187,8 +182,6 @@ import {
   SearchIcon
 } from '@heroicons/vue/solid'
 
-import SearchDialog from '@/components/SearchDialog.vue'
-
 export default {
   name: 'AppNavbar',
 
@@ -200,14 +193,12 @@ export default {
     CogIcon,
     LibraryIcon,
     LogoutIcon,
-    SearchIcon,
-    SearchDialog
+    SearchIcon
   },
 
   setup () {
     const store = useStore()
     const route = useRoute()
-    const router = useRouter()
 
     const { t } = useI18n({ useScope: 'global' })
 
@@ -240,17 +231,6 @@ export default {
 
     const showSearch = computed(() => !store.state.sheet.loading)
 
-    const handleSearch = () => {
-      router.push({
-        name: 'DashboardSearch',
-        query: {
-          q: searchQuery.value
-        }
-      })
-
-      searchQuery.value = ''
-    }
-
     const signOut = () => store.dispatch('auth/signOut')
 
     const isMac = ref(
@@ -259,46 +239,13 @@ export default {
         : navigator.platform.toLowerCase().indexOf('mac') > -1
     )
 
-    const searchDialogIsOpen = ref(false)
-
-    function showSearchDialog () {
-      searchDialogIsOpen.value = true
-    }
-
-    function closeSearchDialog () {
-      searchDialogIsOpen.value = false
-    }
-
-    /**
-     * @param {KeyboardEvent} event
-     */
-    const handleKeyDown = event => {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === 'k' &&
-        showSearch.value &&
-        !searchDialogIsOpen.value
-      ) {
-        event.stopPropagation()
-        event.preventDefault()
-        showSearchDialog()
-      }
-    }
-
-    onMounted(() => {
-      document.addEventListener('keydown', handleKeyDown)
-    })
-
-    onUnmounted(() => {
-      document.removeEventListener('keydown', handleKeyDown)
-    })
+    const showSearchDialog = inject('showSearchDialog')
 
     const isTransparent = computed(() => {
       return route.name === 'BookDetails'
     })
 
     return {
-      handleSearch,
       open,
       navigation,
       desktopNavigation,
@@ -310,9 +257,7 @@ export default {
       searchQuery,
       showSearch,
       signOut,
-      searchDialogIsOpen,
       showSearchDialog,
-      closeSearchDialog,
       isTransparent,
       t
     }

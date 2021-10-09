@@ -278,7 +278,7 @@
 </template>
 
 <script>
-import { computed, ref, toRefs, watch } from 'vue'
+import { computed, inject, ref, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -354,6 +354,9 @@ export default {
 
     const { open } = toRefs(props)
 
+    const disableSearchShortcut = inject('disableSearchShortcut')
+    const enableSearchShortcut = inject('enableSearchShortcut')
+
     watch(open, newOpen => {
       if (newOpen) {
         gridMode.value = store.state.collection.gridMode
@@ -363,6 +366,8 @@ export default {
         sortDirection.value = store.state.collection.sortDirection
         futureItems.value = store.state.collection.futureItems
       }
+
+      newOpen ? disableSearchShortcut() : enableSearchShortcut()
     })
 
     function handleFilter () {

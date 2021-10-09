@@ -54,10 +54,10 @@
       @update:modelValue="handleDragAndDrop"
     >
       <template #item="{ element: tag, index }">
-        <li class="flex items-center text-sm bg-primary-100 dark:bg-gray-700 rounded-md px-2 py-0.5 mr-2 mt-2 font-medium text-primary-700 dark:text-gray-200">
+        <li :class="['tag', tagClass]">
           <span
             v-if="modelValue.length > 1"
-            class="handle hidden md:block text-primary-500 dark:text-gray-400 cursor-move p-1 -ml-1 mr-1"
+            class="handle"
             aria-hidden="true"
           >
             <MenuIcon class="w-3 h-3" />
@@ -66,7 +66,7 @@
           <button
             type="button"
             :title="removeAction"
-            class="text-primary-400 dark:text-gray-400 hover:text-primary-600 dark:hover:text-gray-200 focus-visible:text-primary-600 dark:focus-visible:text-gray-200 p-1 ml-1 -mr-1 rounded-md has-ring-focus focus-visible:ring-offset-primary-100 dark:focus-visible:ring-offset-gray-700"
+            class="remove-button has-ring-focus"
             @click="removeTag(index)"
           >
             <span class="sr-only">
@@ -124,7 +124,8 @@ export default {
       type: String,
       required: true
     },
-    required: Boolean
+    required: Boolean,
+    tagClass: String
   },
 
   emits: ['update:modelValue'],
@@ -143,7 +144,9 @@ export default {
         ? tempTag.value.slice(0, -1)
         : tempTag.value
 
-      if (newTag.length > 0 && !modelValue.value.includes(newTag.trim())) {
+      if (newTag.length > 0 &&
+          newTag.trim().length > 0 &&
+          !modelValue.value.includes(newTag.trim())) {
         context.emit(
           'update:modelValue',
           modelValue.value.concat([newTag.trim()])
@@ -189,3 +192,35 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.tag {
+  @apply flex items-center text-sm
+    bg-primary-100 dark:bg-gray-700 rounded-md
+    text-primary-700 dark:text-gray-200
+    px-2 py-0.5 mr-2 mt-2 font-medium;
+}
+
+.tag.is-uppercase {
+  @apply text-xs uppercase font-semibold tracking-wide;
+}
+
+.handle {
+  @apply hidden md:block cursor-move p-1 -ml-1 mr-1
+    text-primary-500 dark:text-gray-400;
+}
+
+.remove-button {
+  @apply p-1 ml-1 -mr-1 rounded-md
+    text-primary-400 dark:text-gray-400;
+}
+
+.remove-button:hover {
+  @apply text-primary-600 dark:text-gray-200;
+}
+
+.remove-button:focus-visible {
+  @apply text-primary-600 dark:text-gray-200
+    ring-offset-primary-100 dark:ring-offset-gray-700;
+}
+</style>

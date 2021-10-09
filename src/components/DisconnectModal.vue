@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import { inject, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { ExclamationIcon } from '@heroicons/vue/outline'
@@ -95,13 +96,22 @@ export default {
 
   emits: ['update:open', 'click:disconnect'],
 
-  setup (_, context) {
+  setup (props, context) {
     function handleDisconnect (event) {
       context.emit('update:open', false)
       context.emit('click:disconnect', event)
     }
 
     const { t } = useI18n()
+
+    const { open } = toRefs(props)
+
+    const disableSearchShortcut = inject('disableSearchShortcut')
+    const enableSearchShortcut = inject('enableSearchShortcut')
+
+    watch(open, newOpen => {
+      newOpen ? disableSearchShortcut() : enableSearchShortcut()
+    })
 
     return { handleDisconnect, t }
   }

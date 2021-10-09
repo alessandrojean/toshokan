@@ -60,6 +60,7 @@ export default {
       currency: 'Moeda',
       synopsis: 'Sinopse',
       notes: 'Observações',
+      tags: 'Tags',
       language: 'Idioma'
     },
     coverSelector: {
@@ -91,6 +92,9 @@ export default {
       addAuthor: 'Adicionar',
       addAuthorPlaceholder: 'Adicionar um autor…',
       removeAuthor: 'Remover este autor',
+      addTag: 'Adicionar',
+      addTagPlaceholder: 'Adicionar uma tag…',
+      removeTag: 'Remover esta tag',
       example: {
         placeholder: 'ex. {0}',
         id: '9788583621508',
@@ -306,6 +310,7 @@ export default {
         authorListIncomplete: '{authors} e mais {number}',
         authorListComplete: '{authors} e {lastAuthor}',
         authorSeparator: ', ',
+        authorLastSeparator: ' e ',
         status: 'Estado: ',
         group: 'Grupo: ',
         store: 'Loja da compra: ',
@@ -362,6 +367,9 @@ export default {
         },
         fieldHelp: 'Deixe em branco caso desconheça.',
         actionClear: 'Limpar'
+      },
+      organizationForm: {
+        title: 'Organização'
       }
     },
     home: {
@@ -553,6 +561,7 @@ export default {
         publisher: 'editora',
         store: 'loja',
         notes: 'observações',
+        tags: 'tag',
         boughtAt: 'comprado-em',
         boughtBefore: 'comprado-antes-de',
         boughtAfter: 'comprado-depois-de',

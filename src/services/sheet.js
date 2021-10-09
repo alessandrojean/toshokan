@@ -122,7 +122,7 @@ export async function getSheetData (sheetId) {
   return { stats, timeZone }
 }
 
-const COLLECTION_RANGE = 'B4:T'
+const COLLECTION_RANGE = 'B4:U'
 const COLLECTION_SHEET = 'Collection'
 const PER_PAGE = 18
 
@@ -137,7 +137,34 @@ function buildSheetUrl (sheetId) {
   return sheetUrl.href
 }
 
-export function getBooks (sheetId, idMap, page = 1, options = {}) {
+export function countTotalResults (sheetId, queryStr) {
+  const sheetUrl = buildSheetUrl(sheetId)
+
+  const newQueryStr = queryStr
+    .replaceAll('\n', ' ')
+    .replace('select *', `select count(${CollectionColumns.ID})`)
+    .replace(/order.*$/, '')
+    .trim()
+
+  const query = new window.google.visualization.Query(sheetUrl)
+  query.setQuery(newQueryStr)
+
+  return new Promise((resolve, reject) => {
+    query.send(response => {
+      if (response.isError()) {
+        reject(new Error('Error in query: ' + response.getMessage()))
+        return
+      }
+
+      const dataTable = response.getDataTable()
+      const totalResults = dataTable.getValue(0, 0)
+
+      resolve(totalResults)
+    })
+  })
+}
+
+export async function getBooks (sheetId, idMap, page = 1, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const offset = (page - 1) * PER_PAGE
@@ -160,12 +187,16 @@ export function getBooks (sheetId, idMap, page = 1, options = {}) {
     ? `where ${conditions.join(' and ')}`
     : ''
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
+  const queryStr = dedent`
     select * ${where}
     order by ${orderBy} ${orderDirection}
     limit ${limit} offset ${offset}
-  `)
+  `
+
+  const totalResults = await countTotalResults(sheetId, queryStr)
+
+  const query = new window.google.visualization.Query(sheetUrl)
+  query.setQuery(queryStr)
 
   return new Promise((resolve, reject) => {
     query.send(response => {
@@ -183,7 +214,7 @@ export function getBooks (sheetId, idMap, page = 1, options = {}) {
         books.push(parseBookFromDataTable(dataTable, idMap, i))
       }
 
-      resolve(books)
+      resolve({ books, totalResults })
     })
   })
 }
@@ -223,29 +254,8 @@ export async function getLatestReadings (sheetId, idMap, options = {}) {
   })
 }
 
-export async function getBooksFromGroup (sheetId, idMap, group, page = 1, options = {}) {
-  const books = await getBooks(sheetId, idMap, page, { ...options, group })
-
-  const sheetUrl = buildSheetUrl(sheetId)
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select count(${group ? CollectionColumns.GROUP : CollectionColumns.ID})
-    ${group ? `where ${CollectionColumns.GROUP} = "${group}"` : ''}
-  `)
-
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
-        return
-      }
-
-      const dataTable = response.getDataTable()
-      const totalResults = dataTable.getValue(0, 0)
-
-      resolve({ books, totalResults })
-    })
-  })
+export function getBooksFromGroup (sheetId, idMap, group, page = 1, options = {}) {
+  return getBooks(sheetId, idMap, page, { ...options, group })
 }
 
 export function getBookIds (sheetId) {
@@ -517,6 +527,11 @@ export function createSearchKeywords () {
     [t('dashboard.search.keywords.notes')]: {
       column: CollectionColumns.NOTES
     },
+    [t('dashboard.search.keywords.tags')]: {
+      column: CollectionColumns.TAGS,
+      joinWith: 'and',
+      excludeJoinWith: 'or'
+    },
     [t('dashboard.search.keywords.boughtAt')]: {
       column: CollectionColumns.BOUGHT_AT,
       date: true,
@@ -674,9 +689,11 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
           tests = values.map(v => `lower(${keywordInfo.column}) matches ".*${v}.*"`)
         }
 
+        const joinWith = keywordInfo.joinWith || 'or'
+
         return (values.length === 1 || keywordInfo.date)
           ? tests
-          : [`(${tests.join(' or ')})`]
+          : ['(' + tests.join(` ${joinWith} `) + ')']
       })
 
     const excludingConditions = Object.entries(searchQueryObj.exclude)
@@ -717,9 +734,11 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
           tests = values.map(v => `not lower(${keywordInfo.column}) matches ".*${v}.*"`)
         }
 
+        const excludeJoinWith = keywordInfo.excludeJoinWith || 'and'
+
         return (values.length === 1 || keywordInfo.date)
           ? tests
-          : [`(${tests.join(' and ')})`]
+          : ['(' + tests.join(` ${excludeJoinWith} `) + ')']
       })
 
     conditions.push(...excludingConditions)

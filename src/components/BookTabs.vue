@@ -79,6 +79,17 @@
                   >
                     {{ formatDate(mt.value) }}
                   </time>
+                  <ul v-else-if="mt.tags" class="tag-list">
+                    <li v-for="tag in mt.value" :key="tag" class="mr-2 mt-2">
+                      <a
+                        href="#"
+                        class="tag has-ring-focus"
+                        @click="searchByTag(tag)"
+                      >
+                        {{ tag }}
+                      </a>
+                    </li>
+                  </ul>
                   <span v-else>{{ mt.value }}</span>
 
                   <div
@@ -127,7 +138,7 @@
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
+import { computed, inject, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -309,9 +320,23 @@ export default {
           title: t('book.properties.readAt'),
           value: book.value?.readAt,
           time: true
+        },
+        {
+          title: t('book.properties.tags'),
+          value: (book.value?.tags || []).length > 0
+            ? book.value?.tags
+            : null,
+          tags: true
         }
       ]
     })
+
+    const showSearchDialog = inject('showSearchDialog')
+
+    function searchByTag (tag) {
+      const query = `${t('dashboard.search.keywords.tags')}:"${tag.toLowerCase()}"`
+      showSearchDialog(query)
+    }
 
     return {
       showBookInfo,
@@ -321,9 +346,33 @@ export default {
       formatDate,
       metadata,
       filteredCollection,
+      searchByTag,
       t,
       n
     }
   }
 }
 </script>
+
+<style scoped>
+.tag-list {
+  @apply flex flex-wrap -mt-2;
+}
+
+.tag {
+  @apply text-xxs uppercase font-bold tracking-wide
+    bg-primary-100 dark:bg-gray-700 rounded-md
+    text-primary-700 dark:text-gray-300
+    px-2.5 py-1;
+}
+
+.tag:hover,
+.tag:focus-visible {
+  @apply bg-primary-200 dark:bg-gray-600
+    text-primary-800 dark:text-gray-200;
+}
+
+.tag:focus-visible {
+  @apply dark:ring-offset-gray-900;
+}
+</style>

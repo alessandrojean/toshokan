@@ -324,6 +324,7 @@ export default {
 
     async function search (query) {
       const searchTerm = query || searchQuery.value
+      searchQuery.value = searchTerm
 
       if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
         searchInput.value?.blur()
