@@ -25,7 +25,7 @@
     :title="book.title"
     :aria-current="current ? 'page' : undefined"
   >
-    <div class="relative aspect-w-2 aspect-h-3 shadow hover:shadow-lg bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden motion-safe:transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-900">
+    <div class="book-card aspect-w-2 aspect-h-3">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -50,8 +50,10 @@
         </div>
         <img
           v-else
-          :class="spoilerMode.cover && !isRead ? 'md:filter md:blur md:group-hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
-          class="object-cover w-full h-full"
+          :class="[
+            'book-cover',
+            spoilerMode.cover && !isRead ? 'is-spoiler' : ''
+          ]"
           :src="thumbnailUrl"
           aria-hidden="true"
         >
@@ -59,7 +61,7 @@
 
       <div
         v-if="isRead || current || isFuture"
-        class="absolute inset-0 bg-gray-900 dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-60 flex justify-start items-start p-2"
+        class="badge-wrapper"
       >
         <template v-if="!current && !isFuture">
           <span class="sr-only">{{ t('book.read') }}</span>
@@ -201,8 +203,28 @@ export default {
 </script>
 
 <style scoped>
+.book-card {
+  @apply relative shadow
+    bg-gray-200 dark:bg-gray-700
+    rounded-md overflow-hidden motion-safe:transition-shadow
+    group-focus-visible:ring-2 group-focus-visible:ring-offset-2
+    group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-900;
+}
+
+.book-card:hover {
+  @apply shadow-lg;
+}
+
 .book-gradient {
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+}
+
+.book-cover {
+  @apply object-cover w-full h-full;
+}
+
+.book-cover.is-spoiler {
+  @apply filter blur;
 }
 
 .current-volume,
@@ -215,5 +237,11 @@ export default {
 
 .future-item {
   @apply flex items-center space-x-1.5;
+}
+
+.badge-wrapper {
+  @apply p-2 absolute inset-0 flex justify-start items-start
+    bg-gray-900 dark:bg-gray-800
+    bg-opacity-20 dark:bg-opacity-60
 }
 </style>

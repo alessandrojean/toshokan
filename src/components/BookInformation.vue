@@ -15,9 +15,9 @@
         class="book-title"
       >
         <span aria-hidden="true" v-if="isFuture">
-          <ClockIcon class="w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <ClockIcon class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500" />
         </span>
-        <span>{{ mainTitle }}</span>
+        {{ mainTitle }}
       </h2>
       <div v-else class="motion-safe:animate-pulse w-72 h-8 mb-2 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
@@ -445,8 +445,7 @@ export default {
 <style scoped>
 .book-title {
   @apply font-bold dark:font-semibold font-display
-    text-2xl md:text-3xl dark:text-gray-100
-    flex items-center space-x-2;
+    text-2xl md:text-3xl dark:text-gray-100;
 }
 
 .book-external-link {
