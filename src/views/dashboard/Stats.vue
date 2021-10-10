@@ -42,15 +42,6 @@
         <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
           {{ t('dashboard.stats.empty.description' )}}
         </p>
-        <router-link
-          :to="{ name: 'DashboardNewBook' }"
-          class="button is-primary text-lg"
-        >
-          <span aria-hidden="true">
-            <PlusIcon aria-hidden="true" />
-          </span>
-          {{ t('dashboard.stats.empty.action') }}
-        </router-link>
       </section>
 
       <!-- Too early for stats -->

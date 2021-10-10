@@ -83,14 +83,22 @@
       </div>
 
       <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
-        <span class="font-semibold font-display text-sm truncate max-w-full">{{ book.titleParts[0] }}</span>
-        <span class="font-medium text-xs">{{ volume }}</span>
+        <span class="font-semibold font-display text-sm truncate max-w-full">
+          {{ book.titleParts.title }}
+        </span>
+        <span class="font-medium text-xs">
+          {{ volume }}
+        </span>
       </div>
     </div>
 
     <div v-if="mode === 'comfortable'" class="mt-3">
-      <p class="text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">{{ book.titleParts[0] }}</p>
-      <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">{{ volume }}</p>
+      <p class="text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">
+        {{ book.titleParts.title }}
+      </p>
+      <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">
+        {{ volume }}
+      </p>
     </div>
   </router-link>
 </template>
@@ -161,11 +169,11 @@ export default {
         return ''
       }
 
-      const isSingle = book.value.titleParts[1] === undefined
+      const isSingle = book.value.titleParts.number === null
 
       return t(
         isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: book.value.titleParts[1] }
+        isSingle ? undefined : { number: book.value.titleParts.number }
       )
     })
 

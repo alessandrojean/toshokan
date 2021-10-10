@@ -37,11 +37,11 @@
           {{ book.group }}
         </router-link>
       </li>
-      <li aria-hidden="true" v-if="book.titleParts[1] && !hideHome">
+      <li aria-hidden="true" v-if="book.titleParts.number && !hideHome">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
-      <li v-if="book.titleParts[1] && !hideHome">
-        {{ book.titleParts[0] }}
+      <li v-if="book.titleParts.number && !hideHome">
+        {{ book.titleParts.title }}
       </li>
     </ul>
   </nav>

@@ -12,6 +12,8 @@ import {
 } from '@/services/sheet'
 import { PropertyToColumn } from '@/model/Book'
 
+import { MutationTypes } from '@/store'
+
 function buildPaginationInfo ({ perPage, links, totalResults, page }) {
   const paginator = new Paginator(perPage, links)
 
@@ -321,6 +323,22 @@ export default {
       } finally {
         commit(CollectionMutations.UPDATE_STORES, { loading: false })
       }
+    },
+
+    async invalidateAndFetch ({ commit, dispatch }) {
+      commit(CollectionMutations.UPDATE_FUTURE_ITEMS, 'hide')
+      commit(CollectionMutations.UPDATE_GROUP, { group: null })
+      commit(CollectionMutations.UPDATE_GROUPS, { items: [] })
+      commit(CollectionMutations.UPDATE_PUBLISHERS, { items: [] })
+      commit(CollectionMutations.UPDATE_STORES, { items: [] })
+
+      await dispatch('fetchIdMap')
+      await dispatch('fetchGroups')
+      await dispatch('fetchBooks')
+      await dispatch('fetchLastAdded')
+      await dispatch('fetchLatestReadings')
+
+      commit(MutationTypes.SHEET_UPDATE_LOADING, false, { root: true })
     },
 
     async search ({ commit, dispatch, state, rootState }, { query, sortBy, sortDirection }) {

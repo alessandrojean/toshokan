@@ -34,6 +34,15 @@
       >
         <div class="relative flex flex-col w-full max-w-3xl h-full overflow-hidden text-left motion-safe:transition-all transform bg-white dark:bg-gray-800 sm:shadow-xl sm:rounded-lg">
           <div class="relative overflow-hidden bg-primary-600 dark:bg-primary-500 flex-shrink-0 flex items-center px-4 md:px-6 py-4 md:py-5">
+            <Avatar
+              v-if="shared"
+              class="mr-6"
+              dark
+              small
+              shared
+              :picture-url="ownerPictureUrl"
+            />
+
             <div class="flex-grow">
               <DialogTitle as="h2" class="text-lg font-medium font-display leading-6 text-white">
                 {{ t('dashboard.newBook.title') }}
@@ -286,6 +295,7 @@ import {
   PhotographIcon
 } from '@heroicons/vue/outline'
 
+import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/BookCoverSelector.vue'
 import BookForm from '@/components/BookForm.vue'
 import BookProviderSearch from '@/components/BookProviderSearch.vue'
@@ -299,21 +309,22 @@ import useImageLoader from '@/composables/useImageLoader'
 
 export default {
   components: {
-    Dialog,
-    DialogDescription,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
+    Avatar,
+    ArrowSmRightIcon,
     BookCoverSelector,
     BookForm,
     BookProviderSearch,
     BulletSteps,
-    DescriptionList,
-    LoadingIndicator,
-    ArrowSmRightIcon,
     CheckIcon,
     CheckOutlineIcon,
+    DescriptionList,
+    Dialog,
+    DialogDescription,
+    DialogTitle,
+    LoadingIndicator,
     PhotographIcon,
+    TransitionChild,
+    TransitionRoot,
     XIcon
   },
 
@@ -499,6 +510,10 @@ export default {
 
     const bookProviderSearch = ref(null)
 
+    const store = useStore()
+    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
+    const shared = computed(() => store.getters['sheet/shared'])
+
     return {
       t,
       resetSteps,
@@ -526,6 +541,8 @@ export default {
       bookCreatedId,
       viewBook,
       bookProviderSearch,
+      ownerPictureUrl,
+      shared,
       ...useRevisionStep(book)
     }
   }

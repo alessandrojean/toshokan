@@ -87,7 +87,7 @@ const AVAILABLE_SITES = [
   //   name: 'JBC',
   //   baseUrl: 'https://editorajbc.com.br',
   //   createPath: book => {
-  //     const series = slugify(book.titleParts[0]).replace('especial', 'esp')
+  //     const series = slugify(book.titleParts.title).replace('especial', 'esp')
   //     const title = slugify(book.title).replace('especial', 'esp')
   //
   //     return `/mangas/colecao/${series}/vol/${title}`

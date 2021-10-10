@@ -233,7 +233,20 @@ export function formatBook (book) {
 
 export function splitTitle (title) {
   const titleRegex = /\s+#(\d+)(?::\s+)?/
-  return title.split(titleRegex)
+  const parts = title.split(titleRegex)
+
+  const main = parts[2]
+    ? title.substring(0, title.indexOf(parts[2]) - 2).trim()
+    : title
+
+  return {
+    title: parts[0].trim(),
+    number: parts[1] || null,
+    main,
+    subtitle: parts[2]
+      ? title.replace(main, '').replace(':', '').trim()
+      : null
+  }
 }
 
 export function getCodeType (code) {

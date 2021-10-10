@@ -656,6 +656,22 @@ export default {
         read: 'Livros lidos'
       },
       monthlyExpense: 'Gasto mensal'
+    },
+    sheetChooser: {
+      title: 'Escolha uma planilha',
+      description: 'Você pode visualizar e editar outras planilhas compartilhadas.',
+      actionCancel: 'Cancelar',
+      actionSelect: 'Selecionar',
+      actionSelectSheet: 'Escolher planilha',
+      owner: 'Proprietário',
+      you: 'Você',
+      lastModified: 'Última modificação',
+      sharedWithYou: 'Compartilhada com você',
+      readOnly: 'Somente leitura',
+      readAndEdit: 'Leitura e edição',
+      starred: 'Com estrela',
+      label: 'Planilha',
+      libraryOf: 'Biblioteca de',
     }
   },
   about: {

@@ -58,7 +58,7 @@
                     </div>
                     <div class="ml-4">
                       <div class="text-sm font-medium text-gray-900 dark:text-gray-200">
-                        {{ book.titleParts[0] }}
+                        {{ book.titleParts.title }}
                       </div>
                       <div class="text-xs text-gray-500 dark:text-gray-400">
                         {{ volumeText(book) }} &middot; {{ book.publisher }}
@@ -207,11 +207,11 @@ export default {
     }
 
     function volumeText (item) {
-      const isSingle = item.titleParts[1] === undefined
+      const isSingle = item.titleParts.number === null
 
       return t(
         isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: item.titleParts[1] }
+        isSingle ? undefined : { number: item.titleParts.number }
       )
     }
 

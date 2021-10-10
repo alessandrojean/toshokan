@@ -30,6 +30,15 @@
           leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
         >
           <div class="dialog-header">
+            <Avatar
+              v-if="shared"
+              class="mr-6"
+              dark
+              small
+              shared
+              :picture-url="ownerPictureUrl"
+            />
+
             <div class="flex-grow">
               <DialogTitle as="h2" class="dialog-title">
                 {{ t('dashboard.details.editDialog.title') }}
@@ -135,6 +144,7 @@
 
 <script>
 import { computed, inject, nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -153,6 +163,7 @@ import {
 
 import { CheckIcon, XIcon } from '@heroicons/vue/solid'
 
+import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/BookCoverSelector.vue'
 import BookForm from '@/components/BookForm.vue'
 import BookOrganization from '@/components/BookOrganization.vue'
@@ -162,6 +173,12 @@ import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
+    Avatar,
+    BookCoverSelector,
+    BookForm,
+    BookOrganization,
+    BookReading,
+    CheckIcon,
     Dialog,
     DialogDescription,
     DialogOverlay,
@@ -173,11 +190,6 @@ export default {
     TabPanels,
     TransitionChild,
     TransitionRoot,
-    BookCoverSelector,
-    BookForm,
-    BookOrganization,
-    BookReading,
-    CheckIcon,
     XIcon
   },
 
@@ -263,6 +275,10 @@ export default {
       { title: t('dashboard.details.organizationForm.title') }
     ])
 
+    const store = useStore()
+    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
+    const shared = computed(() => store.getters['sheet/shared'])
+
     return {
       t,
       closeDialog,
@@ -272,7 +288,9 @@ export default {
       editingBook,
       handleEdit,
       main,
-      tabs
+      tabs,
+      ownerPictureUrl,
+      shared
     }
   }
 }

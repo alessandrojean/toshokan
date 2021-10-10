@@ -17,22 +17,22 @@
         <span aria-hidden="true" v-if="isFuture">
           <ClockIcon class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500" />
         </span>
-        {{ mainTitle }}
+        {{ book.titleParts.main }}
       </h2>
       <div v-else class="motion-safe:animate-pulse w-72 h-8 mb-2 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
       <!-- Book subtitle -->
       <p
-        v-if="showBookInfo && subtitle.length > 0"
+        v-if="showBookInfo && book.titleParts.subtitle"
         class="italic font-semibold dark:font-medium font-display text-md md:text-xl text-gray-600 dark:text-gray-300 -mt-1 mb-2"
       >
-        {{ subtitle }}
+        {{ book.titleParts.subtitle }}
       </p>
 
       <!-- Book authors -->
       <p
         v-if="showBookInfo"
-        :class="subtitle.length === 0 ? 'md:text-lg' : ''"
+        :class="book.titleParts.subtitle ? '' : 'md:text-lg'"
         class="author-list"
       >
         <template v-for="(author, idx) of book.authors" :key="idx">
@@ -68,7 +68,7 @@
     </div>
 
     <!-- Book actions -->
-    <div class="flex space-x-2">
+    <div class="flex space-x-2" v-if="canEdit">
       <button
         v-if="showBookInfo"
         class="button text-base is-primary justify-center md:justify-start flex-1 md:flex-initial"
@@ -160,6 +160,29 @@
         <div class="motion-safe:animate-pulse w-64 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
       </div>
 
+      <div v-if="showBookInfo && shared" class="owner-badge">
+        <Avatar :picture-url="ownerPictureUrl" small />
+        <div class="owner-info">
+          <span class="owner-title">
+            {{ t('dashboard.sheetChooser.libraryOf') }}
+          </span>
+          <p class="owner-name">
+            {{ ownerDisplayName }}
+          </p>
+        </div>
+        <div
+          class="user-group"
+          :title="t('dashboard.sheetChooser.sharedWithYou')"
+        >
+          <span aria-hidden="true">
+            <UserGroupIcon class="w-5 h-5" />
+          </span>
+          <p class="sr-only">
+            {{ t('dashboard.sheetChooser.sharedWithYou') }}
+          </p>
+        </div>
+      </div>
+
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -219,13 +242,14 @@ import {
   BookmarkIcon as BookmarkOutlineIcon,
   ClockIcon,
   StarIcon as StarOutlineIcon,
-  TrashIcon
+  TrashIcon,
+  UserGroupIcon
 } from '@heroicons/vue/outline'
 
 import AmazonIcon from '@/components/icons/AmazonIcon.vue'
-import PaniniIcon from '@/components/icons/PaniniIcon.vue'
-
+import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
+import PaniniIcon from '@/components/icons/PaniniIcon.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 
@@ -234,6 +258,8 @@ import { BookFavorite, BookStatus } from '@/model/Book'
 export default {
   components: {
     AmazonIcon,
+    Avatar,
+    BookBreadcrumb,
     BookmarkOutlineIcon,
     BookmarkSolidIcon,
     ClockIcon,
@@ -243,7 +269,7 @@ export default {
     StarOutlineIcon,
     StarSolidIcon,
     TrashIcon,
-    BookBreadcrumb
+    UserGroupIcon
   },
 
   props: {
@@ -392,22 +418,6 @@ export default {
       return links.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
-    const mainTitle = computed(() => {
-      if (!book.value) {
-        return ''
-      }
-
-      const { title, titleParts } = book.value
-
-      if (titleParts[2]) {
-        return title.substring(0, title.indexOf(titleParts[2]) - 2).trim()
-      }
-
-      return title
-    })
-
-    const subtitle = computed(() => book.value?.titleParts[2] || '')
-
     const separator = computed(() => {
       return t('dashboard.details.header.authorSeparator')
     })
@@ -422,6 +432,11 @@ export default {
       const query = `${t('dashboard.search.keywords.author')}:"${author}"`
       showSearchDialog(query)
     }
+
+    const canEdit = computed(() => store.getters['sheet/canEdit'])
+    const ownerDisplayName = computed(() => store.getters['sheet/ownerDisplayName'])
+    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
+    const shared = computed(() => store.getters['sheet/shared'])
 
     return {
       showBookInfo,
@@ -439,11 +454,13 @@ export default {
       spoilerMode,
       blurSynopsis,
       externalLinks,
-      mainTitle,
-      subtitle,
       separator,
       lastSeparator,
-      searchByAuthor
+      searchByAuthor,
+      canEdit,
+      ownerDisplayName,
+      ownerPictureUrl,
+      shared
     }
   }
 }
@@ -470,6 +487,30 @@ export default {
 
 .author:focus-visible {
   @apply dark:ring-offset-gray-900;
+}
+
+.owner-badge {
+  @apply flex items-center space-x-3 sm:w-64 rounded-md
+    px-2.5 py-2 border border-gray-200 dark:border-gray-700;
+}
+
+.owner-info {
+  @apply min-w-0 flex-grow;
+}
+
+.owner-title {
+  @apply uppercase text-xxs font-bold tracking-wide block
+    leading-none w-full truncate
+    text-gray-500 dark:text-gray-400;
+}
+
+.owner-name {
+  @apply text-sm font-medium w-full truncate leading-none mt-1
+    text-gray-700 dark:text-gray-300;
+}
+
+.user-group {
+  @apply flex-shrink-0 pr-1 text-gray-400 dark:text-gray-500 ;
 }
 
 .book-external-link {

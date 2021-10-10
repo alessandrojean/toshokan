@@ -3,10 +3,7 @@
     <header class="bg-white shadow dark:bg-gray-800">
       <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
         <div class="flex-1 flex items-center space-x-4">
-          <div
-            class="w-12 h-12 rounded-full shadow-avatar bg-cover"
-            :style="{ backgroundImage: `url('${profileImageUrl}')` }"
-          />
+          <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
           <div>
             <h1 class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100">
               {{ t('dashboard.home.hello', { name: profileName }) }}
@@ -28,7 +25,19 @@
             {{ t('dashboard.home.reload') }}
           </button>
           <button
-            class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
+            v-if="canChange"
+            class="button flex-1 md:flex-initial justify-center md:justify-start"
+            @click="openSheetChooser"
+            :disabled="loading"
+          >
+            <span aria-hidden="true">
+              <CollectionIcon />
+            </span>
+            {{ t('dashboard.sheetChooser.actionSelectSheet') }}
+          </button>
+          <button
+            v-if="canEdit"
+            class="hidden sm:flex button is-primary flex-1 md:flex-initial justify-center md:justify-start"
             @click="openCreateDialog"
             :disabled="loading"
           >
@@ -158,16 +167,16 @@
           <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
             {{ t('dashboard.home.empty.description') }}
           </p>
-          <router-link
-            :to="{ name: 'DashboardNewBook' }"
+          <button
+            v-if="canEdit"
             class="button is-primary text-lg"
-            aria-describedby="empty-sheet-title"
+            @click="openCreateDialog"
           >
             <span aria-hidden="true">
               <PlusIcon aria-hidden="true" />
             </span>
             {{ t('dashboard.home.newBook') }}
-          </router-link>
+          </button>
         </section>
       </div>
     </div>
@@ -175,6 +184,11 @@
     <BookCreateDialog
       :is-open="createDialogOpen"
       @close="closeCreateDialog"
+    />
+
+    <SheetChooserDialog
+      :is-open="sheetChooserOpen"
+      @close="closeSheetChooser"
     />
   </div>
 </template>
@@ -194,25 +208,30 @@ import {
   ExclamationCircleIcon
 } from '@heroicons/vue/outline'
 
-import { PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
+import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
+import Avatar from '@/components/Avatar.vue'
 import BetaWarning from '@/components/BetaWarning.vue'
 import BookCarousel from '@/components/BookCarousel.vue'
 import BookCreateDialog from '@/components/BookCreateDialog.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
+import SheetChooserDialog from '@/components/SheetChooserDialog.vue'
 import StatCard from '@/components/StatCard.vue'
 
 export default {
   name: 'DashboardHome',
 
   components: {
+    Avatar,
     BetaWarning,
     BookCarousel,
     BookCreateDialog,
     GroupGrid,
+    SheetChooserDialog,
     StatCard,
     BookOpenIcon,
     BookmarkIcon,
+    CollectionIcon,
     CurrencyDollarIcon,
     EmojiHappyIcon,
     ExclamationCircleIcon,
@@ -226,10 +245,11 @@ export default {
 
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
 
-    const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
+    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
     const profileName = computed(() => store.state.auth.profileName)
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
+    const shared = computed(() => store.getters['sheet/shared'])
 
     const isDev = ref(import.meta.env.DEV)
 
@@ -251,17 +271,36 @@ export default {
       createDialogOpen.value = false
     }
 
+    const canChange = computed(() => store.getters['sheet/canChange'])
+    const canEdit = computed(() => store.getters['sheet/canEdit'])
+
+    const sheetChooserOpen = ref(false)
+
+    function openSheetChooser () {
+      sheetChooserOpen.value = true
+    }
+
+    function closeSheetChooser () {
+      sheetChooserOpen.value = false
+    }
+
     return {
       sheetIsEmpty,
       loading,
-      profileImageUrl,
+      ownerPictureUrl,
       profileName,
       stats,
+      shared,
       isDev,
       reload,
       createDialogOpen,
       openCreateDialog,
       closeCreateDialog,
+      canChange,
+      canEdit,
+      sheetChooserOpen,
+      openSheetChooser,
+      closeSheetChooser,
       n,
       t
     }

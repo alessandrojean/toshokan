@@ -61,6 +61,7 @@
             {{ t('dashboard.library.filter') }}
           </button>
           <button
+            v-if="canEdit"
             type="button"
             @click="$emit('click:new')"
             class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
@@ -127,6 +128,8 @@ export default {
     const sheetLoading = computed(() => store.state.sheet.loading)
     const group = computed(() => store.state.collection.group)
 
+    const canEdit = computed(() => store.getters['sheet/canEdit'])
+
     return {
       t,
       loading,
@@ -134,7 +137,8 @@ export default {
       sheetIsEmpty,
       sortPropertyNames,
       sortPropertyName,
-      group
+      group,
+      canEdit
     }
   }
 }

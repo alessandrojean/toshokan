@@ -99,7 +99,7 @@
 
           <div v-if="loading || !bookFound" class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-1"></div>
           <h2 v-else class="md:truncate max-w-full text-2xl font-display font-semibold leading-7 text-gray-900 dark:text-gray-100 sm:text-3xl">
-            {{ book.titleParts[0] }}
+            {{ book.titleParts.title }}
           </h2>
 
           <ul class="mt-1 flex flex-col items-start sm:flex-row sm:flex-wrap md:mt-0 sm:space-x-6">
@@ -530,11 +530,11 @@ export default {
         return ''
       }
 
-      const isSingle = book.value.titleParts[1] === undefined
+      const isSingle = book.value.titleParts.number === null
 
       return t(
         isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: book.value.titleParts[1] }
+        isSingle ? undefined : { number: book.value.titleParts.number }
       )
     })
 

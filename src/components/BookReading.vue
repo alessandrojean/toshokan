@@ -119,7 +119,7 @@ export default {
     }
 
     const state = ref(isRead.value ? 'read-other' : 'unread')
-    const newReadDate = ref(today.toISOString().substring(0, 10))
+    const newReadDate = ref('')
 
     if (book.value.readAt) {
       const { readAt } = book.value

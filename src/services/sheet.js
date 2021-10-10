@@ -31,14 +31,21 @@ export async function findSheetId () {
 
   const response = await window.gapi.client.drive.files.list({
     q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
-    orderBy: 'starred'
+    orderBy: 'starred',
+    fields: 'files(capabilities/canEdit,id,modifiedTime,name,ownedByMe,owners(displayName,emailAddress,photoLink),starred)'
   })
 
-  if (response.result.files.length > 0) {
-    return response.result.files[0].id
+  if (response.result.files.length === 0) {
+    throw new Error(t('sheet.notFound'))
   }
 
-  throw new Error(t('sheet.notFound'))
+  const lastSheetOpened = localStorage.getItem('last_sheet_opened')
+
+  const sheet = response.result.files.find(sheet => sheet.id === lastSheetOpened) ||
+    response.result.files.find(sheet => sheet.ownedByMe) ||
+    response.result.files[0]
+
+  return { sheet, options: response.result.files }
 }
 
 export async function getSheetData (sheetId) {
@@ -367,7 +374,7 @@ export function getBooksFromCollection (sheetId, idMap, book) {
   const query = new window.google.visualization.Query(sheetUrl)
   query.setQuery(dedent`
     select *
-    where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
+    where ${CollectionColumns.TITLE} starts with "${book.titleParts.title}"
       and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
       and ${CollectionColumns.GROUP} = "${book.group}"
     order by ${CollectionColumns.TITLE} asc
@@ -404,7 +411,7 @@ export function getBookNeighbors (sheetId, idMap, book) {
   const query = new window.google.visualization.Query(sheetUrl)
   query.setQuery(dedent`
     select *
-    where ${CollectionColumns.TITLE} starts with "${book.titleParts[0]}"
+    where ${CollectionColumns.TITLE} starts with "${book.titleParts.title}"
       and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
       and ${CollectionColumns.GROUP} = "${book.group}"
     order by ${CollectionColumns.TITLE} asc

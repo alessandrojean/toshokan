@@ -61,15 +61,16 @@
         <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
           {{ t('dashboard.library.empty.description') }}
         </p>
-        <router-link
-          :to="{ name: 'DashboardNewBook' }"
+        <button
+          v-if="canEdit"
           class="button is-primary text-lg"
+          @click="openCreateDialog"
         >
           <span aria-hidden="true">
             <PlusIcon aria-hidden="true" />
           </span>
           {{ t('dashboard.library.newBook') }}
-        </router-link>
+        </button>
       </section>
     </div>
 
@@ -281,6 +282,8 @@ export default {
       createDialogOpen.value = false
     }
 
+    const canEdit = computed(() => store.getters['sheet/canEdit'])
+
     return {
       filterOpen,
       sheetIsEmpty,
@@ -298,6 +301,7 @@ export default {
       createDialogOpen,
       openCreateDialog,
       closeCreateDialog,
+      canEdit,
       t
     }
   }

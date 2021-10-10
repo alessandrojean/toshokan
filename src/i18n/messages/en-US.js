@@ -652,6 +652,22 @@ export default {
         read: 'Books read'
       },
       monthlyExpense: 'Monthly expense'
+    },
+    sheetChooser: {
+      title: 'Pick a sheet',
+      description: 'You can view and edit other sheets shared with you.',
+      actionCancel: 'Cancel',
+      actionSelect: 'Select',
+      actionSelectSheet: 'Change sheet',
+      owner: 'Owner',
+      you: 'You',
+      lastModified: 'Last modified',
+      sharedWithYou: 'Shared with you',
+      readOnly: 'Read-only',
+      readAndEdit: 'Read and edit permissions',
+      starred: 'Starred',
+      label: 'Sheet',
+      libraryOf: 'Library owner',
     }
   },
   about: {

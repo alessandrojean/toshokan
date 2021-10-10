@@ -33,7 +33,7 @@ export default function useBookFinder () {
         return
       }
 
-      if (theBook.titleParts[1]) {
+      if (theBook.titleParts.number) {
         collection.value = await getBooksFromCollection(sheetId.value, idMap.value, theBook)
       }
 
