@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, readonly, ref } from 'vue'
 
 import lookupSearch from '@/services/lookup'
 
@@ -40,11 +40,11 @@ export default function useIsbnSearch (isbnRef) {
 
   return {
     clear,
-    errorMessage,
-    failed,
-    noResultsFound,
-    results,
+    errorMessage: readonly(errorMessage),
+    failed: readonly(failed),
+    noResultsFound: readonly(noResultsFound),
+    results: readonly(results),
     search,
-    searching
+    searching: readonly(searching)
   }
 }

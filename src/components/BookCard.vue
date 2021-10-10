@@ -20,7 +20,7 @@
   <router-link
     v-else
     :to="{ name: 'BookDetails', params: { bookId: book.id } }"
-    class="group focus:outline-none"
+    class="book-link group focus:outline-none"
     ref="loadedCard"
     :title="book.title"
     :aria-current="current ? 'page' : undefined"
@@ -202,13 +202,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .book-card {
-  @apply relative shadow
+  @apply relative shadow rounded-md overflow-hidden
     bg-gray-200 dark:bg-gray-700
-    rounded-md overflow-hidden motion-safe:transition-shadow
-    group-focus-visible:ring-2 group-focus-visible:ring-offset-2
-    group-focus-visible:ring-primary-500 dark:group-focus-visible:ring-offset-gray-900;
+    motion-safe:transition-shadow;
+}
+
+.book-link:focus-visible .book-card {
+  @apply ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-gray-900;
 }
 
 .book-card:hover {

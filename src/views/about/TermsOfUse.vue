@@ -10,12 +10,13 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import Content from '@/components/Content'
-import ContentTitle from '@/components/ContentTitle'
-import ContentBody from '@/components/ContentBody'
-import ContentFooter from '@/components/ContentFooter'
+import Content from '@/components/Content.vue'
+import ContentTitle from '@/components/ContentTitle.vue'
+import ContentBody from '@/components/ContentBody.vue'
+import ContentFooter from '@/components/ContentFooter.vue'
 
 import md from 'markdown-it'
+import mdDefList from 'markdown-it-deflist'
 
 export default {
   components: {
@@ -31,7 +32,7 @@ export default {
     const markdown = md({
       html: true,
       typographer: true
-    }).use(require('markdown-it-deflist'))
+    }).use(mdDefList)
 
     const body = ref(
       markdown.render(

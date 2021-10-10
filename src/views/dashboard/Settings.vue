@@ -17,7 +17,7 @@
             <Tab
               v-for="tab in tabs"
               :key="tab.key"
-              class="aside-button"
+              class="aside-button has-ring-focus"
             >
               <span aria-hidden="true">
                 <component :is="tab.icon" />
@@ -250,10 +250,10 @@ import {
   TabPanels
 } from '@headlessui/vue'
 
-import DisconnectModal from '@/components/DisconnectModal'
-import LoadingIndicator from '@/components/LoadingIndicator'
+import DisconnectModal from '@/components/DisconnectModal.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
-import SimpleHeader from '@/components/SimpleHeader'
+import SimpleHeader from '@/components/SimpleHeader.vue'
 
 export default {
   name: 'DashboardSettings',
@@ -354,18 +354,35 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .aside-button {
-  @apply group border-l-4 border-transparent font-medium text-gray-700 dark:text-gray-400 md:text-sm flex items-center px-3 py-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 disabled:opacity-60 disabled:cursor-default;
+  @apply border-l-4 border-transparent font-medium
+    text-gray-700 dark:text-gray-400
+    md:text-sm flex items-center px-3 py-2.5;
+}
+
+.aside-button:focus {
+  @apply outline-none;
+}
+
+.aside-button:focus-visible {
+  @apply dark:ring-offset-gray-900 z-10;
 }
 
 .aside-button:focus,
 .aside-button:hover:not(:disabled):not([aria-selected="true"]) {
-  @apply bg-white dark:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-gray-200;
+  @apply bg-white dark:bg-gray-700 bg-opacity-70
+    text-gray-900 dark:text-gray-200;
 }
 
 .aside-button[aria-selected="true"] {
-  @apply border-primary-600 dark:border-primary-500 bg-primary-50 dark:bg-primary-500 dark:bg-opacity-30 text-primary-600 dark:text-primary-100;
+  @apply border-primary-600 dark:border-primary-500
+    bg-primary-50 dark:bg-primary-500 dark:bg-opacity-30
+    text-primary-600 dark:text-primary-100;
+}
+
+.aside-button:disabled {
+  @apply opacity-60 cursor-default;
 }
 
 .aside-button svg {
@@ -382,7 +399,8 @@ export default {
 }
 
 .preference {
-  @apply px-4 sm:px-6 flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center justify-between py-4;
+  @apply px-4 sm:px-6 flex flex-col space-y-2 md:space-y-0 md:flex-row
+    md:items-center justify-between py-4;
 }
 
 .preference:first-of-type {

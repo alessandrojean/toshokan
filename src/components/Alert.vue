@@ -125,7 +125,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="postcss" scoped>
 .alert-actions a,
 .alert-actions button {
   @apply font-semibold rounded-md px-2.5 py-1.5 motion-safe:transition-shadow;

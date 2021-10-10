@@ -128,9 +128,9 @@ import {
   SparklesIcon
 } from '@heroicons/vue/outline'
 
-import HomeFooter from '@/components/HomeFooter'
-import HomeHeader from '@/components/HomeHeader'
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton'
+import HomeFooter from '@/components/HomeFooter.vue'
+import HomeHeader from '@/components/HomeHeader.vue'
+import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 export default {
   components: {
@@ -155,7 +155,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .features {
   @apply grid grid-cols-3 gap-12 py-6;
 }

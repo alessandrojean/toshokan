@@ -51,7 +51,7 @@ export default class Cbl extends Lookup {
       baseURL: 'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
       headers: {
         Accept: 'application/json',
-        'Api-Key': process.env.VUE_APP_CBL_QUERY_KEY
+        'Api-Key': import.meta.env.VITE_APP_CBL_QUERY_KEY
       }
     })
   }
@@ -81,7 +81,7 @@ export default class Cbl extends Lookup {
   async internalSearch (query = '', options) {
     const { t } = i18n.global
 
-    const queryKey = process.env.VUE_APP_CBL_QUERY_KEY
+    const queryKey = import.meta.env.VITE_APP_CBL_QUERY_KEY
 
     if (!queryKey) {
       throw new Error(t('isbn.keyMissing'))

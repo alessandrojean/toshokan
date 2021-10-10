@@ -61,7 +61,7 @@ import { useStore } from 'vuex'
 
 import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 
-import BookCard from '@/components/BookCard'
+import BookCard from '@/components/BookCard.vue'
 
 export default {
   name: 'LastAddedBooks',

@@ -48,6 +48,14 @@ import { ChartBarIcon } from '@heroicons/vue/solid'
 
 import VueApexCharts from 'vue3-apexcharts'
 
+import apexEnUs from 'apexcharts/dist/locales/en.json'
+import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
+
+const apexLocales = {
+  'en-US': apexEnUs,
+  'pt-BR': apexPtBr
+}
+
 export default {
   components: {
     ApexChart: VueApexCharts,
@@ -69,10 +77,6 @@ export default {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
     })
 
-    const apexLocale = computed(() => {
-      return require('apexcharts/dist/locales/' + localeStr.value + '.json')
-    })
-
     const monthly = computed(() => (stats.value.monthly || []).slice(-6))
 
     const itemsBought = computed(() => ({
@@ -82,15 +86,15 @@ export default {
             enabled: motionSafe.value
           },
           id: 'monthly-boughts',
-          locales: [apexLocale.value],
+          locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
           toolbar: { show: false },
           zoom: { enabled: false }
         },
-        colors: [colors.indigo[500], colors.green[500]],
+        colors: [colors.indigo[500], colors.indigo[300]],
         fill: { opacity: 1.0 },
         grid: {
-          borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
+          borderColor: darkMode.value ? colors.blueGray[600] : colors.blueGray[200]
         },
         tooltip: { enabled: false },
         xaxis: {
@@ -102,7 +106,7 @@ export default {
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
-              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
+              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
             }
           }
         },
@@ -110,13 +114,13 @@ export default {
           labels: {
             formatter: val => val.toFixed(0),
             style: {
-              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
+              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
             }
           }
         },
         legend: {
           labels: {
-            colors: darkMode.value ? colors.gray[300] : colors.gray[600],
+            colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600],
             useSeriesColors: false
           },
           onItemClick: {
@@ -127,7 +131,7 @@ export default {
           enabled: true,
           offsetY: -20,
           style: {
-            colors: [darkMode.value ? colors.gray[100] : colors.gray[700]]
+            colors: [darkMode.value ? colors.blueGray[100] : colors.blueGray[700]]
           }
         },
         stroke: {

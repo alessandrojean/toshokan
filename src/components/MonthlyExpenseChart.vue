@@ -48,6 +48,14 @@ import { ChartBarIcon } from '@heroicons/vue/solid'
 
 import VueApexCharts from 'vue3-apexcharts'
 
+import apexEnUs from 'apexcharts/dist/locales/en.json'
+import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
+
+const apexLocales = {
+  'en-US': apexEnUs,
+  'pt-BR': apexPtBr
+}
+
 export default {
   components: {
     ApexChart: VueApexCharts,
@@ -62,16 +70,12 @@ export default {
 
     const { n, t, d, locale } = useI18n()
 
-    const { darkMode } = useDarkMode()
-    const { motionSafe } = useMotionSafe()
-
     const localeStr = computed(() => {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
     })
 
-    const apexLocale = computed(() => {
-      return require('apexcharts/dist/locales/' + localeStr.value + '.json')
-    })
+    const { darkMode } = useDarkMode()
+    const { motionSafe } = useMotionSafe()
 
     const expenses = computed(() => ({
       options: {
@@ -80,7 +84,7 @@ export default {
             enabled: motionSafe.value
           },
           id: 'monthly-expenses',
-          locales: [apexLocale.value],
+          locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
           toolbar: { show: false },
           zoom: { enabled: false }
@@ -88,7 +92,7 @@ export default {
         colors: [colors.indigo[500]],
         dataLabels: { enabled: false },
         grid: {
-          borderColor: darkMode.value ? colors.gray[600] : colors.gray[200]
+          borderColor: darkMode.value ? colors.blueGray[600] : colors.blueGray[200]
         },
         stroke: { curve: 'smooth' },
         tooltip: {
@@ -107,7 +111,7 @@ export default {
               return value ? d(new Date(value), 'month') : value
             },
             style: {
-              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
+              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
             }
           },
           tooltip: { enabled: false }
@@ -120,7 +124,7 @@ export default {
               })
             },
             style: {
-              colors: darkMode.value ? colors.gray[300] : colors.gray[600]
+              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
             }
           }
         }

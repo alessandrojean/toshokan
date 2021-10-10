@@ -354,7 +354,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .tag-list {
   @apply flex flex-wrap -mt-2;
 }

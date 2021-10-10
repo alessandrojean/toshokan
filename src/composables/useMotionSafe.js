@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, readonly, ref } from 'vue'
 
 export default function useMotionSafe () {
   const motionSafe = ref(window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches)
@@ -23,6 +23,6 @@ export default function useMotionSafe () {
   }
 
   return {
-    motionSafe: computed(() => motionSafe.value)
+    motionSafe: readonly(motionSafe)
   }
 }

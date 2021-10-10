@@ -23,7 +23,7 @@ const { t } = i18n.global
 
 export async function findSheetId () {
   // Use a development only sheet to prevent issues during tests.
-  const isDevEnvironment = process.env.NODE_ENV === 'development'
+  const isDevEnvironment = import.meta.env.DEV
   const sheetSuffix = (isDevEnvironment && SHEET_USE_DEV_VERSION)
     ? SHEET_DEV_SUFFIX
     : ''

@@ -3,8 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store'
 import i18n from '../i18n'
 
-import Home from '@/views/Home'
-import SignIn from '@/views/SignIn'
+import Home from '@/views/Home.vue'
+import SignIn from '@/views/SignIn.vue'
 
 const { t } = i18n.global
 
@@ -28,19 +28,19 @@ const routes = [
   {
     path: '/error',
     name: 'Error',
-    component: () => import(/* webpackChunkName: "error" */ '../views/Error.vue'),
+    component: () => import('../views/Error.vue'),
     meta: {
       title: () => t('app.routes.error')
     }
   },
   {
     path: '/about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/about/Index.vue'),
+    component: () => import('../views/about/Index.vue'),
     children: [
       {
         path: 'accessibility',
         name: 'Accessibility',
-        component: () => import(/* webpackChunkName: "about-a11y" */ '../views/about/Accessibility.vue'),
+        component: () => import('../views/about/Accessibility.vue'),
         meta: {
           title: () => t('app.routes.about.a11y')
         }
@@ -48,7 +48,7 @@ const routes = [
       {
         path: 'instructions',
         name: 'Instructions',
-        component: () => import(/* webpackChunkName: "about-instructions" */ '../views/about/Instructions.vue'),
+        component: () => import('../views/about/Instructions.vue'),
         meta: {
           title: () => t('app.routes.about.instructions')
         }
@@ -56,7 +56,7 @@ const routes = [
       {
         path: 'privacy-police',
         name: 'PrivacyPolicy',
-        component: () => import(/* webpackChunkName: "about-pp" */ '../views/about/PrivacyPolicy.vue'),
+        component: () => import('../views/about/PrivacyPolicy.vue'),
         meta: {
           title: () => t('app.routes.about.privacyPolicy')
         }
@@ -64,7 +64,7 @@ const routes = [
       {
         path: 'terms-of-use',
         name: 'TermsOfUse',
-        component: () => import(/* webpackChunkName: "about-tou" */ '../views/about/TermsOfUse.vue'),
+        component: () => import('../views/about/TermsOfUse.vue'),
         meta: {
           title: () => t('app.routes.about.termsOfUse')
         }
@@ -73,24 +73,24 @@ const routes = [
   },
   {
     path: '/dashboard',
-    component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard/Index.vue'),
+    component: () => import('../views/dashboard/Index.vue'),
     children: [
       {
         path: '',
         name: 'DashboardHome',
-        component: () => import(/* webpackChunkName: "dashboard-home" */ '../views/dashboard/Home.vue'),
+        component: () => import('../views/dashboard/Home.vue'),
         meta: {
           title: () => t('app.routes.dashboard.home')
         }
       },
       {
         path: 'library',
-        component: () => import(/* webpackChunkName: "dashboard-library" */ '../views/dashboard/library/Index.vue'),
+        component: () => import('../views/dashboard/library/Index.vue'),
         children: [
           {
             path: '',
             name: 'DashboardLibrary',
-            component: () => import(/* webpackChunkName: "dashboard-collection-list" */ '../views/dashboard/library/Explorer.vue'),
+            component: () => import('../views/dashboard/library/Explorer.vue'),
             meta: {
               title: () => t('app.routes.dashboard.library')
             }
@@ -98,7 +98,7 @@ const routes = [
           {
             path: 'book/:bookId',
             name: 'BookDetails',
-            component: () => import(/* webpackChunkName: "dashboard-details" */ '../views/dashboard/library/Book.vue'),
+            component: () => import('../views/dashboard/library/Book.vue'),
             meta: {
               title: () => t('app.routes.dashboard.details'),
               blurNavbar: true
@@ -109,7 +109,7 @@ const routes = [
       {
         path: 'stats',
         name: 'DashboardStats',
-        component: () => import(/* webpackChunkName: "dashboard-stats" */ '../views/dashboard/Stats.vue'),
+        component: () => import('../views/dashboard/Stats.vue'),
         meta: {
           title: () => t('app.routes.dashboard.stats')
         }
@@ -117,7 +117,7 @@ const routes = [
       {
         path: 'settings',
         name: 'DashboardSettings',
-        component: () => import(/* webpackChunkName: "dashboard-settings" */ '../views/dashboard/Settings.vue'),
+        component: () => import('../views/dashboard/Settings.vue'),
         meta: {
           title: () => t('app.routes.dashboard.settings'),
           more: true
@@ -127,7 +127,7 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)',
-    component: () => import(/* webpackChunkName: "page-not-found" */ '../views/PageNotFound.vue'),
+    component: () => import('../views/PageNotFound.vue'),
     meta: {
       title: () => t('app.routes.notFound')
     }
@@ -135,7 +135,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior () {
     return {
       top: 0,
@@ -148,7 +148,7 @@ const router = createRouter({
 /**
  * Replace page title.
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   document.title = to.meta.title() + ' | ' + t('app.name')
   next()
 })
@@ -156,7 +156,7 @@ router.beforeEach((to, from, next) => {
 /**
  * Check if user is signed in in dashboard routes.
  */
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   if (to.fullPath.includes('/dashboard')) {
     if (store.getters['auth/isStarted'] && store.getters['auth/isSignedIn']) {
       next()

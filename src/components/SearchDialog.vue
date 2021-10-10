@@ -15,7 +15,8 @@
         </TransitionChild>
 
         <TransitionChild
-          as="template"
+          as="div"
+          class="dialog-content transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 scale-95"
           enter-to="opacity-100 scale-100"
@@ -23,216 +24,214 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <div class="dialog-content">
-            <DialogTitle as="h3" class="sr-only">
-              {{ t('dashboard.search.label') }}
-            </DialogTitle>
+          <DialogTitle as="h3" class="sr-only">
+            {{ t('dashboard.search.label') }}
+          </DialogTitle>
 
-            <form
-              :class="[
-                'py-4 md:py-6 mx-4 md:mx-6 flex items-center space-x-3 md:space-x-4',
-                !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
-              ]"
-              @submit.prevent="handleSearch"
-            >
-              <span aria-hidden="true" class="w-6 h-6 relative">
-                <transition
-                  leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-                  leave-from-class="opacity-200"
-                  leave-to-class="opacity-0"
-                  enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-                  enter-from-class="opacity-0"
-                  enter-to-class="opacity-100"
-                >
-                  <LoadingSpinIcon v-if="searchLoading" class="absolute w-6 h-6 animate-spin text-primary-600 dark:text-primary-400" />
-                  <SearchIcon v-else class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800" />
-                </transition>
-              </span>
-
-              <div class="flex-1">
-                <label for="search-input" class="sr-only">
-                  {{ t('dashboard.search.label') }}
-                </label>
-
-                <input
-                  type="search"
-                  :value="searchQuery"
-                  @input="debounce(() => { searchQuery = $event.target.value })"
-                  id="search-input"
-                  ref="searchInput"
-                  class="search-input"
-                  :placeholder="t('dashboard.search.placeholder')"
-                  @keyup.enter.prevent="search($event.target.value)"
-                >
-              </div>
-
+          <form
+            :class="[
+              'py-4 md:py-6 mx-4 md:mx-6 flex items-center space-x-3 md:space-x-4',
+              !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
+            ]"
+            @submit.prevent="handleSearch"
+          >
+            <span aria-hidden="true" class="w-6 h-6 relative">
               <transition
-                mode="out-in"
                 leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
                 leave-from-class="opacity-200"
                 leave-to-class="opacity-0"
-                enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
+                enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
                 enter-from-class="opacity-0"
                 enter-to-class="opacity-100"
               >
-                <button
-                  type="reset"
-                  class="clear-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
-                  v-if="!searchLoading && searchedOnce && searchQuery.length > 0"
-                  @click="clearSearch(true)"
-                >
-                  <span aria-hidden="true">
-                    <XIcon class="w-5 h-5" />
-                  </span>
-                  <span class="sr-only">
-                    {{ t('dashboard.search.clear') }}
-                  </span>
-                </button>
+                <LoadingSpinIcon v-if="searchLoading" class="absolute w-6 h-6 animate-spin text-primary-600 dark:text-primary-400" />
+                <SearchIcon v-else class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800" />
               </transition>
+            </span>
 
-              <button
-                type="button"
-                class="esc-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
-                @click="closeDialog"
+            <div class="flex-1">
+              <label for="search-input" class="sr-only">
+                {{ t('dashboard.search.label') }}
+              </label>
+
+              <input
+                type="search"
+                :value="searchQuery"
+                @input="debounce(() => { searchQuery = $event.target.value })"
+                id="search-input"
+                ref="searchInput"
+                class="search-input"
+                :placeholder="t('dashboard.search.placeholder')"
+                @keyup.enter.prevent="search($event.target.value)"
               >
-                <span class="sr-only">
-                  {{ t('dashboard.search.close') }}
-                </span>
-                <kbd aria-hidden="true" class="font-sans">
-                  esc
-                </kbd>
-              </button>
-            </form>
+            </div>
 
             <transition
-              v-if="!searchLoading"
               mode="out-in"
               leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-              leave-from-class="opacity-100"
+              leave-from-class="opacity-200"
               leave-to-class="opacity-0"
-              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+              enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
             >
-              <div
-                v-if="searchResults.length > 0"
-                tabindex="-1"
-                ref="results"
-                class="results"
+              <button
+                type="reset"
+                class="clear-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
+                v-if="!searchLoading && searchedOnce && searchQuery.length > 0"
+                @click="clearSearch(true)"
               >
-                <div class="results-header">
-                  <h3 class="title">
-                    {{ t('dashboard.search.results') }}
-                  </h3>
+                <span aria-hidden="true">
+                  <XIcon class="w-5 h-5" />
+                </span>
+                <span class="sr-only">
+                  {{ t('dashboard.search.clear') }}
+                </span>
+              </button>
+            </transition>
 
-                  <div class="flex -space-x-px w-full sm:w-auto">
-                    <div class="flex-1 sm:flex-initial sm:w-56">
-                      <label for="search-sort-by" class="sr-only">
-                        {{ t('dashboard.library.filters.sortBy') }}
-                      </label>
+            <button
+              type="button"
+              class="esc-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
+              @click="closeDialog"
+            >
+              <span class="sr-only">
+                {{ t('dashboard.search.close') }}
+              </span>
+              <kbd aria-hidden="true" class="font-sans">
+                esc
+              </kbd>
+            </button>
+          </form>
 
-                      <select
-                        class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
-                        v-model="sortBy"
-                        id="search-sort-by"
-                      >
-                        <option
-                          v-for="sortProperty in sortProperties"
-                          :key="sortProperty.attr"
-                          :value="sortProperty.attr"
-                        >
-                          {{ sortProperty.title }}
-                        </option>
-                      </select>
-                    </div>
-
-                    <button
-                      class="button direction-button is-icon-only"
-                      @click="toggleSortDirection"
-                    >
-                      <span class="sr-only">
-                        {{
-                          t(
-                            sortDirection === 'asc'
-                              ? 'dashboard.library.filters.sortDirection.asc'
-                              : 'dashboard.library.filters.sortDirection.desc'
-                          )
-                        }}
-                      </span>
-                      <span aria-hidden="true">
-                        <SortAscendingIcon v-if="sortDirection === 'asc'" />
-                        <SortDescendingIcon v-else />
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-                  <li
-                    v-for="result in searchResults"
-                    :key="result.id"
-                  >
-                    <SearchItem
-                      :result="result"
-                      @click="closeDialog"
-                    />
-                  </li>
-                </ul>
-              </div>
-
-              <div
-                v-else-if="searchedOnce && searchResults.length === 0"
-                class="no-results"
-              >
-                <i18n-t keypath="dashboard.search.noResultsFound" tag="p">
-                  <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
-                </i18n-t>
-              </div>
-
-              <div
-                v-else-if="searchHistory.length > 0"
-                class="history"
-              >
+          <transition
+            v-if="!searchLoading"
+            mode="out-in"
+            leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+            enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+          >
+            <div
+              v-if="searchResults.length > 0"
+              tabindex="-1"
+              ref="results"
+              class="results"
+            >
+              <div class="results-header">
                 <h3 class="title">
-                  {{ t('dashboard.search.history') }}
+                  {{ t('dashboard.search.results') }}
                 </h3>
 
-                <ul class="space-y-2">
-                  <li
-                    v-for="historyItem in searchHistory"
-                    :key="historyItem"
+                <div class="flex -space-x-px w-full sm:w-auto">
+                  <div class="flex-1 sm:flex-initial sm:w-56">
+                    <label for="search-sort-by" class="sr-only">
+                      {{ t('dashboard.library.filters.sortBy') }}
+                    </label>
+
+                    <select
+                      class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
+                      v-model="sortBy"
+                      id="search-sort-by"
+                    >
+                      <option
+                        v-for="sortProperty in sortProperties"
+                        :key="sortProperty.attr"
+                        :value="sortProperty.attr"
+                      >
+                        {{ sortProperty.title }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <button
+                    class="button direction-button is-icon-only"
+                    @click="toggleSortDirection"
                   >
-                    <SearchHistoryItem
-                      :search="historyItem"
-                      @click="search($event)"
-                      @click:remove="removeHistoryItem($event)"
-                    />
-                  </li>
-                </ul>
+                    <span class="sr-only">
+                      {{
+                        t(
+                          sortDirection === 'asc'
+                            ? 'dashboard.library.filters.sortDirection.asc'
+                            : 'dashboard.library.filters.sortDirection.desc'
+                        )
+                      }}
+                    </span>
+                    <span aria-hidden="true">
+                      <SortAscendingIcon v-if="sortDirection === 'asc'" />
+                      <SortDescendingIcon v-else />
+                    </span>
+                  </button>
+                </div>
               </div>
 
-              <div v-else class="no-history">
-                <p>{{ t('dashboard.search.noHistory') }}</p>
-              </div>
-            </transition>
+              <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                <li
+                  v-for="result in searchResults"
+                  :key="result.id"
+                >
+                  <SearchItem
+                    :result="result"
+                    @click="closeDialog"
+                  />
+                </li>
+              </ul>
+            </div>
 
-            <transition
-              mode="out-in"
-              leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-              leave-from-class="opacity-100"
-              leave-to-class="opacity-0"
-              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-              enter-from-class="opacity-0"
-              enter-to-class="opacity-100"
+            <div
+              v-else-if="searchedOnce && searchResults.length === 0"
+              class="no-results"
             >
-              <div
-                v-if="!searchLoading && searchedOnce && searchResults.length > 0"
-                class="search-footer"
-              >
-                {{ t('dashboard.search.resultCount', searchResults.length) }}
-              </div>
-            </transition>
-          </div>
+              <i18n-t keypath="dashboard.search.noResultsFound" tag="p">
+                <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
+              </i18n-t>
+            </div>
+
+            <div
+              v-else-if="searchHistory.length > 0"
+              class="history"
+            >
+              <h3 class="title">
+                {{ t('dashboard.search.history') }}
+              </h3>
+
+              <ul class="space-y-2">
+                <li
+                  v-for="historyItem in searchHistory"
+                  :key="historyItem"
+                >
+                  <SearchHistoryItem
+                    :search="historyItem"
+                    @click="search($event)"
+                    @click:remove="removeHistoryItem($event)"
+                  />
+                </li>
+              </ul>
+            </div>
+
+            <div v-else class="no-history">
+              <p>{{ t('dashboard.search.noHistory') }}</p>
+            </div>
+          </transition>
+
+          <transition
+            mode="out-in"
+            leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+            enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+          >
+            <div
+              v-if="!searchLoading && searchedOnce && searchResults.length > 0"
+              class="search-footer"
+            >
+              {{ t('dashboard.search.resultCount', searchResults.length) }}
+            </div>
+          </transition>
         </TransitionChild>
       </div>
     </Dialog>
@@ -439,7 +438,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
@@ -455,7 +454,6 @@ input[type="search"]::-webkit-search-results-decoration {
 .dialog-content {
   @apply flex flex-col w-full max-w-2xl
     overflow-hidden text-left
-    motion-safe:transition-all transform
     bg-white dark:bg-gray-800
     shadow-xl rounded-2xl;
 }

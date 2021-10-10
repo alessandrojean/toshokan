@@ -147,9 +147,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .markdown-editor {
-  @apply group rounded-md shadow-sm
+  @apply rounded-md shadow-sm
     border border-gray-300 dark:border-gray-600
     overflow-hidden motion-safe:transition-colors;
 }

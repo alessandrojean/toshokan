@@ -6,7 +6,7 @@
     :help="help"
     v-slot="{ inputId, ariaDescribedBy }"
   >
-    <div class="group relative">
+    <div class="group relative field-wrapper">
       <div
         v-if="$slots.prefix"
         :class="[
@@ -52,8 +52,8 @@
             {{ listText ? listText(option) : option }}
           </option>
         </datalist>
-        <div class="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-          <SelectorIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" />
+        <div class="selector-icon" aria-hidden="true">
+          <SelectorIcon class="w-5 h-5" />
         </div>
       </template>
       <div
@@ -120,3 +120,14 @@ export default {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+.selector-icon {
+  @apply absolute inset-y-0 right-2 pl-3 text-gray-500
+    flex items-center pointer-events-none;
+}
+
+.field-wrapper:focus-within .selector-icon {
+  @apply dark:text-gray-300;
+}
+</style>

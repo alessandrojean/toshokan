@@ -66,14 +66,14 @@
             enter-to-class="opacity-100"
           >
             <button
-              class="hidden lg:flex items-center pl-3 pr-2 py-2 bg-gray-700 hover:bg-gray-600 mr-2 group rounded-md space-x-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800 motion-safe:transition-shadow"
+              class="fake-search-input has-ring-focus"
               v-if="showSearch"
               @click="showSearchDialog"
             >
               <span aria-hidden="true">
-                <SearchIcon class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 sm:text-sm" />
+                <SearchIcon class="w-4 h-4" />
               </span>
-              <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 w-56 text-left">
+              <span class="text-sm w-56 text-left">
                 {{ t('dashboard.header.search.placeholder') }}
               </span>
               <span aria-hidden="true" class="ctrl-k text-gray-300 group-hover:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 bg-gray-700 group-hover:bg-gray-700 rounded-md">
@@ -265,7 +265,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .nav-link.is-active {
   @apply bg-gray-900 text-white hover:bg-gray-900;
 }
@@ -287,5 +287,20 @@ abbr[title].no-underline {
 #search-navbar:focus + .key-tooltip .ctrl-k,
 #search-form:focus-within .key-tooltip .ctrl-k {
   @apply hidden;
+}
+
+.fake-search-input {
+  @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
+    bg-gray-700 rounded-md space-x-2
+    text-gray-500 dark:text-gray-400;
+}
+
+.fake-search-input:hover {
+  @apply bg-gray-600 text-gray-300 dark:text-gray-300;
+}
+
+.fake-search-input:focus-visible {
+  @apply ring-offset-gray-800 dark:ring-offset-gray-800
+    text-gray-300 dark:text-gray-300;
 }
 </style>

@@ -9,9 +9,9 @@
       <label for="book-isbn" id="isbn-search-label" class="sr-only">
         {{ t('dashboard.newBook.autoFill.label' )}}
       </label>
-      <div class="group relative w-full">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true">
-          <SearchIcon class="w-5 h-5 text-gray-500 dark:group-focus-within:text-gray-300 sm:text-sm" aria-hidden="true" />
+      <div class="group relative w-full search-field">
+        <div class="search-icon" aria-hidden="true">
+          <SearchIcon class="w-5 h-5" />
         </div>
         <input
           type="search"
@@ -237,7 +237,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="postcss" scoped>
 #search-form .key-tooltip {
   @apply hidden;
 }
@@ -251,5 +251,14 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   display: none;
+}
+
+.search-icon {
+  @apply absolute inset-y-0 left-0 pl-3 text-gray-500
+    flex items-center pointer-events-none;
+}
+
+.search-field:focus-within .search-icon {
+  @apply dark:text-gray-300;
 }
 </style>

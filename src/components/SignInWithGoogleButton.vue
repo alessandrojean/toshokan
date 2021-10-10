@@ -21,7 +21,7 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import GoogleIcon from '@/components/icons/GoogleIcon'
+import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 
 export default {
   components: {
@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .button.is-google-sign-in {
   @apply justify-center pl-12;
 }

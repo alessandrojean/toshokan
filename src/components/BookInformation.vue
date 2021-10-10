@@ -83,7 +83,7 @@
       <div v-else class="motion-safe:animate-pulse flex-1 md:flex-initial md:w-28 h-11 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
       <button
-        v-if="showBookInfo"
+        v-if="showBookInfo && !isFuture"
         class="button is-icon-only px-2.5"
         :title="
           t('dashboard.details.header.options.markAs', {
@@ -449,7 +449,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .book-title {
   @apply font-bold dark:font-semibold font-display
     text-2xl md:text-3xl dark:text-gray-100;

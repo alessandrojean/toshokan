@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import { getBookById, getBooksFromCollection } from '@/services/sheet'
@@ -52,10 +52,10 @@ export default function useBookFinder () {
   }
 
   return {
-    book,
-    bookFound,
+    book: readonly(book),
+    bookFound: readonly(bookFound),
     findTheBook,
     clearBook,
-    collection
+    collection: readonly(collection)
   }
 }

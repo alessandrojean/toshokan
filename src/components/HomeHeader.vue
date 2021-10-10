@@ -38,7 +38,7 @@ import { useI18n } from 'vue-i18n'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton'
+import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 export default {
   components: {

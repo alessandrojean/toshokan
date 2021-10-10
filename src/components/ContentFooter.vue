@@ -26,7 +26,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .content-footer {
   @apply space-y-2 sm:space-y-0 text-center sm:text-left sm:flex sm:justify-between text-sm text-gray-500 dark:text-gray-400 border-t border-gray-300 dark:border-gray-600 pt-3 mt-10;
 }

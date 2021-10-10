@@ -196,11 +196,11 @@ import {
 
 import { PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
-import BetaWarning from '@/components/BetaWarning'
-import BookCarousel from '@/components/BookCarousel'
+import BetaWarning from '@/components/BetaWarning.vue'
+import BookCarousel from '@/components/BookCarousel.vue'
 import BookCreateDialog from '@/components/BookCreateDialog.vue'
-import GroupGrid from '@/components/GroupGrid'
-import StatCard from '@/components/StatCard'
+import GroupGrid from '@/components/GroupGrid.vue'
+import StatCard from '@/components/StatCard.vue'
 
 export default {
   name: 'DashboardHome',
@@ -231,7 +231,7 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
     const stats = computed(() => store.state.sheet.stats)
 
-    const isDev = ref(process.env.NODE_ENV === 'development')
+    const isDev = ref(import.meta.env.DEV)
 
     function reload () {
       store.dispatch('sheet/loadSheetData')
@@ -268,7 +268,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

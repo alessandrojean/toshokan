@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import { deleteBook as sheetDeleteBook } from '@/services/sheet'
@@ -27,6 +27,6 @@ export default function useBookDeleter (book) {
 
   return {
     deleteBook,
-    deleting
+    deleting: readonly(deleting)
   }
 }

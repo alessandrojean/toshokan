@@ -20,7 +20,8 @@
         </TransitionChild>
 
         <TransitionChild
-          as="template"
+          as="div"
+          class="dialog-content transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
           enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
@@ -28,105 +29,103 @@
           leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
           leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
         >
-          <div class="dialog-content">
-            <div class="dialog-header">
-              <div class="flex-grow">
-                <DialogTitle as="h2" class="dialog-title">
-                  {{ t('dashboard.details.editDialog.title') }}
-                </DialogTitle>
-                <DialogDescription as="p" class="dialog-description">
-                  {{ t('dashboard.details.editDialog.description') }}
-                </DialogDescription>
-              </div>
+          <div class="dialog-header">
+            <div class="flex-grow">
+              <DialogTitle as="h2" class="dialog-title">
+                {{ t('dashboard.details.editDialog.title') }}
+              </DialogTitle>
+              <DialogDescription as="p" class="dialog-description">
+                {{ t('dashboard.details.editDialog.description') }}
+              </DialogDescription>
+            </div>
 
-              <button
-                class="close-button has-ring-focus"
-                @click="closeDialog"
-              >
-                <span aria-hidden="true">
-                  <XIcon class="w-5 h-5" />
-                </span>
-              </button>
-
-              <span aria-hidden="true" class="absolute left-2">
-                <svg class="text-white opacity-30 block h-48 w-48" viewBox="0 0 184 184" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z" fill="currentColor" fill-rule="evenodd" opacity="0.503"></path>
-                </svg>
+            <button
+              class="close-button has-ring-focus"
+              @click="closeDialog"
+            >
+              <span aria-hidden="true">
+                <XIcon class="w-5 h-5" />
               </span>
-            </div>
+            </button>
 
-            <TabGroup>
-              <TabList class="tab-list">
-                <Tab
-                  v-for="tab of tabs"
-                  :key="tab.title"
-                  as="template"
-                  :disabled="tab.disabled"
-                >
-                  <button class="tab-button has-ring-focus">
-                    <span
-                      v-if="tab.error"
-                      aria-hidden="true"
-                      class="mr-2 bg-red-500 dark:bg-red-400 w-1.5 h-1.5 rounded-md"
-                    />
-                    <span>{{ tab.title }}</span>
-                  </button>
-                </Tab>
-              </TabList>
+            <span aria-hidden="true" class="absolute left-2">
+              <svg class="text-white opacity-30 block h-48 w-48" viewBox="0 0 184 184" xmlns="http://www.w3.org/2000/svg">
+                <path d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z" fill="currentColor" fill-rule="evenodd" opacity="0.503"></path>
+              </svg>
+            </span>
+          </div>
 
-              <TabPanels as="template">
-                <div class="tab-panels" ref="main">
-                  <TabPanel class="has-ring-focus rounded-md">
-                    <BookForm
-                      ref="editForm"
-                      touch-on-mount
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
-                      @error="setEditFormInvalid"
-                    />
-                  </TabPanel>
-                  <TabPanel class="has-ring-focus rounded-md">
-                    <BookCoverSelector
-                      custom
-                      hide-custom-title
-                      v-model:cover-url="editingBook.coverUrl"
-                      :book="editingBook"
-                    />
-                  </TabPanel>
-                  <TabPanel class="has-ring-focus rounded-md">
-                    <BookReading
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
-                    />
-                  </TabPanel>
-                  <TabPanel class="has-ring-focus rounded-md">
-                    <BookOrganization
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
-                    />
-                  </TabPanel>
-                </div>
-              </TabPanels>
-            </TabGroup>
-
-            <div class="dialog-footer">
-              <button
-                type="button"
-                class="button is-primary ml-2"
-                @click.stop="handleEdit"
+          <TabGroup>
+            <TabList class="tab-list">
+              <Tab
+                v-for="tab of tabs"
+                :key="tab.title"
+                as="template"
+                :disabled="tab.disabled"
               >
-                <CheckIcon aria-hidden="true" />
-                {{ t('dashboard.details.editForm.finish') }}
-              </button>
+                <button class="tab-button has-ring-focus">
+                  <span
+                    v-if="tab.error"
+                    aria-hidden="true"
+                    class="mr-2 bg-red-500 dark:bg-red-400 w-1.5 h-1.5 rounded-md"
+                  />
+                  <span>{{ tab.title }}</span>
+                </button>
+              </Tab>
+            </TabList>
 
-              <button
-                type="button"
-                class="button is-ghost"
-                @click.stop="closeDialog"
-              >
-                {{ t('dashboard.details.editForm.cancel') }}
-              </button>
-            </div>
+            <TabPanels as="template">
+              <div class="tab-panels" ref="main">
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookForm
+                    ref="editForm"
+                    touch-on-mount
+                    :modelValue="editingBook"
+                    @update:modelValue="Object.assign(editingBook, $event)"
+                    @error="setEditFormInvalid"
+                  />
+                </TabPanel>
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookCoverSelector
+                    custom
+                    hide-custom-title
+                    v-model:cover-url="editingBook.coverUrl"
+                    :book="editingBook"
+                  />
+                </TabPanel>
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookReading
+                    :modelValue="editingBook"
+                    @update:modelValue="Object.assign(editingBook, $event)"
+                  />
+                </TabPanel>
+                <TabPanel class="has-ring-focus rounded-md">
+                  <BookOrganization
+                    :modelValue="editingBook"
+                    @update:modelValue="Object.assign(editingBook, $event)"
+                  />
+                </TabPanel>
+              </div>
+            </TabPanels>
+          </TabGroup>
+
+          <div class="dialog-footer">
+            <button
+              type="button"
+              class="button is-primary ml-2"
+              @click.stop="handleEdit"
+            >
+              <CheckIcon aria-hidden="true" />
+              {{ t('dashboard.details.editForm.finish') }}
+            </button>
+
+            <button
+              type="button"
+              class="button is-ghost"
+              @click.stop="closeDialog"
+            >
+              {{ t('dashboard.details.editForm.cancel') }}
+            </button>
           </div>
         </TransitionChild>
       </div>
@@ -279,7 +278,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .dialog {
   @apply fixed z-20 inset-0 flex flex-col items-center
     sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16;
@@ -287,8 +286,8 @@ export default {
 
 .dialog-content {
   @apply relative flex flex-col w-full max-w-2xl h-full
-    overflow-hidden text-left motion-safe:transition-all transform
-    bg-white dark:bg-gray-800 sm:shadow-xl sm:rounded-lg;
+    overflow-hidden text-left bg-white dark:bg-gray-800
+    sm:shadow-xl sm:rounded-lg;
 }
 
 .dialog-header {

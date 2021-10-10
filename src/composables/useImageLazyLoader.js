@@ -1,4 +1,4 @@
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, readonly, ref, watch } from 'vue'
 
 export default function useImageLazyLoader (imageUrl, elRef) {
   const imageHasError = ref(false)
@@ -63,9 +63,9 @@ export default function useImageLazyLoader (imageUrl, elRef) {
   })
 
   return {
-    imageHasError,
-    imageLoading,
+    imageHasError: readonly(imageHasError),
+    imageLoading: readonly(imageLoading),
     setupObserver,
-    observerCreated
+    observerCreated: readonly(observerCreated)
   }
 }

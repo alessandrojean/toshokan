@@ -1,8 +1,13 @@
 const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
+const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  purge: [
+    './index.html',
+    './src/**/*.vue',
+    './src/**/*.js'
+  ],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     colors: {
@@ -90,7 +95,6 @@ module.exports = {
     'focus',
     'focus-visible',
     'active',
-    'group-disabled', // Custom variant
     'disabled'
   ],
   variants: {
@@ -99,12 +103,11 @@ module.exports = {
       backgroundColor: ['even', 'odd', 'active', 'focus-visible', 'disabled'],
       backgroundImage: ['dark'],
       blur: ['hover', 'group-hover', 'dark'],
-      borderColor: ['active', 'focus-visible', 'group-focus-within', 'disabled'],
+      borderColor: ['active', 'focus-visible', 'disabled'],
       borderRadius: ['dark'],
       borderWidth: ['focus', 'dark'],
       boxShadow: ['dark'],
       cursor: ['disabled'],
-      display: ['group-focus-within'],
       fontWeight: ['dark'],
       invert: ['dark'],
       margin: ['dark'],
@@ -112,12 +115,12 @@ module.exports = {
       outline: ['focus-visible'],
       padding: ['dark'],
       placeholderColor: ['hover'],
-      ringColor: ['group-focus-visible', 'focus-visible'],
-      ringOffsetColor: ['group-focus-visible', 'focus-visible', 'dark'],
-      ringOffsetWidth: ['group-focus-visible', 'focus-visible'],
+      ringColor: ['focus-visible'],
+      ringOffsetColor: ['focus-visible', 'dark'],
+      ringOffsetWidth: ['focus-visible'],
       ringOpacity: ['focus-visible'],
-      ringWidth: ['group-focus-visible', 'focus-visible', 'active'],
-      textColor: ['disabled', 'focus-visible', 'group-focus-within', 'group-focus-visible', 'group-disabled'],
+      ringWidth: ['focus-visible', 'active'],
+      textColor: ['disabled', 'focus-visible'],
       transform: ['motion-reduce'],
       transitionProperty: ['motion-safe', 'motion-reduce'],
       typography: ['dark'],
@@ -126,7 +129,6 @@ module.exports = {
     }
   },
   plugins: [
-    require('tailwindcss-interaction-variants'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio')

@@ -176,7 +176,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .result {
   @apply py-4 flex items-center rounded-md space-x-4;
 }

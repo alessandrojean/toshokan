@@ -31,7 +31,7 @@ export default {
           window.gapi.client
             .init({
               discoveryDocs: state.discoveryDocs,
-              clientId: process.env.VUE_APP_CLIENT_ID,
+              clientId: import.meta.env.VITE_APP_CLIENT_ID,
               scope: state.scopes
             })
             .then(() => {

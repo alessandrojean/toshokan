@@ -4,7 +4,7 @@
   </section>
 </template>
 
-<style>
+<style lang="postcss">
 .content-body dl {
   @apply space-y-2;
 }

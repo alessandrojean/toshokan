@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, readonly, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export default function useDarkMode () {
@@ -35,6 +35,6 @@ export default function useDarkMode () {
   })
 
   return {
-    darkMode: computed(() => darkMode.value)
+    darkMode: readonly(darkMode)
   }
 }

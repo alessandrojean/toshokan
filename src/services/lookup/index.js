@@ -21,7 +21,7 @@ export default async function search (isbn) {
     openLibrary.search(isbn)
   ]
 
-  if (process.env.VUE_APP_CBL_QUERY_KEY) {
+  if (import.meta.env.VITE_APP_CBL_QUERY_KEY) {
     const cbl = new Cbl()
 
     allPromises.push(cbl.search(isbn))

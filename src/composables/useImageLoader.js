@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { readonly, ref, watch } from 'vue'
 
 export default function useImageLoader (imageUrl) {
   const imageHasError = ref(false)
@@ -42,10 +42,10 @@ export default function useImageLoader (imageUrl) {
   })
 
   return {
-    imageHasError,
-    imageLoading,
-    imageWidth,
-    imageHeight,
+    imageHasError: readonly(imageHasError),
+    imageLoading: readonly(imageLoading),
+    imageWidth: readonly(imageWidth),
+    imageHeight: readonly(imageHeight),
     loadImage
   }
 }

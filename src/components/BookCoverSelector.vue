@@ -135,8 +135,8 @@ import {
 import { EmojiSadIcon } from '@heroicons/vue/outline'
 import { PlusIcon } from '@heroicons/vue/solid'
 
-import Alert from '@/components/Alert'
-import CoverOption from '@/components/CoverOption'
+import Alert from '@/components/Alert.vue'
+import CoverOption from '@/components/CoverOption.vue'
 
 export default {
   name: 'BookCoverSelector',

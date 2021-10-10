@@ -139,7 +139,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .pag-button {
   @apply relative inline-flex items-center
     px-2 py-2 text-sm font-medium

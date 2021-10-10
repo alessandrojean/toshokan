@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import { updateBook as sheetUpdateBook } from '@/services/sheet'
@@ -42,6 +42,6 @@ export default function useBookEditor (book) {
 
   return {
     updateBook,
-    updating
+    updating: readonly(updating)
   }
 }

@@ -86,7 +86,7 @@ import { LibraryIcon } from '@heroicons/vue/solid'
 
 import useAppInfo from '@/composables/useAppInfo'
 
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton'
+import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 export default {
   name: 'Home',
@@ -100,7 +100,7 @@ export default {
     const store = useStore()
     const router = useRouter()
 
-    const isDev = ref(process.env.NODE_ENV === 'development')
+    const isDev = ref(import.meta.env.DEV)
 
     const { appVersion } = useAppInfo()
 
@@ -130,7 +130,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 @layer components {
   .utility-link {
     @apply text-primary-500 dark:text-primary-400 font-semibold rounded-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500;

@@ -99,10 +99,10 @@ import { PlusIcon } from '@heroicons/vue/solid'
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
 
 import BookCreateDialog from '@/components/BookCreateDialog.vue'
-import GridBooks from '@/components/GridBooks'
-import LibraryFilters from '@/components/LibraryFilters'
+import GridBooks from '@/components/GridBooks.vue'
+import LibraryFilters from '@/components/LibraryFilters.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
-import TableBooks from '@/components/TableBooks'
+import TableBooks from '@/components/TableBooks.vue'
 
 export default {
   name: 'DashboardLibraryExplorer',

@@ -12,7 +12,7 @@
       @update:model-value="handleChange"
     >
       <template #prefix>
-        <TagIcon class="tag-icon" />
+        <TagIcon class="w-5 h-5" />
       </template>
     </TagField>
   </div>
@@ -55,11 +55,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.tag-icon {
-  @apply w-5 h-5
-    text-gray-400 dark:text-gray-500
-    group-focus-within:text-gray-600 dark:group-focus-within:text-gray-300;
-}
-</style>

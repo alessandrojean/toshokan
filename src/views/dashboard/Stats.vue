@@ -87,9 +87,9 @@ import {
   PresentationChartLineIcon
 } from '@heroicons/vue/outline'
 
-import MonthlyBoughtsChart from '@/components/MonthlyBoughtsChart'
-import MonthlyExpenseChart from '@/components/MonthlyExpenseChart'
-import SimpleHeader from '@/components/SimpleHeader'
+import MonthlyBoughtsChart from '@/components/MonthlyBoughtsChart.vue'
+import MonthlyExpenseChart from '@/components/MonthlyExpenseChart.vue'
+import SimpleHeader from '@/components/SimpleHeader.vue'
 
 export default {
   name: 'DashboardStats',
@@ -117,7 +117,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

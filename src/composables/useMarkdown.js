@@ -1,8 +1,9 @@
 import md from 'markdown-it'
+import mdAbbr from 'markdown-it-abbr'
 
 export default function useMarkdown () {
   const markdown = md()
-    .use(require('markdown-it-abbr'))
+    .use(mdAbbr)
     .disable([
       'table',
       'code',

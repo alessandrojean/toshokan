@@ -1,5 +1,6 @@
 <template>
   <BaseField
+    class="tag-field"
     :label="label"
     :error="error"
     :required="required"
@@ -10,7 +11,7 @@
         <div
           v-if="$slots.prefix"
           :class="[
-            'absolute inset-y-0 left-0 flex items-center',
+            'prefix absolute inset-y-0 left-0 flex items-center',
             prefixClass
           ]"
         >
@@ -193,7 +194,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
+.prefix {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+.tag-field:focus-within .prefix {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
 .tag {
   @apply flex items-center text-sm
     bg-primary-100 dark:bg-gray-700 rounded-md

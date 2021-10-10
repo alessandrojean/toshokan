@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { readonly, ref } from 'vue'
 import { findCovers } from '@/services/cover'
 
 export default function useCoverFinder (book) {
@@ -18,7 +18,7 @@ export default function useCoverFinder (book) {
   return {
     clearResults,
     findCover,
-    finding,
-    results
+    finding: readonly(finding),
+    results: readonly(results)
   }
 }

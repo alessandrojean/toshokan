@@ -55,7 +55,7 @@ export default {
   setup () {
     const { appVersion } = useAppInfo()
 
-    const isDev = ref(process.env.NODE_ENV === 'development')
+    const isDev = ref(import.meta.env.DEV)
 
     const { t, locale } = useI18n({ useScope: 'global' })
 
@@ -69,7 +69,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .footer {
   @apply max-w-7xl mx-auto px-6 lg:px-8 flex flex-col items-center space-y-6 py-8 text-sm;
 }

@@ -62,7 +62,7 @@ export default {
       }
     })
 
-    const isDev = ref(process.env.NODE_ENV === 'development')
+    const isDev = ref(import.meta.env.DEV)
 
     const { t } = useI18n()
 

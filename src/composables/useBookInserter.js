@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
 import {
@@ -67,6 +67,6 @@ export default function useBookInserter (book) {
   return {
     checkIfExists,
     insertBook,
-    inserting
+    inserting: readonly(inserting)
   }
 }

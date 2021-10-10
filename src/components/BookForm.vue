@@ -38,7 +38,7 @@
       @update:model-value="handleInput('authors', $event)"
     >
       <template #prefix>
-        <UserAddIcon class="w-5 h-5 text-gray-400 dark:text-gray-500 group-focus-within:text-gray-600 dark:group-focus-within:text-gray-300" />
+        <UserAddIcon class="w-5 h-5" />
       </template>
     </TagField>
 
@@ -99,9 +99,10 @@
 
       <TextField
         required
-        class="col-span-9 sm:col-span-5 md:col-span-1"
+        class="monetary-field col-span-9 sm:col-span-5 md:col-span-1"
         input-class="pl-7 pr-12"
         prefix-class="pointer-events-none"
+        suffix-class="suffix"
         input-mode="decimal"
         :label="t('book.properties.labelPrice')"
         :model-value="modelValue.labelPriceValueStr"
@@ -118,7 +119,7 @@
           </label>
           <select
             id="book-label-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-400 h-full shadow-none text-gray-500 dark:text-gray-300"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 dark:text-gray-300"
             @change="handleInput('labelPriceCurrency', $event.target.value)"
             required
           >
@@ -138,9 +139,10 @@
 
       <TextField
         required
-        class="col-span-9 sm:col-span-5 md:col-span-1"
+        class="monetary-field col-span-9 sm:col-span-5 md:col-span-1"
         input-class="pl-7 pr-12"
         prefix-class="pointer-events-none"
+        suffix-class="suffix"
         input-mode="decimal"
         :label="t('book.properties.paidPrice')"
         :model-value="modelValue.paidPriceValueStr"
@@ -157,7 +159,7 @@
           </label>
           <select
             id="book-paid-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l group-focus-within:border-primary-600 dark:group-focus-within:border-primary-400 h-full shadow-none text-gray-500 dark:text-gray-300"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 dark:text-gray-300"
             @change="handleInput('paidPriceCurrency', $event.target.value)"
             required
           >
@@ -259,7 +261,7 @@ import { decimalComma, dimensions } from '@/util/validators'
 
 import { getCodeType } from '@/model/Book'
 
-import Alert from '@/components/Alert'
+import Alert from '@/components/Alert.vue'
 import MarkdownField from '@/components/fields/MarkdownField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
@@ -455,3 +457,9 @@ export default {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+.monetary-field:focus-within .suffix .select {
+  @apply border-primary-600 dark:border-primary-400;
+}
+</style>
