@@ -225,7 +225,7 @@ export function formatBook (book) {
     book.favorite || BookFavorite.INACTIVE,
     book.synopsis || '',
     book.notes || '',
-    book.tags.join(', ').toUpperCase(),
+    book.tags ? book.tags.join(', ').toUpperCase() : '',
     formatDateTimeToSheet(fixDate(book.createdAt, offset) || now),
     formatDateTimeToSheet(now)
   ]

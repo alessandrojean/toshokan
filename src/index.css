@@ -123,7 +123,8 @@
       dark:ring-offset-gray-900;
   }
 
-  .button:disabled {
+  .button:disabled,
+  .button:disabled:hover {
     @apply cursor-default opacity-50
       bg-white dark:bg-gray-700
       dark:border-gray-600;
@@ -193,7 +194,8 @@
       border-primary-800 dark:border-primary-700;
   }
 
-  .button.is-primary:disabled {
+  .button.is-primary:disabled,
+  .button.is-primary:disabled:hover {
     @apply opacity-50 bg-primary-600 border-primary-600;
   }
 
@@ -216,8 +218,9 @@
     @apply bg-red-800 border-red-800;
   }
 
-  .button.is-danger:disabled {
-    @apply opacity-50 bg-red-600;
+  .button.is-danger:disabled,
+  .button.is-danger:disabled:hover {
+    @apply opacity-50 bg-red-600 border-transparent;
   }
 
   .button.is-danger svg {
