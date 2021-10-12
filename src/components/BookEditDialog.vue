@@ -344,12 +344,15 @@ export default {
 }
 
 .tab-list {
-  @apply flex px-4 md:px-6 space-x-6
+  @apply flex flex-nowrap w-full flex-shrink-0
+    overflow-x-auto md:overflow-x-visible overflow-y-visible
+    px-4 md:px-6 space-x-6
     border-b border-gray-300 dark:border-gray-600;
 }
 
 .tab-button {
-  @apply flex items-center justify-center px-1 py-3 -mb-px
+  @apply flex flex-shrink-0 items-center justify-center
+    px-1 py-2.5 -mb-px
     text-sm font-medium border-b-2 border-transparent
     text-gray-600 dark:text-gray-400;
 }

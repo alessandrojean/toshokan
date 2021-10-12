@@ -15,7 +15,7 @@
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
           <button
-            class="button flex-1 md:flex-initial justify-center md:justify-start"
+            class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading"
           >
@@ -26,7 +26,7 @@
           </button>
           <button
             v-if="canChange"
-            class="button flex-1 md:flex-initial justify-center md:justify-start"
+            class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openSheetChooser"
             :disabled="loading"
           >

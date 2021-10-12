@@ -286,7 +286,10 @@ export default {
           await dispatch('fetchIdMap')
         }
 
-        const lastAdded = await getBooks(sheetId, state.idMap, 1, { limit: 6 })
+        const lastAdded = await getBooks(sheetId, state.idMap, 1, {
+          limit: 6,
+          dontCount: true
+        })
         commit(CollectionMutations.UPDATE_LAST_ADDED, { items: lastAdded.books })
       } finally {
         commit(CollectionMutations.UPDATE_LAST_ADDED, { loading: false })

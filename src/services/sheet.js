@@ -200,7 +200,9 @@ export async function getBooks (sheetId, idMap, page = 1, options = {}) {
     limit ${limit} offset ${offset}
   `
 
-  const totalResults = await countTotalResults(sheetId, queryStr)
+  const totalResults = options.dontCount
+    ? null
+    : await countTotalResults(sheetId, queryStr)
 
   const query = new window.google.visualization.Query(sheetUrl)
   query.setQuery(queryStr)
@@ -236,7 +238,8 @@ export async function getLatestReadings (sheetId, idMap, options = {}) {
     select *
     where ${CollectionColumns.READ_AT} is not null
       and ${CollectionColumns.STATUS} = "${BookStatus.READ}"
-    order by ${CollectionColumns.READ_AT} desc
+    order by ${CollectionColumns.READ_AT} desc,
+      ${CollectionColumns.UPDATED_AT} desc
     limit ${limit}
   `)
 

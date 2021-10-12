@@ -17,7 +17,7 @@
           checked
             ? 'border-primary-600 dark:border-primary-400 shadow bg-primary-50 dark:bg-transparent'
             : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700',
-          'cursor-pointer group rounded-md border flex flex-col md:flex-row items-start text-sm px-4 py-4 has-input-focus'
+          'cursor-pointer group rounded-md border flex items-start text-sm px-4 py-4 has-input-focus'
         ]"
       >
         <div

@@ -154,8 +154,11 @@
                 v-model:cover-url="book.coverUrl"
                 :book="book"
               />
-              <div v-else class="grid grid-cols-3 gap-4 md:gap-6 lg:gap-8 w-full">
-                <div v-if="book.coverUrl.length > 0">
+              <div v-else class="grid grid-cols-1 sm:grid-cols-3 sm:gap-4 md:gap-6 lg:gap-8 w-full">
+                <div
+                  v-if="book.coverUrl.length > 0"
+                  class="w-48 sm:w-auto max-w-full sm:max-w-none mb-8 sm:mb-0 mt-3 sm:mt-0"
+                >
                   <transition
                     mode="out-in"
                     leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"

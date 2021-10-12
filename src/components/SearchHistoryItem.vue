@@ -57,9 +57,10 @@ export default {
 <style lang="postcss" scoped>
 .history-item {
   @apply flex items-center relative
+    text-sm sm:text-base
     text-gray-800 dark:text-gray-200
     bg-gray-50 dark:bg-gray-700
-    px-4 py-4 sm:px-7 md:px-4
+    pl-4 pr-10 py-3 sm:py-4
     space-x-4 rounded-md font-medium;
 }
 
@@ -83,7 +84,7 @@ export default {
 }
 
 .remove-button {
-  @apply absolute right-3 sm:right-6 md:right-3 p-1 rounded
+  @apply absolute right-3 p-1 rounded
     text-gray-500 dark:text-gray-400;
 }
 
