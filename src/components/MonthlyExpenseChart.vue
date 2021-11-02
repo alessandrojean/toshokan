@@ -92,7 +92,7 @@ export default {
         colors: [colors.indigo[500]],
         dataLabels: { enabled: false },
         grid: {
-          borderColor: darkMode.value ? colors.blueGray[600] : colors.blueGray[200]
+          borderColor: darkMode.value ? colors.slate[600] : colors.slate[200]
         },
         stroke: { curve: 'smooth' },
         tooltip: {
@@ -111,7 +111,7 @@ export default {
               return value ? d(new Date(value), 'month') : value
             },
             style: {
-              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
+              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
             }
           },
           tooltip: { enabled: false }
@@ -124,7 +124,7 @@ export default {
               })
             },
             style: {
-              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
+              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
             }
           }
         }

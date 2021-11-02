@@ -18,10 +18,10 @@
         'dark:bg-gray-700 border-l-4 dark:border-l-0 dark:rounded-md dark:text-gray-100 px-3 py-5 text-sm flex space-x-3'
       ]"
     >
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <XCircleIcon v-if="type === 'error'" class="h-5 w-5 text-red-500 dark:text-red-400" aria-hidden="true" />
         <InformationCircleIcon v-else-if="type === 'info'" class="h-5 w-5 text-blue-500 dark:text-blue-400" aria-hidden="true" />
-        <ExclamationIcon v-else class="h-5 w-5 text-yellow-400 dark:text-yellow-500" aria-hidden="true" />
+        <ExclamationIcon v-else class="h-5 w-5 text-amber-400 dark:text-amber-500" aria-hidden="true" />
       </div>
       <div class="space-y-2 dark:text-gray-200">
         <p
@@ -81,7 +81,7 @@ export default {
       } else if (type.value === 'info') {
         return 'bg-blue-50'
       } else {
-        return 'bg-yellow-50'
+        return 'bg-amber-50'
       }
     })
 
@@ -91,7 +91,7 @@ export default {
       } else if (type.value === 'info') {
         return 'text-blue-700'
       } else {
-        return 'text-yellow-900'
+        return 'text-amber-900'
       }
     })
 
@@ -101,7 +101,7 @@ export default {
       } else if (type.value === 'info') {
         return 'text-blue-800'
       } else {
-        return 'text-yellow-800'
+        return 'text-amber-800'
       }
     })
 
@@ -111,7 +111,7 @@ export default {
       } else if (type.value === 'info') {
         return 'border-blue-500'
       } else {
-        return 'border-yellow-400'
+        return 'border-amber-400'
       }
     })
 

@@ -6,7 +6,7 @@
       <div
         v-for="idx in 6"
         :key="idx"
-        class="flex-shrink-0 w-2/5 sm:w-3/12 md:w-auto"
+        class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
       >
         <BookCard
           :loading="true"
@@ -43,7 +43,7 @@
       <li
         v-for="(book, bookIdx) in collectionItems"
         :key="book.id"
-        :class="collectionItems.length > 2 ? 'flex-shrink-0 w-2/5 sm:w-3/12 md:w-auto' : ''"
+        :class="collectionItems.length > 2 ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto' : ''"
       >
         <BookCard
           :book="book"

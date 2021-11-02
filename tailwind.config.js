@@ -1,25 +1,14 @@
 const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
-const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  purge: [
+  content: [
     './index.html',
     './src/**/*.vue',
     './src/**/*.js'
   ],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
-    colors: {
-      ...defaultTheme.colors,
-      primary: colors.indigo,
-      secondary: colors.emerald,
-      gray: {
-        ...defaultTheme.colors.gray,
-        850: '#17202D'
-      },
-      picpay: '#21c25e'
-    },
     fontFamily: {
       ...defaultTheme.fontFamily,
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -29,6 +18,15 @@ module.exports = {
       boxShadow: {
         avatar: 'inset 0 0px 4px 0 rgba(0, 0, 0, 0.25)',
         top: '0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05)'
+      },
+      colors: {
+        primary: colors.indigo,
+        secondary: colors.emerald,
+        gray: {
+          850: '#17202D'
+        },
+        picpay: '#21c25e',
+        current: 'currentColor'
       },
       fontSize: {
         'xxs': '.7rem'
@@ -97,37 +95,6 @@ module.exports = {
     'active',
     'disabled'
   ],
-  variants: {
-    extend: {
-      animation: ['motion-safe'],
-      backgroundColor: ['even', 'odd', 'active', 'focus-visible', 'disabled'],
-      backgroundImage: ['dark'],
-      blur: ['hover', 'group-hover', 'dark'],
-      borderColor: ['active', 'focus-visible', 'disabled'],
-      borderRadius: ['dark'],
-      borderWidth: ['focus', 'dark'],
-      boxShadow: ['dark'],
-      cursor: ['disabled'],
-      fontWeight: ['dark'],
-      invert: ['dark'],
-      margin: ['dark'],
-      opacity: ['focus-visible', 'focus-within', 'group-focus', 'disabled', 'dark'],
-      outline: ['focus-visible'],
-      padding: ['dark'],
-      placeholderColor: ['hover'],
-      ringColor: ['focus-visible'],
-      ringOffsetColor: ['focus-visible', 'dark'],
-      ringOffsetWidth: ['focus-visible'],
-      ringOpacity: ['focus-visible'],
-      ringWidth: ['focus-visible', 'active'],
-      textColor: ['disabled', 'focus-visible'],
-      transform: ['motion-reduce'],
-      transitionProperty: ['motion-safe', 'motion-reduce'],
-      typography: ['dark'],
-      userSelect: ['hover'],
-      zIndex: ['focus-visible']
-    }
-  },
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),

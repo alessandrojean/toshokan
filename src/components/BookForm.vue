@@ -462,4 +462,9 @@ export default {
 .monetary-field:focus-within .suffix .select {
   @apply border-primary-600 dark:border-primary-400;
 }
+
+.monetary-field:hover:not(:focus-within) .input,
+.monetary-field:hover:not(:focus-within) .select {
+  @apply border-gray-400 dark:border-gray-500 transition-none;
+}
 </style>

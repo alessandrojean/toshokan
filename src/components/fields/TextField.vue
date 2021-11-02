@@ -130,4 +130,9 @@ export default {
 .field-wrapper:focus-within .selector-icon {
   @apply dark:text-gray-300;
 }
+
+.monetary-field:hover:not(:focus-within) .input,
+.monetary-field:hover:not(:focus-within) .select {
+  @apply border-gray-400 dark:border-gray-500 transition-none;
+}
 </style>

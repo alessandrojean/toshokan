@@ -20,7 +20,7 @@
         </div>
         <router-link
           :to="{ name: 'DashboardHome' }"
-          class="button is-primary"
+          class="button is-primary is-rounded"
           v-if="signedIn"
         >
           {{ t('home.header.dashboard') }}

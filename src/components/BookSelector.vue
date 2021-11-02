@@ -26,7 +26,7 @@
             checked
               ? 'bg-primary-600 dark:bg-primary-500 border-primary-600 dark:border-primary-500'
               : 'bg-white dark:bg-gray-900 dark:group-hover:bg-gray-850 border-gray-300 dark:border-gray-600 group-hover:border-gray-400 dark:group-hover:border-gray-500',
-            'flex-shrink-0 w-4 h-4 mr-4 mt-0.5 border rounded-xl flex items-center justify-center'
+            'shrink-0 w-4 h-4 mr-4 mt-0.5 border rounded-xl flex items-center justify-center'
           ]"
         >
           <span

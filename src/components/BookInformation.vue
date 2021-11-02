@@ -55,7 +55,7 @@
     <div
       v-if="showBookInfo"
       v-html="synopsisRendered"
-      :class="blurSynopsis ? 'md:filter md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto' : ''"
+      :class="blurSynopsis ? 'md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto' : ''"
       class="prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal max-w-none dark:text-gray-300"
     />
     <div v-else class="flex flex-col space-y-2">
@@ -250,6 +250,7 @@ import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
 import PaniniIcon from '@/components/icons/PaniniIcon.vue'
+import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 
@@ -266,6 +267,7 @@ export default {
     GlobeAltIcon,
     PaniniIcon,
     PencilIcon,
+    SkoobIcon,
     StarOutlineIcon,
     StarSolidIcon,
     TrashIcon,
@@ -415,6 +417,14 @@ export default {
         })
       }
 
+      if (country.value?.countryCode === 'BR') {
+        links.push({
+          title: 'Skoob',
+          url: `https://www.skoob.com.br/livro/lista/busca:${bookCode}/tipo:isbn`,
+          icon: SkoobIcon
+        })
+      }
+
       return links.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
@@ -510,12 +520,12 @@ export default {
 }
 
 .user-group {
-  @apply flex-shrink-0 pr-1 text-gray-400 dark:text-gray-500 ;
+  @apply shrink-0 pr-1 text-gray-400 dark:text-gray-500 ;
 }
 
 .book-external-link {
-  @apply flex items-center px-2 py-1
-    mr-2 mt-2 space-x-1.5 rounded
+  @apply flex items-center px-2.5 py-1
+    mr-2 mt-2 space-x-1.5 rounded-full
     bg-gray-100 dark:bg-gray-700 dark:text-gray-300
     font-medium text-sm;
 }

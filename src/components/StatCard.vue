@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-50 sm:shadow sm:rounded-md dark:bg-gray-800" v-if="loading">
     <div class="motion-safe:animate-pulse flex items-center p-4">
-      <div class="w-10 h-10 flex-shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-600"></div>
+      <div class="w-10 h-10 shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-600"></div>
       <div class="flex-1 space-y-2">
         <div class="h-3 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
         <div class="h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="flex items-center justify-center bg-white dark:bg-gray-800 p-4 sm:rounded-md sm:shadow sm:hover:shadow-md motion-safe:transition-shadow" v-else>
-    <div class="flex flex-shrink-0 w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-md bg-primary-100 dark:bg-gray-800" aria-hidden="true">
+    <div class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-md bg-primary-100 dark:bg-gray-800" aria-hidden="true">
       <slot name="icon" css-class="text-primary-600 dark:text-gray-500 h-6 w-6 md:h-8 md:w-8"></slot>
     </div>
     <div class="flex-1">
@@ -17,10 +17,10 @@
       <div class="flex justify-between w-full">
         <transition
           mode="out-in"
-          leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
+          leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
           leave-from-class="opacity-100 translate-x-0"
           leave-to-class="opacity-0 translate-x-2"
-          enter-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-out"
+          enter-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-out"
           enter-from-class="opacity-0 -translate-x-2"
           enter-to-class="opacity-100 translate-x-0"
         >

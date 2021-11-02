@@ -131,9 +131,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-@layer components {
-  .utility-link {
-    @apply text-primary-500 dark:text-primary-400 font-semibold rounded-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500;
-  }
+.utility-link {
+  @apply text-primary-500 dark:text-primary-400 font-semibold rounded-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-900 focus-visible:ring-primary-500;
 }
 </style>

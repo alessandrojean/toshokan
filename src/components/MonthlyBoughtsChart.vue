@@ -94,7 +94,7 @@ export default {
         colors: [colors.indigo[500], colors.indigo[300]],
         fill: { opacity: 1.0 },
         grid: {
-          borderColor: darkMode.value ? colors.blueGray[600] : colors.blueGray[200]
+          borderColor: darkMode.value ? colors.slate[600] : colors.slate[200]
         },
         tooltip: { enabled: false },
         xaxis: {
@@ -106,7 +106,7 @@ export default {
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
-              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
+              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
             }
           }
         },
@@ -114,13 +114,13 @@ export default {
           labels: {
             formatter: val => val.toFixed(0),
             style: {
-              colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600]
+              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
             }
           }
         },
         legend: {
           labels: {
-            colors: darkMode.value ? colors.blueGray[300] : colors.blueGray[600],
+            colors: darkMode.value ? colors.slate[300] : colors.slate[600],
             useSeriesColors: false
           },
           onItemClick: {
@@ -131,7 +131,7 @@ export default {
           enabled: true,
           offsetY: -20,
           style: {
-            colors: [darkMode.value ? colors.blueGray[100] : colors.blueGray[700]]
+            colors: [darkMode.value ? colors.slate[100] : colors.slate[700]]
           }
         },
         stroke: {

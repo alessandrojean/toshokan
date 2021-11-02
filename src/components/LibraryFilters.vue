@@ -17,15 +17,15 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="absolute inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity backdrop-filter backdrop-blur-sm" />
+          <DialogOverlay class="absolute inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-80 transition-opacity backdrop-blur-sm" />
         </TransitionChild>
         <div class="fixed inset-x-0 sm:inset-x-auto sm:inset-y-0 bottom-0 sm:right-0 sm:pl-10 max-w-full flex">
           <TransitionChild
             as="template"
-            enter="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
+            enter="motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
             enter-from="translate-y-full sm:translate-y-0 sm:translate-x-full"
             enter-to="translate-y-0 sm:translate-x-0"
-            leave="transform motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
+            leave="motion-reduce:transform-none transition motion-reduce:transition-none ease-in-out duration-500 sm:duration-700"
             leave-from="translate-y-0 sm:translate-x-0"
             leave-to="translate-y-full sm:translate-y-0 sm:translate-x-full"
           >
@@ -61,7 +61,7 @@
                         </span>
                         <span aria-hidden="true">
                           <ChevronUpIcon
-                            :class="open ? 'transform rotate-180' : ''"
+                            :class="open ? 'rotate-180' : ''"
                             class="w-5 h-5 text-gray-500"
                           />
                         </span>
@@ -177,7 +177,7 @@
                         </span>
                         <span aria-hidden="true">
                           <ChevronUpIcon
-                            :class="open ? 'transform rotate-180' : ''"
+                            :class="open ? 'rotate-180' : ''"
                             class="w-5 h-5 text-gray-500"
                           />
                         </span>

@@ -4,7 +4,7 @@
     class="result group has-ring-focus"
     ref="searchItem"
   >
-    <div class="w-12 lg:w-16 flex-shrink-0">
+    <div class="w-12 lg:w-16 shrink-0">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -59,7 +59,7 @@
         </span>
       </div>
     </div>
-    <span aria-hidden="true" class="flex-shrink-0">
+    <span aria-hidden="true" class="shrink-0">
       <ChevronRightIcon class="chevron" />
     </span>
   </router-link>
@@ -213,7 +213,7 @@ export default {
 }
 
 .result-cover.is-hidden {
-  @apply md:filter md:blur-sm md:group-hover:blur-none
+  @apply md:blur-sm md:group-hover:blur-none
     motion-safe:transition-all duration-100 ease-in-out;
 }
 

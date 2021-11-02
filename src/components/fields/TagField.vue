@@ -199,7 +199,7 @@ export default {
   @apply text-gray-400 dark:text-gray-500;
 }
 
-.tag-field:focus-within .prefix {
+.tag-field .group:focus-within .prefix {
   @apply text-gray-600 dark:text-gray-300;
 }
 

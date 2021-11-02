@@ -138,7 +138,7 @@
                       <span
                         aria-hidden="true"
                         :class="settings.appearence.spoilerMode.synopsis ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
-                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white transform rounded-full"
+                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                       />
                     </Switch>
                   </SwitchGroup>
@@ -159,7 +159,7 @@
                       <span
                         aria-hidden="true"
                         :class="settings.appearence.spoilerMode.cover ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
-                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white transform rounded-full"
+                        class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                       />
                     </Switch>
                   </SwitchGroup>

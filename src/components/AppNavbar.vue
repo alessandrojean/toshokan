@@ -10,7 +10,7 @@
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
-            class="flex-shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+            class="shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
               <LibraryIcon class="h-9 w-9 text-primary-500" aria-hidden="true" />
@@ -113,11 +113,11 @@
             </transition>
             <transition
               enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
-              enter-from-class="transform scale-95 opacity-0"
-              enter-to-class="transform scale-100 opacity-100"
+              enter-from-class="scale-95 opacity-0"
+              enter-to-class="scale-100 opacity-100"
               leave-active-class="transition motion-reduce:transition-none duration-75 ease-in"
-              leave-from-class="transform scale-100 opacity-100"
-              leave-to-class="transform scale-95 opacity-0"
+              leave-from-class="scale-100 opacity-100"
+              leave-to-class="scale-95 opacity-0"
             >
               <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="pb-1">

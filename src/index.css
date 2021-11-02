@@ -55,6 +55,11 @@
       rounded-md shadow-sm
       motion-safe:transition-colors;
   }
+
+  .input:hover:not(:focus),
+  .select:hover:not(:focus):not([aria-expanded='true']) {
+    @apply border-gray-400 dark:border-gray-500 transition-none;
+  }
   
   .input:focus,
   .select:focus,
@@ -93,15 +98,24 @@
   .radio:checked {
     @apply dark:bg-primary-500 dark:border-primary-500;
   }
+
+  .checkbox:hover:not(:checked):not(:focus),
+  .radio:hover:not(:checked):not(:focus) {
+    @apply border-gray-500 dark:border-gray-400 transition-none;
+  }
   
   .button {
-    @apply group relative
+    @apply relative
       inline-flex items-center px-4 py-2 
       border border-gray-300 dark:border-gray-600
       rounded-md shadow-sm text-sm font-medium 
       text-gray-700 dark:text-gray-300 
       bg-white dark:bg-gray-700 
       motion-safe:transition-shadow;
+  }
+
+  .button.is-rounded {
+    @apply rounded-full;
   }
   
   .button:hover {
@@ -236,18 +250,16 @@
     @apply underline;
   }
   
-  @responsive {
-    .button.is-icon-only svg {
-      @apply mx-0;
-    }
+  .button.is-icon-only svg {
+    @apply mx-0;
+  }
+
+  .button.not-is-icon-only svg {
+    @apply -ml-0.5 mr-1.5;
+  }
   
-    .button.not-is-icon-only svg {
-      @apply -ml-0.5 mr-1.5;
-    }
-    
-    .button.not-is-icon-only svg.is-right {
-      @apply ml-2 -mr-1;
-    }
+  .button.not-is-icon-only svg.is-right {
+    @apply ml-2 -mr-1;
   }
   
   .button .icon.is-on-left {

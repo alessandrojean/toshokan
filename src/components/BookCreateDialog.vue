@@ -1,39 +1,38 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog
-      as="div"
       static
       :open="isOpen"
       :initial-focus="bookProviderSearch"
-      class="fixed z-20 inset-0 flex flex-col items-center sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16"
       @close="closeDialog"
     >
-      <TransitionChild
-        as="template"
-        enter="motion-safe:transition-opacity duration-300 ease-out"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="motion-safe:transition-opacity duration-200 ease-in"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
-        <div
-          class="hidden sm:block dialog-overlay"
-          @click="closeDialog"
-        />
-      </TransitionChild>
+      <div class="dialog">
+        <TransitionChild
+          as="template"
+          enter="motion-safe:transition-opacity duration-300 ease-out"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="motion-safe:transition-opacity duration-200 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
+          <div
+            class="hidden sm:block dialog-overlay"
+            @click="closeDialog"
+          />
+        </TransitionChild>
 
-      <TransitionChild
-        as="template"
-        enter="motion-reduce:transition-none duration-300 ease-out"
-        enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
-        enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
-        leave="motion-reduce:transition-none duration-200 ease-in"
-        leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
-        leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
-      >
-        <div class="relative flex flex-col w-full max-w-3xl h-full overflow-hidden text-left motion-safe:transition-all transform bg-white dark:bg-gray-800 sm:shadow-xl sm:rounded-lg">
-          <div class="relative overflow-hidden bg-primary-600 dark:bg-primary-500 flex-shrink-0 flex items-center px-4 md:px-6 py-4 md:py-5">
+        <TransitionChild
+          as="div"
+          class="dialog-content transform"
+          enter="motion-reduce:transition-none duration-300 ease-out"
+          enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
+          enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
+          leave="motion-reduce:transition-none duration-200 ease-in"
+          leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
+          leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
+        >
+          <div class="dialog-header">
             <Avatar
               v-if="shared"
               class="mr-6"
@@ -44,10 +43,10 @@
             />
 
             <div class="flex-grow">
-              <DialogTitle as="h2" class="text-lg font-medium font-display leading-6 text-white">
+              <DialogTitle as="h2" class="dialog-title">
                 {{ t('dashboard.newBook.title') }}
               </DialogTitle>
-              <DialogDescription as="p" class="hidden sm:block mt-0.5 text-sm font-medium text-white opacity-80">
+              <DialogDescription as="p" class="dialog-description">
                 {{ t('dashboard.newBook.description') }}
               </DialogDescription>
             </div>
@@ -59,7 +58,7 @@
             />
 
             <button
-              class="flex-shrink-0 p-2 -mr-2 text-primary-200 hover:text-white focus-visible:text-white hover:bg-primary-500 dark:hover:bg-primary-400 rounded-md focus:outline-none has-ring-focus"
+              class="close-button has-ring-focus"
               @click="closeDialog"
             >
               <span aria-hidden="true">
@@ -118,8 +117,8 @@
                 v-if="bookCreatedId"
                 class="max-w-md mx-auto h-full flex items-center justify-center flex-col space-y-4"
               >
-                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-gray-700">
-                  <CheckOutlineIcon class="w-6 h-6 text-green-500 dark:text-green-400" />
+                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-gray-700">
+                  <CheckOutlineIcon class="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
                 </div>
 
                 <p class="font-medium font-display leading-6 text">
@@ -212,7 +211,7 @@
             </transition>
           </div>
 
-          <div class="flex-shrink-0 flex flex-row-reverse justify-start border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 md:px-6 py-3 md:py-4">
+          <div class="dialog-footer">
             <button
               v-if="bookCreatedId"
               type="button"
@@ -272,8 +271,8 @@
             :loading="loading || inserting"
             :blur="false"
           />
-        </div>
-      </TransitionChild>
+        </TransitionChild>
+      </div>
     </Dialog>
   </TransitionRoot>
 </template>
@@ -687,3 +686,51 @@ function useRevisionStep (book) {
   return { bookInfo }
 }
 </script>
+
+<style lang="postcss" scoped>
+.dialog {
+  @apply fixed z-20 inset-0 flex flex-col items-center
+    sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16;
+}
+
+.dialog-content {
+  @apply relative flex flex-col w-full max-w-3xl h-full
+    overflow-hidden text-left bg-white dark:bg-gray-800
+    sm:shadow-xl sm:rounded-lg;
+}
+
+.dialog-header {
+  @apply relative overflow-hidden
+    bg-primary-600 dark:bg-primary-500
+    shrink-0 flex items-center
+    px-4 md:px-6 py-4 md:py-5;
+}
+
+.dialog-title {
+  @apply text-lg font-medium font-display leading-6 text-white;
+}
+
+.dialog-description {
+  @apply hidden sm:block mt-0.5 text-sm font-medium text-white opacity-80;
+}
+
+.dialog-footer {
+  @apply shrink-0 flex flex-row-reverse justify-start
+    border-t border-gray-200 dark:border-gray-600
+    bg-gray-50 dark:bg-gray-800
+    px-4 md:px-6 py-3 md:py-4;
+}
+
+.close-button {
+  @apply shrink-0 p-2 -mr-2 text-primary-200 rounded;
+}
+
+.close-button:hover {
+  @apply text-white bg-primary-500 dark:bg-primary-400;
+}
+
+.close-button:focus-visible {
+  @apply text-white ring-primary-300
+    ring-offset-primary-600 dark:ring-offset-primary-500;
+}
+</style>

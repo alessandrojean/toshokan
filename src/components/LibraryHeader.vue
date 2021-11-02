@@ -19,7 +19,7 @@
               @click="$emit('click:filter')"
             >
               <span aria-hidden="true">
-                <ArchiveIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                <ArchiveIcon class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
               </span>
               <span class="sr-only">
                 {{ t('dashboard.library.currentGroup') }}
@@ -32,7 +32,7 @@
               @click="$emit('click:filter')"
             >
               <span aria-hidden="true">
-                <SwitchVerticalIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                <SwitchVerticalIcon class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
               </span>
               <span class="sr-only">
                 {{ t('dashboard.library.sortingBy') }}

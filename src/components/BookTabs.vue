@@ -17,7 +17,7 @@
         >
           <button
             :class="[
-              'flex-shrink-0 px-1 py-4 font-medium border-b-2 -mb-px has-ring-focus dark:focus-visible:ring-offset-gray-900 disabled:cursor-default',
+              'shrink-0 px-1 py-4 font-medium border-b-2 -mb-px has-ring-focus dark:focus-visible:ring-offset-gray-900 disabled:cursor-default',
               'disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
               selected
                 ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
@@ -95,7 +95,7 @@
                   <div
                     v-if="mt.badge && !mt.samePrice"
                     :class="[
-                      mt.badge <= 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-800',
+                      mt.badge <= 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-800',
                       'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
                     ]"
                   >

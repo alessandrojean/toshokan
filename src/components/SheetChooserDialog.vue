@@ -301,7 +301,7 @@ export default {
 .dialog-header {
   @apply relative overflow-hidden
     bg-primary-600 dark:bg-primary-500
-    flex-shrink-0 flex items-center
+    shrink-0 flex items-center
     px-4 md:px-6 py-4 md:py-5;
 }
 
@@ -314,14 +314,14 @@ export default {
 }
 
 .dialog-footer {
-  @apply flex-shrink-0 flex flex-row-reverse justify-start
+  @apply shrink-0 flex flex-row-reverse justify-start
     border-t border-gray-200 dark:border-gray-600
     bg-gray-50 dark:bg-gray-800
     px-4 md:px-6 py-3 md:py-4;
 }
 
 .close-button {
-  @apply flex-shrink-0 p-2 -mr-2 text-primary-200 rounded;
+  @apply shrink-0 p-2 -mr-2 text-primary-200 rounded;
 }
 
 .close-button:hover {
@@ -367,14 +367,14 @@ export default {
 }
 
 .fake-radio {
-  @apply flex-shrink-0 w-4 h-4 mr-4 rounded-xl relative
+  @apply shrink-0 w-4 h-4 mr-4 rounded-xl relative
     border border-gray-300 dark:border-gray-600
     bg-white dark:bg-gray-900;
 }
 
 .fake-radio::after {
   @apply w-1.5 h-1.5 rounded-xl bg-white hidden
-    absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
   content: '';
 }
 
@@ -424,7 +424,7 @@ export default {
 }
 
 .owner-picture {
-  @apply w-9 h-9 rounded-full object-contain flex-shrink-0
+  @apply w-9 h-9 rounded-full object-contain shrink-0
     border-2 border-gray-100 dark:border-gray-600;
 }
 
@@ -465,7 +465,7 @@ export default {
 }
 
 .sheet-attributes {
-  @apply flex-shrink-0 md:w-20 md:ml-4 mr-4 md:mr-0
+  @apply shrink-0 md:w-20 md:ml-4 mr-4 md:mr-0
     flex items-center justify-end space-x-3
     text-gray-500;
 }

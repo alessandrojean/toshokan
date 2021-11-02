@@ -77,7 +77,7 @@ export default {
 
 <style lang="postcss" scoped>
 .avatar {
-  @apply w-12 h-12 rounded-full relative flex-shrink-0
+  @apply w-12 h-12 rounded-full relative shrink-0
     border-2 border-primary-50;
 }
 

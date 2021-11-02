@@ -17,7 +17,7 @@
           </span>
         </p>
       </div>
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <button
           type="button"
           class="-mr-1 flex p-2 rounded-md hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"

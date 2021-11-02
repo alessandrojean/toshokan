@@ -1,7 +1,7 @@
 <template>
   <section
     :class="[
-      'motion-safe:transition-transform transform duration-200 h-16 bg-white dark:bg-gray-800 shadow-top sm:hidden fixed inset-x-0 bottom-16 pt-5 pb-2 rounded-t-2xl border-t dark:border-r dark:border-l dark:-mx-px border-gray-200 dark:border-gray-700',
+      'motion-safe:transition-transform duration-200 h-16 bg-white dark:bg-gray-800 shadow-top sm:hidden fixed inset-x-0 bottom-16 pt-5 pb-2 rounded-t-2xl border-t dark:border-r dark:border-l dark:-mx-px border-gray-200 dark:border-gray-700',
       sheetLoading ? 'translate-y-full' : '',
       loading ? 'translate-y-full' : 'translate-y-0'
     ]"

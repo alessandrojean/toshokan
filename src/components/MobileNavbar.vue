@@ -69,11 +69,11 @@
           </transition>
           <transition
             enter-active-class="transition motion-reduce:transition-none duration-300 md:duration-100 ease-out"
-            enter-from-class="transform translate-y-full opacity-0"
-            enter-to-class="transform translate-y-0 opacity-100"
+            enter-from-class="translate-y-full opacity-0"
+            enter-to-class="translate-y-0 opacity-100"
             leave-active-class="transition motion-reduce:transition-none duration-200 md:duration-75 ease-in"
-            leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform translate-y-full opacity-0"
+            leave-from-class="translate-y-0 opacity-100"
+            leave-to-class="translate-y-full opacity-0"
           >
             <PopoverPanel
               as="ul"

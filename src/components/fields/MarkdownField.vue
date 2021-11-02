@@ -5,7 +5,13 @@
     :required="required"
     v-slot="{ inputId, ariaDescribedBy }"
   >
-    <div :class="['markdown-editor', hasFocus ? 'has-focus' : '']">
+    <div
+      :class="[
+        'markdown-editor',
+        hasFocus ? 'has-focus' : '',
+        currentTab === 1 ? 'view-mode' : ''
+      ]"
+    >
       <TabGroup @change="changedTab" as="div">
         <TabPanels as="div" class="relative z-0">
           <TabPanel class="tab-panel">
@@ -51,8 +57,8 @@
               {{ t('book.form.markdown') }}
             </span>
           </a>
-          <Tab class="tab has-ring-focus flex-shrink-0">Editor</Tab>
-          <Tab class="tab has-ring-focus flex-shrink-0">Visualização</Tab>
+          <Tab class="tab has-ring-focus shrink-0">Editor</Tab>
+          <Tab class="tab has-ring-focus shrink-0">Visualização</Tab>
           <span
             v-if="characterCount > 0"
             class="characters flex-grow"
@@ -123,7 +129,11 @@ export default {
 
     const markdownContent = ref(renderMarkdown(modelValue.value))
 
+    const currentTab = ref(0)
+
     function changedTab (index) {
+      currentTab.value = index
+
       if (index === 1) {
         markdownContent.value = renderMarkdown(modelValue.value)
       }
@@ -141,6 +151,7 @@ export default {
       markdownContent,
       changedTab,
       hasFocus,
+      currentTab,
       t
     }
   }
@@ -161,6 +172,10 @@ export default {
     border-primary-500 dark:border-primary-400;
 }
 
+.markdown-editor:hover:not(.has-focus):not(.view-mode) {
+  @apply border-gray-400 dark:border-gray-500 transition-none;
+}
+
 .tab-list {
   @apply px-3 border-t border-gray-200 dark:border-gray-600
     flex items-center space-x-4;
@@ -170,6 +185,10 @@ export default {
   @apply border-primary-300 dark:border-primary-400 border-dashed;
 }
 
+.markdown-editor:hover:not(.has-focus):not(.view-mode) .tab-list {
+  @apply border-gray-300 dark:border-gray-500;
+}
+
 .tab {
   @apply text-sm font-medium h-full py-1.5 px-0.5
     text-gray-600 dark:text-gray-400
@@ -177,7 +196,7 @@ export default {
 }
 
 .markdown-editor:not(.has-focus) .tab:not([aria-selected="true"]):hover {
-  @apply border-gray-300 dark:border-gray-600;
+  @apply border-gray-300 dark:border-gray-400;
 }
 
 .tab:hover {

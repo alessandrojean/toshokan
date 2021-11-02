@@ -311,7 +311,7 @@ export default {
 .dialog-header {
   @apply relative overflow-hidden
     bg-primary-600 dark:bg-primary-500
-    flex-shrink-0 flex items-center
+    shrink-0 flex items-center
     px-4 md:px-6 py-4 md:py-5;
 }
 
@@ -324,14 +324,14 @@ export default {
 }
 
 .dialog-footer {
-  @apply flex-shrink-0 flex flex-row-reverse justify-start
+  @apply shrink-0 flex flex-row-reverse justify-start
     border-t border-gray-200 dark:border-gray-600
     bg-gray-50 dark:bg-gray-800
     px-4 md:px-6 py-3 md:py-4;
 }
 
 .close-button {
-  @apply flex-shrink-0 p-2 -mr-2 text-primary-200 rounded;
+  @apply shrink-0 p-2 -mr-2 text-primary-200 rounded;
 }
 
 .close-button:hover {
@@ -344,14 +344,14 @@ export default {
 }
 
 .tab-list {
-  @apply flex flex-nowrap w-full flex-shrink-0
+  @apply flex flex-nowrap w-full shrink-0
     overflow-x-auto md:overflow-x-visible overflow-y-visible
     px-4 md:px-6 space-x-6
     border-b border-gray-300 dark:border-gray-600;
 }
 
 .tab-button {
-  @apply flex flex-shrink-0 items-center justify-center
+  @apply flex shrink-0 items-center justify-center
     px-1 py-2.5 -mb-px
     text-sm font-medium border-b-2 border-transparent
     text-gray-600 dark:text-gray-400;

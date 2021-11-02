@@ -4,9 +4,6 @@
     class="history-item group has-ring-focus"
     @click="$emit('click', search)"
   >
-    <span aria-hidden="true" class="flex-shrink-0">
-      <ClockIcon class="clock" />
-    </span>
     <p class="flex-grow truncate min-w-0">
       {{ search }}
     </p>
@@ -19,7 +16,7 @@
         {{ t('dashboard.search.removeFromHistory')}}
       </span>
       <span aria-hidden="true">
-        <TrashIcon class="w-5 h-5" />
+        <XIcon class="w-5 h-5" />
       </span>
     </button>
   </a>
@@ -28,14 +25,10 @@
 <script>
 import { useI18n } from 'vue-i18n'
 
-import { ClockIcon } from '@heroicons/vue/outline'
-import { TrashIcon } from '@heroicons/vue/solid'
+import { XIcon } from '@heroicons/vue/solid'
 
 export default {
-  components: {
-    ClockIcon,
-    TrashIcon
-  },
+  components: { XIcon },
 
   props: {
     search: {
@@ -58,43 +51,39 @@ export default {
 .history-item {
   @apply flex items-center relative
     text-sm sm:text-base
-    text-gray-800 dark:text-gray-200
-    bg-gray-50 dark:bg-gray-700
-    pl-4 pr-10 py-3 sm:py-4
-    space-x-4 rounded-md font-medium;
+    text-gray-800 dark:text-gray-400
+    bg-white dark:bg-gray-800
+    pl-5 pr-10 py-3 sm:py-3.5 space-x-4;
 }
 
 .history-item:hover {
-  @apply text-white dark:text-gray-50
-    bg-primary-500 dark:bg-gray-600;
+  @apply text-gray-800 dark:text-gray-300
+    bg-gray-50 dark:bg-gray-700;
 }
 
 .history-item:focus-visible {
-  @apply bg-primary-500 text-white
-    dark:ring-offset-gray-800;
-}
-
-.clock {
-  @apply w-6 h-6 text-gray-500 dark:text-gray-400;
-}
-
-.history-item:focus-visible .clock,
-.history-item:hover .clock {
-  @apply text-primary-100 dark:text-white;
+  @apply bg-gray-50 dark:bg-gray-700
+    text-gray-800 dark:text-gray-300
+    dark:ring-offset-gray-800 z-10;
 }
 
 .remove-button {
   @apply absolute right-3 p-1 rounded
-    text-gray-500 dark:text-gray-400;
+    text-gray-400 dark:text-gray-500;
 }
 
 .history-item:focus-visible .remove-button,
 .history-item:hover .remove-button {
-  @apply text-primary-100 dark:text-white;
+  @apply text-gray-400 dark:text-gray-400;
 }
 
 .remove-button:hover,
-.history-item:hover .remove-button:hover {
-  @apply bg-primary-400 dark:bg-gray-500 text-white;
+.history-item:hover .remove-button:hover,
+.remove-button:focus-visible {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+.remove-button:focus-visible {
+  @apply dark:bg-gray-800 dark:ring-offset-gray-800;
 }
 </style>

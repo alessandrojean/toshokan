@@ -30,7 +30,7 @@
 
           <form
             :class="[
-              'py-4 md:py-6 mx-4 md:mx-6 flex items-center space-x-3 md:space-x-4',
+              'py-4 px-5 flex items-center space-x-3 md:space-x-4',
               !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
             ]"
             @submit.prevent="handleSearch"
@@ -193,11 +193,11 @@
               v-else-if="searchHistory.length > 0"
               class="history"
             >
-              <h3 class="title">
+              <h3 class="title px-5">
                 {{ t('dashboard.search.history') }}
               </h3>
 
-              <ul class="space-y-2">
+              <ul class="divide-y divide-gray-200 dark:divide-gray-700 border-y border-gray-200 dark:border-gray-700">
                 <li
                   v-for="historyItem in searchHistory"
                   :key="historyItem"
@@ -498,7 +498,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .results {
-  @apply flex-1 overflow-y-auto p-4 md:p-6 space-y-6;
+  @apply flex-1 overflow-y-auto p-5 space-y-3.5;
 }
 
 .results-header {
@@ -536,17 +536,17 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .no-results,
 .no-history {
-  @apply py-10 mx-4 md:mx-6 mb-2 md:mb-0
+  @apply py-10 mx-5 mb-2 md:mb-0
     md:text-lg text-gray-400 font-medium;
 }
 
 .history {
-  @apply flex-1 overflow-y-auto p-4 md:p-6 space-y-6;
+  @apply flex-1 overflow-y-auto space-y-3.5 pt-6 pb-5;
 }
 
 .search-footer {
   @apply border-t border-gray-300 dark:border-gray-600
-    text-xs text-gray-600 dark:text-gray-300 font-medium
-    py-4 md:py-5 mx-4 md:mx-6;
+    text-xs text-gray-600 dark:text-gray-400 font-medium
+    py-4 md:py-5 px-5;
 }
 </style>

@@ -37,7 +37,7 @@
               {{ t('footer.donate.actionDonate') }}
             </DialogTitle>
             <button
-              class="flex-shrink-0 p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 focus-visible:text-gray-600 dark:focus-visible:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md has-ring-focus"
+              class="shrink-0 p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 focus-visible:text-gray-600 dark:focus-visible:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md has-ring-focus"
               :title="t('footer.donate.actionClose')"
               @click="closeDialog"
             >

@@ -17,10 +17,10 @@
 
         <transition
           mode="out-in"
-          leave-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-in"
+          leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
           leave-from-class="opacity-100 translate-x-0"
           leave-to-class="opacity-0 translate-x-2"
-          enter-active-class="transition motion-reduce:transition-none transform motion-reduce:transform-none duration-200 ease-out"
+          enter-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-out"
           enter-from-class="opacity-0 -translate-x-2"
           enter-to-class="opacity-100 translate-x-0"
         >

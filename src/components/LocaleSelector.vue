@@ -13,7 +13,7 @@
         <img
           :src="createFlagUrl(localeFlags[modelValue])"
           aria-hidden="true"
-          class="flex-shrink-0 h-5 w-5 rounded-full"
+          class="shrink-0 h-5 w-5 rounded-full"
         >
         <span class="ml-2.5 block truncate">
           {{ t('app.localeName', null, { locale: modelValue }) }}
@@ -52,7 +52,7 @@
               <img
                 :src="createFlagUrl(localeFlags[loc])"
                 aria-hidden="true"
-                class="flex-shrink-0 h-5 w-5 rounded-full"
+                class="shrink-0 h-5 w-5 rounded-full"
               />
               <span
                 :class="[

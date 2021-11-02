@@ -53,7 +53,7 @@
               <tr v-for="book in items" :key="book.id" class="group hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
+                    <div class="shrink-0 h-10 w-10">
                       <img class="h-10 w-10 rounded object-cover" :src="book.coverUrl" alt="" />
                     </div>
                     <div class="ml-4">
@@ -70,7 +70,7 @@
                   <span
                     :class="[
                       book.status === BookStatus.READ
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:bg-opacity-50 dark:text-green-500 dark:border dark:border-green-500'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:bg-opacity-50 dark:text-emerald-500 dark:border dark:border-emerald-500'
                         : 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-40 dark:text-red-400 dark:border dark:border-red-400',
                       'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
                     ]"

@@ -234,7 +234,7 @@ export default {
 }
 
 .book-cover.is-spoiler {
-  @apply filter blur;
+  @apply blur;
 }
 
 .current-volume,
