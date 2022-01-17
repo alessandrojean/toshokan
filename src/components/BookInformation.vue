@@ -24,22 +24,18 @@
       <!-- Book subtitle -->
       <p
         v-if="showBookInfo && book.titleParts.subtitle"
-        class="italic font-semibold dark:font-medium font-display text-md md:text-xl text-gray-600 dark:text-gray-300 -mt-1 mb-2"
+        class="italic font-medium font-display text-md md:text-xl text-gray-700 dark:text-gray-300 -mt-1 mb-2"
       >
         {{ book.titleParts.subtitle }}
       </p>
 
       <!-- Book authors -->
-      <p
-        v-if="showBookInfo"
-        :class="book.titleParts.subtitle ? '' : 'md:text-lg'"
-        class="author-list"
-      >
+      <p v-if="showBookInfo" class="author-list">
         <template v-for="(author, idx) of book.authors" :key="idx">
           <a
             href="#"
             class="author has-ring-focus"
-            @click="searchByAuthor(author)"
+            @click="searchByAuthor(author, $event)"
           >
             {{ author }}
           </a>
@@ -56,7 +52,7 @@
       v-if="showBookInfo"
       v-html="synopsisRendered"
       :class="blurSynopsis ? 'md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto' : ''"
-      class="prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal max-w-none dark:text-gray-300"
+      class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-none"
     />
     <div v-else class="flex flex-col space-y-2">
       <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
@@ -136,24 +132,29 @@
     </div>
 
     <!-- Book metadata -->
-    <div class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-400">
-      <ul v-if="showBookInfo">
-        <li v-if="book.codeType !== 'N/A'">
-          {{ book.codeType }}: <span>{{ book.code }}</span>
-        </li>
-        <li>
-          {{ t('book.properties.createdAt') }}:
-          <time :datetime="book.createdAt.toISOString()">
-            {{ createdAt }}
-          </time>
-        </li>
-        <li>
-          {{ t('book.properties.updatedAt') }}:
-          <time :datetime="book.updatedAt.toISOString()">
-            {{ updatedAt }}
-          </time>
-        </li>
-      </ul>
+    <div class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+      <dl v-if="showBookInfo" class="space-y-1">
+        <div v-if="book.codeType !== 'N/A'" class="flex">
+          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ book.codeType }}</dt>
+          <dd class="grow text-right sm:text-left">{{ book.code }}</dd>
+        </div>
+        <div class="flex">
+          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ t('book.properties.createdAt') }}</dt>
+          <dd class="tabular-nums grow text-right sm:text-left">
+            <time :datetime="book.createdAt.toISOString()">
+              {{ createdAt }}
+            </time>
+          </dd>
+        </div>
+        <div class="flex">
+          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ t('book.properties.updatedAt') }}</dt>
+          <dd class="tabular-nums grow text-right sm:text-left">
+            <time :datetime="book.updatedAt.toISOString()">
+              {{ updatedAt }}
+            </time>
+          </dd>
+        </div>
+      </dl>
       <div v-else class="flex flex-col space-y-1">
         <div class="motion-safe:animate-pulse w-44 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
         <div class="motion-safe:animate-pulse w-52 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
@@ -217,6 +218,9 @@
                 />
               </span>
               <span>{{ link.title }}</span>
+              <span aria-hidden="true">
+                <ExternalLinkIcon class="w-3.5 h-3.5 ext-icon" />
+              </span>
             </a>
           </li>
         </ul>
@@ -234,6 +238,7 @@ import useMarkdown from '@/composables/useMarkdown'
 
 import {
   BookmarkIcon as BookmarkSolidIcon,
+  ExternalLinkIcon,
   GlobeAltIcon,
   PencilIcon,
   StarIcon as StarSolidIcon
@@ -249,6 +254,8 @@ import {
 import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
+import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
+import NewPopIcon from '@/components/icons/NewPopIcon.vue'
 import PaniniIcon from '@/components/icons/PaniniIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
@@ -264,7 +271,10 @@ export default {
     BookmarkOutlineIcon,
     BookmarkSolidIcon,
     ClockIcon,
+    ExternalLinkIcon,
     GlobeAltIcon,
+    GoodreadsIcon,
+    NewPopIcon,
     PaniniIcon,
     PencilIcon,
     SkoobIcon,
@@ -388,10 +398,17 @@ export default {
 
       const bookCode = book.value ? book.value.code.replaceAll('-', '') : ''
 
-      const links = [{
-        title: 'Open Library',
-        url: 'https://openlibrary.org/isbn/' + bookCode
-      }]
+      const links = [
+        {
+          title: 'Goodreads',
+          url: `https://goodreads.com/search?q=${bookCode}`,
+          icon: GoodreadsIcon
+        },
+        {
+          title: 'Open Library',
+          url: `https://openlibrary.org/isbn/${bookCode}`
+        }
+      ]
 
       const amazonLinks = {
         BR: { title: 'Amazon.com.br', url: 'https://amazon.com.br' },
@@ -417,6 +434,14 @@ export default {
         })
       }
 
+      if (book.value?.publisher?.includes('NewPOP')) {
+        links.push({
+          title: 'NewPOP SHOP',
+          url: `https://www.lojanewpop.com.br/buscar?q=${bookCode}`,
+          icon: NewPopIcon
+        })
+      }
+
       if (country.value?.countryCode === 'BR') {
         links.push({
           title: 'Skoob',
@@ -438,7 +463,9 @@ export default {
 
     const showSearchDialog = inject('showSearchDialog')
 
-    function searchByAuthor (author) {
+    function searchByAuthor (author, event) {
+      event.preventDefault()
+
       const query = `${t('dashboard.search.keywords.author')}:"${author}"`
       showSearchDialog(query)
     }
@@ -478,12 +505,12 @@ export default {
 
 <style lang="postcss" scoped>
 .book-title {
-  @apply font-bold dark:font-semibold font-display
+  @apply font-semibold font-display
     text-2xl md:text-3xl dark:text-gray-100;
 }
 
 .author-list {
-  @apply font-medium text-gray-500 dark:text-gray-400 text-base;
+  @apply font-medium text-gray-500 dark:text-gray-400 text-base md:text-lg;
 }
 
 .author {
@@ -524,16 +551,20 @@ export default {
 }
 
 .book-external-link {
-  @apply flex items-center px-2.5 py-1
+  @apply flex items-center px-2 py-1
     mr-2 mt-2 space-x-1.5 rounded-full
-    bg-gray-100 dark:bg-gray-700 dark:text-gray-300
-    font-medium text-sm;
+    bg-gray-100 dark:bg-gray-700
+    text-gray-600 dark:text-gray-300
+    text-xs uppercase tracking-wide font-semibold;
 }
 
 .book-external-link:hover,
 .book-external-link:focus-visible {
-  @apply bg-gray-200 dark:bg-gray-600
-    text-gray-800 dark:text-gray-100;
+  @apply text-gray-800 dark:text-gray-100;
+}
+
+.book-external-link:hover {
+  @apply bg-gray-200 dark:bg-gray-600;
 }
 
 .book-external-link:focus-visible {

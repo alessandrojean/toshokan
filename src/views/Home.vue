@@ -65,7 +65,7 @@
 
           <div class="feature">
             <span class="icon" aria-hidden="true">
-              <ChipIcon />
+              <CodeIcon />
             </span>
             <h3>{{ t('home.features.openSource.title') }}</h3>
             <p>{{ t('home.features.openSource.description') }}</p>
@@ -121,7 +121,7 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import {
-  ChipIcon,
+  CodeIcon,
   DatabaseIcon,
   PhotographIcon,
   SearchIcon,
@@ -137,7 +137,7 @@ export default {
     HomeFooter,
     HomeHeader,
     SignInWithGoogleButton,
-    ChipIcon,
+    CodeIcon,
     DatabaseIcon,
     PhotographIcon,
     SearchIcon,

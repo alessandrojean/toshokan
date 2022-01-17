@@ -1,7 +1,7 @@
 <template>
   <footer class="hidden sm:block bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 py-4" role="contentinfo">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-between">
-      <p class="text-sm text-gray-400 dark:text-gray-400">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
 

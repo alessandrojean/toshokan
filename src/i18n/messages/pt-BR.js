@@ -543,6 +543,7 @@ export default {
       close: 'Fechar',
       title: 'Pesquisa',
       label: 'Pesquisar por',
+      searchBy: 'Pesquisar por "{0}"',
       placeholder: 'O quê você deseja buscar?',
       results: 'Resultados',
       history: 'Histórico',
@@ -591,7 +592,7 @@ export default {
         theme: {
           label: 'Tema',
           description: 'Defina o tema atual da aplicação.',
-          system: 'Seguir o sistema',
+          system: 'Sistema',
           light: 'Claro',
           dark: 'Escuro'
         },
@@ -655,6 +656,10 @@ export default {
         bought: 'Livros comprados',
         read: 'Livros lidos'
       },
+      publishersRankTitle: 'Rank de editoras',
+      authorsRankTitle: 'Rank de autores',
+      seriesRankTitle: 'Rank de séries',
+      bookQuantity: 'Quantidade de livros',
       monthlyExpense: 'Gasto mensal'
     },
     sheetChooser: {
@@ -672,6 +677,7 @@ export default {
       starred: 'Com estrela',
       label: 'Planilha',
       libraryOf: 'Biblioteca de',
+      viewing: 'Visualizando a biblioteca de {0}'
     }
   },
   about: {

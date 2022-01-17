@@ -229,7 +229,16 @@
               v-if="!searchLoading && searchedOnce && searchResults.length > 0"
               class="search-footer"
             >
-              {{ t('dashboard.search.resultCount', searchResults.length) }}
+              <p class="hidden sm:block">
+                {{ t('dashboard.search.resultCount', searchPagination.total_results) }}
+              </p>
+
+              <Paginator
+                v-if="searchPagination.total_pages > 1"
+                enabled
+                :pagination-info="searchPagination"
+                @page="handlePageChange"
+              />
             </div>
           </transition>
         </TransitionChild>
@@ -259,6 +268,7 @@ import {
 import { SearchIcon } from '@heroicons/vue/outline'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+import Paginator from '@/components/Paginator.vue'
 import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
 
@@ -271,6 +281,7 @@ export default {
     DialogTitle,
     TransitionChild,
     TransitionRoot,
+    Paginator,
     SearchHistoryItem,
     SearchIcon,
     SearchItem,
@@ -299,6 +310,7 @@ export default {
     const searchLoading = computed(() => store.state.collection.search.loading)
     const searchResults = computed(() => store.state.collection.search.results)
     const searchHistory = computed(() => store.state.collection.search.history)
+    const searchPagination = computed(() => store.state.collection.search.paginationInfo)
 
     const searchInput = ref(null)
     const results = ref(null)
@@ -321,14 +333,17 @@ export default {
       setTimeout(() => clearSearch(), 300)
     }
 
-    async function search (query) {
+    async function search (query, page = 1) {
       const searchTerm = query || searchQuery.value
       searchQuery.value = searchTerm
 
       if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
         searchInput.value?.blur()
 
-        await store.dispatch('collection/search', { query: searchTerm })
+        await store.dispatch('collection/search', {
+          query: searchTerm,
+          page
+        })
 
         if (searchResults.value.length > 0 && query) {
           results.value?.focus()
@@ -413,6 +428,10 @@ export default {
       })
     }
 
+    async function handlePageChange (page) {
+      await search(null, page)
+    }
+
     return {
       t,
       closeDialog,
@@ -422,6 +441,7 @@ export default {
       searchLoading,
       searchResults,
       searchHistory,
+      searchPagination,
       searchInput,
       results,
       handleSubmit,
@@ -432,7 +452,8 @@ export default {
       sortDirection,
       toggleSortDirection,
       sortProperties,
-      removeHistoryItem
+      removeHistoryItem,
+      handlePageChange
     }
   }
 }
@@ -546,7 +567,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .search-footer {
   @apply border-t border-gray-300 dark:border-gray-600
-    text-xs text-gray-600 dark:text-gray-400 font-medium
-    py-4 md:py-5 px-5;
+    text-sm text-gray-600 dark:text-gray-400 font-medium
+    py-4 px-5 flex justify-center sm:justify-between items-center;
 }
 </style>

@@ -7,7 +7,7 @@
     <h3 v-else id="monthly-expense-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
       {{ t('dashboard.stats.monthlyExpense') }}
     </h3>
-    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img" aria-label="Gráfico do gasto mensal">
+    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img">
       <transition
         mode="out-in"
         enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"

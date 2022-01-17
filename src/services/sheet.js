@@ -623,7 +623,7 @@ export function createSearchKeywords () {
   }
 }
 
-export function searchBooks (sheetId, idMap, searchTerm, sort) {
+export async function searchBooks (sheetId, idMap, searchTerm, sort, page = 1) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const searchRegex = searchTerm
@@ -659,6 +659,7 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
         or ${CollectionColumns.ID} = "${searchTerm}"
         or ${CollectionColumns.CODE} = "${searchTerm}"
       order by ${sortBy} ${sortDirection}
+      limit ${PER_PAGE} offset ${(page - 1) * PER_PAGE}
     `)
   } else {
     const conditions = Object.entries(searchQueryObj)
@@ -763,8 +764,11 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
       select *
       where ${conditions.join('\n  and ')}
       order by ${sortBy} ${sortDirection}
+      limit ${PER_PAGE} offset ${(page - 1) * PER_PAGE}
     `)
   }
+
+  const totalResults = await countTotalResults(sheetId, query.query)
 
   return new Promise((resolve, reject) => {
     query.send(response => {
@@ -782,7 +786,7 @@ export function searchBooks (sheetId, idMap, searchTerm, sort) {
         books.push(parseBookFromDataTable(dataTable, idMap, i))
       }
 
-      resolve(books)
+      resolve({ results: books, total: totalResults })
     })
   })
 }

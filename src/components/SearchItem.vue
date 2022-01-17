@@ -184,7 +184,12 @@ export default {
 .result-title {
   @apply flex items-center space-x-1.5
     text-sm font-display font-medium w-full truncate
-    dark:text-gray-100 inline-block;
+    dark:text-gray-100;
+}
+
+.result:hover .result-title {
+  @apply underline underline-offset-1 decoration-2
+    decoration-primary-600/60 dark:decoration-primary-400/80;
 }
 
 .result-authors {

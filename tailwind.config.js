@@ -48,15 +48,18 @@ module.exports = {
             a: {
               color: theme('colors.primary.600'),
               '&:hover': {
-                color: theme('colors.primary.800')
+                color: `${theme('colors.primary.800')} !important`
               },
               '&:focus': {
+                outline: 'none'
+              },
+              '&:focus-visible': {
                 outline: `2px solid ${theme('colors.primary.600')}`
               }
             }
           }
         },
-        'dark': {
+        invert: {
           css: {
             color: theme('colors.gray.300'),
             'strong, h1, h2, h3, h4, h5, h6': {
@@ -65,9 +68,12 @@ module.exports = {
             a: {
               color: theme('colors.primary.400'),
               '&:hover': {
-                color: theme('colors.primary.300')
+                color: `${theme('colors.primary.300')} !important`
               },
               '&:focus': {
+                outline: 'none'
+              },
+              '&:focus-visible': {
                 outline: `2px solid ${theme('colors.primary.500')}`
               }
             },

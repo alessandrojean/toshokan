@@ -30,7 +30,7 @@
           </TabPanel>
           <TabPanel class="tab-panel">
             <div
-              class="preview prose prose-sm dark:prose-dark"
+              class="preview prose prose-sm dark:prose-invert"
               v-html="markdownContent"
             />
           </TabPanel>

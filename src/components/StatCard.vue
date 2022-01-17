@@ -24,7 +24,7 @@
           enter-from-class="opacity-0 -translate-x-2"
           enter-to-class="opacity-100 translate-x-0"
         >
-          <p class="font-semibold dark:text-gray-50 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue">
+          <p class="font-semibold dark:text-gray-50 text-md sm:text-lg lg:text-xl mb-0" v-if="showValue && !alwaysHidden">
             {{ value || '' }}
           </p>
           <div v-else class="h-5 sm:h-6 mt-1 bg-gray-300 dark:bg-gray-700 rounded w-32 lg:w-24"></div>
@@ -32,7 +32,7 @@
       </div>
     </div>
     <button
-      v-if="sensitive"
+      v-if="sensitive && !alwaysHidden"
       type="button"
       class="button is-ghost is-darker is-icon-only -mr-2 p-2"
       @click.stop="showValue = !showValue"
@@ -71,6 +71,7 @@ export default {
   },
 
   props: {
+    alwaysHidden: Boolean,
     loading: {
       type: Boolean,
       required: true

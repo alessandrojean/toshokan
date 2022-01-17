@@ -23,22 +23,23 @@
 
           <div class="hidden md:block md:ml-6" role="navigation" aria-label="Menu principal" id="main-menu-desktop">
             <ul class="flex space-x-4">
-              <li
-                v-for="item in desktopNavigation"
-                :key="item.name"
-                :lang="item.lang || ''"
-                class="self-stretch"
-              >
-                <router-link
-                  :exact="item.exact"
-                  :exact-active-class="item.exact ? 'is-active' : undefined"
-                  :active-class="!item.exact ? 'is-active' : undefined"
-                  :to="{ name: item.name }"
-                  class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+              <template v-for="item in desktopNavigation" :key="item.name">
+                <li
+                  v-if="!item.hidden"
+                  :lang="item.lang || ''"
+                  class="self-stretch"
                 >
-                  {{ item.title }}
-                </router-link>
-              </li>
+                  <router-link
+                    :exact="item.exact"
+                    :exact-active-class="item.exact ? 'is-active' : undefined"
+                    :active-class="!item.exact ? 'is-active' : undefined"
+                    :to="{ name: item.name }"
+                    class="block nav-link text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+                  >
+                    {{ item.title }}
+                  </router-link>
+                </li>
+              </template>
             </ul>
           </div>
         </div>
@@ -46,7 +47,7 @@
         <div class="absolute inset-y-0 right-0 flex items-center sm:pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
           <!-- Search link -->
           <button
-            v-if="showSearch"
+            v-if="!loading"
             @click="showSearchDialog"
             class="lg:hidden p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
@@ -67,7 +68,7 @@
           >
             <button
               class="fake-search-input has-ring-focus"
-              v-if="showSearch"
+              v-if="!loading"
               @click="showSearchDialog"
             >
               <span aria-hidden="true">
@@ -85,6 +86,8 @@
               </span>
             </button>
           </transition>
+
+          <ThemeToggle class="ml-1" />
 
           <!-- Profile dropdown -->
           <Menu as="div" class="ml-3 md:relative hidden sm:inline-block" v-slot="{ open }">
@@ -182,6 +185,8 @@ import {
   SearchIcon
 } from '@heroicons/vue/solid'
 
+import ThemeToggle from '@/components/ThemeToggle.vue'
+
 export default {
   name: 'AppNavbar',
 
@@ -190,6 +195,7 @@ export default {
     MenuButton,
     MenuItem,
     MenuItems,
+    ThemeToggle,
     CogIcon,
     LibraryIcon,
     LogoutIcon,
@@ -203,6 +209,10 @@ export default {
     const { t } = useI18n({ useScope: 'global' })
 
     const open = ref(false)
+
+    const shared = computed(() => store.getters['sheet/shared'])
+    const loading = computed(() => store.state.sheet.loading)
+
     const navigation = computed(() => [
       {
         name: 'DashboardHome',
@@ -215,7 +225,8 @@ export default {
       },
       {
         name: 'DashboardStats',
-        title: t('dashboard.header.links.statistics')
+        title: t('dashboard.header.links.statistics'),
+        hidden: shared.value || loading.value
       }
     ])
     const searchQuery = ref('')
@@ -228,8 +239,6 @@ export default {
     const profileEmail = computed(() => store.state.auth.profileEmail)
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
     const profileName = computed(() => store.state.auth.profileName)
-
-    const showSearch = computed(() => !store.state.sheet.loading)
 
     const signOut = () => store.dispatch('auth/signOut')
 
@@ -255,7 +264,7 @@ export default {
       isMac,
       searchNavbar,
       searchQuery,
-      showSearch,
+      loading,
       signOut,
       showSearchDialog,
       isTransparent,
@@ -300,7 +309,7 @@ abbr[title].no-underline {
 }
 
 .fake-search-input:focus-visible {
-  @apply ring-offset-gray-800 dark:ring-offset-gray-800
+  @apply ring-primary-500 ring-offset-gray-800 dark:ring-offset-gray-800
     text-gray-300 dark:text-gray-300;
 }
 </style>

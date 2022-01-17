@@ -18,14 +18,17 @@
             {{ t('home.header.instructions') }}
           </router-link>
         </div>
-        <router-link
-          :to="{ name: 'DashboardHome' }"
-          class="button is-primary is-rounded"
-          v-if="signedIn"
-        >
-          {{ t('home.header.dashboard') }}
-        </router-link>
-        <SignInWithGoogleButton collapse />
+        <div class="flex items-center">
+          <ThemeToggle light class="mr-3" />
+          <router-link
+            :to="{ name: 'DashboardHome' }"
+            class="button is-primary is-rounded"
+            v-if="signedIn"
+          >
+            {{ t('home.header.dashboard') }}
+          </router-link>
+          <SignInWithGoogleButton collapse />
+        </div>
       </div>
     </div>
   </header>
@@ -38,11 +41,13 @@ import { useI18n } from 'vue-i18n'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 export default {
   components: {
     LibraryIcon,
+    ThemeToggle,
     SignInWithGoogleButton
   },
 

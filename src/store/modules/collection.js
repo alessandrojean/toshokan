@@ -75,6 +75,8 @@ export default {
         ? JSON.parse(localStorage.getItem('search_history'))
         : [],
       query: '',
+      page: 1,
+      pagination: null,
       sortBy: 'createdAt',
       sortDirection: 'desc',
       results: [],
@@ -97,6 +99,8 @@ export default {
       state.search = {
         ...state.search,
         query: '',
+        page: 1,
+        paginationInfo: null,
         sortBy: 'createdAt',
         sortDirection: 'desc',
         results: [],
@@ -173,7 +177,14 @@ export default {
     },
 
     [CollectionMutations.UPDATE_SEARCH]: function (state, search) {
-      state.search = { ...state.search, ...search }
+      state.search = {
+        ...state.search,
+        ...search,
+        paginationInfo: {
+          ...state.search.paginationInfo,
+          ...search.paginationInfo
+        }
+      }
 
       if (search.history) {
         localStorage.setItem('search_history', JSON.stringify(search.history))
@@ -344,8 +355,14 @@ export default {
       commit(MutationTypes.SHEET_UPDATE_LOADING, false, { root: true })
     },
 
-    async search ({ commit, dispatch, state, rootState }, { query, sortBy, sortDirection }) {
-      commit(CollectionMutations.UPDATE_SEARCH, { loading: true, results: [], query })
+    async search ({ commit, dispatch, state, rootState }, { query, sortBy, sortDirection, page }) {
+      commit(CollectionMutations.UPDATE_SEARCH, {
+        loading: true,
+        results: [],
+        page: page || 1,
+        pagination: null,
+        query
+      })
 
       const sheetId = rootState.sheet.sheetId
 
@@ -359,24 +376,35 @@ export default {
           sortDirection: sortDirection || state.search.sortDirection
         })
 
-        const results = await searchBooks(
+        const { results, total } = await searchBooks(
           sheetId,
           state.idMap,
           query,
           {
             sortBy: state.search.sortBy,
             sortDirection: state.search.sortDirection
-          }
+          },
+          page
         )
 
         const newHistory = [query].concat(state.search.history)
 
         commit(CollectionMutations.UPDATE_SEARCH, {
           results,
-          history: [...new Set(newHistory)].slice(0, 6)
+          history: [...new Set(newHistory)].slice(0, 6),
+          paginationInfo: buildPaginationInfo({
+            perPage: state.perPage,
+            links: 4,
+            totalResults: total,
+            page
+          })
         })
       } catch (e) {
-        commit(CollectionMutations.UPDATE_SEARCH, { results: [] })
+        commit(CollectionMutations.UPDATE_SEARCH, {
+          results: [],
+          page: 1,
+          paginationInfo: null
+        })
       } finally {
         commit(CollectionMutations.UPDATE_SEARCH, { loading: false })
       }

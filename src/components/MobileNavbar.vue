@@ -10,33 +10,31 @@
       <LibraryIconSolid class="text-primary-500 w-9 h-9" />
     </div>
     <ul class="w-full sm:h-full flex items-center sm:justify-start sm:flex-col sm:space-y-2">
-      <li
-        v-for="item in items"
-        :key="item.to"
-        class="flex-1 sm:flex-initial"
-      >
-        <router-link
-          custom
-          :to="{ name: item.to }"
-          v-slot="{ href, navigate, isActive, isExactActive }"
-        >
-          <a
-            :lang="item.lang"
-            :href="href"
-            :aria-current="isExactActive ? 'page' : undefined"
-            :class="[
-              (item.exact ? isExactActive : isActive) ? 'text-primary-600 dark:text-primary-400' : '',
-              'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
-            ]"
-            @click="navigate"
+      <template v-for="item in items" :key="item.to">
+        <li v-if="!item.hidden" class="flex-1 sm:flex-initial">
+          <router-link
+            custom
+            :to="{ name: item.to }"
+            v-slot="{ href, navigate, isActive, isExactActive }"
           >
-            <span aria-hidden="true">
-              <component :is="item.icon" class="w-6 h-6 sm:w-7 sm:h-7 motion-safe:transition-colors duration-500" />
-            </span>
-            <span class="text-xs sm:sr-only motion-safe:transition-colors duration-500">{{ item.title }}</span>
-          </a>
-        </router-link>
-      </li>
+            <a
+              :lang="item.lang"
+              :href="href"
+              :aria-current="isExactActive ? 'page' : undefined"
+              :class="[
+                (item.exact ? isExactActive : isActive) ? 'text-primary-600 dark:text-primary-400' : '',
+                'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
+              ]"
+              @click="navigate"
+            >
+              <span aria-hidden="true">
+                <component :is="item.icon" class="w-6 h-6 sm:w-7 sm:h-7 motion-safe:transition-colors duration-500" />
+              </span>
+              <span class="text-xs sm:sr-only motion-safe:transition-colors duration-500">{{ item.title }}</span>
+            </a>
+          </router-link>
+        </li>
+      </template>
 
       <!-- More menu -->
       <li class="flex-1 sm:hidden">
@@ -165,6 +163,11 @@ export default {
   setup () {
     const { t } = useI18n()
 
+    const store = useStore()
+
+    const shared = computed(() => store.getters['sheet/shared'])
+    const loading = computed(() => store.state.sheet.loading)
+
     const items = computed(() => [
       {
         to: 'DashboardHome',
@@ -180,11 +183,10 @@ export default {
       {
         to: 'DashboardStats',
         title: t('dashboard.stats.title'),
-        icon: PresentationChartLineIcon
+        icon: PresentationChartLineIcon,
+        hidden: shared.value || loading.value
       }
     ])
-
-    const store = useStore()
 
     const profileEmail = computed(() => store.state.auth.profileEmail)
     const profileImageUrl = computed(() => store.state.auth.profileImageUrl)

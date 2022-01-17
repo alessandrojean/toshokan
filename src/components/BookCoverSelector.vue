@@ -23,7 +23,7 @@
             <RadioGroupLabel class="sr-only">
               {{ t('book.coverSelector.label') }}
             </RadioGroupLabel>
-            <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
+            <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               <RadioGroupOption
                 class="focus:outline-none"
                 v-for="result of results"

@@ -230,7 +230,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -288,6 +288,14 @@ export default {
         viewMode: store.state.collection.viewMode,
         gridMode: store.state.collection.gridMode,
         spoilerMode: { ...store.state.collection.spoilerMode }
+      }
+    })
+
+    const theme = computed(() => store.state.theme)
+
+    watch(theme, newTheme => {
+      if (settings.appearence.theme !== newTheme) {
+        settings.appearence.theme = newTheme
       }
     })
 

@@ -62,7 +62,7 @@
                         <span aria-hidden="true">
                           <ChevronUpIcon
                             :class="open ? 'rotate-180' : ''"
-                            class="w-5 h-5 text-gray-500"
+                            class="w-5 h-5 text-gray-500 motion-safe:transition-transform duration-300"
                           />
                         </span>
                       </DisclosureButton>
@@ -84,7 +84,7 @@
                               v-slot="{ checked }"
                               class="mr-2 mt-2 inline-block has-ring-focus rounded"
                             >
-                              <span
+                              <div
                                 :class="[
                                   'chip is-square',
                                   checked ? 'is-active' : ''
@@ -92,7 +92,12 @@
                                 @click="resetGroup(checked)"
                               >
                                 {{ grp.name }}
-                              </span>
+                                <span class="count">
+                                  <span class="sr-only">(</span>
+                                  <span>{{ grp.count }}</span>
+                                  <span class="sr-only">)</span>
+                                </span>
+                              </div>
                             </RadioGroupOption>
                           </div>
                         </RadioGroup>
@@ -178,7 +183,7 @@
                         <span aria-hidden="true">
                           <ChevronUpIcon
                             :class="open ? 'rotate-180' : ''"
-                            class="w-5 h-5 text-gray-500"
+                            class="w-5 h-5 text-gray-500 motion-safe:transition-transform duration-300"
                           />
                         </span>
                       </DisclosureButton>

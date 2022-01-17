@@ -1,5 +1,5 @@
 <template>
-  <section class="content-body prose dark:prose-dark max-w-none">
+  <section class="content-body prose dark:prose-invert max-w-none">
     <slot></slot>
   </section>
 </template>
@@ -30,7 +30,7 @@
 }
 
 .content-body figure img {
-  @apply mx-auto rounded-xl shadow-lg;
+  @apply mx-auto rounded-xl shadow-lg mt-0;
 }
 
 .content-body figure figcaption {

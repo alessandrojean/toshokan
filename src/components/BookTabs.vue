@@ -84,12 +84,22 @@
                       <a
                         href="#"
                         class="tag has-ring-focus"
-                        @click="searchByTag(tag)"
+                        @click="searchByTag(tag, $event)"
                       >
+                        <span aria-hidden="true" class="bullet"></span>
                         {{ tag }}
                       </a>
                     </li>
                   </ul>
+                  <a
+                    v-else-if="mt.searchable"
+                    href="#"
+                    class="search-link has-ring-focus"
+                    :title="t('dashboard.search.searchBy', [mt.value])"
+                    @click="searchBy(mt.key, mt.value, $event)"
+                  >
+                    {{ mt.value }}
+                  </a>
                   <span v-else>{{ mt.value }}</span>
 
                   <div
@@ -114,7 +124,7 @@
 
         <!-- Book notes -->
         <TabPanel
-          class="markdown prose-sm md:prose dark:prose-dark md:dark:prose-dark leading-normal dark:text-gray-300 max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
+          class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
           v-html="notesRendered"
           v-if="showBookInfo && book.notes.length > 0"
         />
@@ -281,11 +291,15 @@ export default {
         },
         {
           title: t('book.properties.publisher'),
-          value: book.value?.publisher
+          key: 'publisher',
+          value: book.value?.publisher,
+          searchable: true
         },
         {
           title: t('book.properties.group'),
-          value: book.value?.group
+          key: 'group',
+          value: book.value?.group,
+          searchable: true
         },
         {
           title: t('book.properties.dimensions'),
@@ -309,7 +323,9 @@ export default {
         },
         {
           title: t('book.properties.store'),
-          value: book.value?.store
+          key: 'store',
+          value: book.value?.store,
+          searchable: true
         },
         {
           title: t('book.properties.boughtAt'),
@@ -333,9 +349,16 @@ export default {
 
     const showSearchDialog = inject('showSearchDialog')
 
-    function searchByTag (tag) {
-      const query = `${t('dashboard.search.keywords.tags')}:"${tag.toLowerCase()}"`
-      showSearchDialog(query)
+    function searchBy (key, value, event) {
+      event.preventDefault()
+
+      const queryKeyword = t('dashboard.search.keywords.' + key)
+      const queryString = `${queryKeyword}:"${value}"`
+      showSearchDialog(queryString)
+    }
+
+    function searchByTag (tag, event) {
+      searchBy('tags', tag.toLowerCase(), event)
     }
 
     return {
@@ -346,6 +369,7 @@ export default {
       formatDate,
       metadata,
       filteredCollection,
+      searchBy,
       searchByTag,
       t,
       n
@@ -363,7 +387,7 @@ export default {
   @apply text-xxs uppercase font-bold tracking-wide
     bg-primary-100 dark:bg-gray-700 rounded-md
     text-primary-700 dark:text-gray-300
-    px-2.5 py-1;
+    px-2.5 inline-flex items-center;
 }
 
 .tag:hover,
@@ -374,5 +398,32 @@ export default {
 
 .tag:focus-visible {
   @apply dark:ring-offset-gray-900;
+}
+
+.bullet {
+  @apply bg-primary-300 dark:bg-gray-500
+    w-1.5 h-1.5 mr-2 -ml-0.5
+    inline-block rounded;
+}
+
+.tag:hover .bullet,
+.tag:focus-visible .bullet {
+  @apply bg-primary-400 dark:bg-gray-400;
+}
+
+.search-link {
+  @apply rounded font-medium
+    text-gray-800 dark:text-gray-300
+    underline underline-offset-1 decoration-2
+    decoration-primary-600/60 dark:decoration-primary-400/80;
+}
+
+.search-link:hover {
+  @apply decoration-primary-600 dark:decoration-primary-400
+    text-gray-900 dark:text-gray-200;
+}
+
+.search-link:focus-visible {
+  @apply dark:ring-offset-gray-800 md:dark:ring-offset-gray-900;
 }
 </style>

@@ -8,8 +8,12 @@
             <h1 class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100">
               {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
-            <p v-if="isDev" class="text-sm text-gray-600 dark:text-gray-300">
-              {{ t('footer.dev') }}
+            <p v-if="isDev || shared" class="text-sm text-gray-600 dark:text-gray-300">
+              {{
+                shared ?
+                  t('dashboard.sheetChooser.viewing', [ownerDisplayName])
+                  : t('footer.dev')
+              }}
             </p>
           </div>
         </div>
@@ -72,11 +76,11 @@
               {{ t('dashboard.home.overview.stats.read') }}:
               {{ n(stats.status?.percent || 0.0, 'percent') }}
             </li>
-            <li>
+            <li v-if="!shared">
               {{ t('dashboard.home.overview.stats.totalExpense') }}:
               {{ n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money.currency }) }}
             </li>
-            <li>
+            <li v-if="!shared">
               {{ t('dashboard.home.overview.stats.totalSavings') }}:
               {{ n(stats.money?.saved || 0.0, 'currency', { currency: stats.money.currency }) }}</li>
           </ul>
@@ -110,7 +114,8 @@
               :title="t('dashboard.home.overview.stats.totalExpense')"
               :value="n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
               :loading="loading"
-              :sensitive="true"
+              :always-hidden="shared"
+              sensitive
             >
               <template v-slot:icon="{ cssClass }">
                 <CurrencyDollarIcon :class="cssClass" />
@@ -121,7 +126,8 @@
               :title="t('dashboard.home.overview.stats.totalSavings')"
               :value="n(stats.money?.saved || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
               :loading="loading"
-              :sensitive="true"
+              :always-hidden="shared"
+              sensitive
             >
               <template v-slot:icon="{ cssClass }">
                 <EmojiHappyIcon :class="cssClass" />
@@ -245,6 +251,7 @@ export default {
 
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
 
+    const ownerDisplayName = computed(() => store.getters['sheet/ownerDisplayName'])
     const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
     const profileName = computed(() => store.state.auth.profileName)
     const loading = computed(() => store.state.sheet.loading)
@@ -287,6 +294,7 @@ export default {
     return {
       sheetIsEmpty,
       loading,
+      ownerDisplayName,
       ownerPictureUrl,
       profileName,
       stats,

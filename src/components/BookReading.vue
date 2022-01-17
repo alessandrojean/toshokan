@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-8">
-    <p class="text-gray-700 dark:text-gray-400 leading-snug">
+    <Alert type="info" show>
       {{ t('dashboard.details.readingForm.description') }}
-    </p>
+    </Alert>
     <div class="flex flex-col space-y-2.5 px-4">
       <div class="flex items-center space-x-2.5">
         <input
@@ -52,22 +52,7 @@
             class="mt-4 w-56"
             input-type="date"
             :help="t('dashboard.details.readingForm.fieldHelp')"
-          >
-            <template #suffix>
-              <button
-                @click="clearDate"
-                class="p-px mr-1.5 bg-white dark:bg-gray-850 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus-visible:text-gray-700 dark:focus-visible:text-gray-300 rounded has-ring-focus dark:focus-visible:ring-offset-gray-850"
-                :title="t('dashboard.details.readingForm.actionClear')"
-              >
-                <span class="sr-only">
-                  {{ t('dashboard.details.readingForm.actionClear') }}
-                </span>
-                <span aria-hidden="true">
-                  <XIcon class="w-5 h-5" />
-                </span>
-              </button>
-            </template>
-          </TextField>
+          />
         </div>
       </div>
     </div>
@@ -78,8 +63,7 @@
 import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { XIcon } from '@heroicons/vue/solid'
-
+import Alert from '@/components/Alert.vue'
 import TextField from '@/components/fields/TextField.vue'
 
 import cloneDeep from 'lodash.clonedeep'
@@ -87,10 +71,7 @@ import cloneDeep from 'lodash.clonedeep'
 import { BookStatus } from '@/model/Book'
 
 export default {
-  components: {
-    TextField,
-    XIcon
-  },
+  components: { Alert, TextField },
 
   props: {
     modelValue: {
@@ -166,15 +147,10 @@ export default {
       context.emit('update:modelValue', bookCopy)
     })
 
-    function clearDate () {
-      newReadDate.value = ''
-    }
-
     return {
       t,
       state,
-      newReadDate,
-      clearDate
+      newReadDate
     }
   }
 }

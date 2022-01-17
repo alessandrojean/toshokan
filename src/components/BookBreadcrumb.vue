@@ -1,7 +1,7 @@
 <template>
   <nav v-if="!loading" class="text-sm font-medium text-gray-500 dark:text-gray-300">
     <ul class="flex space-x-1 md:space-x-3 items-center">
-      <li v-if="!hideHome">
+      <li v-if="!hideHome" class="shrink-0">
         <router-link
           :to="{ name: 'DashboardHome' }"
           :title="t('app.routes.dashboard.home')"
@@ -15,10 +15,10 @@
           </span>
         </router-link>
       </li>
-      <li aria-hidden="true" v-if="!hideHome">
+      <li aria-hidden="true" v-if="!hideHome" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
-      <li>
+      <li class="shrink-0">
         <router-link
           :to="{ name: 'DashboardLibrary' }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
@@ -26,10 +26,10 @@
           {{ t('dashboard.details.header.library') }}
         </router-link>
       </li>
-      <li aria-hidden="true">
+      <li aria-hidden="true" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
-      <li>
+      <li class="shrink-0">
         <router-link
           :to="{ name: 'DashboardLibrary', query: { group: book.group } }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
@@ -37,10 +37,10 @@
           {{ book.group }}
         </router-link>
       </li>
-      <li aria-hidden="true" v-if="book.titleParts.number && !hideHome">
+      <li aria-hidden="true" v-if="book.titleParts.number && !hideHome" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
-      <li v-if="book.titleParts.number && !hideHome">
+      <li v-if="book.titleParts.number && !hideHome" class="grow">
         {{ book.titleParts.title }}
       </li>
     </ul>

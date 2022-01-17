@@ -79,21 +79,13 @@
     </div>
 
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
-      <TextField
+      <DimensionField
         required
-        class="col-span-7 sm:col-span-4 md:col-span-1"
-        input-class="pr-10"
-        suffix-class="pointer-events-none"
         :label="t('book.properties.dimensions')"
         :model-value="modelValue.dimensionsStr"
-        :placeholder="t('book.form.example.placeholder', [t('book.form.example.dimensions')])"
         :error="v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : ''"
         @update:model-value="handleInput('dimensionsStr', $event)"
-      >
-        <template #suffix>
-          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pr-3">cm</span>
-        </template>
-      </TextField>
+      />
 
       <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
 
@@ -119,7 +111,7 @@
           </label>
           <select
             id="book-label-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 dark:text-gray-300"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 focus:text-black dark:text-gray-300 dark:focus:text-gray-300"
             @change="handleInput('labelPriceCurrency', $event.target.value)"
             required
           >
@@ -159,7 +151,7 @@
           </label>
           <select
             id="book-paid-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 dark:text-gray-300"
+            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 focus:text-black dark:text-gray-300 dark:focus:text-gray-300"
             @change="handleInput('paidPriceCurrency', $event.target.value)"
             required
           >
@@ -262,6 +254,7 @@ import { decimalComma, dimensions } from '@/util/validators'
 import { getCodeType } from '@/model/Book'
 
 import Alert from '@/components/Alert.vue'
+import DimensionField from '@/components/fields/DimensionField.vue'
 import MarkdownField from '@/components/fields/MarkdownField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
@@ -271,6 +264,7 @@ export default {
 
   components: {
     Alert,
+    DimensionField,
     MarkdownField,
     TagField,
     TextField,

@@ -539,6 +539,7 @@ export default {
       close: 'Close',
       title: 'Search',
       label: 'Search by',
+      searchBy: 'Search by "{0}"',
       placeholder: 'What you want to search for?',
       results: 'Results',
       history: 'History',
@@ -587,7 +588,7 @@ export default {
         theme: {
           label: 'Theme',
           description: 'Define the current theme of the application.',
-          system: 'Follow system',
+          system: 'System',
           light: 'Light',
           dark: 'Dark'
         },
@@ -651,6 +652,10 @@ export default {
         bought: 'Books bought',
         read: 'Books read'
       },
+      publishersRankTitle: 'Publishers rank',
+      authorsRankTitle: 'Authors rank',
+      seriesRankTitle: 'Series rank',
+      bookQuantity: 'Book quantity',
       monthlyExpense: 'Monthly expense'
     },
     sheetChooser: {
@@ -668,6 +673,7 @@ export default {
       starred: 'Starred',
       label: 'Sheet',
       libraryOf: 'Library owner',
+      viewing: 'Viewing the library of {0}'
     }
   },
   about: {

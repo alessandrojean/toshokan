@@ -78,9 +78,9 @@
     max-height: 20em;
   }
   
-  input::-webkit-calendar-picker-indicator,
-  input:hover::-webkit-calendar-picker-indicator,
-  input:focus::-webkit-calendar-picker-indicator {
+  input[list]::-webkit-calendar-picker-indicator,
+  input[list]:hover::-webkit-calendar-picker-indicator,
+  input[list]:focus::-webkit-calendar-picker-indicator {
     @apply hidden w-0 h-0 opacity-0;
   }
   
@@ -293,6 +293,23 @@
   
   .chip.is-square {
     @apply rounded-md;
+  }
+
+  .chip .count {
+    @apply text-xxs font-semibold uppercase tracking-wide
+      px-1.5 py-px rounded-xl ml-2 -mr-1
+      bg-primary-100 dark:bg-gray-600
+      text-primary-900 dark:text-gray-200;
+  }
+
+  .chip:hover .count {
+    @apply bg-primary-200 dark:bg-gray-500
+      text-primary-900 dark:text-gray-100;
+  }
+
+  .chip.is-active .count {
+    @apply bg-white dark:bg-primary-500
+      text-primary-600 dark:text-primary-50;
   }
   
   .dialog-overlay {

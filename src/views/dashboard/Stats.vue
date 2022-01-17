@@ -13,14 +13,25 @@
           <MonthlyBoughtsChart />
         </div>
 
-        <!-- More charts soon -->
-        <div v-if="!loading" class="h-96 md:h-auto md:flex-1 hidden md:flex flex-col items-center justify-center border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
-          <span aria-hidden="true">
-            <DotsHorizontalIcon class="w-10 h-10 text-gray-400 dark:text-gray-600" aria-hidden="true" />
-          </span>
-          <p class="text-lg text-gray-400 dark:text-gray-600">
-            {{ t('dashboard.stats.moreSoon') }}
-          </p>
+        <div class="space-y-3 sm:space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <BasicBarChart
+            :series="(stats.publishers || []).slice(0, 10)"
+            :series-name="t('dashboard.stats.bookQuantity')"
+            :title="t('dashboard.stats.publishersRankTitle')"
+            :loading="loading"
+          />
+          <BasicBarChart
+            :series="(stats.authors || []).slice(0, 10)"
+            :series-name="t('dashboard.stats.bookQuantity')"
+            :title="t('dashboard.stats.authorsRankTitle')"
+            :loading="loading"
+          />
+          <BasicBarChart
+            :series="(stats.series || []).slice(0, 10)"
+            :series-name="t('dashboard.stats.bookQuantity')"
+            :title="t('dashboard.stats.seriesRankTitle')"
+            :loading="loading"
+          />
         </div>
       </div>
 
@@ -68,8 +79,9 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { DotsHorizontalIcon, PlusIcon } from '@heroicons/vue/solid'
@@ -78,6 +90,7 @@ import {
   PresentationChartLineIcon
 } from '@heroicons/vue/outline'
 
+import BasicBarChart from '@/components/BasicBarChart.vue'
 import MonthlyBoughtsChart from '@/components/MonthlyBoughtsChart.vue'
 import MonthlyExpenseChart from '@/components/MonthlyExpenseChart.vue'
 import SimpleHeader from '@/components/SimpleHeader.vue'
@@ -86,6 +99,7 @@ export default {
   name: 'DashboardStats',
 
   components: {
+    BasicBarChart,
     MonthlyBoughtsChart,
     MonthlyExpenseChart,
     SimpleHeader,
@@ -97,14 +111,28 @@ export default {
 
   setup () {
     const store = useStore()
+    const router = useRouter()
 
     const loading = computed(() => store.state.sheet.loading)
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
     const tooEarly = computed(() => store.state.sheet.stats.monthly?.length === 1)
+    const stats = computed(() => store.state.sheet.stats)
+
+    const shared = computed(() => store.getters['sheet/shared'])
+
+    function checkPermissions () {
+      if (shared.value) {
+        router.replace({ name: 'DashboardHome' })
+      }
+    }
+
+    onMounted(() => checkPermissions())
+
+    watch(shared, () => checkPermissions())
 
     const { t } = useI18n()
 
-    return { loading, sheetIsEmpty, tooEarly, t }
+    return { loading, sheetIsEmpty, tooEarly, stats, t }
   }
 }
 </script>

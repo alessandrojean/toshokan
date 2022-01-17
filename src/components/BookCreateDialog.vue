@@ -194,14 +194,14 @@
                   >
                     <template v-slot:synopsis="{ value }">
                       <div
-                        class="prose prose-sm dark:prose-dark leading-normal"
+                        class="prose prose-sm dark:prose-invert leading-normal"
                         v-html="renderMarkdown(value)"
                       />
                     </template>
 
                     <template v-slot:notes="{ value }">
                       <div
-                        class="prose prose-sm leading-normal dark:text-gray-300"
+                        class="prose prose-sm dark:prose-invert leading-normal"
                         v-html="renderMarkdown(value)"
                       />
                     </template>

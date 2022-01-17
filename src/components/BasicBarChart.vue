@@ -1,13 +1,10 @@
 <template>
-  <section
-    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2"
-    :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
-  >
+  <section class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2">
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
-      {{ t('dashboard.stats.booksBoughtAndRead.title') }}
+    <h3 v-else class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
+      {{ title }}
     </h3>
-    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img">
+    <div class="aspect-w-3 aspect-h-4 sm:-mx-3" role="img">
       <transition
         mode="out-in"
         enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
@@ -25,8 +22,8 @@
             width="100%"
             height="100%"
             type="bar"
-            :options="itemsBought.options"
-            :series="itemsBought.series"
+            :options="plot.options"
+            :series="plot.series"
           />
         </div>
       </transition>
@@ -35,7 +32,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -62,13 +59,17 @@ export default {
     ChartBarIcon
   },
 
-  setup () {
+  props: {
+    loading: Boolean,
+    series: Array,
+    seriesName: String,
+    title: String
+  },
+
+  setup (props) {
     const store = useStore()
 
-    const loading = computed(() => store.state.sheet.loading)
-    const stats = computed(() => store.state.sheet.stats)
-
-    const { t, d, locale } = useI18n()
+    const { locale } = useI18n()
 
     const { darkMode } = useDarkMode()
     const { motionSafe } = useMotionSafe()
@@ -77,32 +78,34 @@ export default {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
     })
 
-    const monthly = computed(() => (stats.value.monthly || []).slice(-6))
+    const { series, seriesName } = toRefs(props)
 
-    const itemsBought = computed(() => ({
+    const plot = computed(() => ({
       options: {
         chart: {
           animations: {
             enabled: motionSafe.value
           },
-          id: 'monthly-boughts',
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
           toolbar: { show: false },
           zoom: { enabled: false }
         },
-        colors: [colors.indigo[500], colors.indigo[300]],
+        colors: [colors.indigo[500]],
         fill: { opacity: 1.0 },
         grid: {
           borderColor: darkMode.value ? colors.slate[600] : colors.slate[200]
         },
-        tooltip: { enabled: false },
+        tooltip: {
+          theme: darkMode.value ? 'dark' : 'light',
+          y: {
+            formatter: val => val.toFixed(0)
+          }
+        },
         xaxis: {
-          categories: monthly.value.map(m => m.month.toISOString()),
+          categories: series.value.map(s => s.name),
           labels: {
-            formatter: (_, timestamp) => {
-              return d(new Date(timestamp), 'month')
-            },
+            formatter: val => val.toFixed(0),
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
@@ -112,7 +115,6 @@ export default {
         },
         yaxis: {
           labels: {
-            formatter: val => val.toFixed(0),
             style: {
               colors: darkMode.value ? colors.slate[300] : colors.slate[600]
             }
@@ -128,11 +130,7 @@ export default {
           }
         },
         dataLabels: {
-          enabled: true,
-          offsetY: -20,
-          style: {
-            colors: [darkMode.value ? colors.slate[100] : colors.slate[700]]
-          }
+          enabled: false
         },
         stroke: {
           show: true,
@@ -141,7 +139,7 @@ export default {
         },
         plotOptions: {
           bar: {
-            horizontal: false,
+            horizontal: true,
             borderRadius: 5,
             endingShape: 'rounded',
             dataLabels: {
@@ -151,19 +149,13 @@ export default {
           }
         }
       },
-      series: [
-        {
-          name: t('dashboard.stats.booksBoughtAndRead.bought'),
-          data: monthly.value.map(m => m.count)
-        },
-        {
-          name: t('dashboard.stats.booksBoughtAndRead.read'),
-          data: monthly.value.map(m => m.read)
-        }
-      ]
+      series: [{
+        name: seriesName.value,
+        data: series.value.map(s => s.count)
+      }]
     }))
 
-    return { loading, itemsBought, t }
+    return { plot }
   }
 }
 </script>
