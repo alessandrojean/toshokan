@@ -81,6 +81,7 @@
     <div class="grid grid-cols-12 md:grid-cols-3 gap-6">
       <DimensionField
         required
+        class="col-span-7 sm:col-span-4 md:col-span-1"
         :label="t('book.properties.dimensions')"
         :model-value="modelValue.dimensionsStr"
         :error="v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : ''"
@@ -213,6 +214,7 @@
       :label="t('book.properties.notes')"
       :model-value="modelValue.notes"
       :placeholder="t('book.form.example.notes')"
+      :markdown-options="{ youtube: true }"
       @update:model-value="handleInput('notes', $event)"
     />
 

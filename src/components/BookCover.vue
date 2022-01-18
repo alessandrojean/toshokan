@@ -1,6 +1,19 @@
 <template>
-  <figure class="group aspect-w-1 aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative">
-    <div class="p-9 flex items-center justify-center">
+  <figure class="group aspect-w-2 aspect-h-[2.5] sm:aspect-h-2 md:aspect-w-1 md:aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative">
+    <transition
+      leave-active-class="motion-safe:transition duration-1000 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+      enter-active-class="motion-safe:transition duration-1000 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+    >
+      <div v-if="showBookCover" class="absolute inset-0 w-full h-full md:rounded-lg overflow-hidden motion-safe:transition-all">
+        <img :src="coverUrl" class="w-full h-full object-cover opacity-30 md:dark:opacity-40 blur-lg scale-105">
+      </div>
+    </transition>
+
+    <div class="px-9 pt-28 sm:pt-24 pb-20 md:px-9 md:py-9 flex items-center justify-center">
       <transition
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
         leave-from-class="opacity-100"
@@ -68,7 +81,7 @@
           v-if="showBookCover"
           :src="coverUrl"
           :class="spoilerMode.cover && !isRead ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
-          class="max-w-full max-h-full shadow-lg rounded"
+          class="max-w-xs md:max-w-full max-h-full shadow-lg rounded"
         >
         <span
           v-else

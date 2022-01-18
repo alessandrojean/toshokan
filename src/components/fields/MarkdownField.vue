@@ -106,6 +106,10 @@ export default {
       default: 'text'
     },
     label: String,
+    markdownOptions: {
+      type: Object,
+      default: {}
+    },
     modelValue: {
       type: String,
       required: true
@@ -117,7 +121,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props) {
-    const { error, help, list, modelValue } = toRefs(props)
+    const { error, help, list, markdownOptions, modelValue } = toRefs(props)
 
     const hasError = computed(() => error.value && error.value.length > 0)
     const hasHelp = computed(() => help.value && help.value.length > 0)
@@ -125,7 +129,7 @@ export default {
 
     const characterCount = computed(() => modelValue.value.length)
 
-    const { renderMarkdown } = useMarkdown()
+    const { renderMarkdown } = useMarkdown(markdownOptions.value)
 
     const markdownContent = ref(renderMarkdown(modelValue.value))
 

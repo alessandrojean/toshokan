@@ -56,6 +56,9 @@ module.exports = {
               '&:focus-visible': {
                 outline: `2px solid ${theme('colors.primary.600')}`
               }
+            },
+            'figure figcaption': {
+              textAlign: 'center'
             }
           }
         },

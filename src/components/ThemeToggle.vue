@@ -11,10 +11,23 @@
     >
       <span aria-hidden="true">
         <component
+          v-if="!currentOption.responsive"
           :is="currentOption.icon"
           :class="theme === 'system' ? 'system' : 'not-system'"
           class="w-6 h-6"
         />
+        <template v-else>
+          <component
+            :is="currentOption.icon[0]"
+            :class="theme === 'system' ? 'system' : 'not-system'"
+            class="w-6 h-6 lg:hidden"
+          />
+          <component
+            :is="currentOption.icon[1]"
+            :class="theme === 'system' ? 'system' : 'not-system'"
+            class="w-6 h-6 hidden lg:inline-block"
+          />
+        </template>
       </span>
       <span class="sr-only">
         {{ t('dashboard.settings.appearence.theme.label') }}
@@ -41,7 +54,23 @@
             class="theme"
           >
             <span aria-hidden="true">
-              <component :is="option.menuIcon" class="w-5 h-5 mr-3" />
+              <component
+                v-if="!option.responsive"
+                :is="option.menuIcon"
+                class="w-5 h-5 mr-3"
+              />
+              <template v-else>
+                <component
+                  :is="option.menuIcon[0]"
+                  :class="theme === 'system' ? 'system' : 'not-system'"
+                  class="w-5 h-5 mr-3 lg:hidden"
+                />
+                <component
+                  :is="option.menuIcon[1]"
+                  :class="theme === 'system' ? 'system' : 'not-system'"
+                  class="w-5 h-5 mr-3 hidden lg:inline-block"
+                />
+              </template>
             </span>
             <span>
               {{ t('dashboard.settings.appearence.theme.' + option.key) }}
@@ -66,12 +95,14 @@ import {
 } from '@headlessui/vue'
 
 import {
+  DeviceMobileIcon,
   DesktopComputerIcon,
   MoonIcon,
   SunIcon
 } from '@heroicons/vue/outline'
 
 import {
+  DeviceMobileIcon as DeviceMobileIconSolid,
   DesktopComputerIcon as DesktopComputerIconSolid,
   MoonIcon as MoonIconSolid,
   SunIcon as SunIconSolid
@@ -87,6 +118,8 @@ export default {
     ListboxOption,
     DesktopComputerIcon,
     DesktopComputerIconSolid,
+    DeviceMobileIcon,
+    DeviceMobileIconSolid,
     MoonIcon,
     MoonIconSolid,
     SunIcon,
@@ -109,7 +142,12 @@ export default {
     const options = computed(() => [
       { key: 'light', icon: SunIcon, menuIcon: SunIconSolid },
       { key: 'dark', icon: MoonIcon, menuIcon: MoonIconSolid },
-      { key: 'system', icon: DesktopComputerIcon, menuIcon: DesktopComputerIconSolid }
+      {
+        key: 'system',
+        responsive: true,
+        icon: [DeviceMobileIcon, DesktopComputerIcon],
+        menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
+      }
     ])
 
     const currentOption = computed(() => {
@@ -156,7 +194,7 @@ export default {
 
 .theme-options {
   @apply absolute z-50 top-full right-0
-    bg-white dark:bg-gray-700
+    bg-white dark:bg-gray-700/80 dark:backdrop-blur
     rounded-md shadow-lg overflow-hidden
     w-36 py-1 mt-2 origin-top-right
     ring-1 ring-black ring-opacity-5;
@@ -169,14 +207,14 @@ export default {
 .theme {
   @apply flex items-center select-none
     w-full px-4 py-2.5 text-sm cursor-pointer
-    text-gray-700 dark:text-gray-300
-    dark:hover:bg-gray-600 dark:hover:text-gray-200;
+    text-gray-700 dark:text-gray-300;
 }
 
 .theme:hover,
 .theme:focus-visible,
 .theme.active {
-  @apply bg-gray-100 dark:bg-gray-600;
+  @apply bg-gray-100 dark:bg-gray-600/50
+    dark:text-gray-200;
 }
 
 .theme:focus {

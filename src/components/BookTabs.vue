@@ -188,7 +188,7 @@ export default {
       return !loading.value && book.value
     })
 
-    const { renderMarkdown } = useMarkdown()
+    const { renderMarkdown } = useMarkdown({ youtube: true })
 
     const notesRendered = computed(() => {
       if (!showBookInfo.value) {

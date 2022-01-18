@@ -14,14 +14,14 @@
     <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-6">
       <!-- Main section -->
       <div class="md:space-y-8 bg-white dark:bg-transparent">
-        <section class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8">
+        <section class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8 -mt-16 md:mt-0">
           <!-- Book cover -->
           <div class="lg:col-span-3">
             <BookCover :loading="!showBookInfo" :book="book" />
           </div>
 
           <!-- Book information -->
-          <div class="bg-white dark:bg-gray-800 md:dark:bg-transparent mt-5 md:mt-0 p-6 md:p-0 shadow-inner md:shadow-none rounded-t-3xl md:rounded-none lg:col-span-4">
+          <div class="bg-white dark:bg-gray-800 md:dark:bg-transparent relative -mt-5 md:mt-0 p-6 md:p-0 shadow-inner md:shadow-none rounded-t-3xl md:rounded-none lg:col-span-4">
             <BookInformation
               :loading="!showBookInfo"
               :book="book"

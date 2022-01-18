@@ -164,6 +164,11 @@ export function countTotalResults (sheetId, queryStr) {
       }
 
       const dataTable = response.getDataTable()
+
+      if (dataTable.getNumberOfRows() === 0) {
+        resolve(0)
+      }
+
       const totalResults = dataTable.getValue(0, 0)
 
       resolve(totalResults)

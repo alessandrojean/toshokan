@@ -4,6 +4,7 @@
     :error="error"
     :required="required"
     :help="help"
+    class="w-full"
     v-slot="{ inputId }"
   >
     <div class="dimension-field" :id="inputId">

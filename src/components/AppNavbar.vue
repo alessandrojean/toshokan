@@ -1,8 +1,8 @@
 <template>
   <nav
     :class="[
-      isTransparent ? 'dark:bg-gray-700 md:dark:bg-gray-800' : '',
-      'bg-gray-800 motion-safe:transition-opacity duration-400'
+      'motion-safe:transition-opacity duration-400 z-20',
+      isTransparent ? 'bg-transparent md:bg-gray-800' : 'bg-gray-800'
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,14 +122,14 @@
               leave-from-class="scale-100 opacity-100"
               leave-to-class="scale-95 opacity-0"
             >
-              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700/80 md:dark:backdrop-blur divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="pb-1">
                   <MenuItem v-slot="{ active }">
                     <router-link
                       :to="{ name: 'DashboardSettings' }"
                       :class="[
-                        active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                        'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                        active ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50' : '',
+                        'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                       ]"
                     >
                       <span aria-hidden="true">
@@ -145,7 +145,7 @@
                       type="button"
                       :class="[
                         active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                        'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                        'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                       ]"
                       @click.stop="signOut"
                     >

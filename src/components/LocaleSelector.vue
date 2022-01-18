@@ -32,7 +32,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <ListboxOptions class="absolute z-10 mt-1 w-56 bg-white dark:bg-gray-700 shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm">
+      <ListboxOptions class="absolute z-10 mt-1 w-56 bg-white dark:bg-gray-700/80 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm">
         <ListboxOption
           as="template"
           v-for="loc in availableLocales"
@@ -43,7 +43,7 @@
           <li
             :class="[
               active
-                ? 'text-white dark:text-gray-100 bg-primary-600 dark:bg-gray-600'
+                ? 'text-white dark:text-gray-100 bg-primary-600 dark:bg-gray-600/50'
                 : 'text-gray-900 dark:text-gray-200',
               'cursor-default select-none relative py-2 pl-3 pr-9 focus:outline-none'
             ]"
