@@ -22,6 +22,11 @@
       ring-primary-600 dark:ring-primary-500
       dark:ring-offset-gray-700;
   }
+
+  .skeleton {
+    @apply motion-safe:animate-pulse rounded
+      bg-gray-400 dark:bg-gray-600;
+  }
   
   .jump-to {
     @apply sr-only;

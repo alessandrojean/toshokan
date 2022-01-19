@@ -232,7 +232,7 @@ export function formatBook (book) {
 }
 
 export function splitTitle (title) {
-  const titleRegex = /\s+#(\d+)(?::\s+)?/
+  const titleRegex = /\s+#(\d+(?:[\.,]\d+)?)(?::\s+)?/
   const parts = title.split(titleRegex)
 
   const main = parts[2]

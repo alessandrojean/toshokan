@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
@@ -221,6 +221,11 @@ export default {
         deleteModalOpen.value = true
       })
     }
+
+    const setNavbarTransparent = inject('setNavbarTransparent')
+
+    onMounted(() => setNavbarTransparent(true))
+    onUnmounted(() => setNavbarTransparent(false))
 
     return {
       t,
