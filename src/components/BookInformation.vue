@@ -206,16 +206,12 @@
               target="_blank"
               :href="link.url"
             >
-              <span aria-hidden="true">
+              <span aria-hidden="true" class="icon">
                 <component
                   v-if="link.icon"
                   :is="link.icon"
-                  class="w-4 h-4"
                 />
-                <GlobeAltIcon
-                  v-else
-                  class="w-4 h-4"
-                />
+                <GlobeAltIcon v-else />
               </span>
               <span>{{ link.title }}</span>
               <span aria-hidden="true">
@@ -241,6 +237,7 @@ import {
   ExternalLinkIcon,
   GlobeAltIcon,
   PencilIcon,
+  ShoppingCartIcon,
   StarIcon as StarSolidIcon
 } from '@heroicons/vue/solid'
 import {
@@ -251,21 +248,16 @@ import {
   UserGroupIcon
 } from '@heroicons/vue/outline'
 
-import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
-import GoodreadsIcon from '@/components/icons/GoodreadsIcon.vue'
-import NewPopIcon from '@/components/icons/NewPopIcon.vue'
-import PaniniIcon from '@/components/icons/PaniniIcon.vue'
-import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
+import getBookLinks from '@/services/links'
 
 import { BookFavorite, BookStatus } from '@/model/Book'
 
 export default {
   components: {
-    AmazonIcon,
     Avatar,
     BookBreadcrumb,
     BookmarkOutlineIcon,
@@ -273,11 +265,7 @@ export default {
     ClockIcon,
     ExternalLinkIcon,
     GlobeAltIcon,
-    GoodreadsIcon,
-    NewPopIcon,
-    PaniniIcon,
     PencilIcon,
-    SkoobIcon,
     StarOutlineIcon,
     StarSolidIcon,
     TrashIcon,
@@ -392,65 +380,7 @@ export default {
     })
 
     const externalLinks = computed(() => {
-      if (!book.value?.codeType?.includes('ISBN')) {
-        return []
-      }
-
-      const bookCode = book.value ? book.value.code.replaceAll('-', '') : ''
-
-      const links = [
-        {
-          title: 'Goodreads',
-          url: `https://goodreads.com/search?q=${bookCode}`,
-          icon: GoodreadsIcon
-        },
-        {
-          title: 'Open Library',
-          url: `https://openlibrary.org/isbn/${bookCode}`
-        }
-      ]
-
-      const amazonLinks = {
-        BR: { title: 'Amazon.com.br', url: 'https://amazon.com.br' },
-        US: { title: 'Amazon', url: 'https://amazon.com' },
-        JP: { title: 'Amazon.co.jp', url: 'https://amazon.co.jp' }
-      }
-
-      if (amazonLinks[country.value?.countryCode]) {
-        const amazonData = amazonLinks[country.value.countryCode]
-
-        links.push({
-          title: amazonData.title,
-          url: `${amazonData.url}/dp/${isbn10.value}`,
-          icon: AmazonIcon
-        })
-      }
-
-      if (country.value?.countryCode === 'BR' && book.value?.publisher?.includes('Panini')) {
-        links.push({
-          title: 'Loja Panini',
-          url: `https://loja.panini.com.br/panini/solucoes/busca.aspx?t=${bookCode}`,
-          icon: PaniniIcon
-        })
-      }
-
-      if (book.value?.publisher?.includes('NewPOP')) {
-        links.push({
-          title: 'NewPOP SHOP',
-          url: `https://www.lojanewpop.com.br/buscar?q=${bookCode}`,
-          icon: NewPopIcon
-        })
-      }
-
-      if (country.value?.countryCode === 'BR') {
-        links.push({
-          title: 'Skoob',
-          url: `https://www.skoob.com.br/livro/lista/busca:${bookCode}/tipo:isbn`,
-          icon: SkoobIcon
-        })
-      }
-
-      return links.sort((a, b) => a.title.localeCompare(b.title, locale.value))
+      return getBookLinks(book.value, locale.value)
     })
 
     const separator = computed(() => {
@@ -569,6 +499,10 @@ export default {
 
 .book-external-link:focus-visible {
   @apply dark:ring-offset-gray-900;
+}
+
+.book-external-link .icon svg {
+  @apply w-4 h-4;
 }
 
 .book-external-link svg {
