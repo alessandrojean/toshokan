@@ -2,13 +2,6 @@ name: Issue report
 description: File a issue report for the application.
 labels: ['bug']
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for taking the time to fill out this issue report!
-
-        In order to standardize the Issues, we appreciate if you
-        fill all the fields in this form using the **English** language.
   - type: input
     id: version
     attributes:

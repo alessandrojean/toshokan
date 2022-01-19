@@ -2,13 +2,6 @@ name: Feature request
 description: Suggest a feature to improve the application
 labels: ['enhancement']
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for taking the time to fill out this feature request!
-
-        In order to standardize the Issues, we appreciate if you
-        fill all the fields in this form using the **English** language.
   - type: textarea
     id: feature-description
     attributes:
