@@ -40,28 +40,28 @@ const WEBSITES = [
   {
     title: 'Amazon',
     url: 'https://amazon.com/dp/{isbn10}',
-    coutry: 'US',
+    country: 'US',
     category: Categories.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.co.jp',
     url: 'https://amazon.co.jp/dp/{isbn10}',
-    coutry: 'JP',
+    country: 'JP',
     category: Categories.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.com.br',
     url: 'https://amazon.com.br/dp/{isbn10}',
-    coutry: 'BR',
+    country: 'BR',
     category: Categories.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.es',
     url: 'https://amazon.es/dp/{isbn10}',
-    coutry: 'ES',
+    country: 'ES',
     category: Categories.STORE,
     icon: AmazonIcon
   },
