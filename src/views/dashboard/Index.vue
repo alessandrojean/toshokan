@@ -4,7 +4,7 @@
       {{ t('a11y.jumpToNavigation') }}
     </a>
 
-    <AppNavbar />
+    <AppNavbar :transparent="navbarTransparent" />
 
     <MobileNavbar />
 
@@ -118,6 +118,14 @@ export default {
     provide('disableSearchShortcut', disableSearchShortcut)
     provide('enableSearchShortcut', enableSearchShortcut)
 
+    const navbarTransparent = ref(false)
+
+    function setNavbarTransparent (value) {
+      navbarTransparent.value = value
+    }
+
+    provide('setNavbarTransparent', setNavbarTransparent)
+
     /**
      * @param {KeyboardEvent} event
      */
@@ -150,7 +158,8 @@ export default {
       searchDialog,
       searchDialogIsOpen,
       showSearchDialog,
-      closeSearchDialog
+      closeSearchDialog,
+      navbarTransparent
     }
   }
 }

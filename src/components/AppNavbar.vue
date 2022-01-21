@@ -1,8 +1,8 @@
 <template>
   <nav
     :class="[
-      'motion-safe:transition-opacity duration-400 z-20',
-      isTransparent ? 'bg-transparent md:bg-gray-800' : 'bg-gray-800'
+      'motion-safe:transition-colors duration-400 z-20',
+      transparent ? 'bg-transparent md:bg-gray-800' : 'bg-gray-800'
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,10 +10,14 @@
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
+            :class="transparent ? 'opacity-95' : ''"
             class="shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
-              <LibraryIcon class="h-9 w-9 text-primary-500" aria-hidden="true" />
+              <LibraryIcon
+                :class="transparent ? 'text-gray-200 md:text-primary-500' : 'text-primary-500'"
+                class="h-9 w-9 motion-safe:transition-colors"
+              />
             </span>
             <span class="sr-only">{{ t('dashboard.header.links.start') }}</span>
             <span class="text-gray-200 font-display font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
@@ -202,6 +206,10 @@ export default {
     SearchIcon
   },
 
+  props: {
+    transparent: Boolean
+  },
+
   setup () {
     const store = useStore()
     const route = useRoute()
@@ -250,10 +258,6 @@ export default {
 
     const showSearchDialog = inject('showSearchDialog')
 
-    const isTransparent = computed(() => {
-      return route.name === 'BookDetails'
-    })
-
     return {
       open,
       navigation,
@@ -267,7 +271,6 @@ export default {
       loading,
       signOut,
       showSearchDialog,
-      isTransparent,
       t
     }
   }
