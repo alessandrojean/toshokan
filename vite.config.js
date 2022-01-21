@@ -18,7 +18,8 @@ export default defineConfig({
       manifest: {
         name: 'Toshokan',
         short_name: 'Toshokan',
-        theme_color: '#6366F1',
+        description: 'Utilitário para gerenciamento de coleções de mangás.',
+        theme_color: '#1e293b',
         background_color: '#1e293b',
         start_url: '/dashboard',
         icons: [
@@ -33,10 +34,48 @@ export default defineConfig({
             type: 'image/png'
           },
           {
+            src: './img/icons/android-chrome-maskable-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
+          },
+          {
             src: './img/icons/android-chrome-maskable-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: 'Dashboard',
+            short_name: 'Dashboard',
+            description: 'Visualizar o dashboard da coleção.',
+            url: '/dashboard',
+            icons: [{
+              src: './img/icons/shortcut-dashboard-192x192.png',
+              sizes: '192x192'
+            }]
+          },
+          {
+            name: 'Biblioteca',
+            short_name: 'Biblioteca',
+            description: 'Visualizar a biblioteca.',
+            url: '/dashboard/library',
+            icons: [{
+              src: './img/icons/shortcut-library-192x192.png',
+              sizes: '192x192'
+            }]
+          },
+          {
+            name: 'Estatísticas',
+            short_name: 'Estatísticas',
+            description: 'Visualizar as estatísticas.',
+            url: '/dashboard/stats',
+            icons: [{
+              src: './img/icons/shortcut-stats-192x192.png',
+              sizes: '192x192'
+            }]
           }
         ]
       }
