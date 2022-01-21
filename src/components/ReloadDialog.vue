@@ -57,7 +57,7 @@
               <button
                 type="button"
                 class="button is-primary sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
-                @click="updateServiceWorker()"
+                @click="updateServiceWorker(true)"
               >
                 {{ t('pwa.newContent.update') }}
               </button>

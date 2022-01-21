@@ -8,7 +8,7 @@
     enter-to-class="opacity-100"
   >
     <div
-      v-if="!authStarted"
+      v-if="!authStarted && !hasCriticalError"
       class="z-30 absolute w-full h-full flex justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
     >
       <span aria-hidden="true">
@@ -61,6 +61,7 @@ export default {
     const { t, locale } = useI18n({ useScope: 'global' })
 
     const authStarted = computed(() => store.state.auth.started)
+    const hasCriticalError = computed(() => store.getters.hasCriticalError)
 
     const route = useRoute()
     const jumpToMain = ref(null)
@@ -96,6 +97,7 @@ export default {
 
     return {
       authStarted,
+      hasCriticalError,
       jumpToMain,
       navigationHelpText,
       t

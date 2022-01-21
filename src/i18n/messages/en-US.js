@@ -32,6 +32,11 @@ export default {
     jumpToNavigation: 'Jump to main navigation',
     pageChanged: 'Navigated to {pageTitle}.'
   },
+  errors: {
+    cookiesDisabled: 'The cookies are disabled. Enable them and refresh the page.',
+    authStartedFailed: 'It was not possible to start the authentication system.',
+    refresh: 'Refresh the page'
+  },
   pwa: {
     newContent: {
       title: 'New content available',

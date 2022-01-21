@@ -32,6 +32,11 @@ export default {
     jumpToNavigation: 'Pular para a navegação principal',
     pageChanged: 'Página alterada para {pageTitle}.'
   },
+  errors: {
+    cookiesDisabled: 'Os cookies estão desabilitados. Habilite-os e atualize a página.',
+    authStartedFailed: 'Não foi possivel inicializar o sistema de autenticação.',
+    refresh: 'Atualizar a página'
+  },
   pwa: {
     newContent: {
       title: 'Novos conteúdos disponíveis',

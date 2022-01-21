@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import store from '../store'
+import store, { MutationTypes } from '../store'
 import i18n from '../i18n'
 
 import Home from '@/views/Home.vue'
@@ -168,10 +168,12 @@ router.beforeEach(async (to, _, next) => {
 
       try {
         isSignedIn = await store.dispatch('auth/initApp')
+        isSignedIn ? next() : next('/sign-in')
       } catch (e) {
         isSignedIn = false
-      } finally {
-        next(isSignedIn ? undefined : '/sign-in')
+        console.error(e)
+        store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
+        next('/error')
       }
 
       return
@@ -181,12 +183,14 @@ router.beforeEach(async (to, _, next) => {
     return
   }
 
-  if (!store.getters['auth/isStarted']) {
+  if (!store.getters['auth/isStarted'] && !store.getters.hasCriticalError) {
     try {
       const isSignedIn = await store.dispatch('auth/initApp')
-      next(isSignedIn && to.path === '/sign-in' ? '/dashboard' : undefined)
+      isSignedIn && to.path === '/sign-in' ? next('/dashboard') : next()
     } catch (e) {
-      next('/sign-in')
+      console.error(e)
+      store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
+      next('/error')
     }
 
     return

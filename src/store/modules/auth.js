@@ -1,3 +1,7 @@
+import i18n from '@/i18n'
+
+const { t } = i18n.global
+
 export const AuthMutations = {
   UPDATE_SIGNED_IN: 'updateSignedIn',
   UPDATE_STARTED: 'updateStarted',
@@ -48,7 +52,17 @@ export default {
               commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
 
               resolve(signedIn)
-            }, () => reject(new Error('Não foi possível inicializar.')))
+            }, (error) => {
+              if (error.details === 'Cookies are not enabled in current environment.') {
+                reject(new Error(t('errors.cookiesDisabled'), {
+                  cause: { ...error, refresh: true }
+                }))
+              } else {
+                reject(new Error(t('errors.authStartedFailed'), {
+                  cause: { ...error, refresh: true }
+                }))
+              }
+            })
         })
       })
     },

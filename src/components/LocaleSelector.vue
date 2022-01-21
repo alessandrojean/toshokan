@@ -21,6 +21,7 @@
           <option
             v-for="loc in availableLocales"
             :key="loc"
+            :value="loc"
             :selected="loc === modelValue"
           >
             {{ t('app.localeName', null, { locale: loc }) }}

@@ -12,6 +12,17 @@
           {{ criticalError?.message || '' }}
         </p>
       </header>
+      <div v-if="criticalError.cause?.refresh" class="text-center">
+        <button
+          class="button is-primary"
+          @click="refresh"
+        >
+          <span aria-hidden="true">
+            <RefreshIcon />
+          </span>
+          <span>{{ t('errors.refresh') }}</span>
+        </button>
+      </div>
       <div v-if="isDev" class="text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md py-4 px-6 w-full">
         <div class="w-full overflow-y-auto pb-2">
           <pre v-if="isDev"><code>{{ criticalError?.stack || '' }}</code></pre>
@@ -39,12 +50,14 @@ import { useI18n } from 'vue-i18n'
 import useAppInfo from '@/composables/useAppInfo'
 
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
+import { RefreshIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Error',
 
   components: {
-    ExclamationCircleIcon
+    ExclamationCircleIcon,
+    RefreshIcon
   },
 
   setup () {
@@ -66,10 +79,15 @@ export default {
 
     const { t } = useI18n()
 
+    function refresh () {
+      window.location.reload()
+    }
+
     return {
       appVersion,
       criticalError,
       isDev,
+      refresh,
       t
     }
   }
