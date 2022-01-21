@@ -18,7 +18,7 @@ function youtube (md) {
       return dedent`
         <figure>
           <div class="aspect-w-16 aspect-h-9">
-            <iframe src="https://www.youtube-nocookie.com/embed/${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
           </div>
           ${token.content && token.content.length ? '<figcaption>' + token.content + '</figcaption>' : ''}
         </figure>

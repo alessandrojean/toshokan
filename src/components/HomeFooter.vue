@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div>
-      <LocaleSelector v-model="locale" />
+      <LocaleSelector v-model="locale" class="w-56 md:w-auto" />
     </div>
 
     <nav>

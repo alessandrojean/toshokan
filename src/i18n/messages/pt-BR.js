@@ -32,6 +32,17 @@ export default {
     jumpToNavigation: 'Pular para a navegação principal',
     pageChanged: 'Página alterada para {pageTitle}.'
   },
+  pwa: {
+    newContent: {
+      title: 'Novos conteúdos disponíveis',
+      message: dedent`
+        A aplicação possui uma versão mais recente e a página será
+        atualizada ao clicar em Atualizar.
+      `,
+      update: 'Atualizar',
+      close: 'Fechar'
+    }
+  },
   book: {
     book: 'Livro',
     volume: 'Volume #{number}',

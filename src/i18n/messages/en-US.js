@@ -32,6 +32,17 @@ export default {
     jumpToNavigation: 'Jump to main navigation',
     pageChanged: 'Navigated to {pageTitle}.'
   },
+  pwa: {
+    newContent: {
+      title: 'New content available',
+      message: dedent`
+        The app has a new version available anhd the page will
+        be refreshed when you click in Reload.
+      `,
+      update: 'Reload',
+      close: 'Close'
+    }
+  },
   book: {
     book: 'Book',
     volume: 'Volume #{number}',

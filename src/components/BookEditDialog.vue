@@ -220,6 +220,14 @@ export default {
     const disableSearchShortcut = inject('disableSearchShortcut')
     const enableSearchShortcut = inject('enableSearchShortcut')
 
+    /**
+     * @param {BeforeUnloadEvent} event
+     */
+    function preventUnload (event) {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
         Object.assign(editingBook, cloneDeep(book.value), {
@@ -232,9 +240,13 @@ export default {
             ? book.value.boughtAt.toISOString().substring(0, 10)
             : ''
         })
-      }
 
-      newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
+        window.addEventListener('beforeunload', preventUnload)
+        disableSearchShortcut()
+      } else {
+        window.removeEventListener('beforeunload', preventUnload)
+        enableSearchShortcut()
+      }
     })
 
     const editForm = ref(null)
