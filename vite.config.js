@@ -18,7 +18,7 @@ export default defineConfig({
       manifest: {
         name: 'Toshokan',
         short_name: 'Toshokan',
-        theme_color: '#1F2937',
+        theme_color: '#6366F1',
         background_color: '#1e293b',
         icons: [
           {
