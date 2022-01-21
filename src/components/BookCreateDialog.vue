@@ -449,12 +449,23 @@ export default {
     const disableSearchShortcut = inject('disableSearchShortcut')
     const enableSearchShortcut = inject('enableSearchShortcut')
 
+    /**
+     * @param {BeforeUnloadEvent} event
+     */
+    function preventUnload (event) {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
         Object.assign(book, bookInitialState)
+        window.addEventListener('beforeunload', preventUnload)
+        disableSearchShortcut()
+      } else {
+        window.removeEventListener('beforeunload', preventUnload)
+        enableSearchShortcut()
       }
-
-      newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
     })
 
     const searchBookSelected = ref(null)

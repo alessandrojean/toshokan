@@ -13,7 +13,6 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'favicon.svg', 'robots.txt', 'img/icons/apple-touch-icon.png'],
       manifest: {
         name: 'Toshokan',

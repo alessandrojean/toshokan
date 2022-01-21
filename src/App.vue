@@ -35,6 +35,8 @@
       <component :is="Component" />
     </transition>
   </router-view>
+
+  <ReloadDialog />
 </template>
 
 <script>
@@ -43,20 +45,18 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { useRegisterSW } from 'virtual:pwa-register/vue'
-
 import { MutationTypes } from '@/store'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+import ReloadDialog from '@/components/ReloadDialog.vue'
 
 export default {
   components: {
-    LoadingSpinIcon
+    LoadingSpinIcon,
+    ReloadDialog
   },
 
   setup () {
-    useRegisterSW()
-
     const store = useStore()
     const { t, locale } = useI18n({ useScope: 'global' })
 
