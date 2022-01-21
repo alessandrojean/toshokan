@@ -20,6 +20,7 @@ export default defineConfig({
         short_name: 'Toshokan',
         theme_color: '#6366F1',
         background_color: '#1e293b',
+        start_url: '/dashboard',
         icons: [
           {
             src: './img/icons/android-chrome-192x192.png',

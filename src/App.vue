@@ -43,6 +43,8 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
+import { useRegisterSW } from 'virtual:pwa-register/vue'
+
 import { MutationTypes } from '@/store'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
@@ -53,6 +55,8 @@ export default {
   },
 
   setup () {
+    useRegisterSW()
+
     const store = useStore()
     const { t, locale } = useI18n({ useScope: 'global' })
 
