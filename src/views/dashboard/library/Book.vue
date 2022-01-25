@@ -17,7 +17,11 @@
         <section class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8 -mt-16 md:mt-0">
           <!-- Book cover -->
           <div class="lg:col-span-3">
-            <BookCover :loading="!showBookInfo" :book="book" />
+            <BookCover
+              :loading="!showBookInfo"
+              :book="book"
+              :collection="collection"
+            />
           </div>
 
           <!-- Book information -->
@@ -69,12 +73,12 @@ import useBookDeleter from '@/composables/useBookDeleter'
 import useBookEditor from '@/composables/useBookEditor'
 import useBookFinder from '@/composables/useBookFinder'
 
-import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
-import BookCover from '@/components/BookCover.vue'
-import BookDeleteModal from '@/components/BookDeleteModal.vue'
-import BookEditDialog from '@/components/BookEditDialog.vue'
-import BookInformation from '@/components/BookInformation.vue'
-import BookTabs from '@/components/BookTabs.vue'
+import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
+import BookCover from '@/components/book/BookCover.vue'
+import BookDeleteModal from '@/components/dialogs/BookDeleteDialog.vue'
+import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
+import BookInformation from '@/components/book/BookInformation.vue'
+import BookTabs from '@/components/book/BookTabs.vue'
 
 import { BookFavorite, BookStatus } from '@/model/Book'
 

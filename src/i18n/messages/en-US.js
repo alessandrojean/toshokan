@@ -35,7 +35,10 @@ export default {
   errors: {
     cookiesDisabled: 'The cookies are disabled. Enable them and refresh the page.',
     authStartedFailed: 'It was not possible to start the authentication system.',
-    refresh: 'Refresh the page'
+    missingScopes: 'Some permissions were not granted to the app.',
+    refresh: 'Refresh the page',
+    grantPermissions: 'Grant the permissions',
+    unexpected: 'An unexpected error happened in the application.'
   },
   pwa: {
     newContent: {

@@ -155,7 +155,7 @@ import { useI18n } from 'vue-i18n'
 import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
-import BookCard from '@/components/BookCard.vue'
+import BookCard from '@/components/book/BookCard.vue'
 
 import useMarkdown from '@/composables/useMarkdown'
 
@@ -199,7 +199,7 @@ export default {
     })
 
     const filteredCollection = computed(() => {
-      if (!showBookInfo.value || !collection.value || collection.length === 0) {
+      if (!showBookInfo.value || !collection.value || collection.value.length === 0) {
         return []
       }
 

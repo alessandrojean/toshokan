@@ -164,10 +164,10 @@ import {
 import { CheckIcon, XIcon } from '@heroicons/vue/solid'
 
 import Avatar from '@/components/Avatar.vue'
-import BookCoverSelector from '@/components/BookCoverSelector.vue'
-import BookForm from '@/components/BookForm.vue'
-import BookOrganization from '@/components/BookOrganization.vue'
-import BookReading from '@/components/BookReading.vue'
+import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
+import BookForm from '@/components/book/BookForm.vue'
+import BookOrganization from '@/components/book/BookOrganization.vue'
+import BookReading from '@/components/book/BookReading.vue'
 
 import cloneDeep from 'lodash.clonedeep'
 

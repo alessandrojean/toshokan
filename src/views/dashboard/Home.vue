@@ -218,10 +218,10 @@ import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
 import Avatar from '@/components/Avatar.vue'
 import BetaWarning from '@/components/BetaWarning.vue'
-import BookCarousel from '@/components/BookCarousel.vue'
-import BookCreateDialog from '@/components/BookCreateDialog.vue'
+import BookCarousel from '@/components/book/BookCarousel.vue'
+import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
-import SheetChooserDialog from '@/components/SheetChooserDialog.vue'
+import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
 import StatCard from '@/components/StatCard.vue'
 
 export default {

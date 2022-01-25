@@ -10,8 +10,6 @@ function youtube (md) {
     const token = tokens[idx]
     const aIndex = token.attrIndex('src')
 
-    console.log(token.content)
-
     if (youtubeRegex.test(token.attrs[aIndex][1])) {
       const id = token.attrs[aIndex][1].match(youtubeRegex)[5]
 

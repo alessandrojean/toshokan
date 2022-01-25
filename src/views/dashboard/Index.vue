@@ -45,7 +45,7 @@ import { MutationTypes } from '@/store'
 import AppNavbar from '@/components/AppNavbar.vue'
 import DashboardFooter from '@/components/DashboardFooter.vue'
 import MobileNavbar from '@/components/MobileNavbar.vue'
-import SearchDialog from '@/components/SearchDialog.vue'
+import SearchDialog from '@/components/dialogs/SearchDialog.vue'
 
 export default {
   name: 'Dashboard',
@@ -63,13 +63,19 @@ export default {
 
     const signedIn = computed(() => store.state.auth.signedIn)
     const loadedOnce = computed(() => store.state.sheet.loadedOnce)
+    const hasGrantedScopes = computed(() => store.state.auth.hasGrantedScopes)
 
     const loadSheetData = async () => {
       if (!loadedOnce.value) {
         try {
           await store.dispatch('sheet/loadSheetData')
         } catch (e) {
-          store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
+          const error = !hasGrantedScopes.value
+            ? new Error(t('errors.missingScopes'))
+            : e
+
+          store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
+          store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, error)
           router.replace({ name: 'Error' })
         }
       }

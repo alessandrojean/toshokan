@@ -48,7 +48,7 @@ import { useI18n } from 'vue-i18n'
 import { MutationTypes } from '@/store'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-import ReloadDialog from '@/components/ReloadDialog.vue'
+import ReloadDialog from '@/components/dialogs/ReloadDialog.vue'
 
 export default {
   components: {

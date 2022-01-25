@@ -35,7 +35,10 @@ export default {
   errors: {
     cookiesDisabled: 'Os cookies estão desabilitados. Habilite-os e atualize a página.',
     authStartedFailed: 'Não foi possivel inicializar o sistema de autenticação.',
-    refresh: 'Atualizar a página'
+    missingScopes: 'Algumas permissões não foram concedidas para a aplicação.',
+    refresh: 'Atualizar a página',
+    grantPermissions: 'Conceder as permissões',
+    unexpected: 'Um erro inesperado aconteceu na aplicação.'
   },
   pwa: {
     newContent: {

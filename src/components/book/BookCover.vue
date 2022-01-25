@@ -27,17 +27,7 @@
           class="absolute bottom-0 hidden md:flex justify-center translate-y-1/2"
           aria-hidden="true"
         >
-          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-md inline-flex divide-x divide-gray-200 dark:divide-gray-600">
-            <span class="py-1 px-1.5 flex items-center justify-center" v-if="country">
-              <img :src="country.flagUrl" class="w-6 h-6 p-px">
-            </span>
-            <span class="py-1 px-1.5" v-if="isRead">
-              <BookmarkIcon class="w-6 h-6 text-primary-600 dark:text-primary-500" />
-            </span>
-            <span class="py-1 px-1.5" v-if="isFavorite">
-              <StarIcon class="w-6 h-6 text-amber-500 dark:text-amber-300" />
-            </span>
-          </div>
+          <BookNavigator :book="book" :collection="collection" />
         </div>
       </transition>
 
@@ -110,7 +100,8 @@ import { useI18n } from 'vue-i18n'
 import { BookOpenIcon } from '@heroicons/vue/outline'
 import { BookmarkIcon, StarIcon, ZoomInIcon } from '@heroicons/vue/solid'
 
-import BookCoverDialog from '@/components/BookCoverDialog.vue'
+import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
+import BookNavigator from '@/components/book/BookNavigator.vue'
 
 import useImageLoader from '@/composables/useImageLoader'
 
@@ -123,11 +114,13 @@ export default {
     BookmarkIcon,
     StarIcon,
     ZoomInIcon,
-    BookCoverDialog
+    BookCoverDialog,
+    BookNavigator
   },
 
   props: {
     book: Object,
+    collection: Array,
     loading: Boolean
   },
 

@@ -48,7 +48,7 @@ import { useI18n } from 'vue-i18n'
 
 import { CurrencyDollarIcon } from '@heroicons/vue/outline'
 
-import DonationDialog from '@/components/DonationDialog.vue'
+import DonationDialog from '@/components/dialogs/DonationDialog.vue'
 import GitHubIcon from '@/components/icons/GitHubIcon.vue'
 
 import useAppInfo from '@/composables/useAppInfo'

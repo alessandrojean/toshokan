@@ -298,9 +298,9 @@ import {
 } from '@heroicons/vue/outline'
 
 import Avatar from '@/components/Avatar.vue'
-import BookCoverSelector from '@/components/BookCoverSelector.vue'
-import BookForm from '@/components/BookForm.vue'
-import BookProviderSearch from '@/components/BookProviderSearch.vue'
+import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
+import BookForm from '@/components/book/BookForm.vue'
+import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import BulletSteps from '@/components/BulletSteps.vue'
 import DescriptionList from '@/components/DescriptionList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'

@@ -148,9 +148,8 @@ const router = createRouter({
 /**
  * Replace page title.
  */
-router.beforeEach((to, _, next) => {
+router.afterEach(to => {
   document.title = to.meta.title() + ' | ' + t('app.name')
-  next()
 })
 
 /**

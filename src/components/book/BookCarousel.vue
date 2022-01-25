@@ -24,12 +24,12 @@
 
       <router-link
         v-if="buttonText && buttonLink"
-        class="button is-ghost -mr-3 hidden md:flex"
+        class="button is-ghost -mr-3 hidden md:flex group"
         :to="buttonLink"
       >
         {{ buttonText }}
         <span aria-hidden="true">
-          <ArrowSmRightIcon class="is-right" />
+          <ArrowSmRightIcon class="is-right motion-safe:transition-transform group-hover:translate-x-1" />
         </span>
       </router-link>
     </div>
@@ -61,7 +61,7 @@ import { useStore } from 'vuex'
 
 import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 
-import BookCard from '@/components/BookCard.vue'
+import BookCard from '@/components/book/BookCard.vue'
 
 export default {
   name: 'LastAddedBooks',

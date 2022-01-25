@@ -249,7 +249,7 @@ import {
 } from '@heroicons/vue/outline'
 
 import Avatar from '@/components/Avatar.vue'
-import BookBreadcrumb from '@/components/BookBreadcrumb.vue'
+import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 import getBookLinks from '@/services/links'
@@ -454,6 +454,11 @@ export default {
 
 .author:focus-visible {
   @apply dark:ring-offset-gray-900;
+}
+
+.author:hover {
+  @apply underline underline-offset-1 decoration-2
+    decoration-primary-600 dark:decoration-primary-400;
 }
 
 .owner-badge {

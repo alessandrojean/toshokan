@@ -136,7 +136,7 @@ import { useI18n } from 'vue-i18n'
 import { SearchIcon } from '@heroicons/vue/solid'
 
 import Alert from '@/components/Alert.vue'
-import BookSelector from '@/components/BookSelector.vue'
+import BookSelector from '@/components/book/BookSelector.vue'
 
 import useBookInserter from '@/composables/useBookInserter'
 import useIsbnSearch from '@/composables/useIsbnSearch'

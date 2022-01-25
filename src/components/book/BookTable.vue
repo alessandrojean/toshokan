@@ -163,7 +163,7 @@ import { useI18n } from 'vue-i18n'
 import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/vue/outline'
 import { DotsHorizontalIcon } from '@heroicons/vue/solid'
 
-import Paginator from './Paginator.vue'
+import Paginator from '@/components/Paginator.vue'
 
 import { BookStatus as BaseBookStatus } from '@/model/Book'
 

@@ -24,7 +24,7 @@
           enter-from-class="opacity-0 -translate-x-2"
           enter-to-class="opacity-100 translate-x-0"
         >
-          <TableBooks
+          <BookTable
             v-if="viewMode === 'table' && books.length > 0"
             :items="books"
             :pagination-info="paginationInfo"
@@ -33,7 +33,7 @@
             @page="handlePage"
           />
 
-          <GridBooks
+          <BookGrid
             v-else
             :items="books"
             :pagination-info="paginationInfo"
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Filters -->
-    <LibraryFilters
+    <LibraryFiltersDialog
       v-model:open="filterOpen"
       v-if="!sheetIsEmpty"
       @filter="handleFilter"
@@ -99,21 +99,21 @@ import { MutationTypes } from '@/store'
 import { PlusIcon } from '@heroicons/vue/solid'
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
 
-import BookCreateDialog from '@/components/BookCreateDialog.vue'
-import GridBooks from '@/components/GridBooks.vue'
-import LibraryFilters from '@/components/LibraryFilters.vue'
+import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
+import BookGrid from '@/components/book/BookGrid.vue'
+import BookTable from '@/components/book/BookTable.vue'
+import LibraryFiltersDialog from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
-import TableBooks from '@/components/TableBooks.vue'
 
 export default {
   name: 'DashboardLibraryExplorer',
 
   components: {
     BookCreateDialog,
-    GridBooks,
-    LibraryFilters,
+    BookGrid,
+    BookTable,
+    LibraryFiltersDialog,
     LibraryHeader,
-    TableBooks,
     ExclamationCircleIcon,
     PlusIcon
   },

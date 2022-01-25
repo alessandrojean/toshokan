@@ -130,8 +130,8 @@ import { useI18n } from 'vue-i18n'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
 
-import BookCard from './BookCard.vue'
-import Paginator from './Paginator.vue'
+import BookCard from '@/components/book/BookCard.vue'
+import Paginator from '@/components/Paginator.vue'
 
 export default {
   name: 'GridBooks',
