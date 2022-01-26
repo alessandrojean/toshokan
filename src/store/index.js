@@ -46,6 +46,11 @@ export const GlobalMutations = {
   UPDATE_THEME: 'updateTheme'
 }
 
+/**
+ * Create the full mutation types object.
+ *
+ * @returns {Record<string, string>}
+ */
 function createMutationTypes () {
   const modules = {
     AUTH: AuthMutations,

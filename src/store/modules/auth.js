@@ -26,140 +26,149 @@ const SCOPES = [
   'https://www.googleapis.com/auth/drive.metadata.readonly'
 ]
 
+const state = () => ({
+  googleAuth: null,
+  hasGrantedScopes: null,
+  started: false,
+  signedIn: false,
+  profileName: null,
+  profileEmail: null,
+  profileImageUrl: null
+})
+
+const getters = {
+  hasGrantedScopes: state => {
+    return state.googleAuth?.currentUser?.get()
+      ?.hasGrantedScopes(SCOPES.join(' '))
+  },
+  isSignedIn: state => state.signedIn,
+  isStarted: state => state.started
+}
+
+const actions = {
+  initApp: function ({ commit, state, getters }) {
+    return new Promise((resolve, reject) => {
+      window.gapi.load('client:auth2', () => {
+        window.gapi.client
+          .init({
+            discoveryDocs: DISCOVERY_DOCS,
+            clientId: import.meta.env.VITE_APP_CLIENT_ID,
+            scope: SCOPES.join(' ')
+          })
+          .then(() => {
+            commit(
+              AuthMutations.UPDATE_GOOGLE_AUTH,
+              window.gapi.auth2.getAuthInstance()
+            )
+
+            state.googleAuth.isSignedIn.listen(signedIn => {
+              commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
+            })
+
+            const signedIn = state.googleAuth.isSignedIn.get()
+            const hasGrantedScopes = state.googleAuth?.currentUser?.get()
+              ?.hasGrantedScopes(SCOPES.join(' '))
+
+            commit(AuthMutations.UPDATE_STARTED, true)
+            commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
+            commit(AuthMutations.UPDATE_HAS_GRANTED_SCOPES, hasGrantedScopes)
+
+            resolve(signedIn)
+          }, (error) => {
+            const errorMessage =
+              error.details === GoogleApiErrors.COOKIES_DISABLED
+                ? t('errors.cookiesDisabled')
+                : t('errors.authStartedFailed')
+
+            reject(new Error(errorMessage, {
+              cause: { ...error, refresh: true }
+            }))
+          })
+      })
+    })
+  },
+  grantPermissions: async function ({ state, commit }) {
+    const GoogleUser = state.googleAuth?.currentUser?.get()
+    const missingScopes = SCOPES.filter(scope => {
+      return !GoogleUser.hasGrantedScopes(scope)
+    })
+
+    if (missingScopes.length) {
+      await state.googleAuth?.currentUser?.get()
+        ?.grant({ scope: missingScopes.join(' ') })
+
+      commit(
+        AuthMutations.UPDATE_HAS_GRANTED_SCOPES,
+        state.googleAuth?.currentUser?.get()
+          ?.hasGrantedScopes(SCOPES.join(' '))
+      )
+    }
+  },
+  signIn: async function ({ state }) {
+    try {
+      await state.googleAuth.signIn()
+    } catch (e) {
+      // Do nothing.
+    }
+  },
+  signOut: async function ({ state }) {
+    await state.googleAuth.signOut()
+  },
+  disconnect: async function ({ state }) {
+    state.googleAuth.disconnect()
+  }
+}
+
+const mutations = {
+  [AuthMutations.UPDATE_GOOGLE_AUTH]: function (state, googleAuth) {
+    state.googl
+    state.googleAuth = googleAuth
+  },
+
+  [AuthMutations.UPDATE_HAS_GRANTED_SCOPES]: function (state, hasGrantedScopes) {
+    state.hasGrantedScopes = hasGrantedScopes
+  },
+
+  [AuthMutations.UPDATE_SIGNED_IN]: function (state, signedIn) {
+    state.signedIn = signedIn
+
+    if (signedIn) {
+      const user = state.googleAuth.currentUser.get()
+      const profile = user.getBasicProfile()
+
+      state.profileName = profile.getName()
+      state.profileEmail = profile.getEmail()
+      state.profileImageUrl = profile.getImageUrl()
+      state.hasGrantedScopes = user.hasGrantedScopes(SCOPES.join(' '))
+    } else {
+      state.profileName = null
+      state.profileEmail = null
+      state.profileImageUrl = null
+      state.hasGrantedScopes = null
+    }
+  },
+
+  [AuthMutations.UPDATE_STARTED]: function (state, started) {
+    state.started = started
+  },
+
+  [AuthMutations.UPDATE_PROFILE_NAME]: function (state, name) {
+    state.profileName = name
+  },
+
+  [AuthMutations.UPDATE_PROFILE_EMAIL]: function (state, email) {
+    state.profileEmail = email
+  },
+
+  [AuthMutations.UPDATE_PROFILE_IMAGE_URL]: function (state, imageUrl) {
+    state.profileImageUrl = imageUrl
+  }
+}
+
 export default {
   namespaced: true,
-  state: () => ({
-    googleAuth: null,
-    hasGrantedScopes: null,
-    started: false,
-    signedIn: false,
-    profileName: null,
-    profileEmail: null,
-    profileImageUrl: null
-  }),
-  getters: {
-    hasGrantedScopes: state => {
-      return state.googleAuth?.currentUser?.get()
-        ?.hasGrantedScopes(SCOPES.join(' '))
-    },
-    isSignedIn: state => state.signedIn,
-    isStarted: state => state.started
-  },
-  actions: {
-    initApp: function ({ commit, state, getters }) {
-      return new Promise((resolve, reject) => {
-        window.gapi.load('client:auth2', () => {
-          window.gapi.client
-            .init({
-              discoveryDocs: DISCOVERY_DOCS,
-              clientId: import.meta.env.VITE_APP_CLIENT_ID,
-              scope: SCOPES.join(' ')
-            })
-            .then(() => {
-              commit(
-                AuthMutations.UPDATE_GOOGLE_AUTH,
-                window.gapi.auth2.getAuthInstance()
-              )
-
-              state.googleAuth.isSignedIn.listen(signedIn => {
-                commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
-              })
-
-              const signedIn = state.googleAuth.isSignedIn.get()
-              const hasGrantedScopes = state.googleAuth?.currentUser?.get()
-                ?.hasGrantedScopes(SCOPES.join(' '))
-
-              commit(AuthMutations.UPDATE_STARTED, true)
-              commit(AuthMutations.UPDATE_SIGNED_IN, signedIn)
-              commit(AuthMutations.UPDATE_HAS_GRANTED_SCOPES, hasGrantedScopes)
-
-              resolve(signedIn)
-            }, (error) => {
-              const errorMessage =
-                error.details === GoogleApiErrors.COOKIES_DISABLED
-                  ? t('errors.cookiesDisabled')
-                  : t('errors.authStartedFailed')
-
-              reject(new Error(errorMessage, {
-                cause: { ...error, refresh: true }
-              }))
-            })
-        })
-      })
-    },
-    grantPermissions: async function ({ state, commit }) {
-      const GoogleUser = state.googleAuth?.currentUser?.get()
-      const missingScopes = SCOPES.filter(scope => {
-        return !GoogleUser.hasGrantedScopes(scope)
-      })
-
-      if (missingScopes.length) {
-        await state.googleAuth?.currentUser?.get()
-          ?.grant({ scope: missingScopes.join(' ') })
-
-        commit(
-          AuthMutations.UPDATE_HAS_GRANTED_SCOPES,
-          state.googleAuth?.currentUser?.get()
-            ?.hasGrantedScopes(SCOPES.join(' '))
-        )
-      }
-    },
-    signIn: async function ({ state }) {
-      try {
-        await state.googleAuth.signIn()
-      } catch (e) {
-        // Do nothing.
-      }
-    },
-    signOut: async function ({ state }) {
-      await state.googleAuth.signOut()
-    },
-    disconnect: async function ({ state }) {
-      state.googleAuth.disconnect()
-    }
-  },
-  mutations: {
-    [AuthMutations.UPDATE_GOOGLE_AUTH]: function (state, googleAuth) {
-      state.googleAuth = googleAuth
-    },
-
-    [AuthMutations.UPDATE_HAS_GRANTED_SCOPES]: function (state, hasGrantedScopes) {
-      state.hasGrantedScopes = hasGrantedScopes
-    },
-
-    [AuthMutations.UPDATE_SIGNED_IN]: function (state, signedIn) {
-      state.signedIn = signedIn
-
-      if (signedIn) {
-        const user = state.googleAuth.currentUser.get()
-        const profile = user.getBasicProfile()
-
-        state.profileName = profile.getName()
-        state.profileEmail = profile.getEmail()
-        state.profileImageUrl = profile.getImageUrl()
-        state.hasGrantedScopes = user.hasGrantedScopes(SCOPES.join(' '))
-      } else {
-        state.profileName = null
-        state.profileEmail = null
-        state.profileImageUrl = null
-        state.hasGrantedScopes = null
-      }
-    },
-
-    [AuthMutations.UPDATE_STARTED]: function (state, started) {
-      state.started = started
-    },
-
-    [AuthMutations.UPDATE_PROFILE_NAME]: function (state, name) {
-      state.profileName = name
-    },
-
-    [AuthMutations.UPDATE_PROFILE_EMAIL]: function (state, email) {
-      state.profileEmail = email
-    },
-
-    [AuthMutations.UPDATE_PROFILE_IMAGE_URL]: function (state, imageUrl) {
-      state.profileImageUrl = imageUrl
-    }
-  }
+  state,
+  getters,
+  actions,
+  mutations
 }
