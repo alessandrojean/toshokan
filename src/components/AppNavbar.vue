@@ -1,8 +1,9 @@
 <template>
   <nav
     :class="[
-      'motion-safe:transition-colors duration-400 z-20',
-      transparent ? 'bg-transparent md:bg-gray-800' : 'bg-gray-800'
+      'app-navbar z-20 sm:z-30 md:z-20',
+      isOnTop ? 'is-transparent' : '',
+      !show ? 'is-hidden' : ''
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,12 +11,12 @@
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
             :to="{ name: 'DashboardHome' }"
-            :class="transparent ? 'opacity-95' : ''"
+            :class="isOnTop ? 'opacity-95' : ''"
             class="shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
               <LibraryIcon
-                :class="transparent ? 'text-gray-200 md:text-primary-500' : 'text-primary-500'"
+                :class="isOnTop ? 'text-gray-200 md:text-primary-500' : 'text-primary-500'"
                 class="h-9 w-9 motion-safe:transition-colors"
               />
             </span>
@@ -126,7 +127,7 @@
               leave-from-class="scale-100 opacity-100"
               leave-to-class="scale-95 opacity-0"
             >
-              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700/80 md:dark:backdrop-blur divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="pb-1">
                   <MenuItem v-slot="{ active }">
                     <router-link
@@ -170,9 +171,8 @@
 </template>
 
 <script>
-import { computed, inject, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -210,13 +210,13 @@ export default {
     transparent: Boolean
   },
 
-  setup () {
+  setup (props) {
     const store = useStore()
-    const route = useRoute()
 
     const { t } = useI18n({ useScope: 'global' })
 
     const open = ref(false)
+    const { transparent } = toRefs(props)
 
     const shared = computed(() => store.getters['sheet/shared'])
     const loading = computed(() => store.state.sheet.loading)
@@ -258,6 +258,32 @@ export default {
 
     const showSearchDialog = inject('showSearchDialog')
 
+    const currentScrollPosition = ref(0)
+    const lastScrollPosition = ref(0)
+    const show = ref(true)
+
+    function handleScroll () {
+      currentScrollPosition.value = document.documentElement.scrollTop
+
+      if (currentScrollPosition.value < 0) {
+        return
+      }
+
+      if (Math.abs(currentScrollPosition.value - lastScrollPosition.value) < 60) {
+        return
+      }
+
+      show.value = currentScrollPosition.value < lastScrollPosition.value
+      lastScrollPosition.value = currentScrollPosition.value
+    }
+
+    const isOnTop = computed(() => {
+      return transparent.value && currentScrollPosition.value <= 30
+    })
+
+    onMounted(() => window.addEventListener('scroll', handleScroll))
+    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+
     return {
       open,
       navigation,
@@ -271,6 +297,8 @@ export default {
       loading,
       signOut,
       showSearchDialog,
+      isOnTop,
+      show,
       t
     }
   }
@@ -278,6 +306,24 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+.app-navbar {
+  @apply fixed inset-x-0 bg-gray-800/95
+    backdrop-blur sm:backdrop-filter-none md:backdrop-blur
+    transition duration-300 ease-in-out sm:left-16 md:left-0;
+}
+
+.app-navbar.is-transparent {
+  @apply bg-transparent md:bg-gray-800/95;
+}
+
+.app-navbar.is-hidden:not(:focus-within) {
+  transform: translate3d(0, -100%, 0);
+}
+
+.app-navbar.is-hidden.is-transparent {
+  @apply bg-gray-800/95;
+}
+
 .nav-link.is-active {
   @apply bg-gray-900 text-white hover:bg-gray-900;
 }

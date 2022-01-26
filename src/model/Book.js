@@ -79,6 +79,8 @@ export const BookFavorite = {
   INACTIVE: ''
 }
 
+export const NSFW_TAGS = ['nsfw', '18+', '+18', 'hentai', 'doujinshi', 'erótico']
+
 export function parseBook (value, index) {
   const labelPrice = value[Columns.LABEL_PRICE].split(' ')
   const paidPrice = value[Columns.PAID_PRICE].split(' ')
@@ -232,7 +234,7 @@ export function formatBook (book) {
 }
 
 export function splitTitle (title) {
-  const titleRegex = /\s+#(\d+(?:[\.,]\d+)?)(?::\s+)?/
+  const titleRegex = /\s+#(\d+(?:[.,]\d+)?)(?::\s+)?/
   const parts = title.split(titleRegex)
 
   const main = parts[2]

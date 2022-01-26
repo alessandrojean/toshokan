@@ -1,6 +1,6 @@
 {
   "name": "toshokan",
-  "version": "0.2.33",
+  "version": "0.2.34",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -29,7 +29,7 @@
     "paginator": "^1.0.0",
     "search-query-parser": "^1.6.0",
     "slugify": "^1.6.5",
-    "vue": "^3.2.27",
+    "vue": "^3.2.29",
     "vue-i18n": "^9.1.9",
     "vue-router": "^4.0.12",
     "vue3-apexcharts": "^1.4.1",
@@ -37,11 +37,12 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.0.1",
-    "@vue/compiler-sfc": "^3.2.27",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/preset-env": "^7.16.11",
+    "@vitejs/plugin-vue": "^2.1.0",
+    "@vue/compiler-sfc": "^3.2.29",
     "@vue/eslint-config-standard": "^6.1.0",
     "autoprefixer": "^10.4.2",
-    "babel-eslint": "^10.1.0",
     "eslint": "^8.7.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
@@ -51,7 +52,8 @@
     "git-describe": "^4.1.0",
     "postcss": "^8.4.5",
     "postcss-loader": "^6.2.1",
-    "tailwindcss": "^3.0.15",
+    "source-map": "^0.7.3",
+    "tailwindcss": "^3.0.17",
     "vite": "^2.7.13",
     "vite-plugin-pwa": "^0.11.13"
   }

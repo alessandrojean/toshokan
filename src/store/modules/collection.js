@@ -3,12 +3,10 @@ import Paginator from 'paginator'
 import {
   getBookIds,
   getBooks,
-  getBooksFromGroup,
   getGroups,
   getPublishers,
   getLatestReadings,
-  getStores,
-  searchBooks
+  getStores
 } from '@/services/sheet'
 import { PropertyToColumn } from '@/model/Book'
 
@@ -21,22 +19,16 @@ function buildPaginationInfo ({ perPage, links, totalResults, page }) {
 }
 
 export const CollectionMutations = {
-  CLEAR_SEARCH: 'clearSearch',
   UPDATE_BOOKS: 'updateBooks',
   UPDATE_CURRENT_PAGE: 'updateCurrentPage',
   UPDATE_FUTURE_ITEMS: 'updateFutureItems',
-  UPDATE_GRID_MODE: 'updateGridMode',
-  UPDATE_GROUP: 'updateGroup',
   UPDATE_GROUPS: 'updateGroups',
   UPDATE_ID_MAP: 'updateIdMap',
   UPDATE_PUBLISHERS: 'updatePublishers',
   UPDATE_LAST_ADDED: 'updateLastAdded',
   UPDATE_LATEST_READINGS: 'updateLatestReadings',
-  UPDATE_SEARCH: 'updateSearch',
   UPDATE_SORT: 'updateSort',
-  UPDATE_SPOILER_MODE: 'updateSpoilerMode',
-  UPDATE_STORES: 'updateStores',
-  UPDATE_VIEW_MODE: 'updateViewMode'
+  UPDATE_STORES: 'updateStores'
 }
 
 const state = () => ({
@@ -44,53 +36,39 @@ const state = () => ({
     items: [],
     loading: false
   },
+  carousels: {
+    lastAdded: {
+      items: [],
+      loading: false
+    },
+    latestReadings: {
+      items: [],
+      loading: false
+    }
+  },
   currentPage: 1,
+  filters: {
+    groups: {
+      items: [],
+      loading: false,
+      selected: JSON.parse(localStorage.getItem('collection_groups') || '[]')
+    },
+    publishers: {
+      items: [],
+      loading: false
+    },
+    stores: {
+      items: [],
+      loading: false
+    }
+  },
   futureItems: 'hide',
-  gridMode: localStorage.getItem('grid_mode') || 'comfortable',
-  group: localStorage.getItem('collection_group'),
-  groups: {
-    items: [],
-    loading: false
-  },
   idMap: {},
-  publishers: {
-    items: [],
-    loading: false
-  },
-  lastAdded: {
-    items: [],
-    loading: false
-  },
-  latestReadings: {
-    items: [],
-    loading: false
-  },
   links: 6,
   paginationInfo: {},
   perPage: 18,
-  search: {
-    history: localStorage.getItem('search_history')
-      ? JSON.parse(localStorage.getItem('search_history'))
-      : [],
-    query: '',
-    page: 1,
-    pagination: null,
-    sortBy: 'createdAt',
-    sortDirection: 'desc',
-    results: [],
-    loading: false
-  },
-  stores: {
-    items: [],
-    loading: false
-  },
   sortBy: 'createdAt',
-  sortDirection: 'desc',
-  spoilerMode: {
-    synopsis: localStorage.getItem('spoiler_mode_synopsis') === 'true',
-    cover: localStorage.getItem('spoiler_mode_cover') === 'true'
-  },
-  viewMode: localStorage.getItem('view_mode') || 'grid'
+  sortDirection: 'desc'
 })
 
 const actions = {
@@ -101,7 +79,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      if (state.groups.items.length === 0) {
+      if (state.filters.groups.items.length === 0) {
         await dispatch('fetchGroups')
       }
 
@@ -109,24 +87,29 @@ const actions = {
         await dispatch('fetchIdMap')
       }
 
-      let group = state.group
-      const groupData = state.groups.items.find(grp => grp.name === group)
+      let groups = state.filters.groups.selected
+      const allGroups = state.filters.groups.items.map(grp => grp.name)
+      const groupData = groups.filter(grp => allGroups.includes(grp))
 
-      if (!groupData) {
-        group = null
+      if (groupData.length === 0) {
+        groups = allGroups
+      } else if (groupData.length < allGroups.length) {
+        groups = groupData
       }
 
       const orderBy = PropertyToColumn[state.sortBy]
       const orderDirection = state.sortDirection
       const futureItems = state.futureItems
 
-      const { books, totalResults } = await getBooksFromGroup(
-        sheetId, state.idMap, group, page,
-        { futureItems, orderBy, orderDirection }
-      )
+      const { books, totalResults } = await getBooks(sheetId, state.idMap, page, {
+        futureItems,
+        groups,
+        orderBy,
+        orderDirection
+      })
       commit(CollectionMutations.UPDATE_BOOKS, { items: books })
       commit(CollectionMutations.UPDATE_CURRENT_PAGE, { page, totalResults })
-      commit(CollectionMutations.UPDATE_GROUP, { group })
+      commit(CollectionMutations.UPDATE_GROUPS, { selected: groups })
     } finally {
       commit(CollectionMutations.UPDATE_BOOKS, { loading: false })
     }
@@ -223,8 +206,7 @@ const actions = {
 
   async invalidateAndFetch ({ commit, dispatch }) {
     commit(CollectionMutations.UPDATE_FUTURE_ITEMS, 'hide')
-    commit(CollectionMutations.UPDATE_GROUP, { group: null })
-    commit(CollectionMutations.UPDATE_GROUPS, { items: [] })
+    commit(CollectionMutations.UPDATE_GROUPS, { items: [], selected: [] })
     commit(CollectionMutations.UPDATE_PUBLISHERS, { items: [] })
     commit(CollectionMutations.UPDATE_STORES, { items: [] })
 
@@ -235,78 +217,10 @@ const actions = {
     await dispatch('fetchLatestReadings')
 
     commit(MutationTypes.SHEET_UPDATE_LOADING, false, { root: true })
-  },
-
-  async search ({ commit, dispatch, state, rootState }, { query, sortBy, sortDirection, page }) {
-    commit(CollectionMutations.UPDATE_SEARCH, {
-      loading: true,
-      results: [],
-      page: page || 1,
-      pagination: null,
-      query
-    })
-
-    const sheetId = rootState.sheet.sheetId
-
-    try {
-      if (Object.keys(state.idMap).length === 0) {
-        await dispatch('fetchIdMap')
-      }
-
-      commit(CollectionMutations.UPDATE_SEARCH, {
-        sortBy: sortBy || state.search.sortBy,
-        sortDirection: sortDirection || state.search.sortDirection
-      })
-
-      const { results, total } = await searchBooks(
-        sheetId,
-        state.idMap,
-        query,
-        {
-          sortBy: state.search.sortBy,
-          sortDirection: state.search.sortDirection
-        },
-        page
-      )
-
-      const newHistory = [query].concat(state.search.history)
-
-      commit(CollectionMutations.UPDATE_SEARCH, {
-        results,
-        history: [...new Set(newHistory)].slice(0, 6),
-        paginationInfo: buildPaginationInfo({
-          perPage: state.perPage,
-          links: 4,
-          totalResults: total,
-          page
-        })
-      })
-    } catch (e) {
-      commit(CollectionMutations.UPDATE_SEARCH, {
-        results: [],
-        page: 1,
-        paginationInfo: null
-      })
-    } finally {
-      commit(CollectionMutations.UPDATE_SEARCH, { loading: false })
-    }
   }
 }
 
 const mutations = {
-  [CollectionMutations.CLEAR_SEARCH]: function (state) {
-    state.search = {
-      ...state.search,
-      query: '',
-      page: 1,
-      paginationInfo: null,
-      sortBy: 'createdAt',
-      sortDirection: 'desc',
-      results: [],
-      loading: false
-    }
-  },
-
   [CollectionMutations.UPDATE_BOOKS]: function (state, books) {
     state.books = { ...state.books, ...books }
   },
@@ -327,35 +241,19 @@ const mutations = {
     state.futureItems = futureItems
   },
 
-  [CollectionMutations.UPDATE_GRID_MODE]: function (state, gridMode) {
-    state.gridMode = gridMode
-    localStorage.setItem('grid_mode', gridMode)
-  },
-
-  [CollectionMutations.UPDATE_GROUP]: function (state, { group, totalResults }) {
-    state.group = group || null
-
-    if (group) {
-      localStorage.setItem('collection_group', group)
-    } else {
-      localStorage.removeItem('collection_group')
-    }
-
-    if (totalResults) {
-      const paginationInfo = buildPaginationInfo({
-        perPage: state.perPage,
-        links: state.links,
-        totalResults,
-        page: state.currentPage === 0 ? 1 : state.currentPage
-      })
-
-      state.currentPage = state.currentPage === 0 ? 1 : state.currentPage
-      state.paginationInfo = { ...state.paginationInfo, ...paginationInfo }
-    }
-  },
-
   [CollectionMutations.UPDATE_GROUPS]: function (state, groups) {
-    state.groups = { ...state.groups, ...groups }
+    state.filters.groups = { ...state.filters.groups, ...groups }
+
+    if (groups.selected) {
+      const { selected } = groups
+      const { items: allGroups } = state.filters.groups
+
+      if (selected.length > 0 && selected.length < allGroups.length) {
+        localStorage.setItem('collection_groups', JSON.stringify(selected))
+      } else if (selected.length === 0 || selected.length === allGroups.length) {
+        localStorage.setItem('collection_groups', '[]')
+      }
+    }
   },
 
   [CollectionMutations.UPDATE_ID_MAP]: function (state, idMap) {
@@ -364,30 +262,15 @@ const mutations = {
   },
 
   [CollectionMutations.UPDATE_PUBLISHERS]: function (state, publishers) {
-    state.publishers = { ...state.publishers, ...publishers }
+    state.filters.publishers = { ...state.filters.publishers, ...publishers }
   },
 
   [CollectionMutations.UPDATE_LAST_ADDED]: function (state, lastAdded) {
-    state.lastAdded = { ...state.lastAdded, ...lastAdded }
+    state.carousels.lastAdded = { ...state.carousels.lastAdded, ...lastAdded }
   },
 
   [CollectionMutations.UPDATE_LATEST_READINGS]: function (state, latestReadings) {
-    state.latestReadings = { ...state.latestReadings, ...latestReadings }
-  },
-
-  [CollectionMutations.UPDATE_SEARCH]: function (state, search) {
-    state.search = {
-      ...state.search,
-      ...search,
-      paginationInfo: {
-        ...state.search.paginationInfo,
-        ...search.paginationInfo
-      }
-    }
-
-    if (search.history) {
-      localStorage.setItem('search_history', JSON.stringify(search.history))
-    }
+    state.carousels.latestReadings = { ...state.carousels.latestReadings, ...latestReadings }
   },
 
   [CollectionMutations.UPDATE_SORT]: function (state, { sortBy, sortDirection }) {
@@ -395,19 +278,8 @@ const mutations = {
     state.sortDirection = sortDirection
   },
 
-  [CollectionMutations.UPDATE_SPOILER_MODE]: function (state, spoilerMode) {
-    state.spoilerMode = { ...state.spoilerMode, ...spoilerMode }
-    localStorage.setItem('spoiler_mode_synopsis', spoilerMode.synopsis)
-    localStorage.setItem('spoiler_mode_cover', spoilerMode.cover)
-  },
-
   [CollectionMutations.UPDATE_STORES]: function (state, stores) {
-    state.stores = { ...state.stores, ...stores }
-  },
-
-  [CollectionMutations.UPDATE_VIEW_MODE]: function (state, viewMode) {
-    state.viewMode = viewMode
-    localStorage.setItem('view_mode', viewMode)
+    state.filters.stores = { ...state.filters.stores, ...stores }
   }
 }
 

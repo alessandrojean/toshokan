@@ -36,6 +36,7 @@ export default {
     cookiesDisabled: 'Os cookies estão desabilitados. Habilite-os e atualize a página.',
     authStartedFailed: 'Não foi possivel inicializar o sistema de autenticação.',
     missingScopes: 'Algumas permissões não foram concedidas para a aplicação.',
+    badQuery: 'Há um erro na query: {error}',
     refresh: 'Atualizar a página',
     grantPermissions: 'Conceder as permissões',
     unexpected: 'Um erro inesperado aconteceu na aplicação.'
@@ -432,11 +433,12 @@ export default {
       title: 'Biblioteca',
       currentGroup: 'Grupo atual: ',
       allGroups: 'Todos os grupos',
+      groupCount: 'Todos os grupos | Um grupo | {count} grupos',
       sortingBy: 'Ordenando por: ',
       filter: 'Filtrar',
       newBook: 'Novo livro',
       items: {
-        current: 'Items do grupo {group}',
+        current: 'Itens de todos os grupos | Itens do grupo {count} | Itens de {count} grupos',
         tableColumns: {
           actions: 'Ações'
         },
@@ -446,7 +448,7 @@ export default {
         title: 'Filtros',
         close: 'Fechar painel',
         closeMobile: 'Fechar',
-        filter: 'Filtrar',
+        apply: 'Aplicar',
         visualization: 'Visualização',
         books: 'Livros',
         viewMode: {
@@ -459,7 +461,7 @@ export default {
           compact: 'Compacto',
           comfortable: 'Confortável'
         },
-        group: 'Grupo',
+        groups: 'Grupos',
         sortDirection: {
           label: 'Sentido',
           asc: 'Crescente',
@@ -478,6 +480,13 @@ export default {
         description: `
           Adicione um primeiro livro para começar a organizar
           melhor suas coleções e poder visualizar as estatísticas mensais.
+        `
+      },
+      noResults: {
+        title: 'Nenhum resultado encontrado',
+        description: `
+          Não há livros que sejam relacionados aos filtros aplicados.
+          Dê uma conferida nos filtros e tente novamente!
         `
       }
     },
@@ -637,6 +646,12 @@ export default {
           label: 'Ocultar as capas de livros não lidos',
           description: `
             Se ativado, as capas serão desfocadas para prevenir spoilers.
+          `
+        },
+        blurNsfwCover: {
+          label: 'Ocultar as capas de livros marcados como NSFW',
+          description: `
+            Se ativado, as capas dos livros marcados como NSFW serão desfocadas.
           `
         }
       },

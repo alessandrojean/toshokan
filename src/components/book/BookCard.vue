@@ -25,7 +25,7 @@
     :title="book.title"
     :aria-current="current ? 'page' : undefined"
   >
-    <div class="book-card aspect-w-2 aspect-h-3">
+    <div :class="blurCover ? 'blurred' : ''" class="book-card">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -48,15 +48,22 @@
             aria-hidden="true"
           />
         </div>
-        <img
-          v-else
-          :class="[
-            'book-cover',
-            spoilerMode.cover && !isRead ? 'is-spoiler' : ''
-          ]"
-          :src="thumbnailUrl"
-          aria-hidden="true"
-        >
+        <div v-else class="book-cover-wrapper" aria-hidden="true">
+          <img
+            :class="[
+              'book-cover',
+              blurCover ? 'is-spoiler' : ''
+            ]"
+            :src="thumbnailUrl"
+          >
+
+          <div
+            v-if="blurCover"
+            class="absolute inset-0 flex items-center justify-center cover-eye"
+          >
+            <EyeOffIcon class="w-8 h-8 text-gray-800 opacity-60" />
+          </div>
+        </div>
       </transition>
 
       <div
@@ -110,10 +117,10 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 
-import { BookOpenIcon } from '@heroicons/vue/outline'
+import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
 
-import { BookFavorite, BookStatus } from '@/model/Book'
+import { BookFavorite, BookStatus, NSFW_TAGS } from '@/model/Book'
 
 export default {
   name: 'BookCard',
@@ -121,7 +128,8 @@ export default {
   components: {
     BookOpenIcon,
     BookmarkIcon,
-    ClockIcon
+    ClockIcon,
+    EyeOffIcon
   },
 
   props: {
@@ -190,8 +198,18 @@ export default {
     })
 
     const store = useStore()
-    const mode = computed(() => store.state.collection.gridMode)
-    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+    const mode = computed(() => store.state.settings.gridMode)
+    const spoilerMode = computed(() => store.state.settings.spoilerMode)
+    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+
+    const isNsfw = computed(() => {
+      return book.value.tags.some(tag => NSFW_TAGS.includes(tag.toLowerCase()))
+    })
+
+    const blurCover = computed(() => {
+      return (spoilerMode.value.cover && !isRead.value) ||
+        (blurNsfw.value && isNsfw.value)
+    })
 
     return {
       isFavorite,
@@ -204,6 +222,7 @@ export default {
       volume,
       mode,
       spoilerMode,
+      blurCover,
       t
     }
   }
@@ -212,21 +231,27 @@ export default {
 
 <style lang="postcss" scoped>
 .book-card {
+  will-change: transform, box-shadow;
   @apply relative shadow rounded-md overflow-hidden
     bg-gray-200 dark:bg-gray-700
-    motion-safe:transition-shadow;
+    aspect-w-2 aspect-h-3
+    motion-safe:transition;
 }
 
 .book-link:focus-visible .book-card {
   @apply ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-gray-900;
 }
 
-.book-card:hover {
-  @apply shadow-lg;
+.book-link:hover .book-card {
+  @apply shadow-lg -translate-y-1;
 }
 
 .book-gradient {
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+}
+
+.book-cover-wrapper {
+  @apply w-full h-full overflow-hidden;
 }
 
 .book-cover {
@@ -234,7 +259,7 @@ export default {
 }
 
 .book-cover.is-spoiler {
-  @apply blur;
+  @apply blur scale-105;
 }
 
 .current-volume,
@@ -253,5 +278,18 @@ export default {
   @apply p-2 absolute inset-0 flex justify-start items-start
     bg-gray-900 dark:bg-gray-800
     bg-opacity-20 dark:bg-opacity-60
+}
+
+.book-card.blurred :where(.book-cover, .cover-eye) {
+  @apply md:motion-safe:transition-all md:motion-safe:duration-[2000ms]
+    md:motion-safe:ease-in;
+}
+
+.book-card.blurred:hover .book-cover {
+  @apply md:blur-0 md:scale-100;
+}
+
+.book-card.blurred:hover .cover-eye {
+  @apply md:opacity-0;
 }
 </style>

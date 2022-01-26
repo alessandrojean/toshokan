@@ -50,14 +50,16 @@
                 <div class="h-s-40 sm:h-auto overflow-y-auto sm:overflow-y-visible mt-4 relative sm:flex-1 border-t border-gray-300 dark:border-gray-600">
                   <div class="divide-y divide-gray-200 dark:divide-gray-600 border-b border-gray-200 dark:border-gray-600">
                     <Disclosure
+                      v-for="(section, sectionIdx) in filters"
+                      :key="sectionIdx"
                       as="div"
                       class="py-4"
                       v-slot="{ open }"
-                      default-open
+                      :default-open="section.open"
                     >
                       <DisclosureButton class="w-full flex justify-between items-center font-medium px-4 sm:px-6 rounded has-ring-focus dark:text-gray-200">
                         <span>
-                          {{ t('dashboard.library.filters.books') }}
+                          {{ section.title }}
                         </span>
                         <span aria-hidden="true">
                           <ChevronUpIcon
@@ -66,185 +68,81 @@
                           />
                         </span>
                       </DisclosureButton>
-                      <DisclosurePanel class="space-y-6 pt-4 px-4 sm:px-6">
-                        <RadioGroup
-                          v-if="groups.length > 0"
-                          v-model="group"
-                          as="div"
-                        >
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.group') }}
-                          </RadioGroupLabel>
 
-                          <div class="w-full -mt-2">
-                            <RadioGroupOption
-                              v-for="grp of groups"
-                              :key="grp.name"
-                              :value="grp.name"
-                              v-slot="{ checked }"
-                              class="mr-2 mt-2 inline-block has-ring-focus rounded"
-                            >
+                      <DisclosurePanel class="space-y-6 pt-4 px-4 sm:px-6">
+                        <template v-for="child in section.children">
+                          <fieldset
+                            v-if="child.options.length > 0 && child.multiple"
+                            :key="child.key"
+                          >
+                            <legend class="label">
+                              {{ child.label }}
+                            </legend>
+
+                            <div class="w-full">
                               <div
-                                :class="[
-                                  'chip is-square',
-                                  checked ? 'is-active' : ''
-                                ]"
-                                @click="resetGroup(checked)"
+                                v-for="option of child.options"
+                                :key="option.key"
+                                class="mr-2 mt-2 inline-block"
                               >
-                                {{ grp.name }}
-                                <span class="count">
-                                  <span class="sr-only">(</span>
-                                  <span>{{ grp.count }}</span>
-                                  <span class="sr-only">)</span>
-                                </span>
+                                <input
+                                  type="checkbox"
+                                  class="sr-only"
+                                  :name="child.key + '-filter'"
+                                  :id="slugify(child.key + '-' + option.key)"
+                                  :value="option.value"
+                                  v-model="state[child.key]"
+                                >
+                                <label
+                                  :for="slugify(child.key + '-' + option.key)"
+                                  :class="[
+                                    'chip is-square',
+                                    checked(child.key, option.value)
+                                      ? 'is-active'
+                                      : ''
+                                  ]"
+                                >
+                                  {{ option.label }}
+                                  <span class="count" v-if="option.count">
+                                    <span class="sr-only">(</span>
+                                    <span>{{ option.count }}</span>
+                                    <span class="sr-only">)</span>
+                                  </span>
+                                </label>
                               </div>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
+                            </div>
+                          </fieldset>
 
-                        <RadioGroup v-model="futureItems" as="div">
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.futureItems.label') }}
-                          </RadioGroupLabel>
+                          <RadioGroup
+                            v-else-if="child.options.length > 0 && !child.hidden"
+                            :key="child.key"
+                            v-model="state[child.key]"
+                            as="div"
+                          >
+                            <RadioGroupLabel class="label">
+                              {{ child.label }}
+                            </RadioGroupLabel>
 
-                          <div class="w-full">
-                            <RadioGroupOption
-                              v-for="option of ['indiferent', 'only', 'hide']"
-                              :key="option"
-                              :value="option"
-                              v-slot="{ checked }"
-                              class="inline-block mr-2 has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t(`dashboard.library.filters.futureItems.${option}`) }}
-                              </span>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
-
-                        <RadioGroup v-model="sortDirection" as="div">
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.sortDirection.label') }}
-                          </RadioGroupLabel>
-
-                          <div class="w-full">
-                            <RadioGroupOption
-                              value="asc"
-                              v-slot="{ checked }"
-                              class="inline-block mr-2 has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.sortDirection.asc') }}
-                              </span>
-                            </RadioGroupOption>
-                            <RadioGroupOption
-                              value="desc"
-                              v-slot="{ checked }"
-                              class="inline-block has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.sortDirection.desc') }}
-                              </span>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
-
-                        <RadioGroup v-model="sortProperty" as="div">
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.sortBy') }}
-                          </RadioGroupLabel>
-
-                          <div class="w-full -mt-2">
-                            <RadioGroupOption
-                              v-for="sortOption of sortProperties"
-                              :key="sortOption.attr"
-                              :value="sortOption.attr"
-                              v-slot="{ checked }"
-                              class="mr-2 mt-2 inline-block has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ sortOption.title }}
-                              </span>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
-                      </DisclosurePanel>
-                    </Disclosure>
-
-                    <Disclosure
-                      as="div"
-                      class="py-4"
-                      v-slot="{ open }"
-                    >
-                      <DisclosureButton class="w-full flex justify-between items-center font-medium px-4 sm:px-6 rounded has-ring-focus dark:text-gray-200">
-                        <span>
-                          {{ t('dashboard.library.filters.visualization') }}
-                        </span>
-                        <span aria-hidden="true">
-                          <ChevronUpIcon
-                            :class="open ? 'rotate-180' : ''"
-                            class="w-5 h-5 text-gray-500 motion-safe:transition-transform duration-300"
-                          />
-                        </span>
-                      </DisclosureButton>
-                      <DisclosurePanel class="space-y-6 pt-4 px-4 sm:px-6">
-                        <RadioGroup v-model="viewMode" as="div">
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.viewMode.label' )}}
-                          </RadioGroupLabel>
-
-                          <div class="w-full">
-                            <RadioGroupOption
-                              value="table"
-                              v-slot="{ checked }"
-                              class="inline-block mr-2 has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.viewMode.table') }}
-                              </span>
-                            </RadioGroupOption>
-                            <RadioGroupOption
-                              value="grid"
-                              v-slot="{ checked }"
-                              class="inline-block has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.viewMode.grid') }}
-                              </span>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
-
-                        <RadioGroup
-                          v-if="viewMode === 'grid'"
-                          v-model="gridMode"
-                          as="div"
-                        >
-                          <RadioGroupLabel class="label">
-                            {{ t('dashboard.library.filters.gridMode.label') }}
-                          </RadioGroupLabel>
-
-                          <div class="w-full">
-                            <RadioGroupOption
-                              value="compact"
-                              v-slot="{ checked }"
-                              class="inline-block mr-2 has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.gridMode.compact') }}
-                              </span>
-                            </RadioGroupOption>
-                            <RadioGroupOption
-                              value="comfortable"
-                              v-slot="{ checked }"
-                              class="inline-block has-ring-focus rounded"
-                            >
-                              <span :class="['chip is-square', checked ? 'is-active' : '']">
-                                {{ t('dashboard.library.filters.gridMode.comfortable') }}
-                              </span>
-                            </RadioGroupOption>
-                          </div>
-                        </RadioGroup>
+                            <div class="w-full">
+                              <RadioGroupOption
+                                v-for="option of child.options"
+                                :key="option.key"
+                                :value="option.value"
+                                v-slot="{ checked }"
+                                class="mr-2 mt-2 inline-block has-ring-focus rounded"
+                              >
+                                <span
+                                  :class="[
+                                    'chip is-square',
+                                    checked ? 'is-active' : ''
+                                  ]"
+                                >
+                                  {{ option.label }}
+                                </span>
+                              </RadioGroupOption>
+                            </div>
+                          </RadioGroup>
+                        </template>
                       </DisclosurePanel>
                     </Disclosure>
                   </div>
@@ -270,7 +168,7 @@
                     type="submit"
                     class="button is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial"
                   >
-                    {{ t('dashboard.library.filters.filter') }}
+                    {{ t('dashboard.library.filters.apply') }}
                   </button>
                 </div>
               </form>
@@ -283,7 +181,7 @@
 </template>
 
 <script>
-import { computed, inject, ref, toRefs, watch } from 'vue'
+import { computed, inject, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -303,9 +201,9 @@ import {
 
 import { ChevronUpIcon, XIcon } from '@heroicons/vue/solid'
 
-export default {
-  name: 'LibraryFilters',
+import slugify from 'slugify'
 
+export default {
   components: {
     ChevronUpIcon,
     XIcon,
@@ -332,13 +230,6 @@ export default {
     const store = useStore()
     const { t, n, locale } = useI18n()
 
-    const gridMode = ref(store.state.collection.gridMode)
-    const viewMode = ref(store.state.collection.viewMode)
-    const group = ref(store.state.collection.group)
-    const sortProperty = ref(store.state.collection.sortBy)
-    const sortDirection = ref(store.state.collection.sortDirection)
-    const futureItems = ref(store.state.collection.futureItems)
-
     const sortProperties = computed(() => {
       const properties = [
         { attr: 'title', title: t('book.properties.title') },
@@ -355,7 +246,7 @@ export default {
       return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
-    const groups = computed(() => store.state.collection.groups.items)
+    const groups = computed(() => store.state.collection.filters.groups.items)
 
     const { open } = toRefs(props)
 
@@ -364,12 +255,12 @@ export default {
 
     watch(open, newOpen => {
       if (newOpen) {
-        gridMode.value = store.state.collection.gridMode
-        viewMode.value = store.state.collection.viewMode
-        group.value = store.state.collection.group
-        sortProperty.value = store.state.collection.sortBy
-        sortDirection.value = store.state.collection.sortDirection
-        futureItems.value = store.state.collection.futureItems
+        state.groups = store.state.collection.filters.groups.selected
+        state.futureItems = store.state.collection.futureItems
+        state.sortDirection = store.state.collection.sortDirection
+        state.sortProperty = store.state.collection.sortBy
+        state.viewMode = store.state.settings.viewMode
+        state.gridMode = store.state.settings.gridMode
       }
 
       newOpen ? disableSearchShortcut() : enableSearchShortcut()
@@ -377,35 +268,137 @@ export default {
 
     function handleFilter () {
       context.emit('update:open', false)
-      context.emit('filter', {
-        viewMode: viewMode.value,
-        gridMode: gridMode.value,
-        group: group.value,
-        sortProperty: sortProperty.value,
-        sortDirection: sortDirection.value,
-        futureItems: futureItems.value
-      })
+      context.emit('filter', state)
     }
 
-    function resetGroup (checked) {
-      if (checked) {
-        setTimeout(() => { group.value = null })
-      }
+    function checked (key, value) {
+      console.log(key, value, state[key].includes(value))
+      return state[key].includes(value)
     }
+
+    const state = reactive({
+      groups: store.state.collection.filters.groups.selected,
+      futureItems: store.state.collection.futureItems,
+      sortDirection: store.state.collection.sortDirection,
+      sortProperty: store.state.collection.sortBy,
+      viewMode: store.state.settings.viewMode,
+      gridMode: store.state.settings.gridMode
+    })
+
+    const filters = computed(() => [
+      {
+        title: t('dashboard.library.filters.books'),
+        open: true,
+        children: [
+          {
+            key: 'groups',
+            label: t('dashboard.library.filters.groups'),
+            multiple: true,
+            options: groups.value.map(grp => ({
+              key: grp.name,
+              value: grp.name,
+              label: grp.name,
+              count: grp.count
+            }))
+          },
+          {
+            key: 'futureItems',
+            label: t('dashboard.library.filters.futureItems.label'),
+            options: [
+              {
+                key: 'indiferent',
+                value: 'indiferent',
+                label: t('dashboard.library.filters.futureItems.indiferent')
+              },
+              {
+                key: 'only',
+                value: 'only',
+                label: t('dashboard.library.filters.futureItems.only')
+              },
+              {
+                key: 'hide',
+                value: 'hide',
+                label: t('dashboard.library.filters.futureItems.hide')
+              }
+            ]
+          },
+          {
+            key: 'sortDirection',
+            label: t('dashboard.library.filters.sortDirection.label'),
+            options: [
+              {
+                key: 'asc',
+                value: 'asc',
+                label: t('dashboard.library.filters.sortDirection.asc')
+              },
+              {
+                key: 'desc',
+                value: 'desc',
+                label: t('dashboard.library.filters.sortDirection.desc')
+              }
+            ]
+          },
+          {
+            key: 'sortProperty',
+            label: t('dashboard.library.filters.sortBy'),
+            options: sortProperties.value.map(property => ({
+              key: property.attr,
+              value: property.attr,
+              label: property.title
+            }))
+          }
+        ]
+      },
+      {
+        title: t('dashboard.library.filters.visualization'),
+        children: [
+          {
+            key: 'viewMode',
+            label: t('dashboard.library.filters.viewMode.label'),
+            options: [
+              {
+                key: 'table',
+                value: 'table',
+                label: t('dashboard.library.filters.viewMode.table')
+              },
+              {
+                key: 'grid',
+                value: 'grid',
+                label: t('dashboard.library.filters.viewMode.grid')
+              }
+            ]
+          },
+          {
+            key: 'gridMode',
+            label: t('dashboard.library.filters.gridMode.label'),
+            hidden: state.viewMode === 'table',
+            options: [
+              {
+                key: 'compact',
+                value: 'compact',
+                label: t('dashboard.library.filters.gridMode.compact')
+              },
+              {
+                key: 'comfortable',
+                value: 'comfortable',
+                label: t('dashboard.library.filters.gridMode.comfortable')
+              }
+            ]
+          }
+        ]
+      }
+    ])
 
     return {
-      gridMode,
-      group,
       groups,
-      sortProperty,
-      sortDirection,
-      futureItems,
       sortProperties,
-      viewMode,
       handleFilter,
-      resetGroup,
       t,
-      n
+      n,
+      slugify,
+      checked,
+      state,
+      filters
     }
   }
 }

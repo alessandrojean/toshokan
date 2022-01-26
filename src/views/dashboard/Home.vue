@@ -23,8 +23,12 @@
             @click="reload"
             :disabled="loading"
           >
-            <span aria-hidden="true">
-              <RefreshIcon />
+            <span
+              aria-hidden="true"
+              :class="loading ? 'motion-safe:animate-spin' : ''"
+              class="origin-center w-5 h-5 -ml-1 mr-2"
+            >
+              <RefreshIcon class="-scale-x-100 !mx-0" />
             </span>
             {{ t('dashboard.home.reload') }}
           </button>

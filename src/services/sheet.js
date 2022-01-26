@@ -159,7 +159,9 @@ export function countTotalResults (sheetId, queryStr) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -167,6 +169,7 @@ export function countTotalResults (sheetId, queryStr) {
 
       if (dataTable.getNumberOfRows() === 0) {
         resolve(0)
+        return
       }
 
       const totalResults = dataTable.getValue(0, 0)
@@ -186,8 +189,12 @@ export async function getBooks (sheetId, idMap, page = 1, options = {}) {
 
   const conditions = []
 
-  if (options.group) {
-    conditions.push(`${CollectionColumns.GROUP} = "${options.group}"`)
+  if (options.groups) {
+    const groupConditions = options.groups
+      .map(group => `${CollectionColumns.GROUP} = "${group}"`)
+      .join(' or ')
+
+    conditions.push('(' + groupConditions + ')')
   }
 
   if (options.futureItems === 'only' || options.futureItems === 'hide') {
@@ -215,7 +222,9 @@ export async function getBooks (sheetId, idMap, page = 1, options = {}) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -251,7 +260,9 @@ export async function getLatestReadings (sheetId, idMap, options = {}) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -284,7 +295,9 @@ export function getBookIds (sheetId) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -322,7 +335,9 @@ export function getBookById (sheetId, idMap, id) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -352,7 +367,9 @@ export function getBookByCode (sheetId, idMap, code) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -391,7 +408,9 @@ export function getBooksFromCollection (sheetId, idMap, book) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -428,7 +447,9 @@ export function getBookNeighbors (sheetId, idMap, book) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -480,7 +501,9 @@ export function getColumnUniqueValues (sheetId, column, alphabetically) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 
@@ -628,15 +651,10 @@ export function createSearchKeywords () {
   }
 }
 
-export async function searchBooks (sheetId, idMap, searchTerm, sort, page = 1) {
+export async function searchBooks ({ sheetId, idMap, searchTerm, sort, page = 1 }) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const searchRegex = searchTerm
-    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    .toLowerCase()
-
-  searchTerm = searchTerm.toLowerCase()
-
+  let searchQueryObj = searchTerm
   let sortBy = CollectionColumns.UPDATED_AT
   let sortDirection = 'desc'
 
@@ -647,16 +665,25 @@ export async function searchBooks (sheetId, idMap, searchTerm, sort, page = 1) {
 
   const keywords = createSearchKeywords()
 
-  const searchOptions = {
-    keywords: Object.keys(keywords),
-    alwaysArray: true
-  }
+  if (typeof searchTerm === 'string') {
+    searchTerm = searchTerm.toLowerCase()
+    searchQueryObj = searchTerm
 
-  const searchQueryObj = searchQuery.parse(searchTerm, searchOptions)
+    const searchOptions = {
+      keywords: Object.keys(keywords),
+      alwaysArray: true
+    }
+
+    searchQueryObj = searchQuery.parse(searchTerm, searchOptions)
+  }
 
   const query = new window.google.visualization.Query(sheetUrl)
 
   if (typeof searchQueryObj === 'string') {
+    const searchRegex = searchTerm
+      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      .toLowerCase()
+
     query.setQuery(dedent`
       select *
       where lower(${CollectionColumns.TITLE}) matches ".*${searchRegex}.*"
@@ -778,7 +805,9 @@ export async function searchBooks (sheetId, idMap, searchTerm, sort, page = 1) {
   return new Promise((resolve, reject) => {
     query.send(response => {
       if (response.isError()) {
-        reject(new Error('Error in query: ' + response.getMessage()))
+        const message = t('errors.badQuery', { error: response.getMessage() })
+        reject(new Error(message))
+
         return
       }
 

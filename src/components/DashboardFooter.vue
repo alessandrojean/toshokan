@@ -21,7 +21,7 @@
           </button>
 
           <a
-            href="https://github.com/alessandrojean/toshokan"
+            :href="githubLink"
             target="_blank"
             title="GitHub"
             class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded has-ring-focus"
@@ -33,9 +33,13 @@
           </a>
         </div>
 
-        <span class="block text-gray-500 dark:text-gray-500 text-xs border dark:border-gray-700 rounded py-0.5 px-1.5 font-medium">
+        <a
+          :href="releaseLink"
+          target="_blank"
+          class="block text-gray-500 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xs border hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-500 rounded py-0.5 px-1.5 font-medium has-ring-focus"
+        >
           v{{ appVersion }}
-        </span>
+        </a>
       </div>
     </div>
 
@@ -52,7 +56,7 @@ import DonationDialog from '@/components/dialogs/DonationDialog.vue'
 import GitHubIcon from '@/components/icons/GitHubIcon.vue'
 
 import useAppInfo from '@/composables/useAppInfo'
-import { ref } from 'vue-demi'
+import { computed, ref } from 'vue-demi'
 
 export default {
   components: {
@@ -68,10 +72,17 @@ export default {
 
     const donateDialogOpen = ref(false)
 
+    const githubLink = ref('https://github.com/alessandrojean/toshokan')
+    const releaseLink = computed(() => {
+      return githubLink.value + '/releases/tag/v' + appVersion.value
+    })
+
     return {
       t,
       appVersion,
-      donateDialogOpen
+      donateDialogOpen,
+      githubLink,
+      releaseLink
     }
   }
 }

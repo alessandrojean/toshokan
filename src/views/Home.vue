@@ -24,13 +24,14 @@
               <p class="text-sm text-gray-400 font-medium leading-tight select-none">
                 {{ t('app.name') }}
               </p>
-              <div class="space-x-2 flex">
+              <div class="space-x-2 hidden md:flex">
                 <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
                 <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
                 <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
               </div>
             </div>
-            <img class="" src="@/assets/home/screenshot-library.png" alt="">
+            <img class="md:hidden" src="@/assets/home/screenshot-library-mobile.png" alt="">
+            <img class="hidden md:block" src="@/assets/home/screenshot-dashboard.jpg" alt="">
           </figure>
         </div>
       </section>

@@ -4,19 +4,21 @@ import mdAbbr from 'markdown-it-abbr'
 
 function youtube (md) {
   const defaultRenderer = md.renderer.rules.image
-  const youtubeRegex = /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed)?(\?v=|\/)?([^$\/\n]+)/
+  const youtubeRegex = /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed|playlist)?(\?(?:v|list)=|\/)?([^$/\n]+)/
 
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
     const aIndex = token.attrIndex('src')
 
     if (youtubeRegex.test(token.attrs[aIndex][1])) {
-      const id = token.attrs[aIndex][1].match(youtubeRegex)[5]
+      const matches = token.attrs[aIndex][1].match(youtubeRegex)
+      const id = matches[5]
+      const type = matches[3] === 'playlist' ? 'videoseries?list=' : ''
 
       return dedent`
         <figure>
-          <div class="aspect-w-16 aspect-h-9">
-            <iframe src="https://www.youtube-nocookie.com/embed/${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="aspect-w-16 aspect-h-9 bg-gray-50 dark:bg-gray-800 rounded overflow-hidden">
+            <iframe src="https://www.youtube-nocookie.com/embed/${type}${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
           </div>
           ${token.content && token.content.length ? '<figcaption>' + token.content + '</figcaption>' : ''}
         </figure>

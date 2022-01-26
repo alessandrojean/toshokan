@@ -357,7 +357,7 @@ export default {
       return convertIsbn13ToIsbn10(book.value.code)
     })
 
-    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+    const spoilerMode = computed(() => store.state.settings.spoilerMode)
 
     const isRead = computed(() => {
       return book.value && book.value.status === BookStatus.READ

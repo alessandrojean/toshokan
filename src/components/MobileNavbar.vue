@@ -1,8 +1,8 @@
 <template>
   <nav
     :class="[
-      'motion-safe:transition-shadow duration-100 shadow-top md:hidden z-20 flex sm:flex-col items-center bg-white dark:bg-gray-800 fixed bottom-0 left-0 sm:inset-y-0 w-full sm:w-16 h-16 sm:h-screen p-2 border-t sm:border-t-0 sm:border-r border-gray-200 dark:border-gray-700'
-      /* $route.name === 'DashboardLibrary' ? '' : 'shadow-top' */
+      'mobile-navbar z-20 sm:z-[25] md:z-20',
+      !show ? 'is-hidden' : '',
     ]"
     aria-label="Navegação principal"
   >
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -197,14 +197,53 @@ export default {
       close()
     }
 
+    const currentScrollPosition = ref(0)
+    const lastScrollPosition = ref(0)
+    const show = ref(true)
+
+    function handleScroll () {
+      currentScrollPosition.value = document.documentElement.scrollTop
+
+      if (currentScrollPosition.value < 0) {
+        return
+      }
+
+      if (Math.abs(currentScrollPosition.value - lastScrollPosition.value) < 60) {
+        return
+      }
+
+      show.value = currentScrollPosition.value < lastScrollPosition.value
+      lastScrollPosition.value = currentScrollPosition.value
+    }
+
+    onMounted(() => window.addEventListener('scroll', handleScroll))
+    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+
     return {
       items,
       profileEmail,
       profileImageUrl,
       profileName,
       signOut,
+      show,
       t
     }
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+.mobile-navbar {
+  @apply shadow-top md:hidden z-20 sm:z-20 flex sm:flex-col items-center
+    bg-white dark:bg-gray-800
+    fixed bottom-0 left-0 sm:inset-y-0
+    w-full sm:w-16 h-16 sm:h-screen
+    p-2 border-t sm:border-t-0 sm:border-r
+    border-gray-200 dark:border-gray-700
+    transition duration-300 ease-in-out;
+}
+
+.mobile-navbar.is-hidden {
+  @apply translate-y-full sm:translate-y-0;
+}
+</style>

@@ -47,14 +47,19 @@ export default {
     collection: Array
   },
 
-  setup(props) {
+  setup (props) {
     const { book, collection } = toRefs(props)
 
     const bookIdx = computed(() => {
-      return collection.value.findIndex(colItem => colItem.id === book.value.id)
+      return (collection.value || [])
+        .findIndex(colItem => colItem.id === book.value.id)
     })
 
     const previous = computed(() => {
+      if (bookIdx.value === -1) {
+        return null
+      }
+
       const previousIdx = bookIdx.value - 1
 
       return previousIdx >= 0
@@ -63,6 +68,10 @@ export default {
     })
 
     const next = computed(() => {
+      if (bookIdx.value === -1) {
+        return null
+      }
+
       const nextIdx = bookIdx.value + 1
 
       return nextIdx < collection.value.length

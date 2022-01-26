@@ -2,6 +2,8 @@ import { createStore } from 'vuex'
 
 import auth, { AuthMutations } from './modules/auth'
 import collection, { CollectionMutations } from './modules/collection'
+import search, { SearchMutations } from './modules/search'
+import settings, { SettingsMutations } from './modules/settings'
 import sheet, { SheetMutations } from './modules/sheet'
 
 function getTheme () {
@@ -55,6 +57,8 @@ function createMutationTypes () {
   const modules = {
     AUTH: AuthMutations,
     COLLECTION: CollectionMutations,
+    SEARCH: SearchMutations,
+    SETTINGS: SettingsMutations,
     SHEET: SheetMutations
   }
 
@@ -118,6 +122,8 @@ const store = createStore({
   modules: {
     auth,
     collection,
+    search,
+    settings,
     sheet
   }
 })

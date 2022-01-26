@@ -49,8 +49,8 @@ export default {
     const sheetLoading = computed(() => store.state.sheet.loading)
     const sheetId = computed(() => store.state.sheet.sheetId)
 
-    const loading = computed(() => store.state.collection.groups.loading)
-    const groups = computed(() => store.state.collection.groups.items)
+    const loading = computed(() => store.state.collection.filters.groups.loading)
+    const groups = computed(() => store.state.collection.filters.groups.items)
 
     onMounted(() => {
       if (sheetId.value && groups.value.length === 0) {

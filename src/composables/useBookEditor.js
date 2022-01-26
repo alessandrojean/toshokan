@@ -30,6 +30,16 @@ export default function useBookEditor (book) {
     const bookId = await sheetUpdateBook(store.state.sheet.sheetId, bookToUpdate)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
+
+    // Also select the new book group so it will be shown in library.
+    const groups = store.state.collection.filters.groups
+
+    if (!groups.selected.includes(bookToUpdate.group) && groups.selected.length > 0) {
+      store.commit(MutationTypes.COLLECTION_UPDATE_GROUPS, {
+        selected: groups.selected.concat(bookToUpdate.group)
+      })
+    }
+
     store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
     store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
     store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })

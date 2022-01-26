@@ -4,7 +4,7 @@
     class="result group has-ring-focus"
     ref="searchItem"
   >
-    <div class="w-12 lg:w-16 shrink-0">
+    <div class="w-14 sm:w-16 shrink-0">
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -28,14 +28,15 @@
             />
           </div>
         </div>
-        <img
-          v-else
-          :src="thumbnailUrl"
-          :class="[
-            'result-cover',
-            spoilerMode.cover && !isRead ? 'is-hidden' : ''
-          ]"
-        >
+        <div v-else class="relative overflow-hidden rounded-md">
+          <img
+            :src="thumbnailUrl"
+            :class="[
+              'result-cover',
+              blurCover ? 'is-hidden' : ''
+            ]"
+          >
+        </div>
       </transition>
     </div>
     <div class="flex-grow space-y-3 min-w-0">
@@ -59,7 +60,7 @@
         </span>
       </div>
     </div>
-    <span aria-hidden="true" class="shrink-0">
+    <span aria-hidden="true" class="shrink-0 hidden sm:block">
       <ChevronRightIcon class="chevron" />
     </span>
   </router-link>
@@ -78,7 +79,7 @@ import {
   PhotographIcon
 } from '@heroicons/vue/outline'
 
-import { BookStatus } from '@/model/Book'
+import { BookStatus, NSFW_TAGS } from '@/model/Book'
 
 export default {
   components: {
@@ -126,10 +127,20 @@ export default {
 
     const store = useStore()
 
-    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+    const spoilerMode = computed(() => store.state.settings.spoilerMode)
+    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+
+    const isNsfw = computed(() => {
+      return result.value.tags.some(tag => NSFW_TAGS.includes(tag.toLowerCase()))
+    })
 
     const isRead = computed(() => {
       return result.value && result.value.status === BookStatus.READ
+    })
+
+    const blurCover = computed(() => {
+      return (spoilerMode.value.cover && !isRead.value) ||
+        (blurNsfw.value && isNsfw.value)
     })
 
     const now = new Date()
@@ -170,7 +181,8 @@ export default {
       spoilerMode,
       isRead,
       isFuture,
-      authorsFormatted
+      authorsFormatted,
+      blurCover
     }
   }
 }
@@ -218,8 +230,12 @@ export default {
 }
 
 .result-cover.is-hidden {
-  @apply md:blur-sm md:group-hover:blur-none
-    motion-safe:transition-all duration-100 ease-in-out;
+  @apply md:blur-sm md:scale-105
+    motion-safe:transition-all;
+}
+
+.result-cover.is-hidden:hover {
+  @apply md:blur-none md:scale-100;
 }
 
 .empty-cover {

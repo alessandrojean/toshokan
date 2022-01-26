@@ -121,7 +121,6 @@ const actions = {
 
 const mutations = {
   [AuthMutations.UPDATE_GOOGLE_AUTH]: function (state, googleAuth) {
-    state.googl
     state.googleAuth = googleAuth
   },
 

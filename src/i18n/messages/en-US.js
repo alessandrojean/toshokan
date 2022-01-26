@@ -36,6 +36,7 @@ export default {
     cookiesDisabled: 'The cookies are disabled. Enable them and refresh the page.',
     authStartedFailed: 'It was not possible to start the authentication system.',
     missingScopes: 'Some permissions were not granted to the app.',
+    badQuery: 'There is a error in the query: {error}',
     refresh: 'Refresh the page',
     grantPermissions: 'Grant the permissions',
     unexpected: 'An unexpected error happened in the application.'
@@ -431,11 +432,12 @@ export default {
       title: 'Library',
       currentGroup: 'Current group: ',
       allGroups: 'All groups',
+      groupCount: 'All groups | One group | {count} groups',
       sortingBy: 'Sorting by: ',
       filter: 'Filter',
       newBook: 'New book',
       items: {
-        current: 'Items from the group {group}',
+        current: 'Items from all groups | Items from the group {count} | Items from {count} groups',
         tableColumns: {
           actions: 'Actions'
         },
@@ -445,7 +447,7 @@ export default {
         title: 'Filters',
         close: 'Close panel',
         closeMobile: 'Close',
-        filter: 'Filtrar',
+        apply: 'Apply',
         visualization: 'Display',
         books: 'Books',
         viewMode: {
@@ -458,7 +460,7 @@ export default {
           compact: 'Compact',
           comfortable: 'Comfortable'
         },
-        group: 'Group',
+        groups: 'Groups',
         sortDirection: {
           label: 'Sort direction',
           asc: 'Ascending',
@@ -477,6 +479,13 @@ export default {
         description: `
           Add the first book to start to better manage your
           collections and allow the display of the monthly statistics.
+        `
+      },
+      noResults: {
+        title: 'No results found',
+        description: `
+          There isn't any books related to the applied filters.
+          Check the filters and try again!
         `
       }
     },
@@ -633,6 +642,12 @@ export default {
           label: 'Hide the covers of unread books',
           description: `
             If enabled, the covers will be blurred to prevent spoilers.
+          `
+        },
+        blurNsfwCover: {
+          label: 'Hide the covers of NSFW tagged books',
+          description: `
+            If enabled, the covers will be blurred if the book is tagged as NSFW.
           `
         }
       },

@@ -90,6 +90,14 @@
               </button>
             </transition>
 
+            <Avatar
+              class="shrink-0"
+              v-if="shared"
+              :picture-url="owner.pictureUrl"
+              :shared="shared"
+              small
+            />
+
             <button
               type="button"
               class="esc-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
@@ -267,6 +275,7 @@ import {
 } from '@heroicons/vue/solid'
 import { SearchIcon } from '@heroicons/vue/outline'
 
+import Avatar from '@/components/Avatar.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import Paginator from '@/components/Paginator.vue'
 import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
@@ -276,6 +285,7 @@ import { MutationTypes } from '@/store'
 
 export default {
   components: {
+    Avatar,
     Dialog,
     DialogOverlay,
     DialogTitle,
@@ -307,10 +317,10 @@ export default {
     const searchQuery = ref('')
     const searchedOnce = ref(false)
     const searchedTerm = ref('')
-    const searchLoading = computed(() => store.state.collection.search.loading)
-    const searchResults = computed(() => store.state.collection.search.results)
-    const searchHistory = computed(() => store.state.collection.search.history)
-    const searchPagination = computed(() => store.state.collection.search.paginationInfo)
+    const searchLoading = computed(() => store.state.search.loading)
+    const searchResults = computed(() => store.state.search.results)
+    const searchHistory = computed(() => store.state.search.history)
+    const searchPagination = computed(() => store.state.search.paginationInfo)
 
     const searchInput = ref(null)
     const results = ref(null)
@@ -320,7 +330,7 @@ export default {
       searchedOnce.value = false
       searchedTerm.value = ''
 
-      store.commit(MutationTypes.COLLECTION_CLEAR_SEARCH)
+      store.commit(MutationTypes.SEARCH_CLEAR)
 
       if (focusOnInput) {
         searchInput.value?.focus()
@@ -340,7 +350,7 @@ export default {
       if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
         searchInput.value?.blur()
 
-        await store.dispatch('collection/search', {
+        await store.dispatch('search/search', {
           query: searchTerm,
           page
         })
@@ -385,17 +395,17 @@ export default {
     })
 
     const sortBy = computed({
-      get: () => store.state.collection.search.sortBy,
+      get: () => store.state.search.sortBy,
       set: async val => {
-        store.commit(MutationTypes.COLLECTION_UPDATE_SEARCH, { sortBy: val })
+        store.commit(MutationTypes.SEARCH_UPDATE_SORT, { sortBy: val })
         await search()
       }
     })
 
     const sortDirection = computed({
-      get: () => store.state.collection.search.sortDirection,
+      get: () => store.state.collection.sortDirection,
       set: async val => {
-        store.commit(MutationTypes.COLLECTION_UPDATE_SEARCH, { sortDirection: val })
+        store.commit(MutationTypes.SEARCH_UPDATE_SORT, { sortDirection: val })
         await search()
       }
     })
@@ -423,14 +433,18 @@ export default {
     function removeHistoryItem (item) {
       const newHistory = searchHistory.value.filter(s => s !== item)
 
-      store.commit(MutationTypes.COLLECTION_UPDATE_SEARCH, {
-        history: newHistory
-      })
+      store.commit(MutationTypes.SEARCH_UPDATE_HISTORY, newHistory)
     }
 
     async function handlePageChange (page) {
       await search(null, page)
     }
+
+    const shared = computed(() => store.getters['sheet/shared'])
+    const owner = computed(() => ({
+      displayName: store.getters['sheet/ownerDisplayName'],
+      pictureUrl: store.getters['sheet/ownerPictureUrl']
+    }))
 
     return {
       t,
@@ -453,7 +467,9 @@ export default {
       toggleSortDirection,
       sortProperties,
       removeHistoryItem,
-      handlePageChange
+      handlePageChange,
+      shared,
+      owner
     }
   }
 }

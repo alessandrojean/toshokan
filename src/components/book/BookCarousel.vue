@@ -6,12 +6,10 @@
       <div
         v-for="idx in 6"
         :key="idx"
+        :class="idx === 5 ? 'md:hidden lg:block' : ''"
         class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
       >
-        <BookCard
-          :loading="true"
-          :class="idx === collectionItems.length - 1 ? 'md:hidden lg:block' : ''"
-        />
+        <BookCard loading />
       </div>
     </div>
   </div>
@@ -36,8 +34,10 @@
 
     <ul
       :class="[
-        collectionItems.length < 3 ? 'grid grid-cols-2' : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex',
-        'md:grid md:grid-cols-5 lg:grid-cols-6 gap-5'
+        collectionItems.length < 3
+          ? 'grid grid-cols-2'
+          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid',
+        'md:grid-cols-5 lg:grid-cols-6 gap-5'
       ]"
     >
       <li
@@ -48,7 +48,7 @@
         <BookCard
           :book="book"
           :loading="loading"
-          :class="bookIdx === collectionItems.length - 1 ? 'md:hidden lg:block' : ''"
+          :class="bookIdx === 5 ? 'md:hidden lg:block' : ''"
         />
       </li>
     </ul>
@@ -64,8 +64,6 @@ import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 import BookCard from '@/components/book/BookCard.vue'
 
 export default {
-  name: 'LastAddedBooks',
-
   components: { BookCard, ArrowSmRightIcon },
 
   props: {
@@ -93,10 +91,10 @@ export default {
     const sheetId = computed(() => store.state.sheet.sheetId)
 
     const loading = computed(() => {
-      return store.state.collection[collection.value].loading
+      return store.state.collection.carousels[collection.value].loading
     })
     const collectionItems = computed(() => {
-      return store.state.collection[collection.value].items
+      return store.state.collection.carousels[collection.value].items
     })
 
     function fetchCollectionItems () {

@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import i18n from './i18n'
 
-import './index.css'
+import './index.pcss'
 
 createApp(App)
   .use(store)

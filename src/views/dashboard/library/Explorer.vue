@@ -6,72 +6,117 @@
     />
 
     <div class="flex-1">
-      <section
-        class="h-full max-w-7xl mx-auto py-6 px-5 md:px-8"
-        aria-labelledby="results-title"
-        v-if="!sheetIsEmpty"
+      <transition
+        mode="out-in"
+        leave-active-class="motion-safe:transition-opacity duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+        enter-active-class="motion-safe:transition-opacity duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
       >
-        <h2 id="results-title" class="sr-only">
-          {{ t('dashboard.library.items.current', { group }) }}
-        </h2>
-
-        <transition
-          mode="out-in"
-          leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
-          leave-from-class="opacity-100 translate-x-0"
-          leave-to-class="opacity-0 translate-x-2"
-          enter-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-out"
-          enter-from-class="opacity-0 -translate-x-2"
-          enter-to-class="opacity-100 translate-x-0"
+        <section
+          class="h-full max-w-7xl mx-auto py-6 px-5 md:px-8"
+          aria-labelledby="results-title"
+          v-if="!sheetIsEmpty && (books.length > 0 || sheetLoading || loading)"
         >
-          <BookTable
-            v-if="viewMode === 'table' && books.length > 0"
-            :items="books"
-            :pagination-info="paginationInfo"
-            :sort-direction="sortDirection"
-            :sort-property="sortProperty"
-            @page="handlePage"
-          />
+          <h2 id="results-title" class="sr-only">
+            {{
+              t('dashboard.library.items.current', groups.selected.length, {
+                count: groups.selected.length === 1
+                  ? groups.selected[0]
+                  : groups.selected.length
+              })
+            }}
+          </h2>
 
-          <BookGrid
-            v-else
-            :items="books"
-            :pagination-info="paginationInfo"
-            :skeleton-items="18"
-            @page="handlePage"
-          />
-        </transition>
-      </section>
+          <transition
+            mode="out-in"
+            leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
+            leave-from-class="opacity-100 translate-x-0"
+            leave-to-class="opacity-0 translate-x-2"
+            enter-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-out"
+            enter-from-class="opacity-0 -translate-x-2"
+            enter-to-class="opacity-100 translate-x-0"
+          >
+            <BookTable
+              v-if="viewMode === 'table' && books.length > 0"
+              :items="books"
+              :pagination-info="paginationInfo"
+              :sort-direction="sortDirection"
+              :sort-property="sortProperty"
+              @page="handlePage"
+            />
 
-      <!-- Empty collection -->
-      <section
-        v-if="sheetIsEmpty"
-        aria-labelledby="empty-sheet-title"
-        class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
-      >
-        <span aria-hidden="true">
-          <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
-        </span>
-        <h2
-          id="empty-sheet-title"
-          class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
-        >
-          {{ t('dashboard.library.empty.title') }}
-        </h2>
-        <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-          {{ t('dashboard.library.empty.description') }}
-        </p>
-        <button
-          v-if="canEdit"
-          class="button is-primary text-lg"
-          @click="openCreateDialog"
+            <BookGrid
+              v-else
+              :items="books"
+              :pagination-info="paginationInfo"
+              :skeleton-items="18"
+              @page="handlePage"
+            />
+          </transition>
+        </section>
+
+        <!-- Empty collection -->
+        <section
+          v-else-if="sheetIsEmpty"
+          aria-labelledby="empty-sheet-title"
+          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
         >
           <span aria-hidden="true">
-            <PlusIcon aria-hidden="true" />
+            <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
           </span>
-          {{ t('dashboard.library.newBook') }}
-        </button>
-      </section>
+          <h2
+            id="empty-sheet-title"
+            class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
+          >
+            {{ t('dashboard.library.empty.title') }}
+          </h2>
+          <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
+            {{ t('dashboard.library.empty.description') }}
+          </p>
+          <button
+            v-if="canEdit"
+            class="button is-primary text-lg"
+            @click="openCreateDialog"
+          >
+            <span aria-hidden="true">
+              <PlusIcon aria-hidden="true" />
+            </span>
+            {{ t('dashboard.library.newBook') }}
+          </button>
+        </section>
+
+        <!-- No results from filters -->
+        <section
+          v-else
+          aria-labelledby="empty-sheet-title"
+          class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
+        >
+          <span aria-hidden="true">
+            <DocumentSearchIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
+          </span>
+          <h2
+            id="empty-sheet-title"
+            class="text-xl text-center font-medium text-gray-600 dark:text-gray-400 mb-2"
+          >
+            {{ t('dashboard.library.noResults.title') }}
+          </h2>
+          <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
+            {{ t('dashboard.library.noResults.description') }}
+          </p>
+          <button
+            class="button text-lg"
+            @click="filterOpen = true"
+          >
+            <span aria-hidden="true">
+              <FilterIcon />
+            </span>
+            {{ t('dashboard.library.filter') }}
+          </button>
+        </section>
+      </transition>
     </div>
 
     <!-- Filters -->
@@ -96,8 +141,8 @@ import { useI18n } from 'vue-i18n'
 
 import { MutationTypes } from '@/store'
 
-import { PlusIcon } from '@heroicons/vue/solid'
-import { ExclamationCircleIcon } from '@heroicons/vue/outline'
+import { FilterIcon, PlusIcon } from '@heroicons/vue/solid'
+import { DocumentSearchIcon, ExclamationCircleIcon } from '@heroicons/vue/outline'
 
 import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import BookGrid from '@/components/book/BookGrid.vue'
@@ -106,12 +151,12 @@ import LibraryFiltersDialog from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
 
 export default {
-  name: 'DashboardLibraryExplorer',
-
   components: {
     BookCreateDialog,
     BookGrid,
     BookTable,
+    DocumentSearchIcon,
+    FilterIcon,
     LibraryFiltersDialog,
     LibraryHeader,
     ExclamationCircleIcon,
@@ -126,11 +171,10 @@ export default {
 
     const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
 
-    const group = computed(() => store.state.collection.group)
     const paginationInfo = computed(() => store.state.collection.paginationInfo)
     const sortProperty = computed(() => store.state.collection.sortBy)
     const sortDirection = computed(() => store.state.collection.sortDirection)
-    const viewMode = computed(() => store.state.collection.viewMode)
+    const viewMode = computed(() => store.state.settings.viewMode)
 
     const sortPropertyNames = {
       title: t('book.properties.title'),
@@ -153,26 +197,25 @@ export default {
     const sheetId = computed(() => store.state.sheet.sheetId)
     const sheetLoading = computed(() => store.state.sheet.loading)
 
+    const groups = computed(() => store.state.collection.filters.groups)
+
     async function updateGroupFromQuery () {
       const newGroup = route.query.group
 
       if (sheetLoading.value || loading.value || !newGroup) {
-        return
+        return false
       }
 
-      if (!sheetIsEmpty.value && store.state.collection.groups.items === 0) {
+      if (!sheetIsEmpty.value && groups.value.items.length === 0) {
         await store.dispatch('collection/fetchGroups')
       }
 
-      const groupData = store.state.collection.groups.items
+      const groupExists = groups.value.items
         .find(grp => grp.name === newGroup)
 
-      const oldGroup = group.value
-
-      if (groupData && oldGroup !== newGroup) {
-        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, {
-          group: newGroup,
-          totalResults: groupData.count
+      if (groupExists) {
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUPS, {
+          selected: [newGroup]
         })
 
         return true
@@ -204,31 +247,27 @@ export default {
       return false
     }
 
-    watch(sheetId, async newSheetId => {
-      if (newSheetId) {
-        const groupChanged = await updateGroupFromQuery()
-        const sortChanged = updateSortPropertyFromQuery()
+    async function updateFromQuery () {
+      const groupChanged = await updateGroupFromQuery()
+      const sortChanged = updateSortPropertyFromQuery()
 
-        if (groupChanged || sortChanged || books.value.length === 0) {
-          await store.dispatch(
-            'collection/fetchBooks',
-            sortChanged ? 1 : currentPage.value
-          )
-        }
+      if (groupChanged || sortChanged || books.value.length === 0) {
+        await store.dispatch(
+          'collection/fetchBooks',
+          sortChanged ? 1 : currentPage.value
+        )
+      }
+    }
+
+    watch(sheetLoading, async newSheetLoading => {
+      if (!newSheetLoading) {
+        await updateFromQuery()
       }
     })
 
     onMounted(async () => {
       if (sheetId.value) {
-        const groupChanged = await updateGroupFromQuery()
-        const sortChanged = updateSortPropertyFromQuery()
-
-        if (groupChanged || sortChanged || books.value.length === 0) {
-          await store.dispatch(
-            'collection/fetchBooks',
-            sortChanged ? 1 : currentPage.value
-          )
-        }
+        await updateFromQuery()
       }
     })
 
@@ -248,17 +287,22 @@ export default {
     }
 
     async function handleFilter (filters) {
-      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, filters.viewMode)
-      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, filters.gridMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_VIEW_MODE, filters.viewMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_GRID_MODE, filters.gridMode)
 
-      if (store.state.collection.group !== filters.group ||
+      if (store.state.collection.filters.groups.selected !== filters.groups ||
           store.state.collection.sortBy !== filters.sortProperty ||
           store.state.collection.sortDirection !== filters.sortDirection ||
           store.state.collection.futureItems !== filters.futureItems) {
         const totalResults = store.state.collection.paginationInfo.total_results
-        store.commit(MutationTypes.COLLECTION_UPDATE_CURRENT_PAGE, { page: 1, totalResults })
+        store.commit(MutationTypes.COLLECTION_UPDATE_CURRENT_PAGE, {
+          page: 1,
+          totalResults
+        })
 
-        store.commit(MutationTypes.COLLECTION_UPDATE_GROUP, { group: filters.group })
+        store.commit(MutationTypes.COLLECTION_UPDATE_GROUPS, {
+          selected: filters.groups
+        })
         store.commit(MutationTypes.COLLECTION_UPDATE_SORT, {
           sortBy: filters.sortProperty,
           sortDirection: filters.sortDirection
@@ -268,7 +312,7 @@ export default {
           filters.futureItems
         )
 
-        store.dispatch('collection/fetchBooks', 1)
+        await store.dispatch('collection/fetchBooks', 1)
       }
     }
 
@@ -287,7 +331,6 @@ export default {
     return {
       filterOpen,
       sheetIsEmpty,
-      group,
       handlePage,
       sheetLoading,
       loading,
@@ -302,6 +345,7 @@ export default {
       openCreateDialog,
       closeCreateDialog,
       canEdit,
+      groups,
       t
     }
   }

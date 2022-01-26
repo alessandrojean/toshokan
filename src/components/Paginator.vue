@@ -99,8 +99,6 @@ import {
 } from '@heroicons/vue/solid'
 
 export default {
-  name: 'Paginator',
-
   components: {
     ChevronDoubleLeftIcon,
     ChevronDoubleRightIcon,
@@ -158,7 +156,7 @@ export default {
 }
 
 .pag-button:not(:disabled):hover {
-  @apply z-10 bg-gray-50 dark:bg-gray-600
+  @apply z-[5] bg-gray-50 dark:bg-gray-600
     dark:text-gray-200 dark:border-gray-500;
 }
 
@@ -185,7 +183,7 @@ export default {
 .pag-button.is-current,
 .pag-button.is-current:not(:disabled):hover,
 .pag-button.is-current:not(:disabled):active {
-  @apply z-20 cursor-default bg-primary-50 dark:bg-primary-900
+  @apply z-10 cursor-default bg-primary-50 dark:bg-primary-900
     border-primary-500 dark:border-primary-500
     text-primary-600 dark:text-primary-200;
 }

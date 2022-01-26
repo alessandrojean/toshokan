@@ -134,7 +134,8 @@
                     </p>
                   </div>
                   <Switch
-                    v-model="settings.appearence.spoilerMode.synopsis"
+                    :model-value="settings.appearence.spoilerMode.synopsis"
+                    @update:model-value="updateSetting('appearence.spoilerMode.synopsis', $event)"
                     :class="settings.appearence.spoilerMode.synopsis ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
                     class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                   >
@@ -155,13 +156,37 @@
                     </p>
                   </div>
                   <Switch
-                    v-model="settings.appearence.spoilerMode.cover"
+                    :model-value="settings.appearence.spoilerMode.cover"
+                    @update:model-value="updateSetting('appearence.spoilerMode.cover', $event)"
                     :class="settings.appearence.spoilerMode.cover ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
                     class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                   >
                     <span
                       aria-hidden="true"
                       :class="settings.appearence.spoilerMode.cover ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                      class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
+                    />
+                  </Switch>
+                </SwitchGroup>
+                <SwitchGroup as="div" class="preference">
+                  <div class="preference-description">
+                    <SwitchLabel>
+                      {{ t('dashboard.settings.appearence.blurNsfwCover.label') }}
+                    </SwitchLabel>
+                    <p>
+                      {{ t('dashboard.settings.appearence.blurNsfwCover.description') }}
+                    </p>
+                  </div>
+                  <Switch
+                    :model-value="settings.appearence.blurNsfw"
+                    @update:model-value="updateSetting('appearence.blurNsfw', $event)"
+                    v-model="settings.appearence.blurNsfw"
+                    :class="settings.appearence.blurNsfw ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                    class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      :class="settings.appearence.blurNsfw ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
                       class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                     />
                   </Switch>
@@ -234,7 +259,7 @@ import { useI18n } from 'vue-i18n'
 
 import { MutationTypes } from '@/store'
 
-import { CogIcon, ExclamationIcon, TranslateIcon } from '@heroicons/vue/solid'
+import { ExclamationIcon } from '@heroicons/vue/solid'
 
 import {
   Switch,
@@ -250,7 +275,6 @@ import {
 import DisconnectModal from '@/components/dialogs/DisconnectDialog.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
-import SimpleHeader from '@/components/SimpleHeader.vue'
 
 export default {
   name: 'DashboardSettings',
@@ -259,7 +283,6 @@ export default {
     DisconnectModal,
     LoadingIndicator,
     LocaleSelector,
-    SimpleHeader,
     Switch,
     SwitchLabel,
     SwitchGroup,
@@ -268,9 +291,7 @@ export default {
     TabList,
     TabPanel,
     TabPanels,
-    CogIcon,
-    ExclamationIcon,
-    TranslateIcon
+    ExclamationIcon
   },
 
   setup () {
@@ -281,9 +302,10 @@ export default {
       appearence: {
         locale: locale.value,
         theme: store.state.theme,
-        viewMode: store.state.collection.viewMode,
-        gridMode: store.state.collection.gridMode,
-        spoilerMode: { ...store.state.collection.spoilerMode }
+        viewMode: store.state.settings.viewMode,
+        gridMode: store.state.settings.gridMode,
+        spoilerMode: { ...store.state.settings.spoilerMode },
+        blurNsfw: store.state.settings.blurNsfw
       }
     })
 
@@ -297,7 +319,12 @@ export default {
 
     function updateSetting (key, newValue) {
       const path = key.split('.')
-      settings[path[0]][path[1]] = newValue
+
+      if (path[2]) {
+        settings[path[0]][path[1]][path[2]] = newValue
+      } else {
+        settings[path[0]][path[1]] = newValue
+      }
 
       if (path[0] === 'appearence') {
         saveAppearenceSettings()
@@ -316,9 +343,10 @@ export default {
       }
 
       store.commit(MutationTypes.UPDATE_THEME, appearence.theme)
-      store.commit(MutationTypes.COLLECTION_UPDATE_VIEW_MODE, appearence.viewMode)
-      store.commit(MutationTypes.COLLECTION_UPDATE_GRID_MODE, appearence.gridMode)
-      store.commit(MutationTypes.COLLECTION_UPDATE_SPOILER_MODE, appearence.spoilerMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_VIEW_MODE, appearence.viewMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_GRID_MODE, appearence.gridMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_SPOILER_MODE, appearence.spoilerMode)
+      store.commit(MutationTypes.SETTINGS_UPDATE_BLUR_NSFW, appearence.blurNsfw)
     }
 
     const sheetLoading = computed(() => store.state.sheet.loading)

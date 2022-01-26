@@ -179,7 +179,7 @@ export default {
 
     const store = useStore()
 
-    const spoilerMode = computed(() => store.state.collection.spoilerMode)
+    const spoilerMode = computed(() => store.state.settings.spoilerMode)
 
     const dialogOpen = ref(false)
 

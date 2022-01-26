@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col pb-16 sm:pb-0 sm:pl-16 md:pl-0">
+  <div class="bg-gray-100 min-h-screen dark:bg-gray-900 flex flex-col sm:pl-16 md:pl-0">
     <a href="#main-menu-desktop" class="jump-to hidden md:block">
       {{ t('a11y.jumpToNavigation') }}
     </a>
@@ -8,7 +8,7 @@
 
     <MobileNavbar />
 
-    <main class="flex-1 flex" role="main" id="main-content">
+    <main class="flex-1 flex pt-16" role="main" id="main-content">
       <router-view v-slot="{ Component }">
         <transition
           mode="out-in"
@@ -48,8 +48,6 @@ import MobileNavbar from '@/components/MobileNavbar.vue'
 import SearchDialog from '@/components/dialogs/SearchDialog.vue'
 
 export default {
-  name: 'Dashboard',
-
   components: {
     AppNavbar,
     DashboardFooter,

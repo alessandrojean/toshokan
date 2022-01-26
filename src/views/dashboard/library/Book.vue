@@ -110,7 +110,9 @@ export default {
     const loading = computed(() => store.state.sheet.loading)
 
     const redirectToHome = () => {
-      router.replace({ name: 'DashboardHome' })
+      if (!deleted.value) {
+        router.replace({ name: 'DashboardHome' })
+      }
     }
 
     onMounted(async () => {
@@ -120,7 +122,7 @@ export default {
     })
 
     watch(loading, async newValue => {
-      if (!newValue && bookId.value) {
+      if (!newValue && bookId.value && !deleted.value) {
         await findTheBook(bookId.value, redirectToHome)
       }
     })
@@ -209,7 +211,7 @@ export default {
     }
 
     const deleteModalOpen = ref(false)
-    const { deleteBook } = useBookDeleter(book)
+    const { deleteBook, deleted } = useBookDeleter(book)
 
     async function handleDelete () {
       try {

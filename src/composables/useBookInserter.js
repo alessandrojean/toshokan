@@ -53,6 +53,16 @@ export default function useBookInserter (book) {
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
     await store.dispatch('collection/fetchIdMap')
+
+    // Also select the new book group so it will be shown in library.
+    const groups = store.state.collection.filters.groups
+
+    if (!groups.selected.includes(book.group) && groups.selected.length > 0) {
+      store.commit(MutationTypes.COLLECTION_UPDATE_GROUPS, {
+        selected: groups.selected.concat(book.group)
+      })
+    }
+
     await store.dispatch('collection/fetchBooks')
     await store.dispatch('collection/fetchLastAdded')
 

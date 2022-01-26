@@ -47,7 +47,8 @@
       v-if="modelValue.length > 0"
       tag="ul"
       class="flex flex-wrap mt-2 select-none"
-      ghost-class="opacity-50"
+      ghost-class="ghost"
+      drag-class="cursor-grabbing"
       handle=".handle"
       :modelValue="modelValue"
       :item-key="tag => tag"
@@ -207,7 +208,8 @@ export default {
   @apply flex items-center text-sm
     bg-primary-100 dark:bg-gray-700 rounded-md
     text-primary-700 dark:text-gray-200
-    px-2 py-0.5 mr-2 mt-2 font-medium;
+    px-2 py-0.5 mr-2 mt-2 font-medium
+    motion-safe:transition-opacity;
 }
 
 .tag.is-uppercase {
@@ -215,8 +217,12 @@ export default {
 }
 
 .handle {
-  @apply hidden md:block cursor-move p-1 -ml-1 mr-1
+  @apply hidden md:block p-1 -ml-1 mr-1
     text-primary-500 dark:text-gray-400;
+}
+
+:not(.ghost) .handle {
+  @apply cursor-grab;
 }
 
 .remove-button {
@@ -231,5 +237,9 @@ export default {
 .remove-button:focus-visible {
   @apply text-primary-600 dark:text-gray-200
     ring-offset-primary-100 dark:ring-offset-gray-700;
+}
+
+.ghost {
+  @apply opacity-50;
 }
 </style>

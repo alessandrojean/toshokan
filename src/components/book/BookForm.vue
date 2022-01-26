@@ -392,10 +392,10 @@ export default {
 
     const store = useStore()
 
-    const publisherOptions = computed(() => store.state.collection.publishers.items)
-    const storeOptions = computed(() => store.state.collection.stores.items)
+    const publisherOptions = computed(() => store.state.collection.filters.publishers.items)
+    const storeOptions = computed(() => store.state.collection.filters.stores.items)
     const groupOptions = computed(() => {
-      return store.state.collection.groups.items
+      return store.state.collection.filters.groups.items
         .slice()
         .sort((a, b) => a.name.localeCompare(b, locale.value))
     })

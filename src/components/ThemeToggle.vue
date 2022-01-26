@@ -10,24 +10,21 @@
       :title="t('dashboard.settings.appearence.theme.label')"
     >
       <span aria-hidden="true">
-        <component
-          v-if="!currentOption.responsive"
-          :is="currentOption.icon"
-          :class="theme === 'system' ? 'system' : 'not-system'"
-          class="w-6 h-6"
-        />
-        <template v-else>
+        <template v-if="theme === 'system'">
           <component
-            :is="currentOption.icon[0]"
-            :class="theme === 'system' ? 'system' : 'not-system'"
-            class="w-6 h-6 lg:hidden"
+            :is="options[0].icon"
+            class="w-6 h-6 dark:hidden system"
           />
           <component
-            :is="currentOption.icon[1]"
-            :class="theme === 'system' ? 'system' : 'not-system'"
-            class="w-6 h-6 hidden lg:inline-block"
+            :is="options[1].icon"
+            class="w-6 h-6 hidden dark:block system"
           />
         </template>
+        <component
+          v-else
+          :is="currentOption.icon"
+          class="w-6 h-6 not-system"
+        />
       </span>
       <span class="sr-only">
         {{ t('dashboard.settings.appearence.theme.label') }}
@@ -94,12 +91,7 @@ import {
   ListboxOption
 } from '@headlessui/vue'
 
-import {
-  DeviceMobileIcon,
-  DesktopComputerIcon,
-  MoonIcon,
-  SunIcon
-} from '@heroicons/vue/outline'
+import { MoonIcon, SunIcon } from '@heroicons/vue/outline'
 
 import {
   DeviceMobileIcon as DeviceMobileIconSolid,
@@ -116,9 +108,7 @@ export default {
     ListboxButton,
     ListboxOptions,
     ListboxOption,
-    DesktopComputerIcon,
     DesktopComputerIconSolid,
-    DeviceMobileIcon,
     DeviceMobileIconSolid,
     MoonIcon,
     MoonIconSolid,
@@ -145,7 +135,6 @@ export default {
       {
         key: 'system',
         responsive: true,
-        icon: [DeviceMobileIcon, DesktopComputerIcon],
         menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
       }
     ])
@@ -193,8 +182,8 @@ export default {
 }
 
 .theme-options {
-  @apply absolute z-50 top-full right-0
-    bg-white dark:bg-gray-700/80 dark:backdrop-blur
+  @apply absolute top-full right-0
+    bg-white dark:bg-gray-700
     rounded-md shadow-lg overflow-hidden
     w-36 py-1 mt-2 origin-top-right
     ring-1 ring-black ring-opacity-5;

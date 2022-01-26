@@ -145,6 +145,7 @@
   .button:disabled,
   .button:disabled:hover {
     @apply cursor-default opacity-50
+      text-gray-700 dark:text-gray-300 
       bg-white dark:bg-gray-700
       dark:border-gray-600;
   }
@@ -226,7 +227,8 @@
   .button.is-primary svg,
   .button.is-primary:hover svg,
   .button.is-primary:active svg,
-  .button.is-primary:disabled svg {
+  .button.is-primary:disabled svg,
+  .button.is-primary:disabled:hover svg {
     @apply text-white;
   }
   
@@ -276,7 +278,7 @@
   }
   
   .chip {
-    @apply text-sm px-3 py-1 cursor-pointer rounded-full
+    @apply text-sm px-3 py-1 cursor-pointer rounded-full select-none
       inline-block motion-safe:transition-colors duration-300 
       bg-white dark:bg-gray-700 dark:text-gray-200 
       border border-gray-300 dark:border-gray-700;
@@ -309,12 +311,23 @@
 
   .chip:hover .count {
     @apply bg-primary-200 dark:bg-gray-500
-      text-primary-900 dark:text-gray-100;
+      text-primary-900 dark:text-gray-100
+      motion-safe:transition-colors;
   }
 
   .chip.is-active .count {
     @apply bg-white dark:bg-primary-500
       text-primary-600 dark:text-primary-50;
+  }
+
+  input[type="checkbox"].sr-only + .chip {
+    @apply motion-safe:transition;
+  }
+
+  input[type="checkbox"].sr-only:focus-visible + .chip {
+    @apply ring-2 ring-offset-2
+      ring-primary-600 dark:ring-primary-500
+      dark:ring-offset-gray-700;
   }
   
   .dialog-overlay {
