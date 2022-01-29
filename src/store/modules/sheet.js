@@ -1,4 +1,4 @@
-import { findSheetId, getSheetData } from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 export const SheetMutations = {
   UPDATE_LOADING: 'updateLoading',
@@ -57,7 +57,7 @@ const getters = {
 
 const actions = {
   findSheetId: async function ({ commit }) {
-    const { sheet, options } = await findSheetId()
+    const { sheet, options } = await SheetService.findSheetId()
 
     commit(SheetMutations.UPDATE_SHEET_ID, sheet.id)
     commit(SheetMutations.UPDATE_SELECTED, sheet)
@@ -75,7 +75,7 @@ const actions = {
       sheetId = await dispatch('findSheetId')
     }
 
-    const sheetData = await getSheetData(sheetId)
+    const sheetData = await SheetService.getSheetData(sheetId)
 
     commit(SheetMutations.UPDATE_STATS, sheetData.stats)
     commit(SheetMutations.UPDATE_TIMEZONE, sheetData.timeZone)

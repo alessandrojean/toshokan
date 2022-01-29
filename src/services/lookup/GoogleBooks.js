@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { parseBookFromGoogleBooks } from '@/model/Book'
+import Book from '@/model/Book'
 import { isbn as validateIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
@@ -30,7 +30,7 @@ export default class GoogleBooks extends Lookup {
         }
       })
 
-      return data.items.map(parseBookFromGoogleBooks)
+      return data.items.map(Book.fromGoogleBooks)
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

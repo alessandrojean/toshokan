@@ -103,7 +103,10 @@
                                   ]"
                                 >
                                   {{ option.label }}
-                                  <span class="count" v-if="option.count">
+                                  <span
+                                    class="count"
+                                    v-if="option.count !== undefined"
+                                  >
                                     <span class="sr-only">(</span>
                                     <span>{{ option.count }}</span>
                                     <span class="sr-only">)</span>
@@ -185,6 +188,8 @@ import { computed, inject, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
+import slugify from 'slugify'
+
 import {
   Dialog,
   DialogOverlay,
@@ -201,7 +206,11 @@ import {
 
 import { ChevronUpIcon, XIcon } from '@heroicons/vue/solid'
 
-import slugify from 'slugify'
+import {
+  FUTURE_HIDE,
+  FUTURE_INDIFERENT,
+  FUTURE_ONLY
+} from '@/store/modules/collection'
 
 export default {
   components: {
@@ -246,7 +255,17 @@ export default {
       return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
-    const groups = computed(() => store.state.collection.filters.groups.items)
+    const groups = computed(() => {
+      const values = store.state.collection.filters.groups.items
+
+      if (state.futureItems === FUTURE_HIDE) {
+        return values
+      }
+
+      return state.futureItems === FUTURE_ONLY
+        ? values.sort((a, b) => b.futureCount - a.futureCount)
+        : values.sort((a, b) => b.totalCount - a.totalCount)
+    })
 
     const { open } = toRefs(props)
 
@@ -255,12 +274,14 @@ export default {
 
     watch(open, newOpen => {
       if (newOpen) {
-        state.groups = store.state.collection.filters.groups.selected
-        state.futureItems = store.state.collection.futureItems
-        state.sortDirection = store.state.collection.sortDirection
-        state.sortProperty = store.state.collection.sortBy
-        state.viewMode = store.state.settings.viewMode
-        state.gridMode = store.state.settings.gridMode
+        Object.assign(state, {
+          groups: store.state.collection.filters.groups.selected,
+          futureItems: store.state.collection.futureItems,
+          sortDirection: store.state.collection.sortDirection,
+          sortProperty: store.state.collection.sortBy,
+          viewMode: store.state.settings.viewMode,
+          gridMode: store.state.settings.gridMode
+        })
       }
 
       newOpen ? disableSearchShortcut() : enableSearchShortcut()
@@ -272,7 +293,6 @@ export default {
     }
 
     function checked (key, value) {
-      console.log(key, value, state[key].includes(value))
       return state[key].includes(value)
     }
 
@@ -284,6 +304,12 @@ export default {
       viewMode: store.state.settings.viewMode,
       gridMode: store.state.settings.gridMode
     })
+
+    const countProperty = {
+      indiferent: 'totalCount',
+      only: 'futureCount',
+      hide: 'count'
+    }
 
     const filters = computed(() => [
       {
@@ -298,7 +324,7 @@ export default {
               key: grp.name,
               value: grp.name,
               label: grp.name,
-              count: grp.count
+              count: grp[countProperty[state.futureItems]]
             }))
           },
           {
@@ -306,18 +332,18 @@ export default {
             label: t('dashboard.library.filters.futureItems.label'),
             options: [
               {
-                key: 'indiferent',
-                value: 'indiferent',
+                key: FUTURE_INDIFERENT,
+                value: FUTURE_INDIFERENT,
                 label: t('dashboard.library.filters.futureItems.indiferent')
               },
               {
-                key: 'only',
-                value: 'only',
+                key: FUTURE_ONLY,
+                value: FUTURE_ONLY,
                 label: t('dashboard.library.filters.futureItems.only')
               },
               {
-                key: 'hide',
-                value: 'hide',
+                key: FUTURE_HIDE,
+                value: FUTURE_HIDE,
                 label: t('dashboard.library.filters.futureItems.hide')
               }
             ]

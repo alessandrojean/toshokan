@@ -1,6 +1,12 @@
 import dedent from 'dedent'
 import md from 'markdown-it'
 import mdAbbr from 'markdown-it-abbr'
+import mdAnchor from 'markdown-it-anchor'
+import mdDefList from 'markdown-it-deflist'
+import mdToc from 'markdown-it-table-of-contents'
+import slugify from 'slugify'
+
+import { useI18n } from 'vue-i18n'
 
 function youtube (md) {
   const defaultRenderer = md.renderer.rules.image
@@ -18,9 +24,17 @@ function youtube (md) {
       return dedent`
         <figure>
           <div class="aspect-w-16 aspect-h-9 bg-gray-50 dark:bg-gray-800 rounded overflow-hidden">
-            <iframe src="https://www.youtube-nocookie.com/embed/${type}${id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/${type}${id}"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              loading="lazy"
+            >
+            </iframe>
           </div>
-          ${token.content && token.content.length ? '<figcaption>' + token.content + '</figcaption>' : ''}
+          ${token.content?.length ? '<figcaption>' + token.content + '</figcaption>' : ''}
         </figure>
       `
     }
@@ -29,9 +43,30 @@ function youtube (md) {
   }
 }
 
+function imageLazyLoad (md) {
+  const defaultRenderer = md.renderer.rules.image
+
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx]
+    token.attrSet('loading', 'lazy')
+
+    return defaultRenderer(tokens, idx, options, env, self)
+  }
+}
+
 export default function useMarkdown (options = {}) {
-  let markdown = md()
+  const { t } = useI18n()
+
+  let markdown = md(options.mdOptions || {})
     .use(mdAbbr)
+    .use(mdDefList)
+    .use(mdAnchor, { slugify: s => slugify(s, { lower: true }) })
+    .use(mdToc, {
+      slugify: s => slugify(s, { lower: true }),
+      listType: 'ol',
+      containerHeaderHtml: `<h2>${t('about.summary')}</h2>`
+    })
+    .use(imageLazyLoad)
 
   if (options.youtube) {
     markdown = markdown.use(youtube)
@@ -41,11 +76,9 @@ export default function useMarkdown (options = {}) {
     'table',
     'code',
     'fence',
-    'blockquote',
     'hr',
     'reference',
     'html_block',
-    // 'heading',
     'lheading'
   ])
 

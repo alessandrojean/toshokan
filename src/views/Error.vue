@@ -28,7 +28,7 @@
               @click="refresh"
             >
               <span aria-hidden="true">
-                <RefreshIcon />
+                <RefreshIcon class="-scale-x-100" />
               </span>
               <span>{{ t('errors.refresh') }}</span>
             </button>

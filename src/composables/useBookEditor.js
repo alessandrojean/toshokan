@@ -1,7 +1,7 @@
 import { readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
-import { updateBook as sheetUpdateBook } from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 import { MutationTypes } from '@/store'
 
@@ -9,25 +9,19 @@ export default function useBookEditor (book) {
   const store = useStore()
   const updating = ref(false)
 
+  /**
+   * Update the book in the sheet.
+   *
+   * @param {import('../model/Book').default} overrideBook
+   * @returns {Promise<string>}
+   */
   async function updateBook (overrideBook) {
     updating.value = true
     store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
 
-    const orgBook = overrideBook || book
+    const bookToUpdate = overrideBook || book
 
-    const bookToUpdate = {
-      ...orgBook,
-      labelPrice: {
-        currency: orgBook.labelPriceCurrency,
-        value: orgBook.labelPriceValue
-      },
-      paidPrice: {
-        currency: orgBook.paidPriceCurrency,
-        value: orgBook.paidPriceValue
-      }
-    }
-
-    const bookId = await sheetUpdateBook(store.state.sheet.sheetId, bookToUpdate)
+    const bookId = await SheetService.updateBook(store.state.sheet.sheetId, bookToUpdate)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
 

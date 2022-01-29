@@ -54,7 +54,7 @@ const routes = [
         }
       },
       {
-        path: 'privacy-police',
+        path: 'privacy-policy',
         name: 'PrivacyPolicy',
         component: () => import('../views/about/PrivacyPolicy.vue'),
         meta: {

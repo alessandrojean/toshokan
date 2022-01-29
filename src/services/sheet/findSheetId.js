@@ -1,0 +1,33 @@
+import i18n from '@/i18n'
+
+const SHEET_FILE_NAME = 'Toshokan'
+const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
+const SHEET_DEV_SUFFIX = '-dev'
+const SHEET_USE_DEV_VERSION = true
+
+export default async function findSheetId () {
+  // Use a development only sheet to prevent issues during tests.
+  const isDevEnvironment = import.meta.env.DEV
+  const sheetSuffix = (isDevEnvironment && SHEET_USE_DEV_VERSION)
+    ? SHEET_DEV_SUFFIX
+    : ''
+  const fileName = SHEET_FILE_NAME + sheetSuffix
+
+  const response = await window.gapi.client.drive.files.list({
+    q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
+    orderBy: 'starred',
+    fields: 'files(capabilities/canEdit,id,modifiedTime,name,ownedByMe,owners(displayName,emailAddress,photoLink),starred)'
+  })
+
+  if (response.result.files.length === 0) {
+    throw new Error(i18n.global.t('sheet.notFound'))
+  }
+
+  const lastSheetOpened = localStorage.getItem('last_sheet_opened')
+
+  const sheet = response.result.files.find(sheet => sheet.id === lastSheetOpened) ||
+    response.result.files.find(sheet => sheet.ownedByMe) ||
+    response.result.files[0]
+
+  return { sheet, options: response.result.files }
+}

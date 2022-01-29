@@ -42,7 +42,7 @@
     <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
         <h4 class="result-title">
-          <span aria-hidden="true" v-if="isFuture">
+          <span aria-hidden="true" v-if="result.isFuture">
             <ClockIcon class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
           </span>
           <span>{{ result.title }}</span>
@@ -79,7 +79,7 @@ import {
   PhotographIcon
 } from '@heroicons/vue/outline'
 
-import { BookStatus, NSFW_TAGS } from '@/model/Book'
+import Book from '@/model/Book'
 
 export default {
   components: {
@@ -90,7 +90,7 @@ export default {
 
   props: {
     result: {
-      type: Object,
+      type: Book,
       required: true
     }
   },
@@ -130,24 +130,9 @@ export default {
     const spoilerMode = computed(() => store.state.settings.spoilerMode)
     const blurNsfw = computed(() => store.state.settings.blurNsfw)
 
-    const isNsfw = computed(() => {
-      return result.value.tags.some(tag => NSFW_TAGS.includes(tag.toLowerCase()))
-    })
-
-    const isRead = computed(() => {
-      return result.value && result.value.status === BookStatus.READ
-    })
-
     const blurCover = computed(() => {
-      return (spoilerMode.value.cover && !isRead.value) ||
-        (blurNsfw.value && isNsfw.value)
-    })
-
-    const now = new Date()
-
-    const isFuture = computed(() => {
-      return result.value && result.value.boughtAt &&
-        result.value.boughtAt.getTime() > now.getTime()
+      return (spoilerMode.value.cover && !result.value.isRead) ||
+        (blurNsfw.value && result.value.isNsfw)
     })
 
     const { t } = useI18n()
@@ -179,8 +164,6 @@ export default {
       imageLoading,
       thumbnailUrl,
       spoilerMode,
-      isRead,
-      isFuture,
       authorsFormatted,
       blurCover
     }
@@ -231,11 +214,11 @@ export default {
 
 .result-cover.is-hidden {
   @apply md:blur-sm md:scale-105
-    motion-safe:transition-all;
+    motion-safe:transition-all motion-safe:ease-in;
 }
 
 .result-cover.is-hidden:hover {
-  @apply md:blur-none md:scale-100;
+  @apply md:blur-none md:scale-100 md:motion-safe:duration-[2000ms];
 }
 
 .empty-cover {

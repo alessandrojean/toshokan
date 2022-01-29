@@ -60,7 +60,7 @@ export default {
     unread: 'Unread',
     currentVolume: 'Current',
     emptySynopsis: 'The book synopsis is empty.',
-    futureItem: 'Future item',
+    future: 'Future',
     properties: {
       id: 'ID',
       title: 'Title',
@@ -69,6 +69,8 @@ export default {
       publisher: 'Publisher',
       group: 'Group',
       dimensions: 'Size',
+      width: 'Width',
+      height: 'Height',
       labelPrice: 'Label price',
       paidPrice: 'Paid price',
       store: 'Store',
@@ -108,6 +110,7 @@ export default {
       required: 'Required',
       optional: 'Optional',
       markdown: 'This field supports Markdown.',
+      notInCollection: 'This book is not on the collection yet',
       addNotes: 'Add notes about this book',
       addAuthor: 'Add',
       addAuthorPlaceholder: 'Add an author…',
@@ -225,14 +228,22 @@ export default {
   pageNotFound: {
     title: 'Page not found',
     description: 'The content you\'re looking for coudn\'t be found.',
-    goBack: 'Go back to home'
+    goBack: 'Go back to home',
+    goBackDashboard: 'Go back to dashboard'
   },
   criticalError: {
     title: 'Critical error'
   },
   home: {
     leading1: 'Manage the sheet of your',
-    leading2: 'manga collection',
+    leading2: ' {0} collection',
+    types: {
+      mangas: 'manga',
+      manhwas: 'manhwa',
+      manhuas: 'manhua',
+      comics: 'comic book',
+      books: 'book'
+    },
     shortDescription: `
       Visualize the data and statistics in a clean and modern UI,
       with features that allows a quick creation of new items.
@@ -711,10 +722,13 @@ export default {
     }
   },
   about: {
+    summary: 'Summary',
     a11y: {
       title: 'Accessibility',
       body: dedent`
         This site have some accessibility features.
+
+        [[toc]]
 
         ## Jump to the content
 
@@ -769,6 +783,8 @@ export default {
         spreadsheet, so you still have total control over your collection
         data and can have an easy access in case you want to export
         or use in other third party service.
+
+        [[toc]]
 
         ## Before starting
 
@@ -950,6 +966,8 @@ export default {
       body: dedent`
         This privacy policy applies to all pages in this website.
 
+        [[toc]]
+
         ## Information we collect
 
         Toshokan must receive some personal information from your
@@ -1072,6 +1090,8 @@ export default {
         those updates implies in your agreement of such changes.
         You can review the most current version of the terms
         at any time on this page.
+
+        [[toc]]
 
         ## Electronic communication
 

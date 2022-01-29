@@ -6,8 +6,8 @@ export function decimalComma (digits) {
   )
 }
 
-export const dimensions = helpers.regex(
-  /^\d+((,|\.)\d{1,2})? (x|×) \d+((,|\.)\d{1,2})?$/
+export const dimension = helpers.regex(
+  /^\d+((,|\.)\d{1,2})?$/
 )
 
 export function isbn (isbn) {

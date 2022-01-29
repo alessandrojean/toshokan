@@ -40,6 +40,7 @@
         :required="required"
         :list="hasList ? inputId + '-list' : undefined"
         :inputmode="inputMode"
+        :max="max"
         @input="$emit('update:modelValue', $event.target.value)"
       >
       <template v-if="hasList">
@@ -92,6 +93,7 @@ export default {
     list: Array,
     listText: Function,
     listValue: Function,
+    max: String,
     modelValue: {
       type: String,
       required: true

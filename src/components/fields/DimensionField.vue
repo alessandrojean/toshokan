@@ -32,8 +32,11 @@
 
 <script>
 import { computed, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import BaseField from '@/components/fields/BaseField.vue'
+
+const VALIDATOR = /^\d+((,|\.)\d{1,2})?$/
 
 export default {
   components: { BaseField },
@@ -43,7 +46,7 @@ export default {
     help: String,
     label: String,
     modelValue: {
-      type: String,
+      type: Object,
       required: true
     },
     required: Boolean
@@ -52,17 +55,27 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, context) {
-    const { modelValue } = toRefs(props)
+    const { n } = useI18n()
+    const { modelValue: dimensions } = toRefs(props)
 
-    const dimensions = computed(() => modelValue.value.split(/\s*[Xx×]\s*/))
-
-    const width = ref(dimensions.value[0])
-    const height = ref(dimensions.value[1])
+    const width = ref(
+      dimensions.value?.width ? n(dimensions.value.width, 'dimensions') : ''
+    )
+    const height = ref(
+      dimensions.value?.height ? n(dimensions.value.height, 'dimensions') : ''
+    )
 
     const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
 
-    watch(dimensionsStr, newDimensions => {
-      context.emit('update:modelValue', newDimensions)
+    watch(dimensionsStr, () => {
+      context.emit('update:modelValue', {
+        width: width.value.match(VALIDATOR)
+          ? parseFloat(width.value.replace(',', '.'))
+          : NaN,
+        height: height.value.match(VALIDATOR)
+          ? parseFloat(height.value.replace(',', '.'))
+          : NaN
+      })
     })
 
     const heightInput = ref(null)

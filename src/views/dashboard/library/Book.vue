@@ -80,7 +80,9 @@ import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
 
-import { BookFavorite, BookStatus } from '@/model/Book'
+import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
@@ -174,19 +176,23 @@ export default {
     }
 
     async function toggleStatus () {
+      if (book.value.isFuture) {
+        return
+      }
+
       try {
         editing.value = true
 
-        await updateBook({
-          ...book.value,
-          status: book.value.status === BookStatus.READ
-            ? BookStatus.UNREAD
-            : BookStatus.READ,
-          readAt: book.value.status === BookStatus.READ
-            ? ''
-            : toDateInputValue(new Date())
-        })
+        /** @type {Book} */
+        const updatedBook = cloneDeep(book.value)
+        updatedBook.status = updatedBook.isRead
+          ? STATUS_UNREAD
+          : STATUS_READ
+        updatedBook.readAt = updatedBook.isRead
+          ? toDateInputValue(new Date())
+          : null
 
+        await updateBook(updatedBook)
         await findTheBook(bookId.value, redirectToHome)
       } finally {
         editing.value = false
@@ -197,13 +203,11 @@ export default {
       try {
         editing.value = true
 
-        await updateBook({
-          ...book.value,
-          favorite: book.value.favorite === BookFavorite.ACTIVE
-            ? BookFavorite.INACTIVE
-            : BookFavorite.ACTIVE
-        })
+        /** @type {Book} */
+        const updatedBook = cloneDeep(book.value)
+        updatedBook.favorite = !updatedBook.favorite
 
+        await updateBook(updatedBook)
         await findTheBook(bookId.value, redirectToHome)
       } finally {
         editing.value = false

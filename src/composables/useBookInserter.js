@@ -1,10 +1,7 @@
-import { computed, readonly, ref } from 'vue'
+import { computed, readonly, ref, toRaw } from 'vue'
 import { useStore } from 'vuex'
 
-import {
-  getBookByCode,
-  insertBook as sheetInsertBook
-} from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 import { MutationTypes } from '@/store'
 
@@ -21,7 +18,7 @@ export default function useBookInserter (book) {
         await store.dispatch('collection/fetchIdMap')
       }
 
-      const books = await getBookByCode(sheetId.value, idMap.value, code)
+      const books = await SheetService.getBookByCode(sheetId.value, idMap.value, code)
 
       if (!books || books.length === 0) {
         return null
@@ -37,19 +34,9 @@ export default function useBookInserter (book) {
     inserting.value = true
     store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
 
-    const bookToInsert = {
-      ...book,
-      labelPrice: {
-        currency: book.labelPriceCurrency,
-        value: book.labelPriceValue
-      },
-      paidPrice: {
-        currency: book.paidPriceCurrency,
-        value: book.paidPriceValue
-      }
-    }
+    const bookToInsert = toRaw(book)
 
-    const bookId = await sheetInsertBook(store.state.sheet.sheetId, bookToInsert)
+    const bookId = await SheetService.insertBook(store.state.sheet.sheetId, bookToInsert)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
     await store.dispatch('collection/fetchIdMap')

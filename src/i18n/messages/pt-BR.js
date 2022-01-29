@@ -60,7 +60,7 @@ export default {
     unread: 'Não lido',
     currentVolume: 'Volume atual',
     emptySynopsis: 'A sinopse do livro não foi preenchida.',
-    futureItem: 'Item futuro',
+    future: 'Futuro',
     properties: {
       id: 'Identificação',
       title: 'Título',
@@ -69,6 +69,8 @@ export default {
       publisher: 'Editora',
       group: 'Grupo',
       dimensions: 'Dimensões',
+      width: 'Largura',
+      height: 'Altura',
       labelPrice: 'Preço de capa',
       paidPrice: 'Preço pago',
       store: 'Local da compra',
@@ -108,6 +110,7 @@ export default {
       required: 'Obrigatório',
       optional: 'Opcional',
       markdown: 'O Markdown é suportado neste campo.',
+      notInCollection: 'Este livro ainda não está na coleção',
       addNotes: 'Adicionar observações sobre este livro',
       addAuthor: 'Adicionar',
       addAuthorPlaceholder: 'Adicionar um autor…',
@@ -225,14 +228,22 @@ export default {
   pageNotFound: {
     title: 'Página não encontrada',
     description: 'O conteúdo procurado não foi localizado.',
-    goBack: 'Voltar para o início'
+    goBack: 'Voltar para o início',
+    goBackDashboard: 'Voltar para o dashboard'
   },
   criticalError: {
     title: 'Erro crítico'
   },
   home: {
     leading1: 'Gerencie sua planilha da',
-    leading2: 'coleção de mangás',
+    leading2: ' coleção de {0}',
+    types: {
+      mangas: 'mangás',
+      manhwas: 'manhwas',
+      manhuas: 'manhuas',
+      comics: 'quadrinhos',
+      books: 'livros'
+    },
     shortDescription: `
       Visualize os dados e estatísticas em uma interface limpa e moderna,
       com recursos que permitem uma rápida criação de novos itens.
@@ -715,10 +726,13 @@ export default {
     }
   },
   about: {
+    summary: 'Sumário',
     a11y: {
       title: 'Acessibilidade',
       body: dedent`
         Este site possui alguns recursos de acessibilidade.
+
+        [[toc]]
 
         ## Pular para o conteúdo
 
@@ -774,6 +788,8 @@ export default {
         assim você ainda tem controle total sobre seus dados da coleção e
         poderá manipulá-los facilmente caso queira exportá-los ou utilizá-los
         em outro serviço, por exemplo.
+
+        [[toc]]
 
         ## Antes de começar
 
@@ -962,6 +978,8 @@ export default {
       body: dedent`
         A política de privacidade aplica-se a todas as páginas deste site.
 
+        [[toc]]
+
         ## Informações coletadas
 
         O Toshokan precisa receber algumas informações pessoais de sua
@@ -1086,6 +1104,8 @@ export default {
         periodicamente. Seu acesso ao site após a publicação de quaisquer
         alterações constitui aceitação de tais alterações. Você pode revisar
         a versão mais atual dos termos a qualquer momento nesta página.
+
+        [[toc]]
 
         ## Comunicação eletrônica
 

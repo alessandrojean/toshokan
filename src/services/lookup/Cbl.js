@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { parseBookFromCbl } from '@/model/Book'
+import Book from '@/model/Book'
 import { isbn as validateIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
@@ -92,7 +92,7 @@ export default class Cbl extends Lookup {
     try {
       const response = await this.axios.post('search?api-version=2016-09-01', dataPayload)
 
-      return response.data.value.map(parseBookFromCbl)
+      return response.data.value.map(Book.fromCbl)
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

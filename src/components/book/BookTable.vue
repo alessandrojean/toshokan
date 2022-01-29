@@ -69,7 +69,7 @@
                 <td class="pr-6 py-4 whitespace-nowrap">
                   <span
                     :class="[
-                      book.status === BookStatus.READ
+                      book.isRead
                         ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:bg-opacity-50 dark:text-emerald-500 dark:border dark:border-emerald-500'
                         : 'bg-red-100 text-red-800 dark:bg-red-900 dark:bg-opacity-40 dark:text-red-400 dark:border dark:border-red-400',
                       'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
@@ -165,8 +165,6 @@ import { DotsHorizontalIcon } from '@heroicons/vue/solid'
 
 import Paginator from '@/components/Paginator.vue'
 
-import { BookStatus as BaseBookStatus } from '@/model/Book'
-
 export default {
   name: 'TableBooks',
 
@@ -192,8 +190,6 @@ export default {
 
     const timeZone = computed(() => store.state.sheet.timeZone)
 
-    const BookStatus = computed(() => BaseBookStatus)
-
     function formatDate (date) {
       return d(date, 'long', { timeZone: timeZone.value.name })
     }
@@ -218,7 +214,6 @@ export default {
     const loading = computed(() => store.state.collection.books.loading)
 
     return {
-      BookStatus,
       formatDate,
       formatPrice,
       handlePage,

@@ -67,10 +67,10 @@
       </transition>
 
       <div
-        v-if="isRead || current || isFuture"
+        v-if="book.isRead || current || book.isFuture"
         class="badge-wrapper"
       >
-        <template v-if="!current && !isFuture">
+        <template v-if="!current && !book.isFuture">
           <span class="sr-only">{{ t('book.read') }}</span>
           <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
             <BookmarkIcon class="w-5 h-5 text-primary-500" />
@@ -81,7 +81,7 @@
             <ClockIcon class="w-3.5 h-3.5" />
           </span>
           <span>
-            {{ t('book.futureItem') }}
+            {{ t('book.future') }}
           </span>
         </span>
         <span v-else class="current-volume">
@@ -120,7 +120,7 @@ import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
 
-import { BookFavorite, BookStatus, NSFW_TAGS } from '@/model/Book'
+import Book from '@/model/Book'
 
 export default {
   name: 'BookCard',
@@ -134,7 +134,7 @@ export default {
 
   props: {
     book: {
-      type: Object
+      type: Book
     },
     current: Boolean,
     loading: {
@@ -146,16 +146,6 @@ export default {
   setup (props) {
     const { book, loading } = toRefs(props)
     const { t } = useI18n()
-
-    const isFavorite = computed(() => book.value.favorite === BookFavorite.ACTIVE)
-    const isRead = computed(() => book.value.status === BookStatus.READ)
-
-    const now = new Date()
-
-    const isFuture = computed(() => {
-      return book.value && book.value.boughtAt &&
-        book.value.boughtAt.getTime() > now.getTime()
-    })
 
     const thumbnailUrl = computed(() => {
       return book.value
@@ -202,19 +192,12 @@ export default {
     const spoilerMode = computed(() => store.state.settings.spoilerMode)
     const blurNsfw = computed(() => store.state.settings.blurNsfw)
 
-    const isNsfw = computed(() => {
-      return book.value.tags.some(tag => NSFW_TAGS.includes(tag.toLowerCase()))
-    })
-
     const blurCover = computed(() => {
-      return (spoilerMode.value.cover && !isRead.value) ||
-        (blurNsfw.value && isNsfw.value)
+      return (spoilerMode.value.cover && !book.value.isRead) ||
+        (blurNsfw.value && book.value.isNsfw)
     })
 
     return {
-      isFavorite,
-      isRead,
-      isFuture,
       loadedCard,
       imageHasError,
       imageLoading,
@@ -281,15 +264,14 @@ export default {
 }
 
 .book-card.blurred :where(.book-cover, .cover-eye) {
-  @apply md:motion-safe:transition-all md:motion-safe:duration-[2000ms]
-    md:motion-safe:ease-in;
+  @apply md:motion-safe:transition-all md:motion-safe:ease-in;
 }
 
 .book-card.blurred:hover .book-cover {
-  @apply md:blur-0 md:scale-100;
+  @apply md:blur-0 md:scale-100 md:motion-safe:duration-[2000ms];
 }
 
 .book-card.blurred:hover .cover-eye {
-  @apply md:opacity-0;
+  @apply md:opacity-0 md:motion-safe:duration-[2000ms];
 }
 </style>

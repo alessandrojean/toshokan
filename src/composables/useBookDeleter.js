@@ -1,7 +1,7 @@
 import { readonly, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import { deleteBook as sheetDeleteBook } from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 import { MutationTypes } from '@/store'
 
@@ -14,7 +14,7 @@ export default function useBookDeleter (book) {
     deleting.value = true
     store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
 
-    await sheetDeleteBook(store.state.sheet.sheetId, book.value)
+    await SheetService.deleteBook(store.state.sheet.sheetId, book.value)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
     await store.dispatch('collection/fetchIdMap')

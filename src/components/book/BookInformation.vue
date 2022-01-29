@@ -14,7 +14,7 @@
         v-if="showBookInfo"
         class="book-title"
       >
-        <span aria-hidden="true" v-if="isFuture">
+        <span aria-hidden="true" v-if="book.isFuture">
           <ClockIcon class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500" />
         </span>
         {{ book.titleParts.main }}
@@ -79,23 +79,23 @@
       <div v-else class="motion-safe:animate-pulse flex-1 md:flex-initial md:w-28 h-11 bg-gray-400 dark:bg-gray-600 rounded"></div>
 
       <button
-        v-if="showBookInfo && !isFuture"
+        v-if="showBookInfo && !book.isFuture"
         class="button is-icon-only px-2.5"
         :title="
           t('dashboard.details.header.options.markAs', {
-            status: t(isRead ? 'book.unread' : 'book.read').toLowerCase() }
+            status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase() }
           )
         "
         @click="$emit('click:toggleStatus', $event)"
       >
         <span aria-hidden="true">
-          <BookmarkSolidIcon v-if="isRead" />
+          <BookmarkSolidIcon v-if="book.isRead" />
           <BookmarkOutlineIcon v-else />
         </span>
         <span class="sr-only">
           {{
             t('dashboard.details.header.options.markAs', {
-              status: t(isRead ? 'book.unread' : 'book.read').toLowerCase() }
+              status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase() }
             )
           }}
         </span>
@@ -104,15 +104,15 @@
       <button
         v-if="showBookInfo"
         class="button is-icon-only px-2.5"
-        :title="t(`dashboard.details.header.options.${isFavorite ? 'removeFromFavorites' : 'addToFavorites' }`)"
+        :title="t(`dashboard.details.header.options.${book.favorite ? 'removeFromFavorites' : 'addToFavorites' }`)"
         @click="$emit('click:toggleFavorite', $event)"
       >
         <span aria-hidden="true">
-          <StarSolidIcon v-if="isFavorite" />
+          <StarSolidIcon v-if="book.favorite" />
           <StarOutlineIcon v-else />
         </span>
         <span class="sr-only">
-          {{ t(`dashboard.details.header.options.${isFavorite ? 'removeFromFavorites' : 'addToFavorites' }`) }}
+          {{ t(`dashboard.details.header.options.${book.favorite ? 'removeFromFavorites' : 'addToFavorites' }`) }}
         </span>
       </button>
 
@@ -237,7 +237,6 @@ import {
   ExternalLinkIcon,
   GlobeAltIcon,
   PencilIcon,
-  ShoppingCartIcon,
   StarIcon as StarSolidIcon
 } from '@heroicons/vue/solid'
 import {
@@ -254,7 +253,7 @@ import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 import getBookLinks from '@/services/links'
 
-import { BookFavorite, BookStatus } from '@/model/Book'
+import Book from '@/model/Book'
 
 export default {
   components: {
@@ -273,7 +272,7 @@ export default {
   },
 
   props: {
-    book: Object,
+    book: Book,
     disabled: Boolean,
     loading: Boolean
   },
@@ -359,24 +358,9 @@ export default {
 
     const spoilerMode = computed(() => store.state.settings.spoilerMode)
 
-    const isRead = computed(() => {
-      return book.value && book.value.status === BookStatus.READ
-    })
-
-    const isFavorite = computed(() => {
-      return book.value?.favorite === BookFavorite.ACTIVE
-    })
-
-    const now = new Date()
-
-    const isFuture = computed(() => {
-      return book.value && book.value.boughtAt &&
-        book.value.boughtAt.getTime() > now.getTime()
-    })
-
     const blurSynopsis = computed(() => {
       return showBookInfo.value && spoilerMode.value.synopsis &&
-        !isRead.value && book.value.synopsis.length > 0
+        !book.value.isRead && book.value.synopsis.length > 0
     })
 
     const externalLinks = computed(() => {
@@ -415,9 +399,6 @@ export default {
       locale,
       isbn10,
       country,
-      isRead,
-      isFavorite,
-      isFuture,
       spoilerMode,
       blurSynopsis,
       externalLinks,

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import Lookup from './Lookup'
 
-import { parseBookFromOpenLibrary } from '@/model/Book'
+import Book from '@/model/Book'
 import { isbn as validateIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
@@ -52,7 +52,7 @@ export default class OpenLibrary extends Lookup {
 
       const details = await this.findDetails(isbn)
 
-      return parseBookFromOpenLibrary(data[bibKey], details)
+      return Book.fromOpenLibrary(data[bibKey], details)
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

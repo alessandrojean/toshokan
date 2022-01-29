@@ -15,8 +15,7 @@ import ContentTitle from '@/components/ContentTitle.vue'
 import ContentBody from '@/components/ContentBody.vue'
 import ContentFooter from '@/components/ContentFooter.vue'
 
-import md from 'markdown-it'
-import mdDefList from 'markdown-it-deflist'
+import useMarkdown from '@/composables/useMarkdown'
 
 export default {
   components: {
@@ -29,13 +28,15 @@ export default {
   setup () {
     const { t } = useI18n()
 
-    const markdown = md({
-      html: true,
-      typographer: true
-    }).use(mdDefList)
+    const { renderMarkdown } = useMarkdown({
+      mdOptions: {
+        html: true,
+        typographer: true
+      }
+    })
 
     const body = ref(
-      markdown.render(
+      renderMarkdown(
         t('about.a11y.body', {
           headlessUiLink: 'https://headlessui.dev/vue/menu#keyboard-interaction'
         })

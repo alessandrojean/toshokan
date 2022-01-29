@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { computed, inject, nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -168,6 +168,8 @@ import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
 import BookOrganization from '@/components/book/BookOrganization.vue'
 import BookReading from '@/components/book/BookReading.vue'
+
+import Book from '@/model/Book'
 
 import cloneDeep from 'lodash.clonedeep'
 
@@ -194,7 +196,7 @@ export default {
   },
 
   props: {
-    book: Object,
+    book: Book,
     isOpen: Boolean
   },
 
@@ -210,7 +212,7 @@ export default {
 
     const { isOpen, book } = toRefs(props)
 
-    const editingBook = reactive(book.value ? cloneDeep(book.value) : {})
+    const editingBook = reactive(book.value || new Book())
     const editFormInvalid = ref(false)
 
     function setEditFormInvalid (value) {
@@ -231,14 +233,14 @@ export default {
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
         Object.assign(editingBook, cloneDeep(book.value), {
-          dimensionsStr: book.value.dimensions
-            .map(dm => n(dm, 'dimensions'))
-            .join(' x '),
-          labelPriceValueStr: n(book.value.labelPrice.value, 'decimal'),
-          paidPriceValueStr: n(book.value.paidPrice.value, 'decimal'),
-          boughtAtStr: book.value.boughtAt
-            ? book.value.boughtAt.toISOString().substring(0, 10)
-            : ''
+          labelPrice: {
+            ...book.value.labelPrice,
+            valueStr: n(book.value.labelPrice.value, 'decimal')
+          },
+          paidPrice: {
+            ...book.value.paidPrice,
+            valueStr: n(book.value.paidPrice.value, 'decimal')
+          }
         })
 
         window.addEventListener('beforeunload', preventUnload)
@@ -253,7 +255,7 @@ export default {
 
     async function handleEdit () {
       if (!editFormInvalid.value) {
-        context.emit('edit', editingBook)
+        context.emit('edit', cloneDeep(toRaw(editingBook)))
         closeDialog()
       } else {
         nextTick(() => {
@@ -267,13 +269,6 @@ export default {
 
     const main = ref(null)
 
-    const now = new Date()
-
-    const isFuture = computed(() => {
-      return editingBook.boughtAt &&
-        editingBook.boughtAt.getTime() > now.getTime()
-    })
-
     const tabs = computed(() => [
       {
         title: t('dashboard.details.editForm.title'),
@@ -282,7 +277,7 @@ export default {
       { title: t('dashboard.details.coverForm.title') },
       {
         title: t('dashboard.details.readingForm.title'),
-        disabled: isFuture.value
+        disabled: editingBook.isFuture
       },
       { title: t('dashboard.details.organizationForm.title') }
     ])

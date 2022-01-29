@@ -1,13 +1,6 @@
 import Paginator from 'paginator'
 
-import {
-  getBookIds,
-  getBooks,
-  getGroups,
-  getPublishers,
-  getLatestReadings,
-  getStores
-} from '@/services/sheet'
+import SheetService from '@/services/sheet'
 import { PropertyToColumn } from '@/model/Book'
 
 import { MutationTypes } from '@/store'
@@ -30,6 +23,10 @@ export const CollectionMutations = {
   UPDATE_SORT: 'updateSort',
   UPDATE_STORES: 'updateStores'
 }
+
+export const FUTURE_HIDE = 'hide'
+export const FUTURE_ONLY = 'only'
+export const FUTURE_INDIFERENT = 'indiferent'
 
 const state = () => ({
   books: {
@@ -62,7 +59,7 @@ const state = () => ({
       loading: false
     }
   },
-  futureItems: 'hide',
+  futureItems: FUTURE_HIDE,
   idMap: {},
   links: 6,
   paginationInfo: {},
@@ -101,7 +98,7 @@ const actions = {
       const orderDirection = state.sortDirection
       const futureItems = state.futureItems
 
-      const { books, totalResults } = await getBooks(sheetId, state.idMap, page, {
+      const { books, totalResults } = await SheetService.getBooks(sheetId, state.idMap, page, {
         futureItems,
         groups,
         orderBy,
@@ -121,7 +118,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      const groups = await getGroups(sheetId)
+      const groups = await SheetService.getGroups(sheetId)
       commit(CollectionMutations.UPDATE_GROUPS, { items: groups })
     } finally {
       commit(CollectionMutations.UPDATE_GROUPS, { loading: false })
@@ -132,7 +129,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      const idMap = await getBookIds(sheetId)
+      const idMap = await SheetService.getBookIds(sheetId)
       commit(CollectionMutations.UPDATE_ID_MAP, idMap)
     } catch (e) {
       commit(CollectionMutations.UPDATE_ID_MAP, {})
@@ -145,7 +142,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      const publishers = await getPublishers(sheetId)
+      const publishers = await SheetService.getPublishers(sheetId)
       commit(CollectionMutations.UPDATE_PUBLISHERS, { items: publishers })
     } finally {
       commit(CollectionMutations.UPDATE_PUBLISHERS, { loading: false })
@@ -162,7 +159,7 @@ const actions = {
         await dispatch('fetchIdMap')
       }
 
-      const lastAdded = await getBooks(sheetId, state.idMap, 1, {
+      const lastAdded = await SheetService.getBooks(sheetId, state.idMap, 1, {
         limit: 6,
         dontCount: true
       })
@@ -182,7 +179,7 @@ const actions = {
         await dispatch('fetchIdMap')
       }
 
-      const latestReadings = await getLatestReadings(sheetId, state.idMap, {
+      const latestReadings = await SheetService.getLatestReadings(sheetId, state.idMap, {
         limit: 6
       })
       commit(CollectionMutations.UPDATE_LATEST_READINGS, { items: latestReadings })
@@ -197,7 +194,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      const stores = await getStores(sheetId)
+      const stores = await SheetService.getStores(sheetId)
       commit(CollectionMutations.UPDATE_STORES, { items: stores })
     } finally {
       commit(CollectionMutations.UPDATE_STORES, { loading: false })

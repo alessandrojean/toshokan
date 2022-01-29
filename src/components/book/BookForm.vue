@@ -83,9 +83,9 @@
         required
         class="col-span-7 sm:col-span-4 md:col-span-1"
         :label="t('book.properties.dimensions')"
-        :model-value="modelValue.dimensionsStr"
-        :error="v$.dimensionsStr.$error ? v$.dimensionsStr.$errors[0].$message : ''"
-        @update:model-value="handleInput('dimensionsStr', $event)"
+        :model-value="modelValue.dimensions"
+        :error="v$.dimensions.$error ? v$.dimensions.$errors[0].$message : ''"
+        @update:model-value="handleInput('dimensions', $event)"
       />
 
       <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
@@ -98,9 +98,9 @@
         suffix-class="suffix"
         input-mode="decimal"
         :label="t('book.properties.labelPrice')"
-        :model-value="modelValue.labelPriceValueStr"
+        :model-value="modelValue.labelPrice.valueStr"
         :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
-        :error="v$.labelPriceValueStr.$error ? v$.labelPriceValueStr.$errors[0].$message : ''"
+        :error="v$.labelPrice.valueStr.$error ? v$.labelPrice.valueStr.$errors[0].$message : ''"
         @update:model-value="handleInput('labelPriceValueStr', $event)"
       >
         <template #prefix>
@@ -120,7 +120,7 @@
               v-for="currency of currencies"
               :key="currency"
               :value="currency"
-              :selected="modelValue.labelPriceCurrency === currency"
+              :selected="modelValue.labelPrice.currency === currency"
             >
               {{ currency }}
             </option>
@@ -138,9 +138,9 @@
         suffix-class="suffix"
         input-mode="decimal"
         :label="t('book.properties.paidPrice')"
-        :model-value="modelValue.paidPriceValueStr"
+        :model-value="modelValue.paidPrice.valueStr"
         :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
-        :error="v$.paidPriceValueStr.$error ? v$.paidPriceValueStr.$errors[0].$message : ''"
+        :error="v$.paidPrice.valueStr.$error ? v$.paidPrice.valueStr.$errors[0].$message : ''"
         @update:model-value="handleInput('paidPriceValueStr', $event)"
       >
         <template #prefix>
@@ -160,7 +160,7 @@
               v-for="currency of currencies"
               :key="currency"
               :value="currency"
-              :selected="modelValue.paidPriceCurrency === currency"
+              :selected="modelValue.paidPrice.currency === currency"
             >
               {{ currency }}
             </option>
@@ -186,6 +186,7 @@
       <TextField
         class="col-span-7 sm:col-span-5 md:col-span-6"
         input-type="date"
+        :max="toDateInputValue(new Date())"
         :label="t('book.properties.boughtAt')"
         :model-value="modelValue.boughtAtStr"
         :placeholder="t('book.form.example.placeholder', [t('book.form.example.boughtAt')])"
@@ -193,20 +194,39 @@
       />
     </div>
 
-    <div class="flex items-center space-x-2.5">
-      <input
-        type="checkbox"
-        class="checkbox"
-        name="add-notes"
-        id="add-notes"
-        v-model="addNotes"
-      >
-      <label
-        for="add-notes"
-        class="label mb-0"
-      >
-        {{ t('book.form.addNotes') }}
-      </label>
+    <div class="space-y-2">
+      <div class="flex items-center space-x-2.5">
+        <input
+          type="checkbox"
+          class="checkbox"
+          name="not-in-collection"
+          id="not-in-collection"
+          :checked="modelValue.isFuture"
+          @change="handleNotInCollection($event.target.checked)"
+        >
+        <label
+          for="not-in-collection"
+          class="label mb-0"
+        >
+          {{ t('book.form.notInCollection') }}
+        </label>
+      </div>
+
+      <div class="flex items-center space-x-2.5">
+        <input
+          type="checkbox"
+          class="checkbox"
+          name="add-notes"
+          id="add-notes"
+          v-model="addNotes"
+        >
+        <label
+          for="add-notes"
+          class="label mb-0"
+        >
+          {{ t('book.form.addNotes') }}
+        </label>
+      </div>
     </div>
 
     <MarkdownField
@@ -233,7 +253,7 @@
           v-for="error of v$.$errors"
           :key="error.$uid"
         >
-          <span class="font-medium">{{ propertyNames[error.$property] }}:</span>
+          <span class="font-medium">{{ propertyNames[error.$propertyPath] }}:</span>
           {{ error.$message }}
         </li>
       </ul>
@@ -242,7 +262,7 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -251,15 +271,17 @@ import { helpers, required } from '@vuelidate/validators'
 
 import { UserAddIcon } from '@heroicons/vue/solid'
 
-import { decimalComma, dimensions } from '@/util/validators'
+import { decimalComma, dimension } from '@/util/validators'
 
-import { getCodeType } from '@/model/Book'
+import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
 
 import Alert from '@/components/Alert.vue'
 import DimensionField from '@/components/fields/DimensionField.vue'
 import MarkdownField from '@/components/fields/MarkdownField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
+
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
   name: 'BookForm',
@@ -278,7 +300,7 @@ export default {
   props: {
     editing: Boolean,
     modelValue: {
-      type: Object,
+      type: Book,
       required: true
     },
     touchOnMount: Boolean
@@ -289,24 +311,26 @@ export default {
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
     const { t, locale } = useI18n()
 
-    const bookState = reactive({ ...book.value })
-    const addNotes = ref(book.value.notes.length > 0)
+    const bookState = reactive(cloneDeep(book.value))
+    const addNotes = ref(book.value.notes ? book.value.notes.length > 0 : false)
 
     function forceUpdateBook () {
-      Object.assign(bookState, { ...book })
+      Object.assign(bookState, cloneDeep(book.value))
     }
+
+    const decimalCommaValidator = decimalComma(2)
 
     const messageRequired = helpers.withMessage(
       t('book.form.blankField'),
       required
     )
-    const messageDimensions = helpers.withMessage(
+    const messageDimension = helpers.withMessage(
       t('book.form.invalidValue'),
-      dimensions
+      dimension
     )
     const messageDecimalComma = helpers.withMessage(
       t('book.form.invalidNumber'),
-      decimalComma(2)
+      decimalCommaValidator
     )
 
     const rules = {
@@ -315,9 +339,16 @@ export default {
       authorsStr: { messageRequired },
       publisher: { messageRequired },
       group: { messageRequired },
-      labelPriceValueStr: { messageRequired, messageDecimalComma },
-      paidPriceValueStr: { messageRequired, messageDecimalComma },
-      dimensionsStr: { messageRequired, messageDimensions },
+      labelPrice: {
+        valueStr: { messageRequired, messageDecimalComma }
+      },
+      paidPrice: {
+        valueStr: { messageRequired, messageDecimalComma }
+      },
+      dimensions: {
+        width: { messageRequired, messageDimension },
+        height: { messageRequired, messageDimension }
+      },
       store: { messageRequired }
     }
 
@@ -327,9 +358,10 @@ export default {
       authorsStr: t('book.properties.authors'),
       publisher: t('book.properties.publisher'),
       group: t('book.properties.group'),
-      labelPriceValueStr: t('book.properties.labelPrice'),
-      paidPriceValueStr: t('book.properties.paidPrice'),
-      dimensionsStr: t('book.properties.dimensions'),
+      'labelPrice.valueStr': t('book.properties.labelPrice'),
+      'paidPrice.valueStr': t('book.properties.paidPrice'),
+      'dimensions.width': t('book.properties.width'),
+      'dimensions.height': t('book.properties.height'),
       store: t('book.properties.store'),
       synopsis: t('book.properties.synopsis'),
       notes: t('book.properties.notes')
@@ -338,43 +370,49 @@ export default {
     const v$ = useVuelidate(rules, bookState)
 
     function handleInput (property, value) {
-      const newBook = { ...bookState, [property]: value }
-
-      if (property === 'code') {
-        newBook.codeType = getCodeType(value)
-      } else if (property === 'authors') {
-        newBook.authorsStr = value.join('; ')
-        property = 'authorsStr'
-      } else if (property === 'boughtAtStr') {
-        newBook.boughtAt = value.length === 10 ? new Date(value) : null
-
-        if (newBook.boughtAt) {
-          newBook.boughtAt.setMinutes(
-            newBook.boughtAt.getMinutes() + newBook.boughtAt.getTimezoneOffset()
-          )
-        }
-      } else if (property === 'dimensionsStr') {
-        newBook.dimensions = value.split(/\s*[Xx×]\s*/)
-          .map(dm => parseFloat(dm.replace(',', '.')))
+      if (property === 'boughtAtStr') {
+        bookState.boughtAt = value.length === 10 ? new Date(value) : null
+        bookState.boughtAt?.setMinutes(
+          bookState.boughtAt.getMinutes() + bookState.boughtAt.getTimezoneOffset()
+        )
       } else if (property === 'labelPriceValueStr') {
-        newBook.labelPriceValue = parseFloat(value.replace(',', '.'))
+        bookState.labelPrice.value = decimalCommaValidator(value)
+          ? parseFloat(value.replace(',', '.'))
+          : null
+        bookState.labelPrice.valueStr = value
+        property = 'labelPrice'
       } else if (property === 'paidPriceValueStr') {
-        newBook.paidPriceValue = parseFloat(value.replace(',', '.'))
+        bookState.paidPrice.value = decimalCommaValidator(value)
+          ? parseFloat(value.replace(',', '.'))
+          : null
+        bookState.paidPrice.valueStr = value
+        property = 'paidPrice'
+      } else if (property === 'labelPriceCurrency') {
+        bookState.labelPrice.currency = value
+      } else if (property === 'paidPriceCurrency') {
+        bookState.paidPrice.value = value
+      } else {
+        bookState[property] = value
       }
-
-      Object.assign(bookState, newBook)
 
       if (v$.value[property]) {
         v$.value[property].$touch()
       }
 
       context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      context.emit('update:modelValue', newBook)
+      context.emit('update:modelValue', cloneDeep(toRaw(bookState)))
     }
 
+    function handleNotInCollection (value) {
+      handleInput('status', value ? STATUS_FUTURE : STATUS_UNREAD)
+      handleInput('boughtAtStr', value ? '' : toDateInputValue(new Date()))
+      handleInput('readAt', null)
+    }
+
+    /** @param {Book} book */
     function touch (book) {
       if (book) {
-        Object.assign(bookState, book)
+        Object.assign(bookState, cloneDeep(book))
         addNotes.value = book.notes.length > 0
       }
 
@@ -438,6 +476,7 @@ export default {
     return {
       currencies,
       handleInput,
+      handleNotInCollection,
       propertyNames,
       v$,
       touch,

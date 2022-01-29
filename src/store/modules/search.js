@@ -1,6 +1,6 @@
 import Paginator from 'paginator'
 
-import { searchBooks } from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 export const SearchMutations = {
   CLEAR: 'clear',
@@ -47,7 +47,7 @@ const actions = {
         sortDirection: sortDirection || state.sortDirection
       })
 
-      const { results, total } = await searchBooks({
+      const { results, total } = await SheetService.searchBooks({
         sheetId,
         idMap: rootState.collection.idMap,
         searchTerm: query,

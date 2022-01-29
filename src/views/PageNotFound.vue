@@ -17,12 +17,18 @@
           <div class="mt-10 md:ml-6 md:pl-6">
             <router-link
               :to="{ name: signedIn ? 'DashboardHome' : 'Home' }"
-              class="button is-primary"
+              class="button is-ghost is-link -ml-3 group"
             >
               <span aria-hidden="true">
-                <HomeIcon />
+                <ArrowSmLeftIcon class="motion-safe:transition-transform group-hover:-translate-x-1" />
               </span>
-              {{ t('pageNotFound.goBack') }}
+              {{
+                t(
+                  signedIn
+                    ? 'pageNotFound.goBackDashboard'
+                    : 'pageNotFound.goBack'
+                )
+              }}
             </router-link>
           </div>
         </div>
@@ -36,10 +42,10 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
-import { HomeIcon } from '@heroicons/vue/solid'
+import { ArrowSmLeftIcon } from '@heroicons/vue/solid'
 
 export default {
-  components: { HomeIcon },
+  components: { ArrowSmLeftIcon },
 
   setup () {
     const store = useStore()

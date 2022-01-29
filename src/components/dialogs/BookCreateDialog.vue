@@ -278,7 +278,7 @@
 </template>
 
 <script>
-import { computed, inject, nextTick, reactive, ref, toRefs, watch } from 'vue'
+import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
@@ -308,6 +308,10 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import useBookInserter from '@/composables/useBookInserter'
 import useMarkdown from '@/composables/useMarkdown'
 import useImageLoader from '@/composables/useImageLoader'
+
+import Book, { STATUS_UNREAD } from '@/model/Book'
+
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
@@ -362,31 +366,35 @@ export default {
 
     const now = new Date()
 
-    const bookInitialState = {
+    const bookInitialState = new Book({
       authors: [],
-      authorsStr: '',
       boughtAt: now,
-      boughtAtStr: now.toISOString().substring(0, 10),
       code: '',
-      codeType: '',
       group: '',
       coverUrl: '',
-      dimensions: [],
-      dimensionsStr: '',
+      dimensions: {
+        width: null,
+        height: null
+      },
       publisher: '',
-      labelPriceCurrency: 'BRL',
-      labelPriceValue: 0.0,
-      labelPriceValueStr: '',
+      labelPrice: {
+        currency: 'BRL',
+        value: null,
+        valueStr: ''
+      },
+      paidPrice: {
+        currency: 'BRL',
+        value: null,
+        valueStr: ''
+      },
       notes: '',
-      paidPriceCurrency: 'BRL',
-      paidPriceValue: 0.0,
-      paidPriceValueStr: '',
+      status: STATUS_UNREAD,
       store: '',
       synopsis: '',
       title: ''
-    }
+    })
 
-    const book = reactive({ ...bookInitialState })
+    const book = reactive(cloneDeep(bookInitialState))
     const step = ref(1)
 
     const steps = computed(() => [
@@ -399,7 +407,7 @@ export default {
     function previousStep () {
       if (step.value === 2) {
         searchBookSelected.value = null
-        Object.assign(book, bookInitialState)
+        Object.assign(book, cloneDeep(bookInitialState))
       }
 
       step.value--
@@ -407,7 +415,9 @@ export default {
 
     function nextStep () {
       if (step.value === 1 && searchBookSelected.value) {
-        Object.assign(book, searchBookSelected.value)
+        const selected = Object.entries(cloneDeep(searchBookSelected.value))
+          .filter(([, value]) => value !== null)
+        Object.assign(book, Object.fromEntries(selected))
       } else if (step.value === 2) {
         const { error } = form.value.touch()
 
@@ -459,7 +469,7 @@ export default {
 
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
-        Object.assign(book, bookInitialState)
+        Object.assign(book, cloneDeep(bookInitialState))
         window.addEventListener('beforeunload', preventUnload)
         disableSearchShortcut()
       } else {
@@ -476,7 +486,7 @@ export default {
 
     async function handleNew () {
       if (!bookInvalid.value) {
-        context.emit('new', book)
+        context.emit('new', cloneDeep(toRaw(book)))
         closeDialog()
       }
     }
@@ -586,15 +596,15 @@ function useRevisionStep (book) {
 
   const formattedLabelPrice = computed(() => {
     return formatPrice({
-      value: book.labelPriceValue,
-      currency: book.labelPriceCurrency
+      value: book.labelPrice.value,
+      currency: book.labelPrice.currency
     })
   })
 
   const formattedPaidPrice = computed(() => {
     return formatPrice({
-      value: book.paidPriceValue,
-      currency: book.paidPriceCurrency
+      value: book.paidPrice.value,
+      currency: book.paidPrice.currency
     })
   })
 
@@ -644,9 +654,8 @@ function useRevisionStep (book) {
       },
       {
         title: t('book.properties.dimensions'),
-        value: book.dimensions
-          .map(dm => n(dm, 'dimensions'))
-          .join(' × ') + ' cm',
+        value: n(book.dimensions.width, 'dimensions') +
+          ' × ' + n(book.dimensions.height, 'dimensions') + ' cm',
         property: 'dimensions'
       },
       {

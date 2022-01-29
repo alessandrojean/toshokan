@@ -304,8 +304,9 @@ export default {
         {
           title: t('book.properties.dimensions'),
           value: book.value?.dimensions
-            ?.map(dm => n(dm, 'dimensions'))
-            ?.join(' × ') + ' cm'
+            ? n(book.value.dimensions.width, 'dimensions') +
+                ' × ' + n(book.value.dimensions.height, 'dimensions') + ' cm'
+            : null
         },
         {
           title: t('book.properties.labelPrice'),

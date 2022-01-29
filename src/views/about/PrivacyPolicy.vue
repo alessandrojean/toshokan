@@ -16,8 +16,7 @@ import ContentTitle from '@/components/ContentTitle.vue'
 import ContentBody from '@/components/ContentBody.vue'
 import ContentFooter from '@/components/ContentFooter.vue'
 
-import md from 'markdown-it'
-import mdDefList from 'markdown-it-deflist'
+import useMarkdown from '@/composables/useMarkdown'
 
 export default {
   components: {
@@ -30,13 +29,15 @@ export default {
   setup () {
     const { t } = useI18n()
 
-    const markdown = md({
-      html: true,
-      typographer: true
-    }).use(mdDefList)
+    const { renderMarkdown } = useMarkdown({
+      mdOptions: {
+        html: true,
+        typographer: true
+      }
+    })
 
     const body = ref(
-      markdown.render(
+      renderMarkdown(
         t('about.privacyPolicy.body', {
           googleHelpLink: 'https://support.google.com/accounts/answer/3466521?hl=pt-BR#remove-access',
           demoBuildLink: 'https://toshokan-app.netlify.com',

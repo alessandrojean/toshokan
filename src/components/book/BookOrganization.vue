@@ -27,12 +27,14 @@ import cloneDeep from 'lodash.clonedeep'
 import { TagIcon } from '@heroicons/vue/solid'
 import TagField from '@/components/fields/TagField.vue'
 
+import Book from '@/model/Book'
+
 export default {
   components: { TagField, TagIcon },
 
   props: {
     modelValue: {
-      type: Object,
+      type: Book,
       required: true
     }
   },

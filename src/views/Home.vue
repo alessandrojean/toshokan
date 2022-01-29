@@ -7,10 +7,26 @@
         <div class="flex flex-col items-center pt-24 space-y-24">
           <div class="space-y-8">
             <h2 class="text-gray-800 dark:text-gray-100 font-bold font-display text-center text-5xl">
-              {{ t('home.leading1') }}<br class="hidden md:block">
-              <span class="text-primary-600 dark:text-primary-500">
-                {{ ' ' + t('home.leading2') }}
-              </span>
+              {{ t('home.leading1') + ' ' }}<br class="hidden md:block">
+              <i18n-t
+                class="text-primary-600 dark:text-primary-500"
+                keypath="home.leading2"
+                tag="span"
+              >
+                <Typewriter
+                  :words="[
+                    t('home.types.mangas'),
+                    t('home.types.manhwas'),
+                    t('home.types.manhuas'),
+                    t('home.types.comics'),
+                    t('home.types.books')
+                  ]"
+                  :next-word-interval="2000"
+                  :delete-speed="100"
+                  :speed="120"
+                  text-class="underline decoration-primary-300 dark:decoration-primary-300/80 underline-offset-2"
+                />
+              </i18n-t>
             </h2>
             <p class="w-full text-gray-500 dark:text-gray-400 text-center max-w-2xl text-lg">
               {{ t('home.shortDescription') }}
@@ -132,6 +148,7 @@ import {
 import HomeFooter from '@/components/HomeFooter.vue'
 import HomeHeader from '@/components/HomeHeader.vue'
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
+import Typewriter from '@/components/Typewriter.vue'
 
 export default {
   components: {
@@ -142,7 +159,8 @@ export default {
     DatabaseIcon,
     PhotographIcon,
     SearchIcon,
-    SparklesIcon
+    SparklesIcon,
+    Typewriter
   },
 
   setup () {

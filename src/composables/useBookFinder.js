@@ -1,7 +1,7 @@
 import { computed, readonly, ref } from 'vue'
 import { useStore } from 'vuex'
 
-import { getBookById, getBooksFromCollection } from '@/services/sheet'
+import SheetService from '@/services/sheet'
 
 export default function useBookFinder () {
   const store = useStore()
@@ -25,7 +25,9 @@ export default function useBookFinder () {
         await store.dispatch('collection/fetchIdMap')
       }
 
-      const theBook = await getBookById(sheetId.value, idMap.value, bookId)
+      const theBook = await SheetService.getBookById(
+        sheetId.value, idMap.value, bookId
+      )
 
       if (!theBook && failCallback) {
         book.value = undefined
@@ -34,7 +36,9 @@ export default function useBookFinder () {
       }
 
       if (theBook.titleParts.number) {
-        collection.value = await getBooksFromCollection(sheetId.value, idMap.value, theBook)
+        collection.value = await SheetService.getBooksFromCollection(
+          sheetId.value, idMap.value, theBook
+        )
       }
 
       bookFound.value = true

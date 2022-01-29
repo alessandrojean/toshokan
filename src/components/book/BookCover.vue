@@ -70,7 +70,7 @@
         <img
           v-if="showBookCover"
           :src="coverUrl"
-          :class="spoilerMode.cover && !isRead ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
+          :class="blurCover ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
           class="max-w-xs md:max-w-full max-h-full shadow-lg rounded"
         >
         <span
@@ -98,28 +98,26 @@ import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
-import { BookmarkIcon, StarIcon, ZoomInIcon } from '@heroicons/vue/solid'
+import { ZoomInIcon } from '@heroicons/vue/solid'
 
 import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
 import BookNavigator from '@/components/book/BookNavigator.vue'
 
 import useImageLoader from '@/composables/useImageLoader'
 
-import { BookStatus, BookFavorite } from '@/model/Book'
+import Book from '@/model/Book'
 import { getIsbnCountry } from '@/util/isbn'
 
 export default {
   components: {
     BookOpenIcon,
-    BookmarkIcon,
-    StarIcon,
     ZoomInIcon,
     BookCoverDialog,
     BookNavigator
   },
 
   props: {
-    book: Object,
+    book: Book,
     collection: Array,
     loading: Boolean
   },
@@ -161,14 +159,6 @@ export default {
       }
     })
 
-    const isRead = computed(() => {
-      return book.value && book.value.status === BookStatus.READ
-    })
-
-    const isFavorite = computed(() => {
-      return book.value && book.value.favorite === BookFavorite.ACTIVE
-    })
-
     const country = computed(() => {
       if (!book.value || !book.value.codeType.includes('ISBN')) {
         return null
@@ -180,6 +170,12 @@ export default {
     const store = useStore()
 
     const spoilerMode = computed(() => store.state.settings.spoilerMode)
+    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+
+    const blurCover = computed(() => {
+      return (spoilerMode.value.cover && !book.value.isRead) ||
+        (blurNsfw.value && book.value.isNsfw)
+    })
 
     const dialogOpen = ref(false)
 
@@ -198,10 +194,8 @@ export default {
       showBookCover,
       showBookInfo,
       imageLoading,
-      isRead,
-      isFavorite,
       country,
-      spoilerMode,
+      blurCover,
       dialogOpen,
       openDialog,
       closeDialog,

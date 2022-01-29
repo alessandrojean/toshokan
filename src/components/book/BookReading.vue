@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { computed, ref, toRefs, watch } from 'vue'
+import { ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import Alert from '@/components/Alert.vue'
@@ -68,14 +68,14 @@ import TextField from '@/components/fields/TextField.vue'
 
 import cloneDeep from 'lodash.clonedeep'
 
-import { BookStatus } from '@/model/Book'
+import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 
 export default {
   components: { Alert, TextField },
 
   props: {
     modelValue: {
-      type: Object,
+      type: Book,
       required: true
     }
   },
@@ -87,10 +87,8 @@ export default {
 
     const { modelValue: book } = toRefs(props)
 
-    const isRead = computed(() => book.value.status === BookStatus.READ)
-
     // Don't remove the timezone offset because it's already removed
-    // when saving in the spreadsheet by the formatBook method.
+    // when saving in the spreadsheet by the Book.toArray() method.
     const today = new Date()
 
     function isToday (date) {
@@ -99,7 +97,7 @@ export default {
         today.getUTCDate() === date.getUTCDate()
     }
 
-    const state = ref(isRead.value ? 'read-other' : 'unread')
+    const state = ref(book.value.isRead ? 'read-other' : 'unread')
     const newReadDate = ref('')
 
     if (book.value.readAt) {
@@ -124,10 +122,10 @@ export default {
       const bookCopy = cloneDeep(book.value)
 
       if (newState === 'unread') {
-        bookCopy.status = BookStatus.UNREAD
+        bookCopy.status = STATUS_UNREAD
         bookCopy.readAt = null
       } else if (newState.includes('read')) {
-        bookCopy.status = BookStatus.READ
+        bookCopy.status = STATUS_READ
         bookCopy.readAt = today
       }
 
@@ -137,12 +135,9 @@ export default {
     watch(newReadDate, newValue => {
       const bookCopy = cloneDeep(book.value)
       bookCopy.readAt = newValue.length === 10 ? new Date(newValue) : null
-
-      if (bookCopy.readAt) {
-        bookCopy.readAt.setMinutes(
-          bookCopy.readAt.getMinutes() + bookCopy.readAt.getTimezoneOffset()
-        )
-      }
+      bookCopy.readAt?.setMinutes(
+        bookCopy.readAt.getMinutes() + bookCopy.readAt.getTimezoneOffset()
+      )
 
       context.emit('update:modelValue', bookCopy)
     })
