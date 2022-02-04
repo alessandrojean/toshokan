@@ -3,7 +3,7 @@
     <Dialog
       static
       :open="isOpen"
-      :initial-focus="bookProviderSearch"
+      :initial-focus="isbnSearchInput"
       @close="closeDialog"
     >
       <div class="dialog">
@@ -533,6 +533,10 @@ export default {
 
     const bookProviderSearch = ref(null)
 
+    const isbnSearchInput = computed(() => {
+      return bookProviderSearch.value?.$el.querySelector('#book-isbn')
+    })
+
     const store = useStore()
     const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
     const shared = computed(() => store.getters['sheet/shared'])
@@ -564,6 +568,7 @@ export default {
       bookCreatedId,
       viewBook,
       bookProviderSearch,
+      isbnSearchInput,
       ownerPictureUrl,
       shared,
       ...useRevisionStep(book)

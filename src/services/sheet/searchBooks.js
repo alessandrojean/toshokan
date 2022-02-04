@@ -125,7 +125,7 @@ export function createSearchKeywords () {
   }
 }
 
-export default async function searchBooks ({ sheetId, idMap, searchTerm, sort, page = 1 }) {
+export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1 }) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   let searchQueryObj = searchTerm
@@ -291,7 +291,7 @@ export default async function searchBooks ({ sheetId, idMap, searchTerm, sort, p
       const books = []
 
       for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, idMap, i))
+        books.push(Book.fromDataTable(dataTable, i))
       }
 
       resolve({ results: books, total: totalResults })

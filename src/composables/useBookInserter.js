@@ -10,15 +10,10 @@ export default function useBookInserter (book) {
   const inserting = ref(false)
 
   const sheetId = computed(() => store.state.sheet.sheetId)
-  const idMap = computed(() => store.state.collection.idMap)
 
   async function checkIfExists (code) {
     try {
-      if (Object.keys(idMap.value).length === 0) {
-        await store.dispatch('collection/fetchIdMap')
-      }
-
-      const books = await SheetService.getBookByCode(sheetId.value, idMap.value, code)
+      const books = await SheetService.getBookByCode(sheetId.value, code)
 
       if (!books || books.length === 0) {
         return null
@@ -39,7 +34,6 @@ export default function useBookInserter (book) {
     const bookId = await SheetService.insertBook(store.state.sheet.sheetId, bookToInsert)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
-    await store.dispatch('collection/fetchIdMap')
 
     // Also select the new book group so it will be shown in library.
     const groups = store.state.collection.filters.groups

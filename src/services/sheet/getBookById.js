@@ -6,7 +6,7 @@ import buildSheetUrl from './buildSheetUrl'
 
 import Book, { CollectionColumns } from '@/model/Book'
 
-export default function getBookById (sheetId, idMap, id) {
+export default function getBookById (sheetId, id) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const query = new window.google.visualization.Query(sheetUrl)
@@ -34,7 +34,7 @@ export default function getBookById (sheetId, idMap, id) {
         return
       }
 
-      resolve(Book.fromDataTable(dataTable, idMap, 0))
+      resolve(Book.fromDataTable(dataTable, 0))
     })
   })
 }

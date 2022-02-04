@@ -7,7 +7,6 @@ export default function useBookFinder () {
   const store = useStore()
 
   const sheetId = computed(() => store.state.sheet.sheetId)
-  const idMap = computed(() => store.state.collection.idMap)
 
   const book = ref(null)
   const bookFound = ref(false)
@@ -21,13 +20,7 @@ export default function useBookFinder () {
     bookFound.value = false
 
     try {
-      if (Object.keys(idMap.value).length === 0) {
-        await store.dispatch('collection/fetchIdMap')
-      }
-
-      const theBook = await SheetService.getBookById(
-        sheetId.value, idMap.value, bookId
-      )
+      const theBook = await SheetService.getBookById(sheetId.value, bookId)
 
       if (!theBook && failCallback) {
         book.value = undefined
@@ -37,7 +30,7 @@ export default function useBookFinder () {
 
       if (theBook.titleParts.number) {
         collection.value = await SheetService.getBooksFromCollection(
-          sheetId.value, idMap.value, theBook
+          sheetId.value, theBook
         )
       }
 

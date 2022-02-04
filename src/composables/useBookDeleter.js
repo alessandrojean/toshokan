@@ -17,7 +17,6 @@ export default function useBookDeleter (book) {
     await SheetService.deleteBook(store.state.sheet.sheetId, book.value)
     await store.dispatch('sheet/loadSheetData', true)
     await store.dispatch('collection/fetchGroups')
-    await store.dispatch('collection/fetchIdMap')
     store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
     store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
     store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })

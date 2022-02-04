@@ -7,7 +7,7 @@ import { PER_PAGE } from './constants'
 
 import Book, { CollectionColumns, STATUS_READ } from '@/model/Book'
 
-export default async function getLatestReadings (sheetId, idMap, options = {}) {
+export default async function getLatestReadings (sheetId, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const limit = options.limit || PER_PAGE
@@ -37,7 +37,7 @@ export default async function getLatestReadings (sheetId, idMap, options = {}) {
       const books = []
 
       for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, idMap, i))
+        books.push(Book.fromDataTable(dataTable, i))
       }
 
       resolve(books)

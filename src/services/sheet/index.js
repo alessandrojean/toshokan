@@ -4,7 +4,6 @@ import deleteBook from './deleteBook'
 import findSheetId from './findSheetId'
 import getBookByCode from './getBookByCode'
 import getBookById from './getBookById'
-import getBookIds from './getBookIds'
 import getBookNeighbors from './getBookNeighbors'
 import getBooks from './getBooks'
 import getBooksFromCollection from './getBooksFromCollection'
@@ -26,7 +25,6 @@ export default {
   findSheetId,
   getBookByCode,
   getBookById,
-  getBookIds,
   getBookNeighbors,
   getBooks,
   getBooksFromCollection,

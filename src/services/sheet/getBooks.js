@@ -8,13 +8,25 @@ import { PER_PAGE } from './constants'
 
 import Book, { CollectionColumns, STATUS_FUTURE } from '@/model/Book'
 
-export default async function getBooks (sheetId, idMap, page = 1, options = {}) {
+export default async function getBooks (sheetId, page = 1, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const offset = (page - 1) * PER_PAGE
   const orderBy = options.orderBy || CollectionColumns.CREATED_AT
   const orderDirection = options.orderDirection || 'desc'
   const limit = options.limit || PER_PAGE
+
+  let orderByStr = `${orderBy} ${orderDirection}`
+
+  if (
+    orderBy === CollectionColumns.LABEL_PRICE_VALUE ||
+    orderBy === CollectionColumns.PAID_PRICE_VALUE
+  ) {
+    const currencyColumn = orderBy === CollectionColumns.LABEL_PRICE_VALUE
+      ? CollectionColumns.LABEL_PRICE_CURRENCY
+      : CollectionColumns.PAID_PRICE_CURRENCY
+    orderByStr = `${currencyColumn} asc, ${orderByStr}`
+  }
 
   const conditions = []
 
@@ -37,7 +49,7 @@ export default async function getBooks (sheetId, idMap, page = 1, options = {}) 
 
   const queryStr = dedent`
     select * ${where}
-    order by ${orderBy} ${orderDirection}
+    order by ${orderByStr}
     limit ${limit} offset ${offset}
   `
 
@@ -63,7 +75,7 @@ export default async function getBooks (sheetId, idMap, page = 1, options = {}) 
       const books = []
 
       for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, idMap, i))
+        books.push(Book.fromDataTable(dataTable, i))
       }
 
       resolve({ books, totalResults })

@@ -47,7 +47,7 @@
   }
   
   .label {
-    @apply mb-1 block text-sm font-medium 
+    @apply mb-1 block text-sm font-medium select-none
       text-gray-700 dark:text-gray-300;
   }
   
@@ -182,24 +182,25 @@
   }
   
   .button.is-ghost:hover {
-    @apply bg-gray-100 dark:bg-gray-700
-      text-primary-800 dark:text-gray-200
-      dark:border-gray-700;
+    @apply bg-gray-700/10 dark:bg-gray-200/10;
   }
-  
-  .button.is-ghost.is-darker:hover {
-    @apply bg-gray-200 dark:bg-gray-600 dark:border-gray-600;
+
+  .button.is-ghost:active {
+    @apply bg-gray-700/20 dark:bg-gray-200/20;
   }
-  
-  .button.is-ghost.is-darker:active {
-    @apply dark:border-gray-600;
+
+  .button.is-ghost:hover,
+  .button.is-ghost:active {
+    @apply text-primary-800 dark:text-gray-200
+      dark:border-transparent;
   }
   
   .button.is-ghost svg {
     @apply text-primary-500 dark:text-primary-400;
   }
   
-  .button.is-ghost:hover svg {
+  .button.is-ghost:hover svg,
+  .button.is-ghost:active svg {
     @apply text-primary-600 dark:text-gray-200;
   }
   
@@ -336,8 +337,7 @@
   
   .dialog-overlay {
     @apply fixed inset-0 
-      bg-gray-500 dark:bg-gray-900 
-      bg-opacity-75 dark:bg-opacity-90 
+      bg-gray-700/75 dark:bg-gray-900/90
       motion-safe:transition-opacity
       backdrop-filter backdrop-blur-sm;
   }  

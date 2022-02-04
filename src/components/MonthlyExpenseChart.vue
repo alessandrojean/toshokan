@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
@@ -45,8 +45,6 @@ import useDarkMode from '@/composables/useDarkMode'
 import useMotionSafe from '@/composables/useMotionSafe'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
-
-import VueApexCharts from 'vue3-apexcharts'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
@@ -58,7 +56,7 @@ const apexLocales = {
 
 export default {
   components: {
-    ApexChart: VueApexCharts,
+    ApexChart: defineAsyncComponent(() => import('vue3-apexcharts')),
     ChartBarIcon
   },
 

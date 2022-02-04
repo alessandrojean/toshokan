@@ -73,12 +73,11 @@
           :class="blurCover ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out' : ''"
           class="max-w-xs md:max-w-full max-h-full shadow-lg rounded"
         >
-        <span
-          v-else
-          aria-hidden="true"
-          :class="(loading || imageLoading) ? 'motion-safe:animate-pulse' : ''"
-        >
-          <BookOpenIcon class="w-12 h-12 text-gray-400 dark:text-gray-600" />
+        <span v-else aria-hidden="true">
+          <BookOpenIcon
+            :class="(loading || imageLoading) ? 'motion-safe:animate-pulse' : ''"
+            class="w-12 h-12 text-gray-500/80 dark:text-gray-400/90"
+          />
         </span>
       </transition>
     </div>

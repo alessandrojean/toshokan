@@ -201,12 +201,13 @@ export default {
 
 .functionality-description .icon,
 .feature .icon {
-  @apply w-12 h-12 bg-primary-500 inline-flex justify-center items-center rounded-md;
+  @apply w-12 h-12 inline-flex justify-center items-center rounded-md
+    bg-primary-100 dark:bg-gray-700;
 }
 
 .functionality-description .icon svg,
 .feature .icon svg {
-  @apply w-6 h-6 text-white;
+  @apply w-6 h-6 text-primary-600 dark:text-gray-400;
 }
 
 .functionality {
@@ -250,10 +251,15 @@ export default {
 }
 
 .cta .button {
-  @apply py-3 px-5 font-medium text-base shadow-md justify-center;
+  @apply py-3 px-5 font-medium text-base shadow-md justify-center
+    motion-safe:transition-transform;
 }
 
 .cta .button.is-secondary {
   @apply text-primary-500 dark:text-gray-100;
+}
+
+.cta .button:hover {
+  @apply -translate-y-0.5;
 }
 </style>

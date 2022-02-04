@@ -157,10 +157,6 @@ export default {
     const isbnQuery = ref('')
     const searchInput = ref(null)
 
-    function focus (options) {
-      searchInput.value?.focus(options)
-    }
-
     const {
       errorMessage: searchError,
       failed: searchFailed,
@@ -217,7 +213,6 @@ export default {
       t,
       isbnQuery,
       searchInput,
-      focus,
       searchError,
       searchFailed,
       noResultsFound,

@@ -161,28 +161,7 @@
         <div class="motion-safe:animate-pulse w-64 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
       </div>
 
-      <div v-if="showBookInfo && shared" class="owner-badge">
-        <Avatar :picture-url="ownerPictureUrl" small />
-        <div class="owner-info">
-          <span class="owner-title">
-            {{ t('dashboard.sheetChooser.libraryOf') }}
-          </span>
-          <p class="owner-name">
-            {{ ownerDisplayName }}
-          </p>
-        </div>
-        <div
-          class="user-group"
-          :title="t('dashboard.sheetChooser.sharedWithYou')"
-        >
-          <span aria-hidden="true">
-            <UserGroupIcon class="w-5 h-5" />
-          </span>
-          <p class="sr-only">
-            {{ t('dashboard.sheetChooser.sharedWithYou') }}
-          </p>
-        </div>
-      </div>
+      <BookOwnerBadge v-if="showBookInfo" />
 
       <transition
         mode="out-in"
@@ -243,12 +222,12 @@ import {
   BookmarkIcon as BookmarkOutlineIcon,
   ClockIcon,
   StarIcon as StarOutlineIcon,
-  TrashIcon,
-  UserGroupIcon
+  TrashIcon
 } from '@heroicons/vue/outline'
 
 import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
+import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 
 import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 import getBookLinks from '@/services/links'
@@ -259,6 +238,7 @@ export default {
   components: {
     Avatar,
     BookBreadcrumb,
+    BookOwnerBadge,
     BookmarkOutlineIcon,
     BookmarkSolidIcon,
     ClockIcon,
@@ -267,8 +247,7 @@ export default {
     PencilIcon,
     StarOutlineIcon,
     StarSolidIcon,
-    TrashIcon,
-    UserGroupIcon
+    TrashIcon
   },
 
   props: {
@@ -385,9 +364,6 @@ export default {
     }
 
     const canEdit = computed(() => store.getters['sheet/canEdit'])
-    const ownerDisplayName = computed(() => store.getters['sheet/ownerDisplayName'])
-    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
-    const shared = computed(() => store.getters['sheet/shared'])
 
     return {
       showBookInfo,
@@ -405,10 +381,7 @@ export default {
       separator,
       lastSeparator,
       searchByAuthor,
-      canEdit,
-      ownerDisplayName,
-      ownerPictureUrl,
-      shared
+      canEdit
     }
   }
 }
@@ -440,30 +413,6 @@ export default {
 .author:hover {
   @apply underline underline-offset-1 decoration-2
     decoration-primary-600 dark:decoration-primary-400;
-}
-
-.owner-badge {
-  @apply flex items-center space-x-3 sm:w-64 rounded-md
-    px-2.5 py-2 border border-gray-200 dark:border-gray-700;
-}
-
-.owner-info {
-  @apply min-w-0 flex-grow;
-}
-
-.owner-title {
-  @apply uppercase text-xxs font-bold tracking-wide block
-    leading-none w-full truncate
-    text-gray-500 dark:text-gray-400;
-}
-
-.owner-name {
-  @apply text-sm font-medium w-full truncate leading-none mt-1
-    text-gray-700 dark:text-gray-300;
-}
-
-.user-group {
-  @apply shrink-0 pr-1 text-gray-400 dark:text-gray-500 ;
 }
 
 .book-external-link {

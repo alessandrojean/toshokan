@@ -84,7 +84,6 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { DotsHorizontalIcon, PlusIcon } from '@heroicons/vue/solid'
 import {
   ExclamationCircleIcon,
   PresentationChartLineIcon
@@ -103,9 +102,7 @@ export default {
     MonthlyBoughtsChart,
     MonthlyExpenseChart,
     SimpleHeader,
-    DotsHorizontalIcon,
     ExclamationCircleIcon,
-    PlusIcon,
     PresentationChartLineIcon
   },
 

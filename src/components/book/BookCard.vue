@@ -70,22 +70,22 @@
         v-if="book.isRead || current || book.isFuture"
         class="badge-wrapper"
       >
-        <template v-if="!current && !book.isFuture">
+        <span v-if="current" class="current-volume">
+          {{ t('book.currentVolume') }}
+        </span>
+        <template v-if="!book.isFuture && book.isRead">
           <span class="sr-only">{{ t('book.read') }}</span>
-          <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5">
+          <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 self-end ml-auto">
             <BookmarkIcon class="w-5 h-5 text-primary-500" />
           </div>
         </template>
-        <span v-else-if="!current" class="future-item">
+        <span v-else-if="!current && book.isFuture" class="future-item">
           <span aria-hidden="true">
             <ClockIcon class="w-3.5 h-3.5" />
           </span>
           <span>
             {{ t('book.future') }}
           </span>
-        </span>
-        <span v-else class="current-volume">
-          {{ t('book.currentVolume') }}
         </span>
       </div>
 
@@ -247,10 +247,9 @@ export default {
 
 .current-volume,
 .future-item {
-  @apply px-1.5 py-px rounded
-    text-xxs uppercase font-bold tracking-wide
-    bg-primary-100 dark:bg-gray-850
-    text-primary-600 dark:text-gray-300;
+  @apply px-1.5 py-0.5 rounded backdrop-blur
+    text-xs font-semibold tracking-wide
+    bg-gray-800/80 text-gray-100;
 }
 
 .future-item {

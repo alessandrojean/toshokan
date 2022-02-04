@@ -31,40 +31,24 @@
 
     <div class="text-center">
       <p>
-        {{ t('footer.version', { version: appVersion }) }}
-      </p>
-
-      <p v-if="isDev">
-        {{ t('footer.dev') }}
+        {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
     </div>
   </footer>
 </template>
 
 <script>
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import LocaleSelector from '@/components/LocaleSelector.vue'
-
-import useAppInfo from '@/composables/useAppInfo'
 
 export default {
   components: { LocaleSelector },
 
   setup () {
-    const { appVersion } = useAppInfo()
-
-    const isDev = ref(import.meta.env.DEV)
-
     const { t, locale } = useI18n({ useScope: 'global' })
 
-    return {
-      appVersion,
-      isDev,
-      t,
-      locale
-    }
+    return { t, locale }
   }
 }
 </script>

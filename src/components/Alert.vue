@@ -125,10 +125,11 @@ export default {
 }
 </script>
 
-<style lang="postcss" scoped>
-.alert-actions a,
-.alert-actions button {
-  @apply font-semibold rounded-md px-2.5 py-1.5 motion-safe:transition-shadow;
+<style lang="postcss">
+.alert-actions > a,
+.alert-actions > button {
+  @apply font-semibold rounded-md px-2.5 py-1.5
+    motion-safe:transition-shadow;
 }
 
 .alert-actions a:hover,

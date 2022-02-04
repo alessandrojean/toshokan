@@ -16,7 +16,6 @@ export const CollectionMutations = {
   UPDATE_CURRENT_PAGE: 'updateCurrentPage',
   UPDATE_FUTURE_ITEMS: 'updateFutureItems',
   UPDATE_GROUPS: 'updateGroups',
-  UPDATE_ID_MAP: 'updateIdMap',
   UPDATE_PUBLISHERS: 'updatePublishers',
   UPDATE_LAST_ADDED: 'updateLastAdded',
   UPDATE_LATEST_READINGS: 'updateLatestReadings',
@@ -60,7 +59,6 @@ const state = () => ({
     }
   },
   futureItems: FUTURE_HIDE,
-  idMap: {},
   links: 6,
   paginationInfo: {},
   perPage: 18,
@@ -80,10 +78,6 @@ const actions = {
         await dispatch('fetchGroups')
       }
 
-      if (Object.keys(state.idMap).length === 0) {
-        await dispatch('fetchIdMap')
-      }
-
       let groups = state.filters.groups.selected
       const allGroups = state.filters.groups.items.map(grp => grp.name)
       const groupData = groups.filter(grp => allGroups.includes(grp))
@@ -98,7 +92,7 @@ const actions = {
       const orderDirection = state.sortDirection
       const futureItems = state.futureItems
 
-      const { books, totalResults } = await SheetService.getBooks(sheetId, state.idMap, page, {
+      const { books, totalResults } = await SheetService.getBooks(sheetId, page, {
         futureItems,
         groups,
         orderBy,
@@ -125,17 +119,6 @@ const actions = {
     }
   },
 
-  async fetchIdMap ({ commit, rootState }) {
-    const sheetId = rootState.sheet.sheetId
-
-    try {
-      const idMap = await SheetService.getBookIds(sheetId)
-      commit(CollectionMutations.UPDATE_ID_MAP, idMap)
-    } catch (e) {
-      commit(CollectionMutations.UPDATE_ID_MAP, {})
-    }
-  },
-
   async fetchPublishers ({ commit, rootState }) {
     commit(CollectionMutations.UPDATE_PUBLISHERS, { loading: true, items: [] })
 
@@ -155,11 +138,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      if (Object.keys(state.idMap).length === 0) {
-        await dispatch('fetchIdMap')
-      }
-
-      const lastAdded = await SheetService.getBooks(sheetId, state.idMap, 1, {
+      const lastAdded = await SheetService.getBooks(sheetId, 1, {
         limit: 6,
         dontCount: true
       })
@@ -175,11 +154,7 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      if (Object.keys(state.idMap).length === 0) {
-        await dispatch('fetchIdMap')
-      }
-
-      const latestReadings = await SheetService.getLatestReadings(sheetId, state.idMap, {
+      const latestReadings = await SheetService.getLatestReadings(sheetId, {
         limit: 6
       })
       commit(CollectionMutations.UPDATE_LATEST_READINGS, { items: latestReadings })
@@ -207,7 +182,6 @@ const actions = {
     commit(CollectionMutations.UPDATE_PUBLISHERS, { items: [] })
     commit(CollectionMutations.UPDATE_STORES, { items: [] })
 
-    await dispatch('fetchIdMap')
     await dispatch('fetchGroups')
     await dispatch('fetchBooks')
     await dispatch('fetchLastAdded')
@@ -251,11 +225,6 @@ const mutations = {
         localStorage.setItem('collection_groups', '[]')
       }
     }
-  },
-
-  [CollectionMutations.UPDATE_ID_MAP]: function (state, idMap) {
-    state.idMap = {}
-    state.idMap = { ...state.idMap, ...idMap }
   },
 
   [CollectionMutations.UPDATE_PUBLISHERS]: function (state, publishers) {

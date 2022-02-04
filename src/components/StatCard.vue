@@ -34,17 +34,17 @@
     <button
       v-if="sensitive && !alwaysHidden"
       type="button"
-      class="button is-ghost is-darker is-icon-only -mr-2 p-2"
+      class="button is-ghost is-icon-only -mr-2 p-2"
       @click.stop="showValue = !showValue"
     >
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
+        leave-from-class="opacity-100 rotate-0"
+        leave-to-class="opacity-0 rotate-180"
         enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
+        enter-from-class="opacity-0 -rotate-180"
+        enter-to-class="opacity-100 rotate-0"
       >
         <EyeIcon class="text-gray-500" v-if="!showValue" />
         <EyeOffIcon class="text-gray-500" v-else />

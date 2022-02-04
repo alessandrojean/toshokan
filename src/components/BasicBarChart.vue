@@ -32,8 +32,7 @@
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import colors from 'tailwindcss/colors'
@@ -42,8 +41,6 @@ import useDarkMode from '@/composables/useDarkMode'
 import useMotionSafe from '@/composables/useMotionSafe'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
-
-import VueApexCharts from 'vue3-apexcharts'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
@@ -55,7 +52,7 @@ const apexLocales = {
 
 export default {
   components: {
-    ApexChart: VueApexCharts,
+    ApexChart: defineAsyncComponent(() => import('vue3-apexcharts')),
     ChartBarIcon
   },
 
@@ -67,8 +64,6 @@ export default {
   },
 
   setup (props) {
-    const store = useStore()
-
     const { locale } = useI18n()
 
     const { darkMode } = useDarkMode()

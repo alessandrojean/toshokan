@@ -23,7 +23,7 @@ function youtube (md) {
 
       return dedent`
         <figure>
-          <div class="aspect-w-16 aspect-h-9 bg-gray-50 dark:bg-gray-800 rounded overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9 bg-gray-50 dark:bg-gray-800 rounded-md overflow-hidden shadow-lg">
             <iframe
               src="https://www.youtube-nocookie.com/embed/${type}${id}"
               title="YouTube video player"

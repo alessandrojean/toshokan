@@ -6,7 +6,7 @@ import buildSheetUrl from './buildSheetUrl'
 
 import Book, { CollectionColumns, Columns } from '@/model/Book'
 
-export default function getBookNeighbors (sheetId, idMap, book) {
+export default function getBookNeighbors (sheetId, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const query = new window.google.visualization.Query(sheetUrl)
@@ -46,11 +46,11 @@ export default function getBookNeighbors (sheetId, idMap, book) {
       }
 
       const previous = bookRow > 0
-        ? Book.fromDataTable(dataTable, idMap, bookRow - 1)
+        ? Book.fromDataTable(dataTable, bookRow - 1)
         : null
 
       const next = bookRow < rows - 1
-        ? Book.fromDataTable(dataTable, idMap, bookRow + 1)
+        ? Book.fromDataTable(dataTable, bookRow + 1)
         : null
 
       resolve({ previous, next })

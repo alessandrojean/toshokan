@@ -29,7 +29,7 @@ module.exports = {
         current: 'currentColor'
       },
       fontSize: {
-        'xxs': '.7rem'
+        xxs: '.7rem'
       },
       height: {
         's-40': '40vh',

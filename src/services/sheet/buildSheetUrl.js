@@ -1,4 +1,4 @@
-const COLLECTION_RANGE = 'B4:U'
+const COLLECTION_RANGE = 'B4:X'
 const COLLECTION_SHEET = 'Collection'
 
 export default function buildSheetUrl (sheetId) {

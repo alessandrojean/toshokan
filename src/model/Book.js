@@ -13,57 +13,63 @@ import { decimalComma } from '@/util/validators'
 const { n, locale } = i18n.global
 
 export const Columns = {
-  ID: 0,
-  CODE: 1,
-  GROUP: 2,
-  TITLE: 3,
-  AUTHORS: 4,
-  PUBLISHER: 5,
-  DIMENSIONS: 6,
-  STATUS: 7,
-  READ_AT: 8,
-  LABEL_PRICE: 9,
-  PAID_PRICE: 10,
-  STORE: 11,
-  COVER_URL: 12,
-  BOUGHT_AT: 13,
-  FAVORITE: 14,
-  SYNOPSIS: 15,
-  NOTES: 16,
-  TAGS: 17,
-  CREATED_AT: 18,
-  UPDATED_AT: 19
+  ROW: 0,
+  ID: 1,
+  CODE: 2,
+  GROUP: 3,
+  TITLE: 4,
+  AUTHORS: 5,
+  PUBLISHER: 6,
+  DIMENSIONS: 7,
+  STATUS: 8,
+  READ_AT: 9,
+  LABEL_PRICE_CURRENCY: 10,
+  LABEL_PRICE_VALUE: 11,
+  PAID_PRICE_CURRENCY: 12,
+  PAID_PRICE_VALUE: 13,
+  STORE: 14,
+  COVER_URL: 15,
+  BOUGHT_AT: 16,
+  FAVORITE: 17,
+  SYNOPSIS: 18,
+  NOTES: 19,
+  TAGS: 20,
+  CREATED_AT: 21,
+  UPDATED_AT: 22
 }
 
 export const CollectionColumns = {
-  ID: 'B',
-  CODE: 'C',
-  GROUP: 'D',
-  TITLE: 'E',
-  AUTHORS: 'F',
-  PUBLISHER: 'G',
-  DIMENSIONS: 'H',
-  STATUS: 'I',
-  READ_AT: 'J',
-  LABEL_PRICE: 'K',
-  PAID_PRICE: 'L',
-  STORE: 'M',
-  COVER_URL: 'N',
-  BOUGHT_AT: 'O',
-  FAVORITE: 'P',
-  SYNOPSIS: 'Q',
-  NOTES: 'R',
-  TAGS: 'S',
-  CREATED_AT: 'T',
-  UPDATED_AT: 'U'
+  ROW: 'B',
+  ID: 'C',
+  CODE: 'D',
+  GROUP: 'E',
+  TITLE: 'F',
+  AUTHORS: 'G',
+  PUBLISHER: 'H',
+  DIMENSIONS: 'I',
+  STATUS: 'J',
+  READ_AT: 'K',
+  LABEL_PRICE_CURRENCY: 'L',
+  LABEL_PRICE_VALUE: 'M',
+  PAID_PRICE_CURRENCY: 'N',
+  PAID_PRICE_VALUE: 'O',
+  STORE: 'P',
+  COVER_URL: 'Q',
+  BOUGHT_AT: 'R',
+  FAVORITE: 'S',
+  SYNOPSIS: 'T',
+  NOTES: 'U',
+  TAGS: 'V',
+  CREATED_AT: 'W',
+  UPDATED_AT: 'X'
 }
 
 export const PropertyToColumn = {
   title: CollectionColumns.TITLE,
   publisher: CollectionColumns.PUBLISHER,
   status: CollectionColumns.STATUS,
-  'paidPrice.value': CollectionColumns.PAID_PRICE,
-  'labelPrice.value': CollectionColumns.LABEL_PRICE,
+  'paidPrice.value': CollectionColumns.PAID_PRICE_VALUE,
+  'labelPrice.value': CollectionColumns.LABEL_PRICE_VALUE,
   boughtAt: CollectionColumns.BOUGHT_AT,
   readAt: CollectionColumns.READ_AT,
   createdAt: CollectionColumns.CREATED_AT,
@@ -86,6 +92,9 @@ const monetaryValidator = decimalComma(2)
 export default class Book {
   /** @type {?string} */
   sheetLocation = null
+
+  /** @type {?number} */
+  row = -1
 
   /** @type {?string} */
   id = null
@@ -307,6 +316,7 @@ export default class Book {
     const offset = now.getTimezoneOffset()
 
     return [
+      '=ROW()',
       this.id || nanoid(),
       this.code,
       this.group,
@@ -317,10 +327,10 @@ export default class Book {
         ' × ' + n(this.dimensions.height, 'dimensions', 'en-US'),
       this.status || STATUS_UNREAD,
       this.readAt ? formatDateToSheet(fixDate(this.readAt, offset)) : '',
-      this.labelPrice.currency + ' ' +
-        n(this.labelPrice.value, 'decimal', 'en-US'),
-      this.paidPrice.currency + ' ' +
-        n(this.paidPrice.value, 'decimal', 'en-US'),
+      this.labelPrice.currency,
+      n(this.labelPrice.value, 'decimal', 'en-US'),
+      this.paidPrice.currency,
+      n(this.paidPrice.value, 'decimal', 'en-US'),
       this.store,
       this.coverUrl || '',
       this.boughtAt ? formatDateToSheet(fixDate(this.boughtAt, offset)) : '',
@@ -338,19 +348,18 @@ export default class Book {
    *
    * @returns {Book}
    */
-  static fromDataTable (dataTable, idMap, i) {
+  static fromDataTable (dataTable, i) {
     function getProperty (column) {
       return dataTable.getValue(i, column)
     }
 
-    const id = getProperty(Columns.ID)
-    const labelPrice = getProperty(Columns.LABEL_PRICE).split(' ')
-    const paidPrice = getProperty(Columns.PAID_PRICE).split(' ')
+    const row = getProperty(Columns.ROW)
     const dimensions = getProperty(Columns.DIMENSIONS).split(' × ')
 
     return new Book({
-      sheetLocation: `Collection!B${idMap[id]}`,
-      id,
+      sheetLocation: `Collection!B${row}`,
+      row,
+      id: getProperty(Columns.ID),
       code: getProperty(Columns.CODE),
       group: getProperty(Columns.GROUP),
       title: getProperty(Columns.TITLE),
@@ -363,12 +372,12 @@ export default class Book {
       status: getProperty(Columns.STATUS),
       readAt: getProperty(Columns.READ_AT),
       labelPrice: {
-        currency: labelPrice[0],
-        value: labelPrice[1] ? parseFloat(labelPrice[1]) : 0.0
+        currency: getProperty(Columns.LABEL_PRICE_CURRENCY),
+        value: getProperty(Columns.LABEL_PRICE_VALUE)
       },
       paidPrice: {
-        currency: paidPrice[0],
-        value: paidPrice[1] ? parseFloat(paidPrice[1]) : 0.0
+        currency: getProperty(Columns.PAID_PRICE_CURRENCY),
+        value: getProperty(Columns.PAID_PRICE_VALUE)
       },
       store: getProperty(Columns.STORE),
       coverUrl: getProperty(Columns.COVER_URL) || '',

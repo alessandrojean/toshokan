@@ -10,7 +10,7 @@
       <div class="relative flex items-center justify-between h-16">
         <div class="flex-1 flex items-center justify-start md:items-stretch">
           <router-link
-            :to="{ name: 'DashboardHome' }"
+            :to="{ name: 'Home' }"
             :class="isOnTop ? 'opacity-95' : ''"
             class="shrink-0 flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >

@@ -1,9 +1,9 @@
 <template>
   <header class="h-16">
-    <div class="max-w-prose mx-auto px-4 sm:px-6 lg:px-0 flex items-center h-full">
+    <div class="max-w-prose mx-auto px-4 sm:px-6 lg:px-0 flex items-center justify-between h-full">
       <router-link
         :to="{ name: 'Home' }"
-        class="flex items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+        class="inline-flex shrink-0 items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
       >
         <span aria-hidden="true">
           <LibraryIcon class="h-9 w-9 text-primary-500" />
@@ -13,22 +13,39 @@
           {{ t('app.name') }}
         </span>
       </router-link>
+      <div class="inline-flex shrink-0">
+        <ThemeToggle light />
+        <router-link
+          :to="{ name: 'DashboardHome' }"
+          class="button is-primary is-rounded ml-3"
+          v-if="signedIn"
+        >
+          {{ t('home.header.dashboard') }}
+        </router-link>
+      </div>
     </div>
   </header>
 </template>
 
 <script>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
+import ThemeToggle from '@/components/ThemeToggle.vue'
+
 export default {
-  components: { LibraryIcon },
+  components: { LibraryIcon, ThemeToggle },
 
   setup () {
     const { t } = useI18n()
 
-    return { t }
+    const store = useStore()
+    const signedIn = computed(() => store.state.auth.signedIn)
+
+    return { t, signedIn }
   }
 }
 </script>

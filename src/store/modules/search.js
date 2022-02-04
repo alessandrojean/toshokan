@@ -38,10 +38,6 @@ const actions = {
     const sheetId = rootState.sheet.sheetId
 
     try {
-      if (Object.keys(rootState.collection.idMap).length === 0) {
-        await dispatch('collection/fetchIdMap', null, { root: true })
-      }
-
       commit(SearchMutations.UPDATE_STATE, {
         sortBy: sortBy || state.sortBy,
         sortDirection: sortDirection || state.sortDirection
@@ -49,7 +45,6 @@ const actions = {
 
       const { results, total } = await SheetService.searchBooks({
         sheetId,
-        idMap: rootState.collection.idMap,
         searchTerm: query,
         sort: {
           sortBy: state.sortBy,

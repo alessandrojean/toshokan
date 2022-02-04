@@ -6,6 +6,8 @@
 
 <style lang="postcss" scoped>
 .content-title {
-  @apply pb-16 text-center font-display font-bold leading-6 text-3xl text-gray-800 dark:text-gray-100;
+  @apply py-20 md:py-24 text-center font-display
+    font-bold leading-7 text-3xl md:text-4xl
+    text-gray-800 dark:text-gray-100;
 }
 </style>
