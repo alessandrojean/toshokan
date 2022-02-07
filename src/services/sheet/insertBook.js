@@ -17,5 +17,5 @@ export default async function insertBook (sheetId, book) {
       values: [bookFormatted]
     })
 
-  return bookFormatted[0]
+  return bookFormatted[1]
 }

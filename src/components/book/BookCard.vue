@@ -73,7 +73,7 @@
         <span v-if="current" class="current-volume">
           {{ t('book.currentVolume') }}
         </span>
-        <template v-if="!book.isFuture && book.isRead">
+        <template v-if="!book.isFuture && book.isRead && mode === 'comfortable'">
           <span class="sr-only">{{ t('book.read') }}</span>
           <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 self-end ml-auto">
             <BookmarkIcon class="w-5 h-5 text-primary-500" />
@@ -89,13 +89,20 @@
         </span>
       </div>
 
-      <div v-if="mode === 'compact'" class="book-gradient text-white absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3">
-        <span class="font-semibold font-display text-sm truncate max-w-full">
-          {{ book.titleParts.title }}
-        </span>
-        <span class="font-medium text-xs">
-          {{ volume }}
-        </span>
+      <div v-if="mode === 'compact'" class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3">
+        <div class="inline-flex text-white w-full items-center">
+          <div class="inline-flex flex-col grow min-w-0">
+            <span class="font-semibold font-display text-sm truncate max-w-full">
+              {{ book.titleParts.title }}
+            </span>
+            <span class="font-medium text-xs">
+              {{ volume }}
+            </span>
+          </div>
+          <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-2">
+            <BookmarkIcon class="w-5 h-5 text-primary-500" />
+          </div>
+        </div>
       </div>
     </div>
 

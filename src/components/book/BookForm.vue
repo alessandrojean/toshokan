@@ -90,83 +90,28 @@
 
       <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
 
-      <TextField
+      <MonetaryField
         required
-        class="monetary-field col-span-9 sm:col-span-5 md:col-span-1"
-        input-class="pl-7 pr-12"
-        prefix-class="pointer-events-none"
-        suffix-class="suffix"
-        input-mode="decimal"
+        class="col-span-9 sm:col-span-5 md:col-span-1"
         :label="t('book.properties.labelPrice')"
-        :model-value="modelValue.labelPrice.valueStr"
+        :model-value="modelValue.labelPrice"
         :placeholder="t('book.form.example.placeholder', [t('book.form.example.labelPrice')])"
-        :error="v$.labelPrice.valueStr.$error ? v$.labelPrice.valueStr.$errors[0].$message : ''"
-        @update:model-value="handleInput('labelPriceValueStr', $event)"
-      >
-        <template #prefix>
-          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pl-3">$</span>
-        </template>
-        <template #suffix>
-          <label for="book-label-price-currency" class="sr-only">
-            {{ t('book.properties.currency') }}
-          </label>
-          <select
-            id="book-label-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 focus:text-black dark:text-gray-300 dark:focus:text-gray-300"
-            @change="handleInput('labelPriceCurrency', $event.target.value)"
-            required
-          >
-            <option
-              v-for="currency of currencies"
-              :key="currency"
-              :value="currency"
-              :selected="modelValue.labelPrice.currency === currency"
-            >
-              {{ currency }}
-            </option>
-          </select>
-        </template>
-      </TextField>
+        :error="v$.labelPrice.$error ? v$.labelPrice.$errors[0].$message : ''"
+        @update:model-value="handleInput('labelPrice', $event)"
+      />
 
       <div aria-hidden="true" class="sm:hidden col-span-3"></div>
 
-      <TextField
+      <MonetaryField
         required
-        class="monetary-field col-span-9 sm:col-span-5 md:col-span-1"
-        input-class="pl-7 pr-12"
-        prefix-class="pointer-events-none"
-        suffix-class="suffix"
-        input-mode="decimal"
+        class="col-span-9 sm:col-span-5 md:col-span-1"
         :label="t('book.properties.paidPrice')"
-        :model-value="modelValue.paidPrice.valueStr"
+        :model-value="modelValue.paidPrice"
         :placeholder="t('book.form.example.placeholder', [t('book.form.example.paidPrice')])"
-        :error="v$.paidPrice.valueStr.$error ? v$.paidPrice.valueStr.$errors[0].$message : ''"
-        @update:model-value="handleInput('paidPriceValueStr', $event)"
-      >
-        <template #prefix>
-          <span class="text-gray-500 dark:text-gray-400 sm:text-sm pl-3">$</span>
-        </template>
-        <template #suffix>
-          <label for="book-paid-price-currency" class="sr-only">
-            {{ t('book.properties.currency') }}
-          </label>
-          <select
-            id="book-paid-price-currency"
-            class="select pl-2 pr-7 rounded-l-none sm:text-sm border-l-0 focus:border-l h-full shadow-none text-gray-500 focus:text-black dark:text-gray-300 dark:focus:text-gray-300"
-            @change="handleInput('paidPriceCurrency', $event.target.value)"
-            required
-          >
-            <option
-              v-for="currency of currencies"
-              :key="currency"
-              :value="currency"
-              :selected="modelValue.paidPrice.currency === currency"
-            >
-              {{ currency }}
-            </option>
-          </select>
-        </template>
-      </TextField>
+        :error="v$.paidPrice.$error ? v$.paidPrice.$errors[0].$message : ''"
+        :base="modelValue.labelPrice.value"
+        @update:model-value="handleInput('paidPrice', $event)"
+      />
     </div>
 
     <div class="grid grid-cols-12 gap-6">
@@ -278,6 +223,7 @@ import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
 import Alert from '@/components/Alert.vue'
 import DimensionField from '@/components/fields/DimensionField.vue'
 import MarkdownField from '@/components/fields/MarkdownField.vue'
+import MonetaryField from '@/components/fields/MonetaryField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
 
@@ -290,6 +236,7 @@ export default {
     Alert,
     DimensionField,
     MarkdownField,
+    MonetaryField,
     TagField,
     TextField,
     UserAddIcon
@@ -340,9 +287,11 @@ export default {
       publisher: { messageRequired },
       group: { messageRequired },
       labelPrice: {
+        currency: { messageRequired },
         valueStr: { messageRequired, messageDecimalComma }
       },
       paidPrice: {
+        currency: { messageRequired },
         valueStr: { messageRequired, messageDecimalComma }
       },
       dimensions: {
@@ -358,7 +307,9 @@ export default {
       authorsStr: t('book.properties.authors'),
       publisher: t('book.properties.publisher'),
       group: t('book.properties.group'),
+      'labelPrice.currency': t('book.properties.labelPriceCurrency'),
       'labelPrice.valueStr': t('book.properties.labelPrice'),
+      'paidPrice.currency': t('book.properties.paidPriceCurrency'),
       'paidPrice.valueStr': t('book.properties.paidPrice'),
       'dimensions.width': t('book.properties.width'),
       'dimensions.height': t('book.properties.height'),
@@ -375,22 +326,6 @@ export default {
         bookState.boughtAt?.setMinutes(
           bookState.boughtAt.getMinutes() + bookState.boughtAt.getTimezoneOffset()
         )
-      } else if (property === 'labelPriceValueStr') {
-        bookState.labelPrice.value = decimalCommaValidator(value)
-          ? parseFloat(value.replace(',', '.'))
-          : null
-        bookState.labelPrice.valueStr = value
-        property = 'labelPrice'
-      } else if (property === 'paidPriceValueStr') {
-        bookState.paidPrice.value = decimalCommaValidator(value)
-          ? parseFloat(value.replace(',', '.'))
-          : null
-        bookState.paidPrice.valueStr = value
-        property = 'paidPrice'
-      } else if (property === 'labelPriceCurrency') {
-        bookState.labelPrice.currency = value
-      } else if (property === 'paidPriceCurrency') {
-        bookState.paidPrice.value = value
       } else {
         bookState[property] = value
       }
