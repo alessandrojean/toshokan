@@ -220,7 +220,7 @@ export default {
     text-gray-500 dark:text-gray-400 pl-3
     select-none sm:text-sm cursor-text
     absolute inset-y-1 w-14
-    bg-white;
+    bg-white dark:bg-gray-850;
 }
 
 .monetary-field .input.currency:focus + .currency-symbol {
