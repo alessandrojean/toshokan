@@ -63,7 +63,11 @@ export function getIsbnCountry (isbn) {
     Object.entries(REGISTRATION_GROUPS)
       .map(([code, info]) => [
         code,
-        { countryCode: info[0], locale: info[1], flagUrl: getFlagUrl(info[0]) }
+        {
+          countryCode: info[0],
+          locale: info[1],
+          flagUrl: getFlagUrl(info[0])
+        }
       ])
   )
 

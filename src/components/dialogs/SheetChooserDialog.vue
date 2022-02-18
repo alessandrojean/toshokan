@@ -181,8 +181,10 @@
 
 <script>
 import { computed, inject, ref, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   Dialog,
@@ -205,7 +207,6 @@ import {
 } from '@heroicons/vue/outline'
 import { XIcon } from '@heroicons/vue/solid'
 
-import { MutationTypes } from '@/store'
 
 export default {
   components: {
@@ -233,32 +234,33 @@ export default {
   emits: ['close'],
 
   setup (props, context) {
-    const { t, d } = useI18n()
+    const { t, d } = useI18n({ useScope: 'global' })
 
-    const store = useStore()
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
 
     function closeDialog () {
       context.emit('close')
     }
 
-    const selected = ref(store.state.sheet.sheetId)
-    const options = computed(() => store.state.sheet.options)
+    const selected = ref(sheetStore.sheetId)
+    const options = computed(() => sheetStore.options)
 
     const selectedSheet = computed(() => {
       return options.value.find(file => file.id === selected.value)
     })
 
-    function selectCurrent () {
-      if (selected.value !== store.state.sheet.sheetId) {
-        store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
-        store.commit(MutationTypes.SHEET_UPDATE_SHEET_ID, selected.value)
-        store.commit(MutationTypes.SHEET_UPDATE_SELECTED, selectedSheet.value)
-
-        store.dispatch('sheet/loadSheetData', true)
-        store.dispatch('collection/invalidateAndFetch')
-      }
-
+    async function selectCurrent () {
       closeDialog()
+
+      if (selected.value !== sheetStore.sheetId) {
+        sheetStore.updateLoading(true)
+        sheetStore.updateSheetId(selected.value)
+        sheetStore.updateSelected(selectedSheet.value)
+
+        await sheetStore.loadSheetData(true)
+        await collectionStore.invalidateAndFetch()
+      }
     }
 
     const { isOpen } = toRefs(props)
@@ -268,7 +270,7 @@ export default {
 
     watch(isOpen, newIsOpen => {
       if (newIsOpen) {
-        selected.value = store.state.sheet.sheetId
+        selected.value = sheetStore.sheetId
       }
 
       newIsOpen ? disableSearchShortcut() : enableSearchShortcut()

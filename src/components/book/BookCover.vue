@@ -93,8 +93,10 @@
 
 <script>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import useImageLoader from '@/composables/useImageLoader'
+import { useSettingsStore } from '@/stores/settings'
 
 import { BookOpenIcon } from '@heroicons/vue/outline'
 import { ZoomInIcon } from '@heroicons/vue/solid'
@@ -102,10 +104,7 @@ import { ZoomInIcon } from '@heroicons/vue/solid'
 import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
 import BookNavigator from '@/components/book/BookNavigator.vue'
 
-import useImageLoader from '@/composables/useImageLoader'
-
 import Book from '@/model/Book'
-import { getIsbnCountry } from '@/util/isbn'
 
 export default {
   components: {
@@ -158,18 +157,12 @@ export default {
       }
     })
 
-    const country = computed(() => {
-      if (!book.value || !book.value.codeType.includes('ISBN')) {
-        return null
-      }
+    const country = computed(() => book.value?.isbnData)
 
-      return getIsbnCountry(book.value.code)
-    })
+    const settingsStore = useSettingsStore()
 
-    const store = useStore()
-
-    const spoilerMode = computed(() => store.state.settings.spoilerMode)
-    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+    const spoilerMode = computed(() => settingsStore.spoilerMode)
+    const blurNsfw = computed(() => settingsStore.blurNsfw)
 
     const blurCover = computed(() => {
       return (spoilerMode.value.cover && !book.value.isRead) ||
@@ -186,7 +179,7 @@ export default {
       dialogOpen.value = false
     }
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       coverUrl,

@@ -1,19 +1,11 @@
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
-    class="result group has-ring-focus"
+    class="result group has-ring-focus focus-visible:ring-inset dark:focus-visible:ring-offset-gray-800"
     ref="searchItem"
   >
     <div class="w-14 sm:w-16 shrink-0">
-      <transition
-        mode="out-in"
-        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-      >
+      <FadeTransition>
         <div
           v-if="imageLoading || imageHasError || thumbnailUrl.length === 0"
           class="aspect-w-2 aspect-h-3"
@@ -28,16 +20,16 @@
             />
           </div>
         </div>
-        <div v-else class="relative overflow-hidden rounded-md">
-          <img
-            :src="thumbnailUrl"
-            :class="[
-              'result-cover',
-              blurCover ? 'is-hidden' : ''
-            ]"
-          >
+        <div
+          v-else
+          :class="[
+            'result-cover',
+            blurCover ? 'is-hidden' : ''
+          ]"
+        >
+          <img :src="thumbnailUrl" :alt="result.title" >
         </div>
-      </transition>
+      </FadeTransition>
     </div>
     <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
@@ -68,10 +60,12 @@
 
 <script>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
+import { useSettingsStore } from '@/stores/settings'
 
 import {
   ChevronRightIcon,
@@ -85,6 +79,7 @@ export default {
   components: {
     ChevronRightIcon,
     ClockIcon,
+    FadeTransition,
     PhotographIcon
   },
 
@@ -125,17 +120,17 @@ export default {
       }
     })
 
-    const store = useStore()
+    const settingsStore = useSettingsStore()
 
-    const spoilerMode = computed(() => store.state.settings.spoilerMode)
-    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+    const spoilerMode = computed(() => settingsStore.spoilerMode)
+    const blurNsfw = computed(() => settingsStore.blurNsfw)
 
     const blurCover = computed(() => {
       return (spoilerMode.value.cover && !result.value.isRead) ||
         (blurNsfw.value && result.value.isNsfw)
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const authorsFormatted = computed(() => {
       const separator = t('dashboard.details.header.authorSeparator')
@@ -173,7 +168,7 @@ export default {
 
 <style lang="postcss" scoped>
 .result {
-  @apply py-4 flex items-center rounded-md space-x-4;
+  @apply py-4 px-5 flex items-center space-x-4 transition-none;
 }
 
 .result-title {
@@ -182,7 +177,7 @@ export default {
     dark:text-gray-100;
 }
 
-.result:hover .result-title {
+.result:where(:hover, :focus-visible) .result-title {
   @apply underline underline-offset-1 decoration-2
     decoration-primary-600/60 dark:decoration-primary-400/80;
 }
@@ -197,38 +192,62 @@ export default {
     px-2 py-0.5 rounded
     bg-white dark:bg-transparent
     text-gray-500 dark:text-gray-200
-    group-hover:text-gray-700 dark:group-hover:text-gray-200
-    border border-gray-200 dark:border-gray-600
-    group-hover:border-gray-300 dark:group-hover:border-gray-500;
+    border border-gray-200 dark:border-gray-600;
+}
+
+.result:where(:hover, :focus-visible) .result-group {
+  @apply text-gray-700 dark:text-gray-200
+    border-gray-300 dark:border-gray-500;
 }
 
 .result-publisher {
   @apply block text-gray-500 dark:text-gray-400
-    group-hover:text-gray-700 dark:group-hover:text-gray-300;
+}
+
+.result:where(:hover, :focus-visible) .result-publisher {
+  @apply text-gray-700 dark:text-gray-300;
 }
 
 .result-cover {
-  @apply w-full object-cover rounded-md
-    shadow group-hover:shadow-md;
+  @apply relative overflow-hidden rounded-md
+    motion-safe:transition shadow dark:shadow-none;
 }
 
-.result-cover.is-hidden {
+.result-cover img {
+  @apply w-full object-cover rounded-md;
+}
+
+.result:where(:hover, :focus-visible) .result-cover {
+  @apply shadow-md dark:shadow-none
+    dark:ring-2 dark:ring-gray-600/50;
+}
+
+.result-cover.is-hidden img {
   @apply md:blur-sm md:scale-105
     motion-safe:transition-all motion-safe:ease-in;
 }
 
-.result-cover.is-hidden:hover {
+.result-cover.is-hidden:hover img {
   @apply md:blur-none md:scale-100 md:motion-safe:duration-[2000ms];
 }
 
 .empty-cover {
   @apply flex justify-center items-center w-full h-full
-    bg-gray-100 dark:bg-gray-700 rounded-md
-    shadow group-hover:shadow-md;
+    bg-gray-100 dark:bg-gray-700 rounded-md shadow;
+}
+
+.result:where(:hover, :focus-visible) .empty-cover {
+  @apply shadow-md;
 }
 
 .chevron {
-  @apply w-5 h-5 text-gray-500 dark:text-gray-400
-    group-hover:text-primary-600 dark:group-hover:text-gray-100;
+  @apply w-5 h-5 p-1 box-content rounded-full
+    motion-safe:transition-colors
+    text-gray-500 dark:text-gray-400;
+}
+
+.result:where(:hover, :focus-visible) .chevron {
+  @apply text-primary-600 dark:text-gray-100
+    bg-primary-50 dark:bg-gray-700/80;
 }
 </style>

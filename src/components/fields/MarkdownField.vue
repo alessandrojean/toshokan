@@ -108,7 +108,7 @@ export default {
     label: String,
     markdownOptions: {
       type: Object,
-      default: {}
+      default: () => ({})
     },
     modelValue: {
       type: String,
@@ -145,7 +145,7 @@ export default {
 
     const hasFocus = ref(false)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       hasError,

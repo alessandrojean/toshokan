@@ -105,7 +105,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, context) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     function closeDialog () {
       context.emit('update:modelValue', false)

@@ -43,7 +43,7 @@ export default {
   },
 
   setup (props) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
     const { modelValue: step, steps } = toRefs(props)
 
     const stepText = computed(() => {

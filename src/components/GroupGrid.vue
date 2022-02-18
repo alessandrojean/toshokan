@@ -19,12 +19,18 @@
         class="motion-safe:animate-pulse h-10 bg-gray-400 dark:bg-gray-600 rounded w-full"
       />
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4" v-else>
+    <div
+      v-else
+      class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+      ref="container"
+    >
       <router-link
-        v-for="group in groups"
+        v-for="(group, idx) in groups"
         :key="group.name"
-        :to="{ name: 'DashboardLibrary', query: { group: group.name } }"
         class="button justify-between py-2.5"
+        :to="{ name: 'DashboardLibrary', query: { group: group.name } }"
+        :tabindex="focused === idx ? '0' : '-1'"
+        @keydown="handleKeydown"
       >
         <span class="flex-1 truncate">
           {{ group.name }}
@@ -38,38 +44,126 @@
 </template>
 
 <script>
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
+
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 export default {
   setup () {
-    const store = useStore()
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
 
-    const sheetLoading = computed(() => store.state.sheet.loading)
-    const sheetId = computed(() => store.state.sheet.sheetId)
+    const sheetLoading = computed(() => sheetStore.loading)
+    const sheetId = computed(() => sheetStore.sheetId)
 
-    const loading = computed(() => store.state.collection.filters.groups.loading)
-    const groups = computed(() => store.state.collection.filters.groups.items)
+    const loading = computed(() => collectionStore.filters.groups.loading)
+    const groups = computed(() => collectionStore.filters.groups.items)
 
-    onMounted(() => {
+    onMounted(async () => {
       if (sheetId.value && groups.value.length === 0) {
-        store.dispatch('collection/fetchGroups')
+        await collectionStore.fetchGroups()
       }
     })
 
-    watch(sheetId, newSheetId => {
+    watch(sheetId, async newSheetId => {
       if (newSheetId && groups.value.length === 0) {
-        store.dispatch('collection/fetchGroups')
+        await collectionStore.fetchGroups()
       }
     })
 
-    const { t, n } = useI18n()
+    const { t, n } = useI18n({ useScope: 'global' })
+
+    const container = ref(null)
+    const focused = ref(0)
+
+    const columnSize = {
+      '1024px': 5, // lg
+      '768px': 4 // md
+    }
+
+    function getColumnSize () {
+      const match = Object.entries(columnSize)
+        .find(([minWidth]) => {
+          return window.matchMedia(`(min-width: ${minWidth})`).matches
+        })
+
+      return match?.[1] || 2
+    }
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleKeydown (event) {
+      const allowedKeys = [
+        'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown',
+        'Home', 'End'
+      ]
+      const { key } = event
+
+      if (key === 'Tab') {
+        setTimeout(() => { focused.value = 0 })
+        return
+      }
+
+      if (!allowedKeys.includes(key)) {
+        return
+      }
+
+      const totalItems = groups.value.length
+      const columns = getColumnSize()
+      const lines = Math.ceil(totalItems / columns)
+      const row = Math.floor(focused.value / columns) + 1
+
+      if (key === 'Home' && focused.value === 0) {
+        return
+      }
+
+      if (key === 'End' && focused.value === totalItems - 1) {
+        return
+      }
+
+      if (key === 'ArrowUp' && row === 1) {
+        return
+      }
+
+      if (key === 'ArrowDown' && row === lines) {
+        return
+      }
+
+      event.preventDefault()
+
+      if (key === 'ArrowRight') {
+        focused.value = Math.min(focused.value + 1, totalItems - 1)
+      } else if (key === 'ArrowLeft') {
+        focused.value = Math.max(focused.value - 1, 0)
+      } else if (key === 'ArrowDown') {
+        focused.value = row < lines
+          ? Math.min(totalItems - 1, focused.value + columns)
+          : focused.value
+      } else if (key === 'ArrowUp') {
+        focused.value = row > 1
+          ? Math.max(0, focused.value - columns)
+          : focused.value
+      } else if (key === 'Home') {
+        focused.value = 0
+      } else if (key === 'End') {
+        focused.value = totalItems - 1
+      }
+
+      const group = container.value?.children?.[focused.value]
+
+      group?.focus()
+    }
 
     return {
       sheetLoading,
       loading,
       groups,
+      container,
+      focused,
+      handleKeydown,
       t,
       n
     }

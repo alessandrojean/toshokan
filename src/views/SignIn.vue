@@ -78,13 +78,13 @@
 
 <script>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { LibraryIcon } from '@heroicons/vue/solid'
-
 import useAppInfo from '@/composables/useAppInfo'
+import { useAuthStore } from '@/stores/auth'
+
+import { LibraryIcon } from '@heroicons/vue/solid'
 
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
@@ -97,15 +97,15 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const authStore = useAuthStore()
     const router = useRouter()
 
     const isDev = ref(import.meta.env.DEV)
 
     const { appVersion } = useAppInfo()
 
-    const started = computed(() => store.state.auth.started)
-    const signedIn = computed(() => store.state.auth.signedIn)
+    const started = computed(() => authStore.started)
+    const signedIn = computed(() => authStore.signedIn)
 
     const redirectToDashboard = () => {
       if (signedIn.value) {
@@ -117,7 +117,7 @@ export default {
 
     watch(signedIn, redirectToDashboard)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       appVersion,

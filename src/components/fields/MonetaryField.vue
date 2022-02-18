@@ -76,7 +76,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, context) {
-    const { t, n, locale } = useI18n()
+    const { t, n, locale } = useI18n({ useScope: 'global' })
     const { base, modelValue: monetaryValue } = toRefs(props)
 
     const DEFAULT_CURRENCIES = ['BRL', 'EUR', 'JPY', 'USD']

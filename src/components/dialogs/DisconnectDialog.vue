@@ -102,7 +102,7 @@ export default {
       context.emit('click:disconnect', event)
     }
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { open } = toRefs(props)
 

@@ -1,137 +1,24 @@
 import { createI18n } from 'vue-i18n'
 
-import enUs from './messages/en-US'
-import ptBr from './messages/pt-BR'
+const messageModules = import.meta.globEager('./messages/*.js')
+const datetimeModules = import.meta.globEager('./datetime/*.js')
+const numberModules = import.meta.globEager('./number/*.js')
 
-const datetimeFormats = {
-  'en-US': {
-    short: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    },
-    long: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    },
-    sheet: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hourCycle: 'h23'
-    },
-    month: {
-      month: 'short'
-    },
-    monthYear: {
-      month: 'long',
-      year: 'numeric'
-    }
-  },
-  'pt-BR': {
-    short: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    },
-    long: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    },
-    sheet: {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    },
-    month: {
-      month: 'short'
-    },
-    monthYear: {
-      month: 'long',
-      year: 'numeric'
-    }
-  }
+const replacingRegex = /^\.\/(.*)\/(.*)\.js$/
+
+function mapToLocale (collection) {
+  const fixedEntries = Object.entries(collection)
+    .map(([path, value]) => [
+      path.replace(replacingRegex, '$2'),
+      value.default
+    ])
+
+  return Object.fromEntries(fixedEntries)
 }
 
-const numberFormats = {
-  'en-US': {
-    currency: {
-      style: 'currency',
-      currency: 'USD',
-      notation: 'standard'
-    },
-    dimensions: {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 1,
-      useGrouping: false
-    },
-    decimal: {
-      style: 'decimal',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      useGrouping: false
-    },
-    integer: {
-      useGrouping: true
-    },
-    percent: {
-      style: 'percent',
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-      useGrouping: false
-    }
-  },
-  'pt-BR': {
-    currency: {
-      style: 'currency',
-      currency: 'BRL',
-      notation: 'standard'
-    },
-    dimensions: {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 1,
-      useGrouping: false
-    },
-    decimal: {
-      style: 'decimal',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      useGrouping: false
-    },
-    integer: {
-      useGrouping: true
-    },
-    percent: {
-      style: 'percent',
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-      useGrouping: false
-    }
-  }
-}
-
-const messages = {
-  'en-US': enUs,
-  'pt-BR': ptBr
-}
+const messages = mapToLocale(messageModules)
+const datetimeFormats = mapToLocale(datetimeModules)
+const numberFormats = mapToLocale(numberModules)
 
 const navigatorLanguage = navigator.language || navigator.userLanguage
 const userLocale = localStorage.getItem('locale') || navigatorLanguage

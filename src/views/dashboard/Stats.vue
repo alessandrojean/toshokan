@@ -80,9 +80,10 @@
 
 <script>
 import { computed, onMounted, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   ExclamationCircleIcon,
@@ -107,15 +108,15 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const sheetStore = useSheetStore()
     const router = useRouter()
 
-    const loading = computed(() => store.state.sheet.loading)
-    const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
-    const tooEarly = computed(() => store.state.sheet.stats.monthly?.length === 1)
-    const stats = computed(() => store.state.sheet.stats)
+    const loading = computed(() => sheetStore.loading)
+    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
+    const tooEarly = computed(() => sheetStore.stats.monthly?.length === 1)
+    const stats = computed(() => sheetStore.stats)
 
-    const shared = computed(() => store.getters['sheet/shared'])
+    const shared = computed(() => sheetStore.shared)
 
     function checkPermissions () {
       if (shared.value) {
@@ -127,7 +128,7 @@ export default {
 
     watch(shared, () => checkPermissions())
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return { loading, sheetIsEmpty, tooEarly, stats, t }
   }

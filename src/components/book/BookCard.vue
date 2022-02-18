@@ -89,21 +89,23 @@
         </span>
       </div>
 
-      <div v-if="mode === 'compact'" class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3">
-        <div class="inline-flex text-white w-full items-center">
-          <div class="inline-flex flex-col grow min-w-0">
-            <span class="font-semibold font-display text-sm truncate max-w-full">
-              {{ book.titleParts.title }}
-            </span>
-            <span class="font-medium text-xs">
-              {{ volume }}
-            </span>
-          </div>
-          <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-2">
-            <BookmarkIcon class="w-5 h-5 text-primary-500" />
+      <FadeTransition>
+        <div v-if="mode === 'compact'" class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3">
+          <div class="inline-flex text-white w-full items-center">
+            <div class="inline-flex flex-col grow min-w-0">
+              <span class="font-semibold font-display text-sm truncate max-w-full">
+                {{ book.titleParts.title }}
+              </span>
+              <span class="font-medium text-xs">
+                {{ volume }}
+              </span>
+            </div>
+            <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-2">
+              <BookmarkIcon class="w-5 h-5 text-primary-500" />
+            </div>
           </div>
         </div>
-      </div>
+      </FadeTransition>
     </div>
 
     <div v-if="mode === 'comfortable'" class="mt-3">
@@ -119,13 +121,15 @@
 
 <script>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
+import { useSettingsStore } from '@/stores/settings'
 
 import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 import Book from '@/model/Book'
 
@@ -136,7 +140,8 @@ export default {
     BookOpenIcon,
     BookmarkIcon,
     ClockIcon,
-    EyeOffIcon
+    EyeOffIcon,
+    FadeTransition
   },
 
   props: {
@@ -152,7 +157,7 @@ export default {
 
   setup (props) {
     const { book, loading } = toRefs(props)
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const thumbnailUrl = computed(() => {
       return book.value
@@ -194,10 +199,10 @@ export default {
       }
     })
 
-    const store = useStore()
-    const mode = computed(() => store.state.settings.gridMode)
-    const spoilerMode = computed(() => store.state.settings.spoilerMode)
-    const blurNsfw = computed(() => store.state.settings.blurNsfw)
+    const settingsStore = useSettingsStore()
+    const mode = computed(() => settingsStore.gridMode)
+    const spoilerMode = computed(() => settingsStore.spoilerMode)
+    const blurNsfw = computed(() => settingsStore.blurNsfw)
 
     const blurCover = computed(() => {
       return (spoilerMode.value.cover && !book.value.isRead) ||
@@ -232,8 +237,8 @@ export default {
   @apply ring-2 ring-offset-2 ring-primary-500 dark:ring-offset-gray-900;
 }
 
-.book-link:hover .book-card {
-  @apply shadow-lg -translate-y-1;
+.book-link:where(:hover, :focus-visible) .book-card {
+  @apply md:shadow-lg md:-translate-y-1;
 }
 
 .book-gradient {

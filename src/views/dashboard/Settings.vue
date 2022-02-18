@@ -254,10 +254,12 @@
 
 <script>
 import { computed, reactive, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
-import { MutationTypes } from '@/store'
+import { useAuthStore } from '@/stores/auth'
+import { useCollectionStore } from '@/stores/collection'
+import { useSettingsStore } from '@/stores/settings'
+import { useSheetStore } from '@/stores/sheet'
 
 import { ExclamationIcon } from '@heroicons/vue/solid'
 
@@ -296,20 +298,23 @@ export default {
 
   setup () {
     const { t, locale } = useI18n({ useScope: 'global' })
-    const store = useStore()
+    const authStore = useAuthStore()
+    const collectionStore = useCollectionStore()
+    const settingsStore = useSettingsStore()
+    const sheetStore = useSheetStore()
 
     const settings = reactive({
       appearence: {
         locale: locale.value,
-        theme: store.state.theme,
-        viewMode: store.state.settings.viewMode,
-        gridMode: store.state.settings.gridMode,
-        spoilerMode: { ...store.state.settings.spoilerMode },
-        blurNsfw: store.state.settings.blurNsfw
+        theme: settingsStore.theme,
+        viewMode: settingsStore.viewMode,
+        gridMode: settingsStore.gridMode,
+        spoilerMode: { ...settingsStore.spoilerMode },
+        blurNsfw: settingsStore.blurNsfw
       }
     })
 
-    const theme = computed(() => store.state.theme)
+    const theme = computed(() => settingsStore.theme)
 
     watch(theme, newTheme => {
       if (settings.appearence.theme !== newTheme) {
@@ -331,25 +336,24 @@ export default {
       }
     }
 
-    function saveAppearenceSettings () {
+    async function saveAppearenceSettings () {
       const { appearence } = settings
 
       if (locale.value !== appearence.locale) {
         locale.value = appearence.locale
-        store.dispatch('sheet/loadSheetData')
-        store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
-        store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
-        store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
+        await sheetStore.loadSheetData()
+        collectionStore.clearCarouselItems('lastAdded', 'latestReadings')
+        collectionStore.clearItems(null, 'books')
       }
 
-      store.commit(MutationTypes.UPDATE_THEME, appearence.theme)
-      store.commit(MutationTypes.SETTINGS_UPDATE_VIEW_MODE, appearence.viewMode)
-      store.commit(MutationTypes.SETTINGS_UPDATE_GRID_MODE, appearence.gridMode)
-      store.commit(MutationTypes.SETTINGS_UPDATE_SPOILER_MODE, appearence.spoilerMode)
-      store.commit(MutationTypes.SETTINGS_UPDATE_BLUR_NSFW, appearence.blurNsfw)
+      settingsStore.updateTheme(appearence.theme)
+      settingsStore.updateBlurNsfw(appearence.blurNsfw)
+      settingsStore.updateGridMode(appearence.gridMode)
+      settingsStore.updateSpoilerMode(appearence.spoilerMode)
+      settingsStore.updateViewMode(appearence.viewMode)
     }
 
-    const sheetLoading = computed(() => store.state.sheet.loading)
+    const sheetLoading = computed(() => sheetStore.loading)
 
     const disconnectModalOpen = ref(false)
 
@@ -358,7 +362,7 @@ export default {
     }
 
     function handleDisconnect () {
-      store.dispatch('auth/disconnect')
+      authStore.disconnect()
     }
 
     const tabs = computed(() => [

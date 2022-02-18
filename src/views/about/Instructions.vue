@@ -36,13 +36,10 @@ export default {
   },
 
   setup () {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { renderMarkdown } = useMarkdown({
-      mdOptions: {
-        html: true,
-        typographer: true
-      }
+      mdOptions: { typographer: true }
     })
 
     const body = ref(
@@ -51,48 +48,13 @@ export default {
           googleDriveLink: 'https://drive.google.com/',
           templateSheetLink: '#',
           iso4217link: 'https://en.wikipedia.org/wiki/ISO_4217',
-          figure1: dedent`
-            <figure>
-              <img src="${step1}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend1')}</figcaption>
-            </figure>
-          `,
-          figure2: dedent`
-            <figure>
-              <img src="${step2}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend2')}</figcaption>
-            </figure>
-          `,
-          figure3: dedent`
-            <figure>
-              <img src="${step3}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend3')}</figcaption>
-            </figure>
-          `,
-          figure4: dedent`
-            <figure>
-              <img src="${step4}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend4')}</figcaption>
-            </figure>
-          `,
-          figure5: dedent`
-            <figure>
-              <img src="${step5}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend5')}</figcaption>
-            </figure>
-          `,
-          figure6: dedent`
-            <figure>
-              <img src="${step6}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend6')}</figcaption>
-            </figure>
-          `,
-          figure7: dedent`
-            <figure>
-              <img src="${step7}" loading="lazy" />
-              <figcaption>${t('about.instructions.legend7')}</figcaption>
-            </figure>
-          `
+          figure1: step1,
+          figure2: step2,
+          figure3: step3,
+          figure4: step4,
+          figure5: step5,
+          figure6: step6,
+          figure7: step7
         })
       )
     )

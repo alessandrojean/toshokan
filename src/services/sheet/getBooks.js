@@ -6,7 +6,11 @@ import buildSheetUrl from './buildSheetUrl'
 import countTotalResults from './countTotalResults'
 import { PER_PAGE } from './constants'
 
-import Book, { CollectionColumns, STATUS_FUTURE } from '@/model/Book'
+import Book, {
+  CollectionColumns,
+  FAVORITE_ACTIVE,
+  STATUS_FUTURE
+} from '@/model/Book'
 
 export default async function getBooks (sheetId, page = 1, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
@@ -41,6 +45,10 @@ export default async function getBooks (sheetId, page = 1, options = {}) {
   if (options.futureItems === 'only' || options.futureItems === 'hide') {
     const comparation = options.futureItems === 'only' ? '=' : '!='
     conditions.push(`${CollectionColumns.STATUS} ${comparation} '${STATUS_FUTURE}'`)
+  }
+
+  if (options.favorites === 'only') {
+    conditions.push(`${CollectionColumns.FAVORITE} = '${FAVORITE_ACTIVE}'`)
   }
 
   const where = conditions.length > 0

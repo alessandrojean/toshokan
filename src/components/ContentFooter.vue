@@ -19,7 +19,7 @@ export default {
 
   setup () {
     const { appVersion } = useAppInfo()
-    const { t, d } = useI18n()
+    const { t, d } = useI18n({ useScope: 'global' })
 
     return { appVersion, t, d }
   }

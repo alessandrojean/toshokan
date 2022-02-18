@@ -1,15 +1,16 @@
 import { computed, readonly, ref, toRaw } from 'vue'
-import { useStore } from 'vuex'
 
 import SheetService from '@/services/sheet'
 
-import { MutationTypes } from '@/store'
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBookInserter (book) {
-  const store = useStore()
+  const collectionStore = useCollectionStore()
+  const sheetStore = useSheetStore()
   const inserting = ref(false)
 
-  const sheetId = computed(() => store.state.sheet.sheetId)
+  const sheetId = computed(() => sheetStore.sheetId)
 
   async function checkIfExists (code) {
     try {
@@ -27,28 +28,28 @@ export default function useBookInserter (book) {
 
   async function insertBook () {
     inserting.value = true
-    store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
+    sheetStore.updateLoading(true)
 
     const bookToInsert = toRaw(book)
 
-    const bookId = await SheetService.insertBook(store.state.sheet.sheetId, bookToInsert)
-    await store.dispatch('sheet/loadSheetData', true)
-    await store.dispatch('collection/fetchGroups')
+    const bookId = await SheetService.insertBook(sheetId.value, bookToInsert)
+    await sheetStore.loadSheetData(true)
+    await collectionStore.fetchGroups()
 
     // Also select the new book group so it will be shown in library.
-    const groups = store.state.collection.filters.groups
+    const groups = collectionStore.filters.groups
 
     if (!groups.selected.includes(book.group) && groups.selected.length > 0) {
-      store.commit(MutationTypes.COLLECTION_UPDATE_GROUPS, {
+      collectionStore.updateGroups({
         selected: groups.selected.concat(book.group)
       })
     }
 
-    await store.dispatch('collection/fetchBooks')
-    await store.dispatch('collection/fetchLastAdded')
+    await collectionStore.fetchBooks()
+    await collectionStore.fetchLastAdded()
 
     inserting.value = false
-    store.commit(MutationTypes.SHEET_UPDATE_LOADING, false)
+    sheetStore.updateLoading(false)
 
     return bookId
   }

@@ -36,11 +36,12 @@
 
 <script>
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { MutationTypes } from '@/store'
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
+import { useStore } from '@/stores/main'
 
 import AppNavbar from '@/components/AppNavbar.vue'
 import DashboardFooter from '@/components/DashboardFooter.vue'
@@ -56,24 +57,26 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const authStore = useAuthStore()
+    const mainStore = useStore()
+    const sheetStore = useSheetStore()
     const router = useRouter()
 
-    const signedIn = computed(() => store.state.auth.signedIn)
-    const loadedOnce = computed(() => store.state.sheet.loadedOnce)
-    const hasGrantedScopes = computed(() => store.state.auth.hasGrantedScopes)
+    const signedIn = computed(() => authStore.signedIn)
+    const loadedOnce = computed(() => sheetStore.loadedOnce)
+    const hasGrantedScopes = computed(() => authStore.hasGrantedScopes)
 
-    const loadSheetData = async () => {
+    async function loadSheetData () {
       if (!loadedOnce.value) {
         try {
-          await store.dispatch('sheet/loadSheetData')
+          await sheetStore.loadSheetData()
         } catch (e) {
           const error = !hasGrantedScopes.value
             ? new Error(t('errors.missingScopes'))
             : e
 
-          store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
-          store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, error)
+          sheetStore.resetLoadedOnce()
+          mainStore.updateCriticalError(error)
           router.replace({ name: 'Error' })
         }
       }
@@ -84,13 +87,13 @@ export default {
     watch(signedIn, newValue => {
       if (!newValue) {
         router.replace('/')
-        store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
+        sheetStore.resetLoadedOnce()
       }
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
-    const showSearch = computed(() => !store.state.sheet.loading)
+    const showSearch = computed(() => !sheetStore.loading)
     const searchDialog = ref(null)
     const searchDialogIsOpen = ref(false)
 

@@ -1,4 +1,6 @@
 import buildSheetUrl from './buildSheetUrl'
+import bulkDeleteBooks from './bulkDeleteBooks'
+import bulkUpdateBooks from './bulkUpdateBooks'
 import countTotalResults from './countTotalResults'
 import deleteBook from './deleteBook'
 import findSheetId from './findSheetId'
@@ -20,6 +22,8 @@ import updateBook from './updateBook'
 
 export default {
   buildSheetUrl,
+  bulkDeleteBooks,
+  bulkUpdateBooks,
   countTotalResults,
   deleteBook,
   findSheetId,

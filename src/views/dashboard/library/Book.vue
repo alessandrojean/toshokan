@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <BookDeleteModal
+    <BookDeleteDialog
       v-model:open="deleteModalOpen"
       @click:delete="handleDelete"
     />
@@ -66,16 +66,16 @@
 <script>
 import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import useBookDeleter from '@/composables/useBookDeleter'
 import useBookEditor from '@/composables/useBookEditor'
 import useBookFinder from '@/composables/useBookFinder'
+import { useSheetStore } from '@/stores/sheet'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookCover from '@/components/book/BookCover.vue'
-import BookDeleteModal from '@/components/dialogs/BookDeleteDialog.vue'
+import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
@@ -88,17 +88,17 @@ export default {
   components: {
     BookBreadcrumb,
     BookCover,
-    BookDeleteModal,
+    BookDeleteDialog,
     BookEditDialog,
     BookInformation,
     BookTabs
   },
 
   setup () {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
     const router = useRouter()
     const route = useRoute()
-    const store = useStore()
+    const sheetStore = useSheetStore()
 
     const bookId = computed(() => route.params.bookId)
 
@@ -109,7 +109,7 @@ export default {
       findTheBook
     } = useBookFinder()
 
-    const loading = computed(() => store.state.sheet.loading)
+    const loading = computed(() => sheetStore.loading)
 
     const redirectToHome = () => {
       if (!deleted.value) {

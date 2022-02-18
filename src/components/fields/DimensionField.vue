@@ -55,7 +55,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, context) {
-    const { n } = useI18n()
+    const { n } = useI18n({ useScope: 'global' })
     const { modelValue: dimensions } = toRefs(props)
 
     const width = ref(

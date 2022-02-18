@@ -5,6 +5,7 @@ export default {
     name: 'Toshokan',
     localeName: 'English (US)',
     localeFlag: 'US',
+    starting: 'Starting the app.',
     routes: {
       home: 'Home',
       signIn: 'Sign in',
@@ -44,10 +45,7 @@ export default {
   pwa: {
     newContent: {
       title: 'New content available',
-      message: dedent`
-        The app has a new version available anhd the page will
-        be refreshed when you click in Reload.
-      `,
+      message: 'The app has a new version available!',
       update: 'Reload',
       close: 'Close'
     }
@@ -143,8 +141,9 @@ export default {
       }
     },
     deleteModal: {
-      title: 'Delete the book',
-      message1: 'Are you sure you want to delete this book?',
+      title: 'Delete the book | Delete the books',
+      message1: 'Are you sure you want to delete this book? | ' +
+        'Are you sure you want to delete this books?',
       message2: 'This action can\'t be undone.',
       delete: 'Delete',
       cancel: 'Cancel'
@@ -452,7 +451,8 @@ export default {
       items: {
         current: 'Items from all groups | Items from the group {count} | Items from {count} groups',
         tableColumns: {
-          actions: 'Actions'
+          actions: 'Actions',
+          deleteSelection: 'Delete'
         },
         view: 'View'
       },
@@ -471,7 +471,9 @@ export default {
         gridMode: {
           label: 'Grid mode',
           compact: 'Compact',
-          comfortable: 'Comfortable'
+          compactGrid: 'Compact grid',
+          comfortable: 'Comfortable',
+          comfortableGrid: 'Comfortable grid'
         },
         groups: 'Groups',
         sortDirection: {
@@ -480,6 +482,11 @@ export default {
           desc: 'Descending'
         },
         sortBy: 'Sort by',
+        favorites: {
+          label: 'Favorites',
+          indiferent: 'Doesn\'t matter',
+          only: 'Only'
+        },
         futureItems: {
           label: 'Future itens',
           indiferent: 'Doesn\'t matter',
@@ -796,7 +803,7 @@ export default {
         - Sign in with your Google Account at the
           [Google Drive]({googleDriveLink}) website.
         - Access [this sheet]({templateSheetLink}) and create a copy
-          by clicking on <span class="command">File → Make a copy</span>.
+          by clicking on **File → Make a copy**.
         - **Do not rename the file**, it should be named **Toshokan**.
 
         In the next time, the copied spreadsheet will be selected automatically.
@@ -806,8 +813,7 @@ export default {
         After you copied the spreadsheet to your Google Drive, you can
         start to use Toshokan, by signing in with your Google Account.
 
-        - Access the homepage and click on
-          <span class="command">Sign in with Google<span>.
+        - Access the homepage and click on **Sign in with Google**.
         - Grant access to the information requested by Toshokan.
 
         In the next time, you will not need to grant the permissions again.
@@ -834,7 +840,7 @@ export default {
         is valid, you will be taken to the next step with some fields of
         the formulary already filled.
 
-        {figure1}
+        ![First step: ISBN search.]({figure1})
 
         The ISBN used to search can be typed with or without the dashes,
         and the search also works with old books that have the ISBN
@@ -845,7 +851,7 @@ export default {
         If the search returns no results or the book don't have a
         Brazilian ISBN, you can use the **Fill manually** option.
 
-        {figure2}
+        ![Second step: fill the book's metadata.]({figure2})
 
         The book metadata not always is right or follow a pattern, so
         you will probably need to fix some minor issues at the data.
@@ -917,7 +923,7 @@ export default {
           or do not have this information, you can leave the field
           value blank by erasing the day, month and year at the input.
 
-        {figure3}
+        ![Book metadata correctly filled.]({figure3})
 
         ### Cover image
 
@@ -928,7 +934,7 @@ export default {
         If you want to leave the book without a cover image, just do not
         select any option and skip to the next step.
 
-        {figure4}
+        ![Third step: choosing the cover image.]({figure4})
 
         ### Information review
 
@@ -936,32 +942,24 @@ export default {
         you can do a last review on the information provided before
         finishing the wizard and creating the book at the spreadsheet.
 
-        {figure5}
+        ![Fourth step: information review.]({figure5})
 
         If all information is correct, you must click on
-        <span class="command">Finish</span>.
+        **Finish**.
 
-        {figure6}
+        ![Creation confirmation dialog.]({figure6})
 
         With this, the book will be added to the spreadsheet and you
-        can then choose <span class="command">View</span>, if you want to
-        go straight to the book page, or <span class="command">New book</span>
-        if you want to add another book in sequence.
+        can then choose **View**, if you want to go straight to the
+        book page, or **New book** if you want to add another book
+        in sequence.
 
-        {figure7}
+        ![Book information page.]({figure7})
 
         The book is now saved in the spreadsheet and you can repeat
         the wizard when you want to add new books. You can explore
-        your library items via the <span class="command">Library</span>
-        item in the main navigation.
-      `,
-      legend1: 'First step: ISBN search.',
-      legend2: 'Second step: fill the book\'s metadata.',
-      legend3: 'Book metadata correctly filled.',
-      legend4: 'Third step: choosing the cover image.',
-      legend5: 'Fourth step: information review.',
-      legend6: 'Creation confirmation dialog.',
-      legend7: 'Book information page.'
+        your library items via the **Library** item in the main navigation.
+      `
     },
     privacyPolicy: {
       title: 'Privacy Policy',

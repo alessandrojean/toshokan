@@ -3,13 +3,15 @@
     role="navigation"
     class="relative rounded-md shadow-sm"
   >
-    <ul class="z-0 inline-flex -space-x-px">
+    <ul class="z-0 inline-flex -space-x-px" ref="paginator">
       <li>
         <button
           type="button"
           class="pag-button is-left has-ring-focus"
-          @click.stop="changePage(1)"
           :disabled="!paginationInfo.has_previous_page || !enabled"
+          :tabindex="tabIndex(0)"
+          @click.stop="changePage(1)"
+          @keydown="handleKeydown($event, 0)"
         >
           <span class="sr-only">{{ t('pagination.firstPage') }}</span>
           <span aria-hidden="true">
@@ -22,8 +24,10 @@
         <button
           type="button"
           class="pag-button has-ring-focus"
-          @click.stop="changePage(paginationInfo.previous_page)"
           :disabled="!paginationInfo.has_previous_page || !enabled"
+          :tabindex="tabIndex(1)"
+          @click.stop="changePage(paginationInfo.previous_page)"
+          @keydown="handleKeydown($event, 1)"
         >
           <span class="sr-only">{{ t('pagination.previousPage') }}</span>
           <span aria-hidden="true">
@@ -44,7 +48,9 @@
           ]"
           :aria-current="isCurrent(pageIdx) ? 'page' : ''"
           :disabled="!enabled"
+          :tabindex="tabIndex(pageIdx + 1)"
           @click.stop="changePage(paginationInfo.first_page + pageIdx - 1)"
+          @keydown="handleKeydown($event, pageIdx + 1)"
         >
           <span class="sr-only" v-if="isCurrent(pageIdx)">
             {{ t('pagination.current') }}
@@ -60,8 +66,10 @@
         <button
           type="button"
           class="pag-button has-ring-focus"
-          @click.stop="changePage(paginationInfo.next_page)"
           :disabled="!paginationInfo.has_next_page || !enabled"
+          :tabindex="tabIndex(links + 2)"
+          @click.stop="changePage(paginationInfo.next_page)"
+          @keydown="handleKeydown($event, links + 2)"
         >
           <span class="sr-only">{{ t('pagination.nextPage') }}</span>
           <span aria-hidden="true">
@@ -74,8 +82,10 @@
         <button
           type="button"
           class="pag-button is-right has-ring-focus"
-          @click.stop="changePage(paginationInfo.total_pages)"
           :disabled="!paginationInfo.has_next_page || !enabled"
+          :tabindex="tabIndex(links + 3)"
+          @click.stop="changePage(paginationInfo.total_pages)"
+          @keydown="handleKeydown($event, links + 3)"
         >
           <span class="sr-only">{{ t('pagination.lastPage') }}</span>
           <span aria-hidden="true">
@@ -88,7 +98,7 @@
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
+import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -120,7 +130,7 @@ export default {
       return paginationInfo.value.last_page + 1 - paginationInfo.value.first_page
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     function isCurrent (idx) {
       return paginationInfo.value.current_page === paginationInfo.value.first_page + idx - 1
@@ -132,7 +142,81 @@ export default {
       }
     }
 
-    return { links, t, isCurrent, changePage }
+    const paginator = ref(null)
+    const focused = ref((paginationInfo.value?.current_page || 1) + 1)
+
+    function tabIndex (idx) {
+      return idx === focused.value ? '0' : '-1'
+    }
+
+    watch(paginationInfo, newPagination => {
+      const { current_page: currentPage, first_page: firstPage } = newPagination
+      focused.value = currentPage - firstPage + 2
+    })
+
+    /**
+     * @param {KeyboardEvent} event
+     * @param {number} idx
+     */
+    function handleKeydown (event, idx) {
+      const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+      const { key } = event
+      const {
+        current_page: currentPage,
+        first_page: firstPage,
+        has_previous_page: hasPreviousPage,
+        has_next_page: hasNextPage
+      } = paginationInfo.value
+
+      if (key === 'Tab') {
+        setTimeout(() => { focused.value = currentPage - firstPage + 2 })
+        return
+      }
+
+      if (!allowedKeys.includes(key)) {
+        return
+      }
+
+      event.preventDefault()
+
+      if (key === 'ArrowRight' && hasNextPage) {
+        focused.value = focused.value + 1 >= links.value + 4
+          ? (hasPreviousPage ? 0 : 2)
+          : focused.value + 1
+      } else if (key === 'ArrowRight') {
+        focused.value = focused.value + 1 >= links.value + 2
+          ? 0
+          : focused.value + 1
+      } else if (key === 'ArrowLeft' && hasPreviousPage) {
+        focused.value = focused.value - 1 < 0
+          ? (hasNextPage ? links.value + 3 : links.value + 1)
+          : focused.value - 1
+      } else if (key === 'ArrowLeft') {
+        focused.value = focused.value - 1 <= 1
+          ? links.value + 3
+          : focused.value - 1
+      } else if (key === 'Home') {
+        focused.value = hasPreviousPage ? 0 : 2
+      } else if (key === 'End') {
+        focused.value = hasNextPage ? links.value + 3 : links.value + 1
+      }
+
+      const li = paginator.value?.children?.[focused.value]
+      const button = li?.children?.[0]
+
+      button?.focus()
+    }
+
+    return {
+      links,
+      t,
+      isCurrent,
+      changePage,
+      paginator,
+      focused,
+      tabIndex,
+      handleKeydown
+    }
   }
 }
 </script>
@@ -165,7 +249,7 @@ export default {
 }
 
 .pag-button:focus-visible {
-  @apply dark:ring-offset-gray-800;
+  @apply dark:ring-offset-gray-800 z-[15];
 }
 
 .pag-button.is-left {

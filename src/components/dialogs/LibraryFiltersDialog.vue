@@ -139,8 +139,23 @@
                                     'chip is-square',
                                     checked ? 'is-active' : ''
                                   ]"
+                                  @click="checked && child.sort && toggleSort(option.value)"
                                 >
                                   {{ option.label }}
+                                  <span
+                                    aria-hidden="true"
+                                    v-if="child.sort && checked"
+                                    class="ml-1 -mr-1"
+                                  >
+                                    <ArrowSmUpIcon
+                                      :class="[
+                                        'w-4 h-4 motion-safe:transition-transform',
+                                        state.sortDirection === 'desc'
+                                          ? '-scale-y-100'
+                                          : 'scale-y-100'
+                                      ]"
+                                    />
+                                  </span>
                                 </span>
                               </RadioGroupOption>
                             </div>
@@ -185,8 +200,14 @@
 
 <script>
 import { computed, inject, reactive, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import {
+  useCollectionStore,
+  HIDE,
+  INDIFERENT,
+  ONLY
+} from '@/stores/collection'
 
 import slugify from 'slugify'
 
@@ -204,18 +225,16 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { ChevronUpIcon, XIcon } from '@heroicons/vue/solid'
-
 import {
-  FUTURE_HIDE,
-  FUTURE_INDIFERENT,
-  FUTURE_ONLY
-} from '@/store/modules/collection'
+  ArrowSmUpIcon,
+  ChevronUpIcon,
+  XIcon
+} from '@heroicons/vue/solid'
 
 export default {
   components: {
+    ArrowSmUpIcon,
     ChevronUpIcon,
-    XIcon,
     Dialog,
     DialogOverlay,
     DialogTitle,
@@ -226,7 +245,8 @@ export default {
     RadioGroupLabel,
     RadioGroupOption,
     TransitionChild,
-    TransitionRoot
+    TransitionRoot,
+    XIcon
   },
 
   emits: ['update:open', 'filter'],
@@ -236,8 +256,8 @@ export default {
   },
 
   setup (props, context) {
-    const store = useStore()
-    const { t, n, locale } = useI18n()
+    const collectionStore = useCollectionStore()
+    const { t, n, locale } = useI18n({ useScope: 'global' })
 
     const sortProperties = computed(() => {
       const properties = [
@@ -256,13 +276,13 @@ export default {
     })
 
     const groups = computed(() => {
-      const values = store.state.collection.filters.groups.items
+      const values = collectionStore.filters.groups.items
 
-      if (state.futureItems === FUTURE_HIDE) {
+      if (state.futureItems === HIDE) {
         return values
       }
 
-      return state.futureItems === FUTURE_ONLY
+      return state.futureItems === ONLY
         ? values.sort((a, b) => b.futureCount - a.futureCount)
         : values.sort((a, b) => b.totalCount - a.totalCount)
     })
@@ -275,12 +295,11 @@ export default {
     watch(open, newOpen => {
       if (newOpen) {
         Object.assign(state, {
-          groups: store.state.collection.filters.groups.selected,
-          futureItems: store.state.collection.futureItems,
-          sortDirection: store.state.collection.sortDirection,
-          sortProperty: store.state.collection.sortBy,
-          viewMode: store.state.settings.viewMode,
-          gridMode: store.state.settings.gridMode
+          favorites: collectionStore.favorites,
+          futureItems: collectionStore.futureItems,
+          groups: collectionStore.filters.groups.selected,
+          sortDirection: collectionStore.sortDirection,
+          sortProperty: collectionStore.sortBy
         })
       }
 
@@ -297,18 +316,17 @@ export default {
     }
 
     const state = reactive({
-      groups: store.state.collection.filters.groups.selected,
-      futureItems: store.state.collection.futureItems,
-      sortDirection: store.state.collection.sortDirection,
-      sortProperty: store.state.collection.sortBy,
-      viewMode: store.state.settings.viewMode,
-      gridMode: store.state.settings.gridMode
+      favorites: collectionStore.favorites,
+      futureItems: collectionStore.futureItems,
+      groups: collectionStore.filters.groups.selected,
+      sortDirection: collectionStore.sortDirection,
+      sortProperty: collectionStore.sortBy
     })
 
     const countProperty = {
-      indiferent: 'totalCount',
-      only: 'futureCount',
-      hide: 'count'
+      [INDIFERENT]: 'totalCount',
+      [ONLY]: 'futureCount',
+      [HIDE]: 'count'
     }
 
     const filters = computed(() => [
@@ -328,45 +346,46 @@ export default {
             }))
           },
           {
-            key: 'futureItems',
-            label: t('dashboard.library.filters.futureItems.label'),
+            key: 'favorites',
+            label: t('dashboard.library.filters.favorites.label'),
             options: [
               {
-                key: FUTURE_INDIFERENT,
-                value: FUTURE_INDIFERENT,
-                label: t('dashboard.library.filters.futureItems.indiferent')
+                key: INDIFERENT,
+                value: INDIFERENT,
+                label: t('dashboard.library.filters.favorites.indiferent'),
               },
               {
-                key: FUTURE_ONLY,
-                value: FUTURE_ONLY,
-                label: t('dashboard.library.filters.futureItems.only')
-              },
-              {
-                key: FUTURE_HIDE,
-                value: FUTURE_HIDE,
-                label: t('dashboard.library.filters.futureItems.hide')
+                key: ONLY,
+                value: ONLY,
+                label: t('dashboard.library.filters.favorites.only')
               }
             ]
           },
           {
-            key: 'sortDirection',
-            label: t('dashboard.library.filters.sortDirection.label'),
+            key: 'futureItems',
+            label: t('dashboard.library.filters.futureItems.label'),
             options: [
               {
-                key: 'asc',
-                value: 'asc',
-                label: t('dashboard.library.filters.sortDirection.asc')
+                key: INDIFERENT,
+                value: INDIFERENT,
+                label: t('dashboard.library.filters.futureItems.indiferent')
               },
               {
-                key: 'desc',
-                value: 'desc',
-                label: t('dashboard.library.filters.sortDirection.desc')
+                key: ONLY,
+                value: ONLY,
+                label: t('dashboard.library.filters.futureItems.only')
+              },
+              {
+                key: HIDE,
+                value: HIDE,
+                label: t('dashboard.library.filters.futureItems.hide')
               }
             ]
           },
           {
             key: 'sortProperty',
             label: t('dashboard.library.filters.sortBy'),
+            sort: true,
             options: sortProperties.value.map(property => ({
               key: property.attr,
               value: property.attr,
@@ -374,46 +393,12 @@ export default {
             }))
           }
         ]
-      },
-      {
-        title: t('dashboard.library.filters.visualization'),
-        children: [
-          {
-            key: 'viewMode',
-            label: t('dashboard.library.filters.viewMode.label'),
-            options: [
-              {
-                key: 'table',
-                value: 'table',
-                label: t('dashboard.library.filters.viewMode.table')
-              },
-              {
-                key: 'grid',
-                value: 'grid',
-                label: t('dashboard.library.filters.viewMode.grid')
-              }
-            ]
-          },
-          {
-            key: 'gridMode',
-            label: t('dashboard.library.filters.gridMode.label'),
-            hidden: state.viewMode === 'table',
-            options: [
-              {
-                key: 'compact',
-                value: 'compact',
-                label: t('dashboard.library.filters.gridMode.compact')
-              },
-              {
-                key: 'comfortable',
-                value: 'comfortable',
-                label: t('dashboard.library.filters.gridMode.comfortable')
-              }
-            ]
-          }
-        ]
       }
     ])
+
+    function toggleSort () {
+      state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
+    }
 
     return {
       groups,
@@ -424,7 +409,8 @@ export default {
       slugify,
       checked,
       state,
-      filters
+      filters,
+      toggleSort
     }
   }
 }

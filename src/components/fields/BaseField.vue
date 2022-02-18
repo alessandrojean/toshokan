@@ -70,7 +70,7 @@ export default {
       return helps.join(' ')
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       inputId,

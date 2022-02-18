@@ -2,7 +2,7 @@
   <header class="bg-white shadow dark:bg-gray-800">
     <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
       <div class="flex-1 items-center">
-        <template v-if="sheetLoading">
+        <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
           <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"></div>
           <div class="flex space-x-2">
             <div class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
@@ -23,6 +23,7 @@
             <div class="mt-1 flex flex-col md:flex-row items-start md:flex-wrap md:mt-0 md:-mb-1 md:space-x-2">
               <button
                 class="group -ml-2.5 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
+                :disabled="writing || loading"
                 @click="$emit('click:filter')"
               >
                 <span aria-hidden="true">
@@ -36,10 +37,14 @@
 
               <button
                 class="group -ml-2.5 md:ml-0 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
+                :disabled="writing || loading"
                 @click="$emit('click:filter')"
               >
                 <span aria-hidden="true">
-                  <SwitchVerticalIcon class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                  <component
+                    class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
+                    :is="sortDirection === 'asc' ? 'SortAscendingIcon' : 'SortDescendingIcon'"
+                  />
                 </span>
                 <span class="sr-only">
                   {{ t('dashboard.library.sortingBy') }}
@@ -51,7 +56,7 @@
         </div>
       </div>
       <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
-        <template v-if="sheetLoading">
+        <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
           <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"></div>
           <div class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"></div>
         </template>
@@ -61,7 +66,7 @@
             class="button flex-1 md:flex-initial justify-center md:justify-start"
             @click.stop="$emit('click:filter')"
             v-if="!sheetIsEmpty"
-            :disabled="loading"
+            :disabled="loading || writing"
           >
             <span aria-hidden="true">
               <FilterIcon aria-hidden="true" />
@@ -73,7 +78,7 @@
             type="button"
             @click="$emit('click:new')"
             class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
-            :disabled="loading"
+            :disabled="loading || writing"
           >
             <span aria-hidden="true">
               <PlusIcon aria-hidden="true" />
@@ -88,14 +93,17 @@
 
 <script>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   ArchiveIcon,
   FilterIcon,
   PlusIcon,
-  SwitchVerticalIcon
+  SortAscendingIcon,
+  SortDescendingIcon
 } from '@heroicons/vue/solid'
 
 import Avatar from '@/components/Avatar.vue'
@@ -106,7 +114,12 @@ export default {
     Avatar,
     FilterIcon,
     PlusIcon,
-    SwitchVerticalIcon
+    SortAscendingIcon,
+    SortDescendingIcon
+  },
+
+  props: {
+    writing: Boolean
   },
 
   emits: [
@@ -115,10 +128,11 @@ export default {
   ],
 
   setup () {
-    const store = useStore()
-    const { t } = useI18n()
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
+    const { t } = useI18n({ useScope: 'global' })
 
-    const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
+    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
 
     const sortPropertyNames = {
       title: t('book.properties.title'),
@@ -132,12 +146,14 @@ export default {
       updatedAt: t('book.properties.updatedAt')
     }
 
-    const sortProperty = computed(() => store.state.collection.sortBy)
+    const sortProperty = computed(() => collectionStore.sortBy)
     const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
+    const sortDirection = computed(() => collectionStore.sortDirection)
 
-    const loading = computed(() => store.state.collection.books.loading)
-    const sheetLoading = computed(() => store.state.sheet.loading)
-    const groups = computed(() => store.state.collection.filters.groups)
+    const loading = computed(() => collectionStore.books.loading)
+    const sheetLoading = computed(() => sheetStore.loading)
+    const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
+    const groups = computed(() => collectionStore.filters.groups)
 
     const currentGroups = computed(() => {
       if (groups.value.selected.length === groups.value.items.length) {
@@ -151,20 +167,22 @@ export default {
       return t('dashboard.library.groupCount', groups.value.selected.length)
     })
 
-    const canEdit = computed(() => store.getters['sheet/canEdit'])
-    const shared = computed(() => store.getters['sheet/shared'])
+    const canEdit = computed(() => sheetStore.canEdit)
+    const shared = computed(() => sheetStore.shared)
     const owner = computed(() => ({
-      displayName: store.getters['sheet/ownerDisplayName'],
-      pictureUrl: store.getters['sheet/ownerPictureUrl']
+      displayName: sheetStore.ownerDisplayName,
+      pictureUrl: sheetStore.ownerPictureUrl
     }))
 
     return {
       t,
       loading,
       sheetLoading,
+      sheetLoadedOnce,
       sheetIsEmpty,
       sortPropertyNames,
       sortPropertyName,
+      sortDirection,
       currentGroups,
       canEdit,
       shared,

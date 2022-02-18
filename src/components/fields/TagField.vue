@@ -178,7 +178,7 @@ export default {
       context.emit('update:modelValue', newTags)
     }
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       hasError,

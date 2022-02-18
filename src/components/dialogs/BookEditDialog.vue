@@ -144,8 +144,9 @@
 
 <script>
 import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   Dialog,
@@ -203,7 +204,7 @@ export default {
   emits: ['close', 'edit'],
 
   setup (props, context) {
-    const { t, n } = useI18n()
+    const { t, n } = useI18n({ useScope: 'global' })
 
     function closeDialog () {
       editFormInvalid.value = false
@@ -282,9 +283,9 @@ export default {
       { title: t('dashboard.details.organizationForm.title') }
     ])
 
-    const store = useStore()
-    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
-    const shared = computed(() => store.getters['sheet/shared'])
+    const sheetStore = useSheetStore()
+    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+    const shared = computed(() => sheetStore.shared)
 
     return {
       t,

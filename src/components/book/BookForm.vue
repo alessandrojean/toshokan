@@ -47,6 +47,7 @@
       :label="t('book.properties.synopsis')"
       :model-value="modelValue.synopsis"
       :placeholder="t('book.form.example.synopsis')"
+      :markdown-options="{ disable: ['image'] }"
       @update:model-value="handleInput('synopsis', $event)"
     />
 
@@ -208,8 +209,9 @@
 
 <script>
 import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useCollectionStore } from '@/stores/collection'
 
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
@@ -256,7 +258,7 @@ export default {
   setup (props, context) {
     const { modelValue: book, touchOnMount } = toRefs(props)
     const currencies = ref(['BRL', 'USD', 'EUR', 'JPY'])
-    const { t, locale } = useI18n()
+    const { t, locale } = useI18n({ useScope: 'global' })
 
     const bookState = reactive(cloneDeep(book.value))
     const addNotes = ref(book.value.notes ? book.value.notes.length > 0 : false)
@@ -363,12 +365,12 @@ export default {
       v$.value.$reset()
     }
 
-    const store = useStore()
+    const collectionStore = useCollectionStore()
 
-    const publisherOptions = computed(() => store.state.collection.filters.publishers.items)
-    const storeOptions = computed(() => store.state.collection.filters.stores.items)
+    const publisherOptions = computed(() => collectionStore.filters.publishers.items)
+    const storeOptions = computed(() => collectionStore.filters.stores.items)
     const groupOptions = computed(() => {
-      return store.state.collection.filters.groups.items
+      return collectionStore.filters.groups.items
         .slice()
         .sort((a, b) => a.name.localeCompare(b, locale.value))
     })
@@ -382,15 +384,15 @@ export default {
 
     onMounted(async () => {
       if (publisherOptions.value.length === 0) {
-        await store.dispatch('collection/fetchPublishers')
+        await collectionStore.fetchPublishers()
       }
 
       if (storeOptions.value.length === 0) {
-        await store.dispatch('collection/fetchStores')
+        await collectionStore.fetchStores()
       }
 
       if (groupOptions.value.length === 0) {
-        await store.dispatch('collection/fetchGroups')
+        await collectionStore.fetchGroups()
       }
     })
 

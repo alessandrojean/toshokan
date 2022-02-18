@@ -149,17 +149,15 @@
 
 <script>
 import { computed, inject, toRefs } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import useMarkdown from '@/composables/useMarkdown'
+import { useSheetStore } from '@/stores/sheet'
 
 import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
 import BookCard from '@/components/book/BookCard.vue'
-
-import useMarkdown from '@/composables/useMarkdown'
-
-import { getIsbnCountry } from '@/util/isbn'
 
 export default {
   components: {
@@ -180,8 +178,8 @@ export default {
   },
 
   setup (props) {
-    const { t, d, n, locale } = useI18n()
-    const store = useStore()
+    const { t, d, n, locale } = useI18n({ useScope: 'global' })
+    const sheetStore = useSheetStore()
     const { book, loading, collection } = toRefs(props)
 
     const showBookInfo = computed(() => {
@@ -235,7 +233,7 @@ export default {
       return n(value, 'currency', { currency })
     }
 
-    const timeZone = computed(() => store.state.sheet.timeZone)
+    const timeZone = computed(() => sheetStore.timeZone)
 
     function formatDate (date, format = 'short') {
       if (typeof date === 'string' && date.length > 0) {
@@ -253,13 +251,7 @@ export default {
       return t('dashboard.details.info.dateUnknown')
     }
 
-    const country = computed(() => {
-      if (!book.value || !book.value.codeType.includes('ISBN')) {
-        return null
-      }
-
-      return getIsbnCountry(book.value.code)
-    })
+    const country = computed(() => book.value?.isbnData)
 
     const language = computed(() => {
       if (!country.value) {

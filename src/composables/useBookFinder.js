@@ -1,12 +1,12 @@
 import { computed, readonly, ref } from 'vue'
-import { useStore } from 'vuex'
 
 import SheetService from '@/services/sheet'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBookFinder () {
-  const store = useStore()
+  const sheetStore = useSheetStore()
 
-  const sheetId = computed(() => store.state.sheet.sheetId)
+  const sheetId = computed(() => sheetStore.sheetId)
 
   const book = ref(null)
   const bookFound = ref(false)

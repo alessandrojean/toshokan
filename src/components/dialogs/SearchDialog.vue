@@ -16,6 +16,7 @@
 
         <TransitionChild
           as="div"
+          ref="dialogContent"
           class="dialog-content transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 scale-95"
@@ -30,23 +31,13 @@
 
           <form
             :class="[
-              'py-4 px-5 flex items-center space-x-3 md:space-x-4',
-              !searchLoading ? 'border-b border-gray-300 dark:border-gray-600' : ''
+              'py-4 px-5 flex items-center space-x-3 md:space-x-4 shrink-0',
+              'border-b border-gray-300 dark:border-gray-600'
             ]"
             @submit.prevent="handleSearch"
           >
             <span aria-hidden="true" class="w-6 h-6 relative">
-              <transition
-                leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-                leave-from-class="opacity-200"
-                leave-to-class="opacity-0"
-                enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-              >
-                <LoadingSpinIcon v-if="searchLoading" class="absolute w-6 h-6 animate-spin text-primary-600 dark:text-primary-400" />
-                <SearchIcon v-else class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800" />
-              </transition>
+              <SearchIcon class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800" />
             </span>
 
             <div class="flex-1">
@@ -62,19 +53,13 @@
                 ref="searchInput"
                 class="search-input"
                 :placeholder="t('dashboard.search.placeholder')"
+                :disabled="searchLoading"
                 @keyup.enter.prevent="search($event.target.value)"
+                @keyup.arrow-down.exact.prevent="focusOnResults"
               >
             </div>
 
-            <transition
-              mode="out-in"
-              leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-              leave-from-class="opacity-200"
-              leave-to-class="opacity-0"
-              enter-active-class="transition motion-reduce:transition-none duration-100 ease-out"
-              enter-from-class="opacity-0"
-              enter-to-class="opacity-100"
-            >
+            <FadeTransition>
               <button
                 type="reset"
                 class="clear-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
@@ -88,7 +73,7 @@
                   {{ t('dashboard.search.clear') }}
                 </span>
               </button>
-            </transition>
+            </FadeTransition>
 
             <Avatar
               class="shrink-0"
@@ -112,18 +97,18 @@
             </button>
           </form>
 
-          <transition
-            v-if="!searchLoading"
-            mode="out-in"
-            leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-            enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-          >
+          <FadeTransition>
             <div
-              v-if="searchResults.length > 0"
+              v-if="searchedOnce && searchResults.length === 0"
+              class="no-results"
+            >
+              <i18n-t keypath="dashboard.search.noResultsFound" tag="p" scope="global">
+                <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
+              </i18n-t>
+            </div>
+
+            <div
+              v-else-if="searchResults.length > 0"
               tabindex="-1"
               ref="results"
               class="results"
@@ -143,6 +128,7 @@
                       class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
                       v-model="sortBy"
                       id="search-sort-by"
+                      :disabled="searchLoading"
                     >
                       <option
                         v-for="sortProperty in sortProperties"
@@ -156,6 +142,7 @@
 
                   <button
                     class="button direction-button is-icon-only"
+                    :disabled="searchLoading"
                     @click="toggleSortDirection"
                   >
                     <span class="sr-only">
@@ -175,26 +162,22 @@
                 </div>
               </div>
 
-              <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+              <ul
+                class="divide-y divide-gray-200 dark:divide-gray-700"
+                ref="resultsList"
+              >
                 <li
-                  v-for="result in searchResults"
+                  v-for="(result, resultIdx) in searchResults"
                   :key="result.id"
                 >
                   <SearchItem
                     :result="result"
+                    :tabindex="resultIdx === searchItemFocused && !searchLoading ? '0' : '-1'"
                     @click="closeDialog"
+                    @keydown="handleSearchItemKeydown"
                   />
                 </li>
               </ul>
-            </div>
-
-            <div
-              v-else-if="searchedOnce && searchResults.length === 0"
-              class="no-results"
-            >
-              <i18n-t keypath="dashboard.search.noResultsFound" tag="p">
-                <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
-              </i18n-t>
             </div>
 
             <div
@@ -205,15 +188,20 @@
                 {{ t('dashboard.search.history') }}
               </h3>
 
-              <ul class="divide-y divide-gray-200 dark:divide-gray-700 border-y border-gray-200 dark:border-gray-700">
+              <ul
+                class="divide-y divide-gray-200 dark:divide-gray-700 border-y border-gray-200 dark:border-gray-700"
+                ref="historyList"
+              >
                 <li
-                  v-for="historyItem in searchHistory"
+                  v-for="(historyItem, historyIdx) in searchHistory"
                   :key="historyItem"
                 >
                   <SearchHistoryItem
+                    :tabindex="historyIdx === historyItemFocused && !searchLoading ? '0' : '-1'"
                     :search="historyItem"
                     @click="search($event)"
                     @click:remove="removeHistoryItem($event)"
+                    @keydown="handleHistoryItemKeydown"
                   />
                 </li>
               </ul>
@@ -222,33 +210,31 @@
             <div v-else class="no-history">
               <p>{{ t('dashboard.search.noHistory') }}</p>
             </div>
-          </transition>
+          </FadeTransition>
 
-          <transition
-            mode="out-in"
-            leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-            enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-          >
+          <FadeTransition>
             <div
-              v-if="!searchLoading && searchedOnce && searchResults.length > 0"
+              v-if="searchResults.length > 0"
               class="search-footer"
             >
               <p class="hidden sm:block">
-                {{ t('dashboard.search.resultCount', searchPagination.total_results) }}
+                {{ t('dashboard.search.resultCount', searchPagination?.total_results || 0) }}
               </p>
 
               <Paginator
-                v-if="searchPagination.total_pages > 1"
-                enabled
+                v-if="searchPagination && searchPagination.total_pages > 1"
+                :enabled="!searchLoading"
                 :pagination-info="searchPagination"
                 @page="handlePageChange"
               />
             </div>
-          </transition>
+          </FadeTransition>
+
+          <LoadingIndicator
+            :loading="searchLoading"
+            :blur="false"
+            z-index="z-50"
+          />
         </TransitionChild>
       </div>
     </Dialog>
@@ -256,9 +242,11 @@
 </template>
 
 <script>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
+import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import { useSearchStore } from '@/stores/search'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   Dialog,
@@ -276,12 +264,11 @@ import {
 import { SearchIcon } from '@heroicons/vue/outline'
 
 import Avatar from '@/components/Avatar.vue'
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import Paginator from '@/components/Paginator.vue'
 import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
-
-import { MutationTypes } from '@/store'
 
 export default {
   components: {
@@ -289,16 +276,17 @@ export default {
     Dialog,
     DialogOverlay,
     DialogTitle,
-    TransitionChild,
-    TransitionRoot,
+    FadeTransition,
+    LoadingIndicator,
     Paginator,
     SearchHistoryItem,
     SearchIcon,
     SearchItem,
     SortAscendingIcon,
     SortDescendingIcon,
-    XIcon,
-    LoadingSpinIcon
+    TransitionChild,
+    TransitionRoot,
+    XIcon
   },
 
   props: {
@@ -308,29 +296,31 @@ export default {
   emits: ['close'],
 
   setup (props, context) {
-    const { t, locale } = useI18n()
+    const { t, locale } = useI18n({ useScope: 'global' })
 
-    const store = useStore()
+    const searchStore = useSearchStore()
+    const sheetStore = useSheetStore()
 
-    const loading = computed(() => store.state.sheet.loading)
+    const loading = computed(() => sheetStore.loading)
 
     const searchQuery = ref('')
     const searchedOnce = ref(false)
     const searchedTerm = ref('')
-    const searchLoading = computed(() => store.state.search.loading)
-    const searchResults = computed(() => store.state.search.results)
-    const searchHistory = computed(() => store.state.search.history)
-    const searchPagination = computed(() => store.state.search.paginationInfo)
+    const searchLoading = computed(() => searchStore.loading)
+    const searchResults = computed(() => searchStore.results)
+    const searchHistory = computed(() => searchStore.history)
+    const searchPagination = computed(() => searchStore.pagination)
 
     const searchInput = ref(null)
     const results = ref(null)
+    const dialogContent = ref(null)
 
     function clearSearch (focusOnInput) {
       searchQuery.value = ''
       searchedOnce.value = false
       searchedTerm.value = ''
 
-      store.commit(MutationTypes.SEARCH_CLEAR)
+      searchStore.clear()
 
       if (focusOnInput) {
         searchInput.value?.focus()
@@ -347,23 +337,31 @@ export default {
       const searchTerm = query || searchQuery.value
       searchQuery.value = searchTerm
 
+      const focusedElement = document.activeElement
+
       if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
-        searchInput.value?.blur()
+        focusedElement?.blur()
+        searchItemFocused.value = 0
+        historyItemFocused.value = 0
 
-        await store.dispatch('search/search', {
-          query: searchTerm,
-          page
-        })
-
-        if (searchResults.value.length > 0 && query) {
-          results.value?.focus()
-        } else {
-          searchInput.value?.focus()
-        }
+        await searchStore.search({ query: searchTerm, page })
 
         searchQuery.value = searchTerm
         searchedOnce.value = true
         searchedTerm.value = searchTerm
+
+        nextTick(() => {
+          if (
+            focusedElement?.classList.contains('history-item') ||
+            focusedElement?.classList.contains('pag-button')
+          ) {
+            setTimeout(() => {
+              focusOnElement(resultsList.value, searchItemFocused.value)
+            }, 210)
+          } else {
+            focusedElement?.focus()
+          }
+        })
       }
     }
 
@@ -395,17 +393,17 @@ export default {
     })
 
     const sortBy = computed({
-      get: () => store.state.search.sortBy,
+      get: () => searchStore.sortBy,
       set: async val => {
-        store.commit(MutationTypes.SEARCH_UPDATE_SORT, { sortBy: val })
+        searchStore.updateSort({ sortBy: val })
         await search()
       }
     })
 
     const sortDirection = computed({
-      get: () => store.state.collection.sortDirection,
+      get: () => searchStore.sortDirection,
       set: async val => {
-        store.commit(MutationTypes.SEARCH_UPDATE_SORT, { sortDirection: val })
+        searchStore.updateSort({ sortDirection: val })
         await search()
       }
     })
@@ -433,18 +431,130 @@ export default {
     function removeHistoryItem (item) {
       const newHistory = searchHistory.value.filter(s => s !== item)
 
-      store.commit(MutationTypes.SEARCH_UPDATE_HISTORY, newHistory)
+      searchStore.updateHistory(newHistory)
     }
 
     async function handlePageChange (page) {
       await search(null, page)
     }
 
-    const shared = computed(() => store.getters['sheet/shared'])
+    const shared = computed(() => sheetStore.shared)
     const owner = computed(() => ({
-      displayName: store.getters['sheet/ownerDisplayName'],
-      pictureUrl: store.getters['sheet/ownerPictureUrl']
+      displayName: sheetStore.ownerDisplayName,
+      pictureUrl: sheetStore.ownerPictureUrl
     }))
+
+    const resultsList = ref(null)
+    const historyList = ref(null)
+    const searchItemFocused = ref(0)
+    const historyItemFocused = ref(0)
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleSearchItemKeydown (event) {
+      if (!resultsList.value || searchLoading.value) {
+        return
+      }
+
+      const nextValue = handleItemKeydown(
+        event,
+        searchItemFocused.value,
+        searchResults.value.length
+      )
+
+      if (nextValue === null) {
+        return
+      }
+
+      searchItemFocused.value = nextValue
+
+      focusOnElement(resultsList.value, searchItemFocused.value)
+    }
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleHistoryItemKeydown (event) {
+      if (!historyList.value || searchLoading.value) {
+        return
+      }
+
+      if (event.key === 'Delete') {
+        removeHistoryItem(searchHistory.value[historyItemFocused.value])
+
+        if (searchHistory.value.length === 0) {
+          historyItemFocused.value = 0
+        } else if (historyItemFocused.value > searchHistory.value.length - 1) {
+          historyItemFocused.value--
+        }
+      } else {
+        const nextValue = handleItemKeydown(
+          event,
+          historyItemFocused.value,
+          searchHistory.value.length
+        )
+
+        if (nextValue === null) {
+          return
+        }
+
+        historyItemFocused.value = nextValue
+      }
+
+      nextTick(() => {
+        focusOnElement(historyList.value, historyItemFocused.value)
+      })
+    }
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleItemKeydown (event, focused, totalItems) {
+      const allowedKeys = ['ArrowUp', 'ArrowDown', 'Home', 'End']
+      const { key } = event
+
+      if (!allowedKeys.includes(key)) {
+        return null
+      }
+
+      if (key === 'Home' && focused === 0) {
+        return null
+      }
+
+      if (key === 'End' && focused === totalItems - 1) {
+        return null
+      }
+
+      event.preventDefault()
+
+      if (key === 'ArrowDown') {
+        return (focused + 1) % totalItems
+      } else if (key === 'ArrowUp') {
+        return focused - 1 < 0
+          ? totalItems - 1
+          : focused - 1
+      } else if (key === 'Home') {
+        return 0
+      } else {
+        return totalItems - 1
+      }
+    }
+
+    function focusOnElement (container, i) {
+      const li = container?.children?.[i]
+      const element = li?.children?.[0]
+
+      element?.focus()
+    }
+
+    function focusOnResults () {
+      if (!searchLoading.value && searchResults.value.length > 0) {
+        focusOnElement(resultsList.value, searchItemFocused.value)
+      } else if (searchHistory.value.length > 0) {
+        focusOnElement(historyList.value, historyItemFocused.value)
+      }
+    }
 
     return {
       t,
@@ -457,6 +567,7 @@ export default {
       searchHistory,
       searchPagination,
       searchInput,
+      dialogContent,
       results,
       handleSubmit,
       clearSearch,
@@ -469,7 +580,15 @@ export default {
       removeHistoryItem,
       handlePageChange,
       shared,
-      owner
+      owner,
+      resultsList,
+      historyList,
+      searchItemFocused,
+      historyItemFocused,
+      handleItemKeydown,
+      handleSearchItemKeydown,
+      handleHistoryItemKeydown,
+      focusOnResults
     }
   }
 }
@@ -535,11 +654,11 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .results {
-  @apply flex-1 overflow-y-auto p-5 space-y-3.5;
+  @apply grow overflow-y-auto pt-5 space-y-3.5;
 }
 
 .results-header {
-  @apply flex flex-col sm:flex-row space-y-2 sm:space-y-0
+  @apply px-5 flex flex-col sm:flex-row space-y-2 sm:space-y-0
     justify-between sm:items-center;
 }
 
@@ -578,11 +697,11 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .history {
-  @apply flex-1 overflow-y-auto space-y-3.5 pt-6 pb-5;
+  @apply grow overflow-y-auto space-y-3.5 pt-6 pb-5;
 }
 
 .search-footer {
-  @apply border-t border-gray-300 dark:border-gray-600
+  @apply shrink-0 border-t border-gray-300 dark:border-gray-600
     text-sm text-gray-600 dark:text-gray-400 font-medium
     py-4 px-5 flex justify-center sm:justify-between items-center;
 }

@@ -36,13 +36,13 @@
 
 <script>
 import { computed, defineAsyncComponent } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import colors from 'tailwindcss/colors'
 
 import useDarkMode from '@/composables/useDarkMode'
 import useMotionSafe from '@/composables/useMotionSafe'
+import { useSheetStore } from '@/stores/sheet'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -61,12 +61,12 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const sheetStore = useSheetStore()
 
-    const loading = computed(() => store.state.sheet.loading)
-    const stats = computed(() => store.state.sheet.stats)
+    const loading = computed(() => sheetStore.loading)
+    const stats = computed(() => sheetStore.stats)
 
-    const { n, t, d, locale } = useI18n()
+    const { n, t, d, locale } = useI18n({ useScope: 'global' })
 
     const localeStr = computed(() => {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()

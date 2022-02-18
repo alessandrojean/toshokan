@@ -27,13 +27,10 @@ export default {
   },
 
   setup () {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { renderMarkdown } = useMarkdown({
-      mdOptions: {
-        html: true,
-        typographer: true
-      }
+      mdOptions: { typographer: true }
     })
 
     const body = ref(

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import store, { MutationTypes } from '../store'
 import i18n from '../i18n'
+import { useAuthStore } from '@/stores/auth'
+import { useStore } from '@/stores/main'
 
 import Home from '@/views/Home.vue'
 import SignIn from '@/views/SignIn.vue'
@@ -156,22 +157,25 @@ router.afterEach(to => {
  * Check if user is signed in in dashboard routes.
  */
 router.beforeEach(async (to, _, next) => {
+  const authStore = useAuthStore()
+  const mainStore = useStore()
+
   if (to.fullPath.includes('/dashboard')) {
-    if (store.getters['auth/isStarted'] && store.getters['auth/isSignedIn']) {
+    if (authStore.isStarted && authStore.isSignedIn) {
       next()
       return
     }
 
-    if (!store.getters['auth/isStarted']) {
+    if (!authStore.isStarted) {
       let isSignedIn
 
       try {
-        isSignedIn = await store.dispatch('auth/initApp')
+        isSignedIn = await authStore.initApp()
         isSignedIn ? next() : next('/sign-in')
       } catch (e) {
         isSignedIn = false
         console.error(e)
-        store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
+        mainStore.updateCriticalError(e)
         next('/error')
       }
 
@@ -182,13 +186,13 @@ router.beforeEach(async (to, _, next) => {
     return
   }
 
-  if (!store.getters['auth/isStarted'] && !store.getters.hasCriticalError) {
+  if (!authStore.isStarted && !mainStore.hasCriticalError) {
     try {
-      const isSignedIn = await store.dispatch('auth/initApp')
+      const isSignedIn = await authStore.initApp()
       isSignedIn && to.path === '/sign-in' ? next('/dashboard') : next()
     } catch (e) {
       console.error(e)
-      store.commit(MutationTypes.UPDATE_CRITICAL_ERROR, e)
+      mainStore.updateCriticalError(e)
       next('/error')
     }
 

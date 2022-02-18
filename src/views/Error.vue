@@ -57,10 +57,11 @@
 <script>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import useAppInfo from '@/composables/useAppInfo'
+import { useAuthStore } from '@/stores/auth'
+import { useStore } from '@/stores/main'
 
 import { IdentificationIcon, RefreshIcon } from '@heroicons/vue/solid'
 
@@ -69,12 +70,13 @@ export default {
 
   setup () {
     const router = useRouter()
-    const store = useStore()
+    const authStore = useAuthStore()
+    const mainStore = useStore()
 
     const { appVersion } = useAppInfo()
 
-    const hasCriticalError = computed(() => store.getters.hasCriticalError)
-    const criticalError = computed(() => store.state.criticalError)
+    const hasCriticalError = computed(() => mainStore.hasCriticalError)
+    const criticalError = computed(() => mainStore.criticalError)
 
     onMounted(() => {
       if (!hasCriticalError.value) {
@@ -84,16 +86,16 @@ export default {
 
     const isDev = ref(import.meta.env.DEV)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     function refresh () {
       window.location.reload()
     }
 
-    const hasGrantedScopes = computed(() => store.state.auth.hasGrantedScopes)
+    const hasGrantedScopes = computed(() => authStore.hasGrantedScopes)
 
     async function grantPermissions () {
-      await store.dispatch('auth/grantPermissions')
+      await authStore.grantPermissions()
     }
 
     watch(hasGrantedScopes, newValue => {

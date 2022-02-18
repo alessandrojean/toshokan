@@ -89,7 +89,7 @@ export default {
   setup (props) {
     const showValue = ref(!props.sensitive)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return { showValue, t }
   }

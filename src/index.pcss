@@ -6,6 +6,14 @@
   html.dark {
     color-scheme: dark;
   }
+
+  svg path[stroke-width="2"] {
+    stroke-width: 1.8;
+  }
+
+  html.dark svg path[stroke-width="2"] {
+    stroke-width: 1.6;
+  }
 }
 
 @layer components {
@@ -33,7 +41,7 @@
   }
   
   .jump-to:focus-visible {
-    @apply not-sr-only fixed left-2 top-2 z-10 
+    @apply not-sr-only fixed left-2 top-2 z-30 
       px-3 py-2 bg-white dark:bg-gray-600 
       text-primary-600 dark:text-white 
       font-medium rounded outline-none 
@@ -104,9 +112,14 @@
     @apply dark:bg-primary-500 dark:border-primary-500;
   }
 
-  .checkbox:hover:not(:checked):not(:focus),
-  .radio:hover:not(:checked):not(:focus) {
+  .checkbox:hover:not(:checked):not(:focus):not(:disabled),
+  .radio:hover:not(:checked):not(:focus):not(:disabled) {
     @apply border-gray-500 dark:border-gray-400 transition-none;
+  }
+
+  .checkbox:disabled,
+  .radio:disabled {
+    @apply opacity-50;
   }
   
   .button {
@@ -284,7 +297,7 @@
   
   .chip {
     @apply text-sm px-3 py-1 cursor-pointer rounded-full select-none
-      inline-block motion-safe:transition-colors duration-300 
+      inline-flex items-center motion-safe:transition-colors duration-300 
       bg-white dark:bg-gray-700 dark:text-gray-200 
       border border-gray-300 dark:border-gray-700;
   }
@@ -294,13 +307,14 @@
   }
   
   .chip.is-active {
-    @apply bg-primary-100 dark:bg-primary-900 
+    @apply bg-primary-100 dark:bg-primary-800/50 
       text-primary-600 dark:text-primary-100 
-      border-primary-500 dark:border-primary-500;
+      border-primary-500/50 dark:border-primary-400/50;
   }
   
   .chip.is-active:hover {
-    @apply bg-primary-200 dark:bg-primary-800 dark:border-primary-400;
+    @apply bg-primary-200/80 dark:bg-primary-800/80
+      dark:border-primary-400/70;
   }
   
   .chip.is-square {
@@ -309,7 +323,7 @@
 
   .chip .count {
     @apply text-xxs font-semibold uppercase tracking-wide
-      px-1.5 py-px rounded-xl ml-2 -mr-1
+      px-1.5 rounded-xl ml-2 -mr-1 leading-normal
       bg-primary-100 dark:bg-gray-600
       text-primary-900 dark:text-gray-200;
   }
@@ -341,4 +355,61 @@
       motion-safe:transition-opacity
       backdrop-filter backdrop-blur-sm;
   }  
+
+  .table-column-header {
+    @apply align-text-bottom space-x-1 
+      text-left text-sm pr-6 py-3
+      text-gray-600 dark:text-gray-300;
+  }
+
+  .table-column-header:first-child {
+    @apply pl-6;
+  }
+
+  .table-column-header[aria-sort] {
+    @apply py-0 px-0;
+  }
+
+  .table-column-header[aria-sort] > button {
+    @apply text-sm font-semibold py-3 px-3 w-full text-left transition-none;
+  }
+
+  .table-column-header[aria-sort] > button:not(:disabled):where(:hover, :focus-visible) {
+    @apply text-gray-800 dark:text-gray-100
+      underline underline-offset-1 decoration-2
+      decoration-primary-600/60 dark:decoration-primary-400/80;
+  }
+
+  .table-column-header[aria-sort] > button:not(:disabled):active {
+    @apply bg-gray-700/5 dark:bg-gray-700/40;
+  }
+
+  .badge {
+    @apply px-2.5 inline-flex text-xs leading-5
+      font-semibold rounded-full
+      bg-gray-200 dark:bg-gray-700
+      text-gray-800 dark:text-gray-300
+      dark:border dark:border-gray-500;
+  }
+
+  .badge.is-read,
+  .badge.is-green {
+    @apply bg-emerald-100 dark:bg-emerald-900/50
+      text-emerald-800 dark:text-emerald-500
+      dark:border-emerald-500/40;
+  }
+
+  .badge.is-unread,
+  .badge.is-red {
+    @apply bg-red-100 dark:bg-red-900/40
+      text-red-800 dark:text-red-400/90
+      dark:border-red-400/25;
+  }
+
+  .badge.is-future,
+  .badge.is-blue {
+    @apply bg-blue-100 dark:bg-blue-800/40
+      text-blue-700 dark:text-blue-400
+      dark:border-blue-400/40;
+  }
 }

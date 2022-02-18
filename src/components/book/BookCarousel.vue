@@ -36,19 +36,24 @@
       :class="[
         collectionItems.length < 3
           ? 'grid grid-cols-2'
-          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid',
+          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x md:snap-none flex md:grid',
         'md:grid-cols-5 lg:grid-cols-6 gap-5'
       ]"
+      ref="carousel"
     >
       <li
         v-for="(book, bookIdx) in collectionItems"
         :key="book.id"
-        :class="collectionItems.length > 2 ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto' : ''"
+        :class="[
+          collectionItems.length > 2 ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto snap-start md:snap-none scroll-ml-5 md:scroll-ml-0' : '',
+          bookIdx === 5 ? 'md:hidden lg:block' : ''
+        ]"
       >
         <BookCard
           :book="book"
           :loading="loading"
-          :class="bookIdx === 5 ? 'md:hidden lg:block' : ''"
+          :tabindex="focused === bookIdx ? '0' : '-1'"
+          @keydown="handleKeydown"
         />
       </li>
     </ul>
@@ -56,12 +61,14 @@
 </template>
 
 <script>
-import { computed, onMounted, toRefs, watch } from 'vue'
-import { useStore } from 'vuex'
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
+
+import { useSheetStore } from '@/stores/sheet'
 
 import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 
 import BookCard from '@/components/book/BookCard.vue'
+import { useCollectionStore } from '@/stores/collection'
 
 export default {
   components: { BookCard, ArrowSmRightIcon },
@@ -85,22 +92,25 @@ export default {
 
   setup (props) {
     const { collection } = toRefs(props)
-    const store = useStore()
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
 
-    const sheetLoading = computed(() => store.state.sheet.loading)
-    const sheetId = computed(() => store.state.sheet.sheetId)
+    const sheetLoading = computed(() => sheetStore.loading)
+    const sheetId = computed(() => sheetStore.sheetId)
 
     const loading = computed(() => {
-      return store.state.collection.carousels[collection.value].loading
+      return collectionStore.carousels[collection.value].loading
     })
     const collectionItems = computed(() => {
-      return store.state.collection.carousels[collection.value].items
+      return collectionStore.carousels[collection.value].items
     })
 
-    function fetchCollectionItems () {
+    async function fetchCollectionItems () {
+      focused.value = 0
+
       const method = collection.value.substring(0, 1).toUpperCase() +
         collection.value.substring(1)
-      store.dispatch(`collection/fetch${method}`)
+      await collectionStore['fetch' + method]?.()
     }
 
     onMounted(() => {
@@ -115,10 +125,63 @@ export default {
       }
     })
 
+    const carousel = ref(null)
+    const focused = ref(0)
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleKeydown (event) {
+      const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+      const { key } = event
+
+      if (key === 'Tab') {
+        setTimeout(() => { focused.value = 0 })
+        return
+      }
+
+      if (!allowedKeys.includes(key)) {
+        return
+      }
+
+      // https://stackoverflow.com/a/21696585
+      const visibleItems = Array.from(carousel.value.children)
+        .filter(el => el.offsetParent !== null)
+      const totalItems = visibleItems.length
+
+      if (key === 'Home' && focused.value === 0) {
+        return
+      }
+
+      if (key === 'End' && focused.value === totalItems - 1) {
+        return
+      }
+
+      event.preventDefault()
+
+      if (key === 'ArrowRight') {
+        focused.value = Math.min(focused.value + 1, totalItems - 1)
+      } else if (key === 'ArrowLeft') {
+        focused.value = Math.max(focused.value - 1, 0)
+      } else if (key === 'Home') {
+        focused.value = 0
+      } else if (key === 'End') {
+        focused.value = totalItems - 1
+      }
+
+      const li = carousel.value?.children?.[focused.value]
+      const card = li?.children?.[0]
+
+      card?.focus()
+    }
+
     return {
       sheetLoading,
       loading,
-      collectionItems
+      collectionItems,
+      carousel,
+      focused,
+      handleKeydown
     }
   }
 }

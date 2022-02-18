@@ -92,7 +92,7 @@ export default {
   emits: ['close'],
 
   setup (props) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { open } = toRefs(props)
 

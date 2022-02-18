@@ -3,7 +3,6 @@
     <Dialog
       static
       :open="isOpen"
-      :initial-focus="isbnSearchInput"
       @close="closeDialog"
     >
       <div class="dialog">
@@ -158,34 +157,36 @@
                   v-if="book.coverUrl.length > 0"
                   class="w-48 sm:w-auto max-w-full sm:max-w-none mb-8 sm:mb-0 mt-3 sm:mt-0"
                 >
-                  <transition
-                    mode="out-in"
-                    leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-                    leave-from-class="opacity-100"
-                    leave-to-class="opacity-0"
-                    enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-                    enter-from-class="opacity-0"
-                    enter-to-class="opacity-100"
-                  >
-                    <div
-                      v-if="imageLoading || imageHasError"
-                      class="aspect-w-1 aspect-h-1"
-                      aria-hidden="true"
+                  <div class="sm:sticky sm:top-0">
+                    <transition
+                      mode="out-in"
+                      leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
+                      leave-from-class="opacity-100"
+                      leave-to-class="opacity-0"
+                      enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+                      enter-from-class="opacity-0"
+                      enter-to-class="opacity-100"
                     >
-                      <div class="flex justify-center items-center w-full h-full">
-                        <PhotographIcon
-                          :class="imageLoading ? 'motion-safe:animate-pulse' : ''"
-                          class="w-10 h-10 text-gray-300"
-                        />
+                      <div
+                        v-if="imageLoading || imageHasError"
+                        class="aspect-w-1 aspect-h-1"
+                        aria-hidden="true"
+                      >
+                        <div class="flex justify-center items-center w-full h-full">
+                          <PhotographIcon
+                            :class="imageLoading ? 'motion-safe:animate-pulse' : ''"
+                            class="w-10 h-10 text-gray-300"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <img
-                      v-else
-                      :src="book.coverUrl"
-                      :alt="book.title"
-                      class="w-full rounded-md shadow"
-                    />
-                  </transition>
+                      <img
+                        v-else
+                        :src="book.coverUrl"
+                        :alt="book.title"
+                        class="w-full rounded-md shadow"
+                      />
+                    </transition>
+                  </div>
                 </div>
                 <div :class="book.coverUrl.length > 0 ? 'col-span-2' : 'col-span-3'">
                   <DescriptionList
@@ -223,7 +224,7 @@
             <button
               v-else-if="step === 4"
               type="button"
-              class="button is-primary ml-2"
+              class="button is-primary"
               @click.stop="handleInsertBook"
             >
               <CheckIcon aria-hidden="true" />
@@ -232,7 +233,7 @@
             <button
               v-else
               type="button"
-              class="button is-primary ml-2"
+              class="button is-primary"
               @click.stop="nextStep"
             >
               {{ nextStepText }}
@@ -280,8 +281,12 @@
 <script>
 import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+
+import useBookInserter from '@/composables/useBookInserter'
+import useMarkdown from '@/composables/useMarkdown'
+import useImageLoader from '@/composables/useImageLoader'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   Dialog,
@@ -304,10 +309,6 @@ import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import BulletSteps from '@/components/BulletSteps.vue'
 import DescriptionList from '@/components/DescriptionList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-
-import useBookInserter from '@/composables/useBookInserter'
-import useMarkdown from '@/composables/useMarkdown'
-import useImageLoader from '@/composables/useImageLoader'
 
 import Book, { STATUS_UNREAD } from '@/model/Book'
 
@@ -341,7 +342,7 @@ export default {
   emits: ['close'],
 
   setup (props, context) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     function resetSteps () {
       step.value = 1
@@ -472,6 +473,7 @@ export default {
         Object.assign(book, cloneDeep(bookInitialState))
         window.addEventListener('beforeunload', preventUnload)
         disableSearchShortcut()
+        nextTick(() => isbnSearchInput.value?.focus())
       } else {
         window.removeEventListener('beforeunload', preventUnload)
         enableSearchShortcut()
@@ -537,9 +539,9 @@ export default {
       return bookProviderSearch.value?.$el.querySelector('#book-isbn')
     })
 
-    const store = useStore()
-    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
-    const shared = computed(() => store.getters['sheet/shared'])
+    const sheetStore = useSheetStore()
+    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+    const shared = computed(() => sheetStore.shared)
 
     return {
       t,
@@ -578,9 +580,9 @@ export default {
 
 function useRevisionStep (book) {
   const { t, d, n } = useI18n({ useScope: 'global' })
-  const store = useStore()
+  const sheetStore = useSheetStore()
 
-  const timeZone = computed(() => store.state.sheet.timeZone)
+  const timeZone = computed(() => sheetStore.timeZone)
 
   function formatPrice ({ value, currency }) {
     return n(value, 'currency', { currency })
@@ -741,6 +743,7 @@ function useRevisionStep (book) {
 
 .dialog-footer {
   @apply shrink-0 flex flex-row-reverse justify-start
+    space-x-2 space-x-reverse
     border-t border-gray-200 dark:border-gray-600
     bg-gray-50 dark:bg-gray-800
     px-4 md:px-6 py-3 md:py-4;

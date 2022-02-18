@@ -5,6 +5,7 @@ export default {
     name: 'Toshokan',
     localeName: 'Português (Brasil)',
     localeFlag: 'BR',
+    starting: 'Iniciando a aplicação.',
     routes: {
       home: 'Início',
       signIn: 'Autentique-se',
@@ -44,10 +45,7 @@ export default {
   pwa: {
     newContent: {
       title: 'Novos conteúdos disponíveis',
-      message: dedent`
-        A aplicação possui uma versão mais recente e a página será
-        atualizada ao clicar em Atualizar.
-      `,
+      message: 'A aplicação possui uma versão mais recente disponível!',
       update: 'Atualizar',
       close: 'Fechar'
     }
@@ -143,8 +141,9 @@ export default {
       }
     },
     deleteModal: {
-      title: 'Deletar livro',
-      message1: 'Você tem certeza de que deseja deletar este livro?',
+      title: 'Deletar livro | Deletar livros',
+      message1: 'Você tem certeza de que deseja deletar este livro? | ' +
+        'Você tem certeza de que deseja deletar estes livros?',
       message2: 'Esta ação não pode ser revertida.',
       delete: 'Deletar',
       cancel: 'Cancelar'
@@ -453,7 +452,8 @@ export default {
       items: {
         current: 'Itens de todos os grupos | Itens do grupo {count} | Itens de {count} grupos',
         tableColumns: {
-          actions: 'Ações'
+          actions: 'Ações',
+          deleteSelection: 'Deletar'
         },
         view: 'Visualizar'
       },
@@ -472,7 +472,9 @@ export default {
         gridMode: {
           label: 'Modo da grade',
           compact: 'Compacto',
-          comfortable: 'Confortável'
+          compactGrid: 'Grade compacta',
+          comfortable: 'Confortável',
+          comfortableGrid: 'Grade confortável'
         },
         groups: 'Grupos',
         sortDirection: {
@@ -481,6 +483,11 @@ export default {
           desc: 'Decrescente'
         },
         sortBy: 'Ordenar por',
+        favorites: {
+          label: 'Favoritos',
+          indiferent: 'Indiferente',
+          only: 'Somente'
+        },
         futureItems: {
           label: 'Itens futuros',
           indiferent: 'Indiferente',
@@ -800,7 +807,7 @@ export default {
 
         - Autentique-se com sua conta no site do [Google Drive]({googleDriveLink}).
         - Acesse [esta planilha]({templateSheetLink}) e faça uma
-          cópia em <span class="command">Arquivo → Fazer uma cópia</span>.
+          cópia em **Arquivo → Fazer uma cópia**.
         - **Não renomeie o arquivo**, o nome deve ser mantido como **Toshokan**.
 
         Nas próximas vezes, a planilha copiada será escolhida automaticamente.
@@ -811,8 +818,7 @@ export default {
         a gerenciar sua coleção no Toshokan, autenticando-se com sua
         Conta do Google.
 
-        - Acesse a página inicial e clique em
-          <span class="command">Entrar com Google</span>.
+        - Acesse a página inicial e clique em **Entrar com Google**.
         - Permita o acesso do Toshokan às informações requisitadas em sua conta.
 
         Nas próximas vezes, você não precisará conceder a permissão novamente.
@@ -841,7 +847,7 @@ export default {
         do livro na próxima etapa, isso se o código é válido e um livro
         com tal código existe no banco de dados do provedor.
 
-        {figure1}
+        ![Primeira etapa: pesquisa por ISBN.]({figure1})
 
         O ISBN para a pesquisa pode ser digitado com ou sem os hífens,
         e a pesquisa também funciona para livros mais antigos que utilizem
@@ -853,7 +859,7 @@ export default {
         possui um ISBN brasileiro, você poderá optar por
         **Preencher manualmente**.
 
-        {figure2}
+        ![Segunda etapa: preenchimento dos metadados do livro.]({figure2})
 
         As informações do livro no provedor de pesquisa não necessariamente
         estão corretas e/ou seguem um padrão, portanto na maioria das vezes
@@ -928,7 +934,7 @@ export default {
           ou não possua mais esta informação, você pode deixar o valor
           do campo em branco apagando o dia, mês e ano.
 
-        {figure3}
+        ![Metadados do livro preenchidos corretamente.]({figure3})
 
         ### Imagem de capa
 
@@ -939,7 +945,7 @@ export default {
         Caso você queira deixar o sem imagem, basta não selecionar
         nenhuma das opções.
 
-        {figure4}
+        ![Terceira etapa: escolha da imagem de capa.]({figure4})
 
         ### Revisão das informações
 
@@ -947,33 +953,24 @@ export default {
         você pode realizar uma última revisão das informações antes
         de concluir o procedimento e adicionar o novo livro na planilha.
 
-        {figure5}
+        ![Quarta etapa: revisão das informações.]({figure5})
 
         Caso todas as informações estejam corretas, você deve
-        clicar em <span class="command">Concluir</span>.
+        clicar em **Concluir**.
 
-        {figure6}
+        ![Diálogo de confirmação de criação.]({figure6})
 
         Com isso, o livro será adicionado na planilha e você poderá em
-        seguida optar por <span class="command">Visualizar</span>,
-        caso queira ir direto para a página com as informações,
-        ou <span class="command">Novo livro</span> caso queira
+        seguida optar por **Visualizar**, caso queira ir direto para a
+        página com as informações, ou **Novo livro** caso queira
         adicionar um em sequência.
 
-        {figure7}
+        ![Página das informações do livro.]({figure7})
 
         Agora o livro está salvo na planilha e você já pode continuar
         o procedimento ao inserir novos ou explorar sua biblioteca
-        através do item <span class="command">Biblioteca</span>
-        na navegação principal.
-      `,
-      legend1: 'Primeira etapa: pesquisa por ISBN.',
-      legend2: 'Segunda etapa: preenchimento dos metadados do livro.',
-      legend3: 'Metadados do livro preenchidos corretamente.',
-      legend4: 'Terceira etapa: escolha da imagem de capa.',
-      legend5: 'Quarta etapa: revisão das informações.',
-      legend6: 'Diálogo de confirmação de criação.',
-      legend7: 'Página das informações do livro.'
+        através do item **Biblioteca** na navegação principal.
+      `
     },
     privacyPolicy: {
       title: 'Política de Privacidade',

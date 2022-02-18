@@ -81,8 +81,14 @@
 
 <script>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import {
+  useSettingsStore,
+  THEME_SYSTEM,
+  THEME_DARK,
+  THEME_LIGHT
+} from '@/stores/settings'
 
 import {
   Listbox,
@@ -99,8 +105,6 @@ import {
   MoonIcon as MoonIconSolid,
   SunIcon as SunIconSolid
 } from '@heroicons/vue/solid'
-
-import { MutationTypes } from '@/store'
 
 export default {
   components: {
@@ -122,18 +126,18 @@ export default {
 
   setup () {
     const { t } = useI18n({ useScope: 'global' })
-    const store = useStore()
+    const settingsStore = useSettingsStore()
 
     const theme = computed({
-      get: () => store.state.theme,
-      set: newTheme => store.commit(MutationTypes.UPDATE_THEME, newTheme)
+      get: () => settingsStore.theme,
+      set: newTheme => settingsStore.updateTheme(newTheme)
     })
 
     const options = computed(() => [
-      { key: 'light', icon: SunIcon, menuIcon: SunIconSolid },
-      { key: 'dark', icon: MoonIcon, menuIcon: MoonIconSolid },
+      { key: THEME_LIGHT, icon: SunIcon, menuIcon: SunIconSolid },
+      { key: THEME_DARK, icon: MoonIcon, menuIcon: MoonIconSolid },
       {
-        key: 'system',
+        key: THEME_SYSTEM,
         responsive: true,
         menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
       }

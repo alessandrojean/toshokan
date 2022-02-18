@@ -5,7 +5,7 @@
     class="space-y-6"
   >
     <div>
-      <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
+      <div class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700 relative overflow-hidden">
         <transition
           mode="out-in"
           leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
@@ -23,7 +23,7 @@
             <RadioGroupLabel class="sr-only">
               {{ t('book.coverSelector.label') }}
             </RadioGroupLabel>
-            <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
               <RadioGroupOption
                 class="focus:outline-none"
                 v-for="result of results"
@@ -52,6 +52,12 @@
             </p>
           </div>
         </transition>
+
+        <LoadingIndicator
+          class="rounded-lg"
+          :loading="finding"
+          small
+        />
       </div>
 
       <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" aria-hidden="true">
@@ -137,18 +143,20 @@ import { PlusIcon } from '@heroicons/vue/solid'
 
 import Alert from '@/components/Alert.vue'
 import CoverOption from '@/components/CoverOption.vue'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export default {
   name: 'BookCoverSelector',
 
   components: {
-    RadioGroup,
-    RadioGroupLabel,
-    RadioGroupOption,
     Alert,
     CoverOption,
     EmojiSadIcon,
-    PlusIcon
+    LoadingIndicator,
+    PlusIcon,
+    RadioGroup,
+    RadioGroupLabel,
+    RadioGroupOption
   },
 
   props: {
@@ -165,7 +173,7 @@ export default {
 
   setup (props, context) {
     const { book, coverUrl } = toRefs(props)
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const {
       clearResults,

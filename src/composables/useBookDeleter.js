@@ -1,27 +1,27 @@
 import { readonly, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 
 import SheetService from '@/services/sheet'
 
-import { MutationTypes } from '@/store'
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBookDeleter (book) {
-  const store = useStore()
+  const collectionStore = useCollectionStore()
+  const sheetStore = useSheetStore()
   const deleting = ref(false)
   const deleted = ref(false)
 
   async function deleteBook () {
     deleting.value = true
-    store.commit(MutationTypes.SHEET_UPDATE_LOADING, true)
+    sheetStore.updateLoading(true)
 
-    await SheetService.deleteBook(store.state.sheet.sheetId, book.value)
-    await store.dispatch('sheet/loadSheetData', true)
-    await store.dispatch('collection/fetchGroups')
-    store.commit(MutationTypes.COLLECTION_UPDATE_LAST_ADDED, { items: [] })
-    store.commit(MutationTypes.COLLECTION_UPDATE_LATEST_READINGS, { items: [] })
-    store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
+    await SheetService.deleteBook(sheetStore.sheetId, book.value)
+    await sheetStore.loadSheetData(true)
+    await collectionStore.fetchGroups()
+    collectionStore.clearCarouselItems('lastAdded', 'latestReadings')
+    collectionStore.clearItems(null, 'books')
 
-    store.commit(MutationTypes.SHEET_UPDATE_LOADING, false)
+    sheetStore.updateLoading(false)
     deleting.value = false
     deleted.value = true
   }

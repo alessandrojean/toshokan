@@ -152,7 +152,7 @@ export default {
   emits: ['search', 'select', 'click:viewExisting'],
 
   setup (_, context) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const isbnQuery = ref('')
     const searchInput = ref(null)

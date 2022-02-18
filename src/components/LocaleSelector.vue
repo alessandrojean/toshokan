@@ -141,7 +141,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup () {
-    const { t, availableLocales } = useI18n()
+    const { t, availableLocales } = useI18n({ useScope: 'global' })
 
     const localeFlags = {
       'pt-BR': 'BR',

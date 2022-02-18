@@ -1,13 +1,16 @@
 import { computed, onMounted, onUnmounted, readonly, ref, watch } from 'vue'
-import { useStore } from 'vuex'
+
+import { useSettingsStore, THEME_SYSTEM, THEME_DARK } from '@/stores/settings'
 
 export default function useDarkMode () {
-  const store = useStore()
+  const settingsStore = useSettingsStore()
 
-  const mediaDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const theme = computed(() => store.state.theme)
+  const mediaDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches
+  const theme = computed(() => settingsStore.theme)
 
-  const darkMode = ref((theme.value === 'system' && mediaDark) || theme.value === 'dark')
+  const darkMode = ref(
+    (theme.value === THEME_SYSTEM && mediaDark) || theme.value === THEME_DARK
+  )
 
   /**
    * @param {MediaQueryListEvent} event
@@ -31,7 +34,11 @@ export default function useDarkMode () {
   }
 
   watch(theme, newValue => {
-    darkMode.value = newValue === 'dark' || (newValue === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    darkMode.value = newValue === THEME_DARK ||
+      (
+        newValue === THEME_SYSTEM &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      )
   })
 
   return {

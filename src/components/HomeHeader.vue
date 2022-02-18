@@ -36,8 +36,9 @@
 
 <script>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
@@ -52,10 +53,10 @@ export default {
   },
 
   setup () {
-    const store = useStore()
-    const signedIn = computed(() => store.state.auth.signedIn)
+    const authStore = useAuthStore()
+    const signedIn = computed(() => authStore.signedIn)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return { signedIn, t }
   }

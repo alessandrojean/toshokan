@@ -172,8 +172,10 @@
 
 <script>
 import { computed, inject, onMounted, onUnmounted, ref, toRefs } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   Menu,
@@ -211,15 +213,16 @@ export default {
   },
 
   setup (props) {
-    const store = useStore()
+    const authStore = useAuthStore()
+    const sheetStore = useSheetStore()
 
     const { t } = useI18n({ useScope: 'global' })
 
     const open = ref(false)
     const { transparent } = toRefs(props)
 
-    const shared = computed(() => store.getters['sheet/shared'])
-    const loading = computed(() => store.state.sheet.loading)
+    const shared = computed(() => sheetStore.shared)
+    const loading = computed(() => sheetStore.loading)
 
     const navigation = computed(() => [
       {
@@ -244,11 +247,13 @@ export default {
       return navigation.value.filter(navItem => !navItem.mobileOnly)
     })
 
-    const profileEmail = computed(() => store.state.auth.profileEmail)
-    const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
-    const profileName = computed(() => store.state.auth.profileName)
+    const profileEmail = computed(() => authStore.profileEmail)
+    const profileImageUrl = computed(() => authStore.profileImageUrl)
+    const profileName = computed(() => authStore.profileName)
 
-    const signOut = () => store.dispatch('auth/signOut')
+    async function signOut () {
+      await authStore.signOut()
+    }
 
     const isMac = ref(
       navigator.userAgentData

@@ -25,8 +25,9 @@
 
 <script>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useSheetStore } from '@/stores/sheet'
 
 import { UserGroupIcon } from '@heroicons/vue/solid'
 
@@ -36,12 +37,12 @@ export default {
   components: { Avatar, UserGroupIcon },
 
   setup () {
-    const { t } = useI18n()
-    const store = useStore()
+    const { t } = useI18n({ useScope: 'global' })
+    const sheetStore = useSheetStore()
 
-    const ownerDisplayName = computed(() => store.getters['sheet/ownerDisplayName'])
-    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
-    const shared = computed(() => store.getters['sheet/shared'])
+    const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
+    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+    const shared = computed(() => sheetStore.shared)
 
     return {
       t,

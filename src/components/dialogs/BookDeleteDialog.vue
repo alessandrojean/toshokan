@@ -43,11 +43,11 @@
                 </div>
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <DialogTitle as="h3" class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100">
-                    {{ t('book.deleteModal.title') }}
+                    {{ t('book.deleteModal.title', quantity) }}
                   </DialogTitle>
                   <div class="mt-2 space-y-4 text-gray-500 dark:text-gray-400 text-sm">
                     <p>
-                      {{ t('book.deleteModal.message1') }}
+                      {{ t('book.deleteModal.message1', quantity) }}
                     </p>
                     <p>
                       {{ t('book.deleteModal.message2') }}
@@ -98,7 +98,11 @@ export default {
   },
 
   props: {
-    open: Boolean
+    open: Boolean,
+    quantity: {
+      type: Number,
+      default: 1
+    }
   },
 
   emits: ['update:open', 'click:delete'],
@@ -109,7 +113,7 @@ export default {
       context.emit('click:delete', event)
     }
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { open } = toRefs(props)
 

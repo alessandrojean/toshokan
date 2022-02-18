@@ -59,7 +59,7 @@ export default {
       hideBetaWarning.value = hideFromStorage !== null
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       hideBetaWarning,

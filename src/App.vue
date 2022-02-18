@@ -9,11 +9,14 @@
   >
     <div
       v-if="!authStarted && !hasCriticalError"
-      class="z-30 absolute w-full h-full flex justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
+      class="z-50 absolute w-full h-full flex flex-col justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
     >
       <span aria-hidden="true">
         <LoadingSpinIcon class="motion-safe:animate-spin h-10 w-10 mx-auto text-primary-500" aria-hidden="true" />
       </span>
+      <p class="font-display font-medium sm:text-lg mt-6 dark:text-gray-200">
+        {{ t('app.starting') }}
+      </p>
     </div>
   </transition>
   <a href="#main-content" class="jump-to" ref="jumpToMain">
@@ -41,11 +44,12 @@
 
 <script>
 import { computed, nextTick, ref, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import { MutationTypes } from '@/store'
+import { useAuthStore } from './stores/auth'
+import { useSheetStore } from './stores/sheet'
+import { useStore } from '@/stores/main'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import ReloadDialog from '@/components/dialogs/ReloadDialog.vue'
@@ -57,11 +61,13 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const authStore = useAuthStore()
+    const mainStore = useStore()
+    const sheetStore = useSheetStore()
     const { t, locale } = useI18n({ useScope: 'global' })
 
-    const authStarted = computed(() => store.state.auth.started)
-    const hasCriticalError = computed(() => store.getters.hasCriticalError)
+    const authStarted = computed(() => authStore.started)
+    const hasCriticalError = computed(() => mainStore.hasCriticalError)
 
     const route = useRoute()
     const jumpToMain = ref(null)
@@ -92,7 +98,7 @@ export default {
       document.title = route.meta.title() + ' | ' + t('app.name')
       document.documentElement.lang = newLocale
       localStorage.setItem('locale', newLocale)
-      store.commit(MutationTypes.SHEET_RESET_LOADED_ONCE)
+      sheetStore.resetLoadedOnce()
     })
 
     return {

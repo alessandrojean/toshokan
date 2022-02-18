@@ -123,8 +123,10 @@
 
 <script>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   DotsHorizontalIcon,
@@ -161,12 +163,13 @@ export default {
   },
 
   setup () {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
-    const store = useStore()
+    const authStore = useAuthStore()
+    const sheetStore = useSheetStore()
 
-    const shared = computed(() => store.getters['sheet/shared'])
-    const loading = computed(() => store.state.sheet.loading)
+    const shared = computed(() => sheetStore.shared)
+    const loading = computed(() => sheetStore.loading)
 
     const items = computed(() => [
       {
@@ -188,12 +191,12 @@ export default {
       }
     ])
 
-    const profileEmail = computed(() => store.state.auth.profileEmail)
-    const profileImageUrl = computed(() => store.state.auth.profileImageUrl)
-    const profileName = computed(() => store.state.auth.profileName)
+    const profileEmail = computed(() => authStore.profileEmail)
+    const profileImageUrl = computed(() => authStore.profileImageUrl)
+    const profileName = computed(() => authStore.profileName)
 
     async function signOut (close) {
-      await store.dispatch('auth/signOut')
+      await authStore.signOut()
       close()
     }
 

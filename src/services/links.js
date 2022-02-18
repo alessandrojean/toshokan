@@ -1,4 +1,4 @@
-import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
+import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 
 import AmazonIcon from '@/components/icons/AmazonIcon.vue'
 import FnacIcon from '@/components/icons/FnacIcon.vue'
@@ -90,6 +90,12 @@ const WEBSITES = [
   }
 ]
 
+/**
+ * Generate the links for the book.
+ *
+ * @param {import('@/model/Book').default} book
+ * @param {string} locale
+ */
 export default function getBookLinks (book, locale) {
   if (!book || !book.codeType.includes('ISBN')) {
     return []
@@ -98,7 +104,7 @@ export default function getBookLinks (book, locale) {
   const isbn = book.code.replaceAll('-', '')
   const isbn10 = isbn.length === 10 ? isbn : convertIsbn13ToIsbn10(isbn)
 
-  const { countryCode: country } = getIsbnCountry(isbn)
+  const country = book.isbnData?.countryCode
 
   return WEBSITES
     .filter(website => {

@@ -205,10 +205,11 @@
 
 <script>
 import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
-import { MutationTypes } from '@/store'
+import { useAuthStore } from '@/stores/auth'
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   BookOpenIcon,
@@ -250,26 +251,28 @@ export default {
   },
 
   setup () {
-    const store = useStore()
-    const { n, t } = useI18n()
+    const authStore = useAuthStore()
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
+    const { n, t } = useI18n({ useScope: 'global' })
 
-    const sheetIsEmpty = computed(() => store.getters['sheet/sheetIsEmpty'])
+    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
 
-    const ownerDisplayName = computed(() => store.getters['sheet/ownerDisplayName'])
-    const ownerPictureUrl = computed(() => store.getters['sheet/ownerPictureUrl'])
-    const profileName = computed(() => store.state.auth.profileName)
-    const loading = computed(() => store.state.sheet.loading)
-    const stats = computed(() => store.state.sheet.stats)
-    const shared = computed(() => store.getters['sheet/shared'])
+    const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
+    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+    const profileName = computed(() => authStore.profileName)
+    const loading = computed(() => sheetStore.loading)
+    const stats = computed(() => sheetStore.stats)
+    const shared = computed(() => sheetStore.shared)
 
     const isDev = ref(import.meta.env.DEV)
 
-    function reload () {
-      store.dispatch('sheet/loadSheetData')
-      store.dispatch('collection/fetchLastAdded')
-      store.dispatch('collection/fetchLatestReadings')
-      store.dispatch('collection/fetchGroups')
-      store.commit(MutationTypes.COLLECTION_UPDATE_BOOKS, { items: [] })
+    async function reload () {
+      await sheetStore.loadSheetData()
+      await collectionStore.fetchLastAdded()
+      await collectionStore.fetchLatestReadings()
+      await collectionStore.fetchGroups()
+      collectionStore.clearItems(null, 'books')
     }
 
     const createDialogOpen = ref(false)
@@ -282,8 +285,8 @@ export default {
       createDialogOpen.value = false
     }
 
-    const canChange = computed(() => store.getters['sheet/canChange'])
-    const canEdit = computed(() => store.getters['sheet/canEdit'])
+    const canChange = computed(() => sheetStore.canChange)
+    const canEdit = computed(() => sheetStore.canEdit)
 
     const sheetChooserOpen = ref(false)
 

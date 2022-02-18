@@ -83,7 +83,7 @@ export default {
   emits: ['update:modelValue'],
 
   setup (props, context) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const { modelValue: book } = toRefs(props)
 

@@ -79,7 +79,7 @@ export default {
         : null
     })
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return { previous, next, t }
   }

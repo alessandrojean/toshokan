@@ -109,7 +109,7 @@ export default {
   emits: ['select'],
 
   setup (_, context) {
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     const separator = computed(() => {
       return t('dashboard.details.header.authorSeparator')

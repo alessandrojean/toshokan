@@ -18,9 +18,30 @@
 </template>
 
 <script>
+import { nextTick, onMounted, watch } from 'vue'
+
+import { useAuthStore } from '@/stores/auth'
+
 import PageHeader from '@/components/PageHeader.vue'
 
 export default {
-  components: { PageHeader }
+  components: { PageHeader },
+
+  setup () {
+    const authStore = useAuthStore()
+
+    watch(() => authStore.started, async () => await handleHash())
+    onMounted(async () => await handleHash())
+
+    async function handleHash () {
+      if (window.location.hash && authStore.started) {
+        await nextTick()
+        await nextTick()
+
+        document.querySelector(window.location.hash)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
 }
 </script>

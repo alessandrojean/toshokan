@@ -17,9 +17,10 @@
 
 <script>
 import { computed, watch } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
 
 import GoogleIcon from '@/components/icons/GoogleIcon.vue'
 
@@ -33,11 +34,11 @@ export default {
   },
 
   setup () {
-    const store = useStore()
+    const authStore = useAuthStore()
     const router = useRouter()
 
-    const started = computed(() => store.state.auth.started)
-    const signedIn = computed(() => store.state.auth.signedIn)
+    const started = computed(() => authStore.started)
+    const signedIn = computed(() => authStore.signedIn)
 
     const redirectToDashboard = () => {
       if (signedIn.value) {
@@ -46,13 +47,13 @@ export default {
     }
 
     const handleSignIn = async () => {
-      await store.dispatch('auth/signIn')
+      await authStore.signIn()
       redirectToDashboard()
     }
 
     watch(signedIn, redirectToDashboard)
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       signedIn,

@@ -64,7 +64,7 @@ export default {
 
     onMounted(() => loadImage())
 
-    const { t } = useI18n()
+    const { t } = useI18n({ useScope: 'global' })
 
     return {
       imageLoading,

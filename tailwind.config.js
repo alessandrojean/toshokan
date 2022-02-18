@@ -43,7 +43,8 @@ module.exports = {
         DEFAULT: {
           css: {
             'h1, h2, h3, h4, h5, h6': {
-              fontFamily: theme('fontFamily.display').join(', ')
+              fontFamily: theme('fontFamily.display').join(', '),
+              scrollMargin: theme('scrollMargin.4')
             },
             a: {
               color: theme('colors.primary.600'),
@@ -57,8 +58,56 @@ module.exports = {
                 outline: `2px solid ${theme('colors.primary.600')}`
               }
             },
-            'figure figcaption': {
-              textAlign: 'center'
+            figure: {
+              maxWidth: '100%',
+              textAlign: 'center',
+              paddingTop: theme('padding.4'),
+              paddingBottom: theme('padding.4'),
+
+              '& > img, & > .video-player': {
+                margin: '0 auto',
+                borderRadius: theme('borderRadius.md'),
+                boxShadow: theme('boxShadow.lg')
+              },
+
+              '& > .video-player': {
+                backgroundColor: theme('colors.gray.50'),
+                overflow: 'hidden'
+              },
+
+              figcaption: {
+                textAlign: 'center',
+                marginTop: theme('margin.5')
+              }
+            },
+            details: {
+              summary: {
+                fontFamily: theme('fontFamily.display').join(', '),
+                fontWeight: theme('fontWeight.medium'),
+                cursor: theme('cursor.pointer'),
+
+                '&::marker': {
+                  color: theme('colors.gray.400')
+                }
+              },
+
+              'summary + *': {
+                margin: `${theme('margin.4')} ${theme('margin.2')}`
+              },
+
+              '& + details': {
+                marginTop: theme('margin.2')
+              }
+            },
+            '.header-anchor': {
+              float: 'left',
+              marginLeft: '-1.25em',
+              opacity: '0',
+              paddingRight: '0.25em',
+              textDecoration: 'none'
+            },
+            ':where(h1, h2, h3, h4, h5, h6):hover .header-anchor': {
+              opacity: '1'
             }
           }
         },
@@ -82,6 +131,16 @@ module.exports = {
             },
             'ul > li::before': {
               backgroundColor: theme('colors.gray.400')
+            },
+            'details summary': {
+              color: theme('colors.gray.200'),
+
+              '&::marker': {
+                color: theme('colors.gray.500')
+              }
+            },
+            'figure > .video-player': {
+              backgroundColor: theme('colors.gray.800')
             }
           }
         }

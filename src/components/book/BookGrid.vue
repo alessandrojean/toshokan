@@ -1,8 +1,7 @@
 <template>
   <div>
     <template v-if="sheetLoading || (loading && items.length === 0)">
-      <div class="motion-safe:animate-pulse mb-6 w-full hidden sm:block h-28 md:h-14 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5">
         <BookCard
           v-for="tempBook in skeletonItems"
           :key="tempBook"
@@ -12,46 +11,26 @@
       <div class="motion-safe:animate-pulse mt-6 w-full h-28 md:h-14 bg-gray-400 dark:bg-gray-600 rounded"></div>
     </template>
     <template v-else>
-      <div v-if="paginationInfo.total_pages > 1" class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg mb-6 hidden sm:flex flex-col md:flex-row md:justify-between items-center">
-        <div>
-          <i18n-t
-            keypath="pagination.text"
-            tag="p"
-            class="text-sm text-gray-700 dark:text-gray-300 sm:mb-4 md:mb-0"
-          >
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.current_page }} </span>
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_pages }} </span>
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_results }} </span>
-          </i18n-t>
-        </div>
-
-        <div class="hidden sm:block">
-          <Paginator
-            v-if="paginationInfo.total_pages > 1"
-            :pagination-info="paginationInfo"
-            :enabled="!loading"
-            @page="handlePage"
-          />
-        </div>
-      </div>
-
       <ul
-        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5"
+        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
         v-if="!loading"
+        ref="grid"
       >
         <li
-          v-for="book in items"
+          v-for="(book, bookIdx) in items"
           :key="book.id"
         >
           <BookCard
             :book="book"
             :loading="loading"
+            :tabindex="bookIdx === focused ? '0' : '-1'"
+            @keydown="handleKeydown"
           />
         </li>
       </ul>
 
       <div
-        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5"
+        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
         v-else
       >
         <BookCard
@@ -60,113 +39,134 @@
           :loading="true"
         />
       </div>
-
-      <div v-if="paginationInfo.total_pages > 1" class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow rounded-lg flex sm:mb-6 flex-col md:flex-row md:justify-between items-center">
-        <div>
-          <i18n-t
-            keypath="pagination.text"
-            tag="p"
-            class="text-sm text-gray-700 dark:text-gray-300 mb-4 md:mb-0"
-          >
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.current_page }} </span>
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_pages }} </span>
-            <span class="font-semibold dark:text-gray-100"> {{ paginationInfo.total_results }} </span>
-          </i18n-t>
-        </div>
-
-        <nav
-          role="navigation"
-          aria-label="Paginação do conteúdo"
-          class="w-full sm:hidden"
-        >
-          <ul class="flex justify-center space-x-4">
-            <li>
-              <button
-                type="button"
-                class="button"
-                :disabled="!paginationInfo.has_previous_page || loading"
-                @click.stop="handlePage(paginationInfo.current_page - 1)"
-              >
-                <span aria-hidden="true">
-                  <ChevronLeftIcon aria-hidden="true" />
-                </span>
-                {{ t('pagination.previous') }}
-              </button>
-            </li>
-
-            <li>
-              <button
-                type="button"
-                class="button"
-                :disabled="!paginationInfo.has_next_page || loading"
-                @click.stop="handlePage(paginationInfo.current_page + 1)"
-              >
-                {{ t('pagination.next') }}
-                <span aria-hidden="true">
-                  <ChevronRightIcon class="is-right" aria-hidden="true" />
-                </span>
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        <div class="hidden sm:block">
-          <Paginator
-            v-if="paginationInfo.total_pages > 1"
-            :pagination-info="paginationInfo"
-            :enabled="!loading"
-            @page="handlePage"
-          />
-        </div>
-      </div>
     </template>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
+import { useCollectionStore } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
 
 import BookCard from '@/components/book/BookCard.vue'
-import Paginator from '@/components/Paginator.vue'
 
 export default {
-  name: 'GridBooks',
-
-  components: {
-    BookCard,
-    Paginator,
-    ChevronLeftIcon,
-    ChevronRightIcon
-  },
+  components: { BookCard },
 
   props: {
     items: Array,
-    paginationInfo: Object,
     skeletonItems: Number
   },
 
-  emits: ['page'],
+  setup (props) {
+    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
 
-  setup (_, context) {
-    function handlePage (page) {
-      context.emit('page', page)
+    const sheetLoading = computed(() => sheetStore.loading)
+    const loading = computed(() => collectionStore.books.loading)
+
+    const { t } = useI18n({ useScope: 'global' })
+
+    const focused = ref(0)
+    const grid = ref(null)
+    const { items } = toRefs(props)
+
+    const columnSize = {
+      '1024px': 6, // lg
+      '768px': 5, // md
+      '640px': 3 // sm
     }
 
-    const store = useStore()
+    function getColumnSize () {
+      const match = Object.entries(columnSize)
+        .find(([minWidth]) => {
+          return window.matchMedia(`(min-width: ${minWidth})`).matches
+        })
 
-    const sheetLoading = computed(() => store.state.sheet.loading)
-    const loading = computed(() => store.state.collection.books.loading)
+      return match?.[1] || 2
+    }
 
-    const { t } = useI18n()
+    /**
+     * @param {KeyboardEvent} event
+     */
+    function handleKeydown (event) {
+      const allowedKeys = [
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+        'Home', 'End'
+      ]
+      const { key } = event
+
+      if (!allowedKeys.includes(key)) {
+        return
+      }
+
+      const totalItems = items.value.length
+      const columns = getColumnSize()
+      const lines = Math.ceil(totalItems / columns)
+      const row = Math.floor(focused.value / columns) + 1
+
+      if (key === 'Home' && focused.value === 0) {
+        return
+      }
+
+      if (key === 'End' && focused.value === totalItems - 1) {
+        return
+      }
+
+      if (key === 'ArrowUp' && row === 1) {
+        return
+      }
+
+      if (key === 'ArrowDown' && row === lines) {
+        return
+      }
+
+      event.preventDefault()
+
+      if (key === 'ArrowRight') {
+        focused.value = Math.min(totalItems - 1, focused.value + 1)
+      } else if (key === 'ArrowLeft') {
+        focused.value = Math.max(0, focused.value - 1)
+      } else if (key === 'ArrowDown') {
+        focused.value = row < lines
+          ? Math.min(totalItems - 1, focused.value + columns)
+          : focused.value
+      } else if (key === 'ArrowUp') {
+        focused.value = row > 1
+          ? Math.max(0, focused.value - columns)
+          : focused.value
+      } else if (key === 'Home') {
+        focused.value = 0
+      } else if (key === 'End') {
+        focused.value = totalItems - 1
+      }
+
+      focus()
+    }
+
+    watch(
+      () => sheetLoading.value || loading.value,
+      () => { focused.value = 0 }
+    )
+
+    function focus () {
+      nextTick(() => {
+        const li = grid.value?.children?.[focused.value]
+        const card = li?.children?.[0]
+
+        card?.focus()
+      })
+    }
 
     return {
-      handlePage,
       sheetLoading,
       loading,
+      focused,
+      grid,
+      handleKeydown,
+      focus,
       t
     }
   }

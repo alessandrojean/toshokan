@@ -206,10 +206,11 @@
 
 <script>
 import { computed, inject, toRefs } from 'vue'
-import { useStore } from 'vuex'
 import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
+import { useSettingsStore } from '@/stores/settings'
+import { useSheetStore } from '@/stores/sheet'
 
 import {
   BookmarkIcon as BookmarkSolidIcon,
@@ -229,7 +230,7 @@ import Avatar from '@/components/Avatar.vue'
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 
-import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
+import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 import getBookLinks from '@/services/links'
 
 import Book from '@/model/Book'
@@ -266,14 +267,15 @@ export default {
 
   setup (props) {
     const { book, loading } = toRefs(props)
-    const { t, d, locale } = useI18n()
-    const store = useStore()
+    const { t, d, locale } = useI18n({ useScope: 'global' })
+    const settingsStore = useSettingsStore()
+    const sheetStore = useSheetStore()
 
     const showBookInfo = computed(() => {
       return !loading.value && book.value
     })
 
-    const { renderMarkdown } = useMarkdown()
+    const { renderMarkdown } = useMarkdown({ disable: ['image'] })
 
     const synopsisRendered = computed(() => {
       if (!showBookInfo.value) {
@@ -287,7 +289,7 @@ export default {
       return renderMarkdown(book.value.synopsis)
     })
 
-    const timeZone = computed(() => store.state.sheet.timeZone)
+    const timeZone = computed(() => sheetStore.timeZone)
 
     function formatDate (date, format = 'short') {
       if (date instanceof Date) {
@@ -316,11 +318,11 @@ export default {
     })
 
     const country = computed(() => {
-      if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
+      if (!showBookInfo.value) {
         return []
       }
 
-      return getIsbnCountry(book.value.code)
+      return book.value?.isbnData
     })
 
     const isbn10 = computed(() => {
@@ -335,7 +337,7 @@ export default {
       return convertIsbn13ToIsbn10(book.value.code)
     })
 
-    const spoilerMode = computed(() => store.state.settings.spoilerMode)
+    const spoilerMode = computed(() => settingsStore.spoilerMode)
 
     const blurSynopsis = computed(() => {
       return showBookInfo.value && spoilerMode.value.synopsis &&
@@ -363,7 +365,7 @@ export default {
       showSearchDialog(query)
     }
 
-    const canEdit = computed(() => store.getters['sheet/canEdit'])
+    const canEdit = computed(() => sheetStore.canEdit)
 
     return {
       showBookInfo,

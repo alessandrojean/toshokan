@@ -9,6 +9,7 @@ import {
 
 import i18n from '@/i18n'
 import { decimalComma } from '@/util/validators'
+import { getIsbnCountry } from '@/util/isbn'
 
 const { n, locale } = i18n.global
 
@@ -272,6 +273,15 @@ export default class Book {
   /** @type {string} */
   get boughtAtStr () {
     return this.boughtAt ? this.boughtAt.toISOString().substring(0, 10) : ''
+  }
+
+  /** @type {string?} */
+  get isbnData () {
+    if (!this.codeType.includes('ISBN')) {
+      return null
+    }
+
+    return getIsbnCountry(this.code)
   }
 
   /**

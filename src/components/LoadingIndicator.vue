@@ -11,6 +11,7 @@
       aria-hidden="true"
       :class="[
         position,
+        zIndex,
         'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75',
         blur ? 'backdrop-blur-sm' : ''
       ]"
@@ -19,7 +20,8 @@
       <LoadingSpinIcon
         :class="[
           `motion-safe:animate-${animation}`,
-          'h-10 w-10 mx-auto text-primary-500'
+          small ? 'h-8 w-8' : 'h-10 w-18',
+          'mx-auto text-primary-500'
         ]"
       />
     </div>
@@ -47,6 +49,11 @@ export default {
     position: {
       type: String,
       default: 'absolute'
+    },
+    small: Boolean,
+    zIndex: {
+      type: String,
+      default: ''
     }
   }
 }
