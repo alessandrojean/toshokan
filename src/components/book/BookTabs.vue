@@ -84,7 +84,7 @@
                       <a
                         href="#"
                         class="tag has-ring-focus"
-                        @click="searchByTag(tag, $event)"
+                        @click.prevent="searchByTag(tag, $event)"
                       >
                         <span aria-hidden="true" class="bullet"></span>
                         {{ tag }}
@@ -96,7 +96,7 @@
                     href="#"
                     class="search-link has-ring-focus"
                     :title="t('dashboard.search.searchBy', [mt.value])"
-                    @click="searchBy(mt.key, mt.value, $event)"
+                    @click.prevent="searchBy(mt.key, mt.value, $event)"
                   >
                     {{ mt.value }}
                   </a>

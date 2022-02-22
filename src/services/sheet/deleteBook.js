@@ -1,3 +1,9 @@
+/**
+ * Delete a book in the sheet.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {import('@/model/Book').default} book The book to delete
+ */
 export default async function deleteBook (sheetId, book) {
   const bookRow = parseInt(book.sheetLocation.substring(12))
 

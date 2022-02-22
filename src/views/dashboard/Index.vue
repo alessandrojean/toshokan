@@ -136,7 +136,7 @@ export default {
     /**
      * @param {KeyboardEvent} event
      */
-    const handleKeyDown = event => {
+    function handleKeyDown (event) {
       if (
         (event.ctrlKey || event.metaKey) &&
         event.key === 'k' &&

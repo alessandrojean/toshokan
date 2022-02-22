@@ -66,7 +66,7 @@
           v-if="!sheetIsEmpty"
           :aria-labelledby="loading? '' : 'overview-title'"
         >
-          <div v-if="loading" class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-40 mb-3"></div>
+          <div v-if="loading" class="skeleton h-6 w-40 mb-3"></div>
           <h2 v-else id="overview-title" class="font-medium font-display text-lg mb-2 dark:text-gray-200">
             {{ t('dashboard.home.overview.title') }}
           </h2>

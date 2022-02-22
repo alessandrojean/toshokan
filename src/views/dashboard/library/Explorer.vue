@@ -89,15 +89,7 @@
           </div>
 
           <div>
-            <transition
-              mode="out-in"
-              leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
-              leave-from-class="opacity-100 translate-x-0"
-              leave-to-class="opacity-0 translate-x-2"
-              enter-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-out"
-              enter-from-class="opacity-0 -translate-x-2"
-              enter-to-class="opacity-100 translate-x-0"
-            >
+            <FadeTransition>
               <BookTable
                 v-if="viewMode === 'table'"
                 ref="table"
@@ -120,7 +112,7 @@
                 :items="books"
                 :skeleton-items="18"
               />
-            </transition>
+            </FadeTransition>
           </div>
 
           <div
@@ -323,6 +315,7 @@ import LibraryHeader from '@/components/LibraryHeader.vue'
 import Paginator from '@/components/Paginator.vue'
 
 import cloneDeep from 'lodash.clonedeep'
+import { STATUS_READ } from '@/model/Book'
 
 export default {
   components: {
@@ -587,8 +580,10 @@ export default {
       const editedBooks = booksToEdit
         .filter(book => book.status !== newStatus)
         .map(book => {
+          /** @type {import('@/model/Book').default} */
           const clone = cloneDeep(book)
           clone.status = newStatus
+          clone.readAt = newStatus === STATUS_READ ? new Date() : null
           return clone
         })
 

@@ -5,7 +5,7 @@
         <router-link
           :to="{ name: 'DashboardHome' }"
           :title="t('app.routes.dashboard.home')"
-          class="w-5 h-5 block hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+          class="w-5 h-5 block hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus dark:focus-visible:ring-offset-gray-800 rounded"
         >
           <span aria-hidden="true">
             <HomeIcon class="w-5 h-5" />
@@ -21,7 +21,7 @@
       <li class="shrink-0">
         <router-link
           :to="{ name: 'DashboardLibrary' }"
-          class="hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+          class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
         >
           {{ t('dashboard.details.header.library') }}
         </router-link>
@@ -32,7 +32,7 @@
       <li class="shrink-0">
         <router-link
           :to="{ name: 'DashboardLibrary', query: { group: book.group } }"
-          class="hover:text-gray-700 dark:hover:text-gray-100 focus:text-gray-700 dark:focus:text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 rounded motion-safe:transition-shadow"
+          class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
         >
           {{ book.group }}
         </router-link>
@@ -41,15 +41,24 @@
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
       <li v-if="book.titleParts.number && !hideHome" class="grow">
-        {{ book.titleParts.title }}
+        <a
+          href="#"
+          class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
+          @click.prevent="showCollection"
+        >
+          {{ book.titleParts.title }}
+        </a>
       </li>
     </ul>
   </nav>
-  <div v-else class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-44"></div>
+  <div v-else class="skeleton h-5 w-44"></div>
 </template>
 
 <script>
+import { inject, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import Book from '@/model/Book'
 
 import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/solid'
 
@@ -60,15 +69,32 @@ export default {
   },
 
   props: {
-    book: Object,
+    book: Book,
     loading: Boolean,
     hideHome: Boolean
   },
 
-  setup () {
+  setup (props) {
     const { t } = useI18n({ useScope: 'global' })
+    const { book } = toRefs(props)
 
-    return { t }
+    const showSearchDialog = inject('showSearchDialog')
+
+    function showCollection () {
+      const keywords = {
+        [t('dashboard.search.keywords.title')]: book.value.titleParts.title + ' #',
+        [t('dashboard.search.keywords.publisher')]: book.value.publisher,
+        [t('dashboard.search.keywords.group')]: book.value.group
+      }
+
+      const queryString = Object.entries(keywords)
+        .map(([keyword, value]) => `${keyword}:"${value}"`)
+        .join(' ')
+
+      showSearchDialog(queryString)
+    }
+
+    return { t, showCollection }
   }
 }
 </script>

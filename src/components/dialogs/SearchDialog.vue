@@ -1,5 +1,11 @@
 <template>
-  <TransitionRoot appear :show="isOpen" as="template">
+  <TransitionRoot
+    appear
+    :show="isOpen"
+    as="template"
+    @after-leave="clearSearch"
+    @after-enter="searchInput?.focus()"
+  >
     <Dialog as="template" @close="closeDialog">
       <div class="dialog">
         <TransitionChild
@@ -32,7 +38,7 @@
           <form
             :class="[
               'py-4 px-5 flex items-center space-x-3 md:space-x-4 shrink-0',
-              'border-b border-gray-300 dark:border-gray-600'
+              'border-b border-gray-300 dark:border-gray-600 relative overflow-y-hidden'
             ]"
             @submit.prevent="handleSearch"
           >
@@ -40,20 +46,24 @@
               <SearchIcon class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800" />
             </span>
 
-            <div class="flex-1">
-              <label for="search-input" class="sr-only">
+            <div class="flex-1 search-input-wrapper">
+              <label for="search-input" id="search-label" class="sr-only">
                 {{ t('dashboard.search.label') }}
               </label>
 
               <input
                 type="search"
-                :value="searchQuery"
-                @input="debounce(() => { searchQuery = $event.target.value })"
                 id="search-input"
                 ref="searchInput"
                 class="search-input"
+                spellcheck="false"
+                role="combobox"
+                aria-controls="search-options"
+                aria-labelledby="search-label"
+                :value="searchQuery"
                 :placeholder="t('dashboard.search.placeholder')"
-                :disabled="searchLoading"
+                :disabled="searchLoading || !isOpen"
+                @input="debounce(() => { searchQuery = $event.target.value })"
                 @keyup.enter.prevent="search($event.target.value)"
                 @keyup.arrow-down.exact.prevent="focusOnResults"
               >
@@ -100,7 +110,7 @@
           <FadeTransition>
             <div
               v-if="searchedOnce && searchResults.length === 0"
-              class="no-results"
+              class="no-results select-none"
             >
               <i18n-t keypath="dashboard.search.noResultsFound" tag="p" scope="global">
                 <span class="text-gray-900 dark:text-gray-100">{{ searchedTerm }}</span>
@@ -113,90 +123,121 @@
               ref="results"
               class="results"
             >
-              <div class="results-header">
-                <h3 class="title">
-                  {{ t('dashboard.search.results') }}
-                </h3>
+              <div class="grow min-h-0 overflow-y-auto pt-5">
+                <div class="results-header">
+                  <h3 class="title" id="results-header">
+                    {{ t('dashboard.search.results') }}
+                  </h3>
 
-                <div class="flex -space-x-px w-full sm:w-auto">
-                  <div class="flex-1 sm:flex-initial sm:w-56">
-                    <label for="search-sort-by" class="sr-only">
-                      {{ t('dashboard.library.filters.sortBy') }}
-                    </label>
+                  <div class="flex -space-x-px w-full sm:w-auto">
+                    <div class="flex-1 sm:flex-initial sm:w-56">
+                      <label for="search-sort-by" class="sr-only">
+                        {{ t('dashboard.library.filters.sortBy') }}
+                      </label>
 
-                    <select
-                      class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
-                      v-model="sortBy"
-                      id="search-sort-by"
-                      :disabled="searchLoading"
-                    >
-                      <option
-                        v-for="sortProperty in sortProperties"
-                        :key="sortProperty.attr"
-                        :value="sortProperty.attr"
+                      <select
+                        class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
+                        v-model="sortBy"
+                        id="search-sort-by"
+                        :disabled="searchLoading"
                       >
-                        {{ sortProperty.title }}
-                      </option>
-                    </select>
-                  </div>
+                        <option
+                          v-for="sortProperty in sortProperties"
+                          :key="sortProperty.attr"
+                          :value="sortProperty.attr"
+                        >
+                          {{ sortProperty.title }}
+                        </option>
+                      </select>
+                    </div>
 
-                  <button
-                    class="button direction-button is-icon-only"
-                    :disabled="searchLoading"
-                    @click="toggleSortDirection"
-                  >
-                    <span class="sr-only">
-                      {{
-                        t(
-                          sortDirection === 'asc'
-                            ? 'dashboard.library.filters.sortDirection.asc'
-                            : 'dashboard.library.filters.sortDirection.desc'
-                        )
-                      }}
-                    </span>
-                    <span aria-hidden="true">
-                      <SortAscendingIcon v-if="sortDirection === 'asc'" />
-                      <SortDescendingIcon v-else />
-                    </span>
-                  </button>
+                    <button
+                      class="button direction-button is-icon-only"
+                      :disabled="searchLoading"
+                      @click="toggleSortDirection"
+                    >
+                      <span class="sr-only">
+                        {{
+                          t(
+                            sortDirection === 'asc'
+                              ? 'dashboard.library.filters.sortDirection.asc'
+                              : 'dashboard.library.filters.sortDirection.desc'
+                          )
+                        }}
+                      </span>
+                      <span aria-hidden="true">
+                        <SortAscendingIcon v-if="sortDirection === 'asc'" />
+                        <SortDescendingIcon v-else />
+                      </span>
+                    </button>
+                  </div>
                 </div>
+
+                <ul
+                  class="divide-y divide-gray-200 dark:divide-gray-700"
+                  ref="resultsList"
+                  id="search-options"
+                  aria-labelledby="results-header"
+                  role="listbox"
+                >
+                  <li
+                    v-for="(result, resultIdx) in searchResults"
+                    :key="result.id"
+                    role="option"
+                    :aria-selected="resultIdx === searchItemFocused && !searchLoading ? true : undefined"
+                  >
+                    <SearchItem
+                      :result="result"
+                      :tabindex="resultIdx === searchItemFocused && !searchLoading ? '0' : '-1'"
+                      @click="closeDialog"
+                      @keydown="handleSearchItemKeydown"
+                    />
+                  </li>
+                </ul>
               </div>
 
-              <ul
-                class="divide-y divide-gray-200 dark:divide-gray-700"
-                ref="resultsList"
-              >
-                <li
-                  v-for="(result, resultIdx) in searchResults"
-                  :key="result.id"
+              <FadeTransition>
+                <div
+                  v-if="searchResults.length > 0"
+                  class="search-footer"
                 >
-                  <SearchItem
-                    :result="result"
-                    :tabindex="resultIdx === searchItemFocused && !searchLoading ? '0' : '-1'"
-                    @click="closeDialog"
-                    @keydown="handleSearchItemKeydown"
+                  <p class="hidden sm:block">
+                    {{ t('dashboard.search.resultCount', searchPagination?.total_results || 0) }}
+                  </p>
+
+                  <Paginator
+                    v-if="searchPagination && searchPagination.total_pages > 1"
+                    :enabled="!searchLoading"
+                    :pagination-info="searchPagination"
+                    @page="handlePageChange"
                   />
-                </li>
-              </ul>
+                </div>
+              </FadeTransition>
             </div>
 
             <div
               v-else-if="searchHistory.length > 0"
               class="history"
             >
-              <h3 class="title px-5">
+              <h3 class="title px-5" id="history-header">
                 {{ t('dashboard.search.history') }}
               </h3>
 
               <ul
-                class="divide-y divide-gray-200 dark:divide-gray-700 border-y border-gray-200 dark:border-gray-700"
+                class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700"
                 ref="historyList"
+                id="search-options"
+                aria-labelledby="history-header"
+                role="listbox"
               >
                 <li
                   v-for="(historyItem, historyIdx) in searchHistory"
                   :key="historyItem"
+                  role="option"
+                  :aria-selected="historyIdx === historyItemFocused && !searchLoading ? true : undefined"
                 >
                   <SearchHistoryItem
+                    :class="historyIdx === searchHistory.length - 1 ? 'focus-visible:rounded-b-2xl' : ''"
                     :tabindex="historyIdx === historyItemFocused && !searchLoading ? '0' : '-1'"
                     :search="historyItem"
                     @click="search($event)"
@@ -207,26 +248,8 @@
               </ul>
             </div>
 
-            <div v-else class="no-history">
+            <div v-else class="no-history select-none">
               <p>{{ t('dashboard.search.noHistory') }}</p>
-            </div>
-          </FadeTransition>
-
-          <FadeTransition>
-            <div
-              v-if="searchResults.length > 0"
-              class="search-footer"
-            >
-              <p class="hidden sm:block">
-                {{ t('dashboard.search.resultCount', searchPagination?.total_results || 0) }}
-              </p>
-
-              <Paginator
-                v-if="searchPagination && searchPagination.total_pages > 1"
-                :enabled="!searchLoading"
-                :pagination-info="searchPagination"
-                @page="handlePageChange"
-              />
             </div>
           </FadeTransition>
 
@@ -242,7 +265,7 @@
 </template>
 
 <script>
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useSearchStore } from '@/stores/search'
@@ -315,7 +338,7 @@ export default {
     const results = ref(null)
     const dialogContent = ref(null)
 
-    function clearSearch (focusOnInput) {
+    async function clearSearch (focusOnInput) {
       searchQuery.value = ''
       searchedOnce.value = false
       searchedTerm.value = ''
@@ -323,14 +346,13 @@ export default {
       searchStore.clear()
 
       if (focusOnInput) {
+        await nextTick()
         searchInput.value?.focus()
       }
     }
 
     function closeDialog () {
       context.emit('close')
-
-      setTimeout(() => clearSearch(), 300)
     }
 
     async function search (query, page = 1) {
@@ -369,14 +391,6 @@ export default {
       await search()
     }
 
-    const { isOpen } = toRefs(props)
-
-    watch(isOpen, newIsOpen => {
-      if (newIsOpen) {
-        searchInput.value?.focus()
-      }
-    })
-
     function createDebounce () {
       let timeout = null
 
@@ -389,6 +403,8 @@ export default {
     watch(searchQuery, async (newQuery, oldQuery) => {
       if (newQuery.length > 0 && !searchLoading.value && newQuery !== oldQuery) {
         await search()
+      } else if (newQuery.length === 0 && oldQuery.length > 0) {
+        clearSearch()
       }
     })
 
@@ -611,12 +627,22 @@ input[type="search"]::-webkit-search-results-decoration {
   @apply flex flex-col w-full max-w-2xl
     overflow-hidden text-left
     bg-white dark:bg-gray-800
-    shadow-xl rounded-2xl;
+    shadow-xl rounded-2xl
+    ring-2 ring-gray-600/5;
+}
+
+.search-input-wrapper::after {
+  @apply content-[''] absolute inset-x-0 bottom-0
+    bg-primary-600 dark:bg-primary-400 h-2px scale-x-0
+    motion-safe:transition-transform motion-safe:ease-in motion-safe:delay-150;
+}
+
+.search-input-wrapper:focus-within::after {
+  @apply scale-x-100 will-change-transform;
 }
 
 .search-input {
   @apply w-full border-0 p-0 font-medium
-    placeholder-gray-400 dark:placeholder-gray-500
     dark:bg-gray-800 dark:text-gray-100;
 }
 
@@ -653,12 +679,18 @@ input[type="search"]::-webkit-search-results-decoration {
     text-sm px-1.5 py-0.5 motion-safe:transition-shadow;
 }
 
+.esc-button:where(:focus-visible, :hover) {
+  @apply text-gray-600 dark:text-gray-100
+    bg-gray-100 dark:bg-gray-700/80
+    border-gray-400 dark:border-gray-400/70;
+}
+
 .results {
-  @apply grow overflow-y-auto pt-5 space-y-3.5;
+  @apply grow flex flex-col min-h-0;
 }
 
 .results-header {
-  @apply px-5 flex flex-col sm:flex-row space-y-2 sm:space-y-0
+  @apply px-5 flex flex-col sm:flex-row space-y-2 sm:space-y-0 shrink-0
     justify-between sm:items-center;
 }
 
@@ -697,7 +729,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .history {
-  @apply grow overflow-y-auto space-y-3.5 pt-6 pb-5;
+  @apply grow overflow-y-auto space-y-3.5 pt-6;
 }
 
 .search-footer {

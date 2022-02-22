@@ -246,8 +246,8 @@
                     :class="[
                       'w-5 h-5 shrink-0 ml-auto -mr-2 hidden sm:block',
                       selection.includes(bookIdx)
-                        ? 'text-primary-600'
-                        : 'text-gray-700/80'
+                        ? 'text-primary-600 dark:text-yellow-500'
+                        : 'text-gray-700/50 dark:text-yellow-500/80'
                     ]"
                   />
                 </div>
@@ -301,7 +301,7 @@
               >
                 <div class="flex items-center">
                   <div class="shrink-0 skeleton h-10 w-10 inline-flex items-center justify-center">
-                    <PhotographIcon class="h-6 w-6 text-gray-100 dark:text-gray-400"/>
+                    <PhotographIcon class="h-6 w-6 text-white dark:text-gray-500"/>
                   </div>
                   <div class="ml-4">
                     <div class="skeleton w-36 h-4" />
@@ -326,8 +326,6 @@
         </tbody>
       </table>
     </div>
-
-    <LoadingIndicator :loading="loading" :blur="false" />
   </div>
 </template>
 
@@ -345,8 +343,6 @@ import {
 } from '@heroicons/vue/outline'
 import { DotsHorizontalIcon, StarIcon } from '@heroicons/vue/solid'
 
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
-
 import { STATUS_FUTURE, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 
 export default {
@@ -354,7 +350,6 @@ export default {
     ArrowSmDownIcon,
     ArrowSmUpIcon,
     DotsHorizontalIcon,
-    LoadingIndicator,
     PhotographIcon,
     StarIcon
   },
@@ -461,7 +456,7 @@ export default {
     )
 
     function handleTopCheckbox (checked) {
-      if (!selectable.value) {
+      if (!selectable.value || !hasMinimumBreakpoint()) {
         return
       }
 
@@ -492,6 +487,10 @@ export default {
         .sort((a, b) => a - b)
     }
 
+    function hasMinimumBreakpoint () {
+      return window.matchMedia('(min-width: 768px)').matches
+    }
+
     /**
      * Try to mimic the Windows behavior on selecting items
      * using the mouse + Shift + Ctrl + Command + checkboxes.
@@ -502,6 +501,14 @@ export default {
      */
     function handleCheckbox (checked, idx, event) {
       if (event.target.tagName === 'A') {
+        return
+      }
+
+      if (!hasMinimumBreakpoint()) {
+        router.push({
+          name: 'BookDetails',
+          params: { bookId: items.value[idx].id }
+        })
         return
       }
 
@@ -563,7 +570,7 @@ export default {
       const totalItems = items.value.length
       const selectionTotalItems = selection.value.length
 
-      if (!allowedKeys.includes(key)) {
+      if (!allowedKeys.includes(key) || !hasMinimumBreakpoint()) {
         return
       }
 

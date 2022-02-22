@@ -6,12 +6,10 @@ export function decimalComma (digits) {
   )
 }
 
-export const dimension = helpers.regex(
-  /^\d+((,|\.)\d{1,2})?$/
-)
+export const dimension = decimalComma(2)
 
 export function isbn (isbn) {
-  isbn = isbn.replace(/-/g, '')
+  isbn = isbn?.replace(/-/g, '') || ''
 
   if (isbn.length !== 10 && isbn.length !== 13) {
     return false
@@ -37,7 +35,7 @@ export function isbn (isbn) {
 }
 
 export function issn (issn) {
-  issn = issn.replace(/-/g, '')
+  issn = issn?.replace(/-/g, '') || ''
 
   if (!issn.match(/^[0-9]{7}[0-9xX]{1}$/)) {
     return false
@@ -55,7 +53,7 @@ export function issn (issn) {
 }
 
 export function ean (ean) {
-  ean = ean.replace(/-/g, '')
+  ean = ean?.replace(/-/g, '') || ''
 
   if (!ean.match(/^\d{13}$/)) {
     return false
@@ -69,14 +67,22 @@ export function ean (ean) {
   return (10 - (checkSum % 10)) % 10 === parseInt(ean.slice(-1), 10)
 }
 
-export function isoDate (dateString) {
-  if (!dateString.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) {
+export function isoDate (dateString, incomplete) {
+  if (typeof dateString !== 'string') {
+    return false
+  }
+
+  if (!incomplete && !dateString.match(/^\d{4}-\d{1,2}-\d{1,2}$/)) {
+    return false
+  }
+
+  if (incomplete && !dateString.match(/^\d{4}(-\d{1,2}){0,2}$/)) {
     return false
   }
 
   const parts = dateString.split('-')
-  const day = parseInt(parts[2], 10)
-  const month = parseInt(parts[1], 10)
+  const day = parseInt(parts[2] || '1', 10)
+  const month = parseInt(parts[1] || '1', 10)
   const year = parseInt(parts[0], 10)
 
   if (year < 1000 || year > 3000 || month === 0 || month > 12) {

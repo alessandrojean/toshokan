@@ -1,8 +1,8 @@
 /**
  * Update a book in the sheet.
  *
- * @param {string} sheetId The ID of the sheet to update the book.
- * @param {import('../../model/Book').default} book The book to update.
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {import('@/model/Book').default} book The book to update
  */
 export default async function updateBook (sheetId, book) {
   const bookFormatted = book.toArray()

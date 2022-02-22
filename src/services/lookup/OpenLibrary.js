@@ -7,7 +7,7 @@ import { isbn as validateIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
 export default class OpenLibrary extends Lookup {
-  createAxios () {
+  _createAxios () {
     return axios.create({
       baseURL: 'https://openlibrary.org/',
       headers: {
@@ -16,7 +16,7 @@ export default class OpenLibrary extends Lookup {
     })
   }
 
-  async findDetails (isbn) {
+  async #findDetails (isbn) {
     try {
       const { data } = await this.axios.get(`isbn/${isbn}.json`)
 
@@ -50,9 +50,9 @@ export default class OpenLibrary extends Lookup {
         return []
       }
 
-      const details = await this.findDetails(isbn)
+      const details = await this.#findDetails(isbn)
 
-      return Book.fromOpenLibrary(data[bibKey], details)
+      return [Book.fromOpenLibrary(data[bibKey], details)]
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

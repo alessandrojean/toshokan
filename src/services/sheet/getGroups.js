@@ -1,64 +1,56 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
 
 import { CollectionColumns, STATUS_FUTURE } from '@/model/Book'
+import QueryBuilder from '@/data/QueryBuilder'
 
+/**
+ * Find all the groups and its count.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @returns {Promise<{ name: string, count: number, futureCount: number, totalCount: number }[]}>} The groups found
+ */
 export default async function getGroups (sheetId) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select ${CollectionColumns.GROUP}, ${CollectionColumns.STATUS}, count(${CollectionColumns.GROUP})
-    where ${CollectionColumns.GROUP} is not null
-    group by ${CollectionColumns.GROUP}, ${CollectionColumns.STATUS}
-  `)
+  const { GROUP, STATUS } = CollectionColumns
+  const query = new QueryBuilder(sheetUrl)
+    .select(GROUP, STATUS, `count(${GROUP})`)
+    .where(GROUP)
+    .groupBy(GROUP, STATUS)
+    .build()
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
 
-        return
-      }
+  const rows = dataTable.getNumberOfRows()
+  const groupMap = new Map()
 
-      const dataTable = response.getDataTable()
+  for (let i = 0; i < rows; i++) {
+    const group = dataTable.getValue(i, 0)
 
-      const rows = dataTable.getNumberOfRows()
-      const groupMap = new Map()
+    if (!groupMap.has(group)) {
+      groupMap.set(group, {
+        name: group,
+        count: 0,
+        futureCount: 0,
+        totalCount: 0
+      })
+    }
 
-      for (let i = 0; i < rows; i++) {
-        const group = dataTable.getValue(i, 0)
+    const groupObj = groupMap.get(group)
+    const status = dataTable.getValue(i, 1)
+    const count = dataTable.getValue(i, 2)
 
-        if (!groupMap.has(group)) {
-          groupMap.set(group, {
-            name: group,
-            count: 0,
-            futureCount: 0,
-            totalCount: 0
-          })
-        }
+    if (status === STATUS_FUTURE) {
+      groupObj.futureCount = count
+    } else {
+      groupObj.count += count
+    }
 
-        const groupObj = groupMap.get(group)
-        const status = dataTable.getValue(i, 1)
-        const count = dataTable.getValue(i, 2)
+    groupObj.totalCount += count
+  }
 
-        if (status === STATUS_FUTURE) {
-          groupObj.futureCount = count
-        } else {
-          groupObj.count += count
-        }
+  const groups = Array.from(groupMap.values())
+    .sort((a, b) => b.count - a.count)
 
-        groupObj.totalCount += count
-      }
-
-      const groups = Array.from(groupMap.values())
-        .sort((a, b) => b.count - a.count)
-
-      resolve(groups)
-    })
-  })
+  return groups
 }

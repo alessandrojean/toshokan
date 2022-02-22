@@ -72,7 +72,7 @@
             enter-to-class="opacity-100"
           >
             <button
-              class="fake-search-input has-ring-focus"
+              class="fake-search-input has-ring-focus group"
               v-if="!loading"
               @click="showSearchDialog"
             >
@@ -312,13 +312,15 @@ export default {
 
 <style lang="postcss" scoped>
 .app-navbar {
-  @apply fixed inset-x-0 bg-gray-800/95
+  @apply fixed inset-x-0
+    bg-gray-800 supports-backdrop-blur:bg-gray-800/95
     backdrop-blur sm:backdrop-filter-none md:backdrop-blur
     transition duration-300 ease-in-out sm:left-16 md:left-0;
 }
 
 .app-navbar.is-transparent {
-  @apply bg-transparent md:bg-gray-800/95;
+  @apply bg-transparent
+    supports-backdrop-blur:md:bg-gray-800/95 md:bg-gray-800;
 }
 
 .app-navbar.is-hidden:not(:focus-within) {
@@ -326,7 +328,7 @@ export default {
 }
 
 .app-navbar.is-hidden.is-transparent {
-  @apply bg-gray-800/95;
+  @apply supports-backdrop-blur:bg-gray-800/95 bg-gray-800;
 }
 
 .nav-link.is-active {

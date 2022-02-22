@@ -1,13 +1,15 @@
 {
   "name": "toshokan",
-  "version": "0.2.40",
+  "version": "0.2.41",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "test": "jest ./src/tests",
+    "test:watch": "jest --watch ./src/tests"
   },
   "dependencies": {
     "@headlessui/vue": "^1.5.0",
@@ -41,12 +43,19 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.5",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
+    "@types/dedent": "^0.7.0",
+    "@types/gapi.client.drive": "^3.0.13",
+    "@types/gapi.client.sheets": "^4.0.20201029",
+    "@types/google.visualization": "^0.0.68",
+    "@types/jest": "^27.4.0",
     "@vitejs/plugin-vue": "^2.2.2",
     "@vue/compiler-sfc": "^3.2.31",
     "@vue/eslint-config-standard": "^6.1.0",
     "autoprefixer": "^10.4.2",
+    "babel-jest": "^27.5.1",
     "eslint": "^8.9.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
@@ -54,6 +63,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^8.4.1",
     "git-describe": "^4.1.0",
+    "jest": "^27.5.1",
     "postcss": "^8.4.6",
     "postcss-loader": "^6.2.1",
     "source-map": "^0.7.3",

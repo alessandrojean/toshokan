@@ -5,6 +5,11 @@ const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
 const SHEET_DEV_SUFFIX = '-dev'
 const SHEET_USE_DEV_VERSION = true
 
+/**
+ * Find the sheet ID and other matches.
+ *
+ * @returns The sheet and other matches
+ */
 export default async function findSheetId () {
   // Use a development only sheet to prevent issues during tests.
   const isDevEnvironment = import.meta.env.DEV

@@ -10,7 +10,7 @@
           :to="{ name: 'BookDetails', params: { bookId: previous.id } }"
         >
           <span aria-hidden="true">
-            <ChevronLeftIcon class="w-5 h-5 mr-2" />
+            <ArrowSmLeftIcon class="w-5 h-5 mr-2" />
           </span>
           <span>{{ t('pagination.previous') }}</span>
         </router-link>
@@ -25,7 +25,7 @@
         >
           <span>{{ t('pagination.next') }}</span>
           <span aria-hidden="true">
-            <ChevronRightIcon class="w-5 h-5 ml-2" />
+            <ArrowSmRightIcon class="w-5 h-5 ml-2" />
           </span>
         </router-link>
       </li>
@@ -37,10 +37,10 @@
 import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
+import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/vue/solid'
 
 export default {
-  components: { ChevronLeftIcon, ChevronRightIcon },
+  components: { ArrowSmLeftIcon, ArrowSmRightIcon },
 
   props: {
     book: Object,
@@ -87,24 +87,29 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.navigation-link:hover {
+.navigation-link:where(:hover, :focus-visible) {
   @apply underline underline-offset-1 decoration-2 dark:text-gray-100
     decoration-primary-600 dark:decoration-primary-400;
 }
 
-.navigation-link svg {
-  @apply motion-safe:transition-transform;
+.navigation-link.previous:focus-visible {
+  @apply relative z-10;
 }
 
-.navigation-link:hover svg {
+.navigation-link svg {
+  @apply text-gray-500/80 dark:text-gray-400/80
+    motion-safe:transition-transform;
+}
+
+.navigation-link:where(:hover, :focus-visible) svg {
   @apply text-primary-600 dark:text-primary-300;
 }
 
-.navigation-link.previous:hover svg {
+.navigation-link.previous:where(:hover, :focus-visible) svg {
   @apply -translate-x-0.5;
 }
 
-.navigation-link.next:hover svg {
+.navigation-link.next:where(:hover, :focus-visible) svg {
   @apply translate-x-0.5;
 }
 </style>

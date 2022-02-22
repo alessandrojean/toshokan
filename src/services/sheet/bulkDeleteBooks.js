@@ -1,3 +1,9 @@
+/**
+ * Bulk delete books in the sheet.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {import('@/model/Book').default[]} books The books to delete
+ */
 export default async function bulkDeleteBooks (sheetId, books) {
   await window.gapi.client.sheets.spreadsheets
     .batchUpdate({

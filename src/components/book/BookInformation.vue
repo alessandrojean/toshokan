@@ -19,7 +19,7 @@
         </span>
         {{ book.titleParts.main }}
       </h2>
-      <div v-else class="motion-safe:animate-pulse w-72 h-8 mb-2 bg-gray-400 dark:bg-gray-600 rounded"></div>
+      <div v-else class="skeleton w-72 h-8 mb-2"></div>
 
       <!-- Book subtitle -->
       <p
@@ -35,7 +35,7 @@
           <a
             href="#"
             class="author has-ring-focus"
-            @click="searchByAuthor(author, $event)"
+            @click.prevent="searchByAuthor(author, $event)"
           >
             {{ author }}
           </a>
@@ -44,7 +44,7 @@
           </span>
         </template>
       </p>
-      <div v-else class="motion-safe:animate-pulse h-6 bg-gray-400 dark:bg-gray-600 rounded w-44"></div>
+      <div v-else class="skeleton h-6 w-44"></div>
     </div>
 
     <!-- Book synopsis -->
@@ -55,12 +55,12 @@
       class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-none"
     />
     <div v-else class="flex flex-col space-y-2">
-      <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="motion-safe:animate-pulse w-full h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
-      <div class="motion-safe:animate-pulse w-6/12 h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
+      <div class="skeleton w-full h-5"></div>
+      <div class="skeleton w-full h-5"></div>
+      <div class="skeleton w-full h-5"></div>
+      <div class="skeleton w-full h-5"></div>
+      <div class="skeleton w-full h-5"></div>
+      <div class="skeleton w-6/12 h-5"></div>
     </div>
 
     <!-- Book actions -->
@@ -76,7 +76,7 @@
         </span>
         {{ t('dashboard.details.header.edit') }}
       </button>
-      <div v-else class="motion-safe:animate-pulse flex-1 md:flex-initial md:w-28 h-11 bg-gray-400 dark:bg-gray-600 rounded"></div>
+      <div v-else class="skeleton flex-1 md:flex-initial md:w-28 h-11"></div>
 
       <button
         v-if="showBookInfo && !book.isFuture"
@@ -156,9 +156,9 @@
         </div>
       </dl>
       <div v-else class="flex flex-col space-y-1">
-        <div class="motion-safe:animate-pulse w-44 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
-        <div class="motion-safe:animate-pulse w-52 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
-        <div class="motion-safe:animate-pulse w-64 h-4 bg-gray-400 dark:bg-gray-600 rounded"></div>
+        <div class="skeleton w-44 h-4"></div>
+        <div class="skeleton w-52 h-4"></div>
+        <div class="skeleton w-64 h-4"></div>
       </div>
 
       <BookOwnerBadge v-if="showBookInfo" />

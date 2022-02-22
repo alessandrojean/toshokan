@@ -1,5 +1,6 @@
 const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
+const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
 module.exports = {
   content: [
@@ -166,6 +167,18 @@ module.exports = {
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio')
+    require('@tailwindcss/aspect-ratio'),
+    function ({ addVariant }) {
+      addVariant(
+        'supports-backdrop-blur',
+        '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))'
+      )
+    },
+    function ({ matchUtilities, theme }) {
+      matchUtilities(
+        { skeleton: value => ({ backgroundColor: value }) },
+        { values: flattenColorPalette(theme('backgroundColor')), type: 'color' }
+      )
+    }
   ]
 }

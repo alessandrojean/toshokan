@@ -1,4 +1,3 @@
-import dedent from 'dedent'
 import searchQuery from 'search-query-parser'
 
 import i18n from '@/i18n'
@@ -9,6 +8,8 @@ import { PER_PAGE } from './constants'
 
 import Book, { CollectionColumns, PropertyToColumn } from '@/model/Book'
 import { isoDate as validateDate } from '@/util/validators'
+import QueryBuilder from '@/data/QueryBuilder'
+import { isoDate, lastDayOfMonth } from '@/util/date'
 
 export function createSearchKeywords () {
   return {
@@ -48,7 +49,8 @@ export function createSearchKeywords () {
       column: CollectionColumns.BOUGHT_AT,
       date: true,
       operation: '=',
-      inverseOperation: '!='
+      inverseOperation: '!=',
+      dateRange: true
     },
     [i18n.global.t('dashboard.search.keywords.boughtBefore')]: {
       column: CollectionColumns.BOUGHT_AT,
@@ -66,7 +68,8 @@ export function createSearchKeywords () {
       column: CollectionColumns.READ_AT,
       date: true,
       operation: '=',
-      inverseOperation: '!='
+      inverseOperation: '!=',
+      dateRange: true
     },
     [i18n.global.t('dashboard.search.keywords.readBefore')]: {
       column: CollectionColumns.READ_AT,
@@ -85,7 +88,8 @@ export function createSearchKeywords () {
       date: true,
       withTime: true,
       operation: '=',
-      inverseOperation: '!='
+      inverseOperation: '!=',
+      dateRange: true
     },
     [i18n.global.t('dashboard.search.keywords.createdBefore')]: {
       column: CollectionColumns.CREATED_AT,
@@ -106,7 +110,8 @@ export function createSearchKeywords () {
       date: true,
       withTime: true,
       operation: '=',
-      inverseOperation: '!='
+      inverseOperation: '!=',
+      dateRange: true
     },
     [i18n.global.t('dashboard.search.keywords.updatedBefore')]: {
       column: CollectionColumns.UPDATED_AT,
@@ -125,16 +130,35 @@ export function createSearchKeywords () {
   }
 }
 
+/**
+ * Perform an advanced search in the books.
+ *
+ * @param {Object} options The search options
+ * @param {string} options.sheetId The sheet to perform the operation
+ * @param {string} options.searchTerm The search query
+ * @param {Object} options.sort The sorting
+ * @param {string} options.sort.sortBy The column to order
+ * @param {'asc' | 'desc'} options.sort.sortDirection The sort direction
+ * @param {number} options.page The page
+ * @returns {Promise<{ results: Book[], totalResults: number }>} The books found
+ */
 export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1 }) {
   const sheetUrl = buildSheetUrl(sheetId)
 
+  const queryBuilder = new QueryBuilder(sheetUrl)
+    .orderBy([CollectionColumns.UPDATED_AT, 'desc'])
+    .limit(PER_PAGE)
+    .offset((page - 1) * PER_PAGE)
+
   let searchQueryObj = searchTerm
-  let sortBy = CollectionColumns.UPDATED_AT
-  let sortDirection = 'desc'
 
   if (sort) {
-    sortBy = sort.sortBy ? PropertyToColumn[sort.sortBy] : sortBy
-    sortDirection = sort.sortDirection || sortDirection
+    const builderObj = queryBuilder.toObject()
+
+    queryBuilder.orderBy([
+      sort.sortBy ? PropertyToColumn[sort.sortBy] : builderObj.orderBy[0][0],
+      sort.sortDirection || builderObj.orderBy[0][1]
+    ])
   }
 
   const keywords = createSearchKeywords()
@@ -151,24 +175,20 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
     searchQueryObj = searchQuery.parse(searchTerm, searchOptions)
   }
 
-  const query = new window.google.visualization.Query(sheetUrl)
-
   if (typeof searchQueryObj === 'string') {
     const searchRegex = searchTerm
       .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       .toLowerCase()
 
-    query.setQuery(dedent`
-      select *
-      where lower(${CollectionColumns.TITLE}) matches ".*${searchRegex}.*"
-        or lower(${CollectionColumns.AUTHORS}) matches ".*${searchRegex}.*"
-        or ${CollectionColumns.ID} = "${searchTerm}"
-        or ${CollectionColumns.CODE} = "${searchTerm}"
-      order by ${sortBy} ${sortDirection}
-      limit ${PER_PAGE} offset ${(page - 1) * PER_PAGE}
-    `)
+    const { AUTHORS, CODE, ID, TITLE } = CollectionColumns
+
+    queryBuilder
+      .where(`lower(${TITLE})`, 'matches', `.*${searchRegex}.*`)
+      .orWhere(`lower(${AUTHORS})`, 'matches', `.*${searchRegex}.*`)
+      .orWhere(ID, searchTerm)
+      .orWhere(CODE, searchTerm)
   } else {
-    const conditions = Object.entries(searchQueryObj)
+    const restrictions = Object.entries(searchQueryObj)
       .flatMap(([localeKeyword, values]) => {
         const keywordInfo = keywords[localeKeyword]
 
@@ -179,41 +199,71 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
         let tests = []
 
         if (keywordInfo.equals) {
-          tests = values.map(v => `lower(${keywordInfo.column}) = "${v}"`)
+          const column = `lower(${keywordInfo.column})`
+          tests = values.map(v => [column, '=', v])
         } else if (keywordInfo.date) {
           const isEquality = keywordInfo.operation === '='
           const isUnique = values.length === 1 || isEquality
           const isValidDate = isEquality
-            ? values.every(date => validateDate(date))
+            ? values.every(date => validateDate(date, true))
             : validateDate(values[0])
 
           if (isUnique && isValidDate) {
             const column = keywordInfo.withTime
               ? `toDate(${keywordInfo.column})`
               : keywordInfo.column
+            const operation = keywordInfo.operation
 
             const checks = values.map(date => {
-              const isoDate = date
-                .replace(/-(\d)-/, '0$1')
-                .replace(/-(\d)$/, '0$1')
+              if (isEquality) {
+                const [year, month, day] = date
+                  .split('-')
+                  .map(n => parseInt(n, 10))
+                const dates = []
 
-              return `${column} ${keywordInfo.operation} date "${isoDate}"`
+                if (year && month && day) {
+                  dates.push(date)
+                } else if (year && month) {
+                  const start = date + '-01'
+                  const end = date + '-' + lastDayOfMonth(year, month)
+                  dates.push(start, end)
+                } else {
+                  dates.push(date + '-01-01', date + '-12-31')
+                }
+
+                const [start, end] = dates.map(isoDate)
+
+                return start && end
+                  ? QueryBuilder.and(
+                      [column, '>= date', start],
+                      [column, '<= date', end]
+                    )
+                  : [column, `${operation} date`, start]
+              }
+
+              return [column, `${operation} date`, isoDate(date)]
             })
 
-            tests = [`(${checks.join(' or ')})`]
+            const dateTests = checks.length > 1
+              ? [QueryBuilder.or(...checks)]
+              : checks
+
+            tests = [QueryBuilder.and([column, 'is not', 'null'], ...dateTests)]
           }
         } else {
-          tests = values.map(v => `lower(${keywordInfo.column}) matches ".*${v}.*"`)
+          const column = `lower(${keywordInfo.column})`
+          tests = values.map(v => [column, 'matches', `.*${v}.*`])
         }
 
+        /** @type {'and' | 'or'} */
         const joinWith = keywordInfo.joinWith || 'or'
 
         return (values.length === 1 || keywordInfo.date)
           ? tests
-          : ['(' + tests.join(` ${joinWith} `) + ')']
+          : [QueryBuilder[joinWith](...tests)]
       })
 
-    const excludingConditions = Object.entries(searchQueryObj.exclude)
+    const excludingRestrictions = Object.entries(searchQueryObj.exclude)
       .flatMap(([localeKeyword, values]) => {
         const keywordInfo = keywords[localeKeyword]
 
@@ -224,77 +274,94 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
         let tests = []
 
         if (keywordInfo.equals) {
-          tests = values.map(v => `lower(${keywordInfo.column}) != "${v}"`)
+          const column = `lower(${keywordInfo.column})`
+          tests = values.map(v => [column, '!=', v])
         } else if (keywordInfo.date) {
           const isDifferent = keywordInfo.inverseOperation === '!='
           const isUnique = values.length === 1 || isDifferent
           const isValidDate = isDifferent
-            ? values.every(date => validateDate(date))
+            ? values.every(date => validateDate(date, true))
             : validateDate(values[0])
 
           if (isUnique && isValidDate) {
             const column = keywordInfo.withTime
               ? `toDate(${keywordInfo.column})`
               : keywordInfo.column
+            const inverseOperation = keywordInfo.inverseOperation
 
             const checks = values.map(date => {
-              const isoDate = date
-                .replace(/-(\d)-/, '0$1')
-                .replace(/-(\d)$/, '0$1')
+              if (isDifferent) {
+                const [year, month, day] = date
+                  .split('-')
+                  .map(n => parseInt(n, 10))
+                const dates = []
 
-              return `${column} ${keywordInfo.inverseOperation} date "${isoDate}"`
+                if (year && month && day) {
+                  dates.push(date)
+                } else if (year && month) {
+                  const start = date + '-01'
+                  const end = date + '-' + lastDayOfMonth(year, month)
+                  dates.push(start, end)
+                } else {
+                  dates.push(date + '-01-01', date + '-12-31')
+                }
+
+                const [start, end] = dates.map(isoDate)
+
+                return start && end
+                  ? QueryBuilder.andNot(
+                      [column, '>= date', start],
+                      [column, '<= date', end]
+                    )
+                  : [column, `${inverseOperation} date`, start]
+              }
+
+              return [column, `${inverseOperation} date`, isoDate(date)]
             })
 
-            tests = [`(${checks.join(' and ')})`]
+            const dateTests = checks.length > 1
+              ? [QueryBuilder.and(...checks)]
+              : checks
+
+            tests = [QueryBuilder.and([column, 'is not', 'null'], ...dateTests)]
           }
         } else {
-          tests = values.map(v => `not lower(${keywordInfo.column}) matches ".*${v}.*"`)
+          const column = `not lower(${keywordInfo.column})`
+          tests = values.map(v => [column, 'matches', `.*${v}.*`])
         }
 
+        /** @type {'and' | 'or'} */
         const excludeJoinWith = keywordInfo.excludeJoinWith || 'and'
 
         return (values.length === 1 || keywordInfo.date)
           ? tests
-          : ['(' + tests.join(` ${excludeJoinWith} `) + ')']
+          : [QueryBuilder[excludeJoinWith](...tests)]
       })
 
-    conditions.push(...excludingConditions)
+    restrictions.push(...excludingRestrictions)
 
     if (searchQueryObj.text) {
-      conditions.push(
-        `lower(${CollectionColumns.TITLE}) matches ".*${searchQueryObj.text}.*"`
-      )
+      restrictions.push([
+        `lower(${CollectionColumns.TITLE})`,
+        'matches',
+        `.*${searchQueryObj.text}.*`
+      ])
     }
 
-    query.setQuery(dedent`
-      select *
-      where ${conditions.join('\n  and ')}
-      order by ${sortBy} ${sortDirection}
-      limit ${PER_PAGE} offset ${(page - 1) * PER_PAGE}
-    `)
+    queryBuilder.andWhere(restrictions)
   }
 
-  const totalResults = await countTotalResults(sheetId, query.query)
+  const query = queryBuilder.build()
+  const totalResults = await countTotalResults(sheetId, query)
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
 
-        return
-      }
+  const rows = dataTable.getNumberOfRows()
+  const books = []
 
-      const dataTable = response.getDataTable()
+  for (let i = 0; i < rows; i++) {
+    books.push(Book.fromDataTable(dataTable, i))
+  }
 
-      const rows = dataTable.getNumberOfRows()
-      const books = []
-
-      for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, i))
-      }
-
-      resolve({ results: books, total: totalResults })
-    })
-  })
+  return { results: books, total: totalResults }
 }

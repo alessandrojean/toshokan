@@ -1,40 +1,30 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
 
 import Book, { CollectionColumns } from '@/model/Book'
+import QueryBuilder from '@/data/QueryBuilder'
 
-export default function getBookById (sheetId, id) {
+/**
+ * Find a book by the ID.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {string} id The ID to find
+ * @returns {Promise<Book | null>} The book found
+ */
+export default async function getBookById (sheetId, id) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select *
-    where ${CollectionColumns.ID} = "${id}"
-    limit 1
-  `)
+  const { ID } = CollectionColumns
+  const query = new QueryBuilder(sheetUrl)
+    .where(ID, id)
+    .build()
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
 
-        return
-      }
+  const rows = dataTable.getNumberOfRows()
 
-      const dataTable = response.getDataTable()
+  if (rows === 0) {
+    return null
+  }
 
-      const rows = dataTable.getNumberOfRows()
-
-      if (rows === 0) {
-        resolve(null)
-        return
-      }
-
-      resolve(Book.fromDataTable(dataTable, 0))
-    })
-  })
+  return Book.fromDataTable(dataTable, 0)
 }

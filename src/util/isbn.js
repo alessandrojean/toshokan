@@ -2,7 +2,11 @@ import { getFlagUrl } from '.'
 import { isbn as validateIsbn } from './validators'
 
 export function convertIsbn13ToIsbn10 (isbn13) {
-  isbn13 = isbn13.replace(/-/g, '')
+  isbn13 = isbn13?.replace(/-/g, '') || ''
+
+  if (!validateIsbn(isbn13)) {
+    return null
+  }
 
   if (isbn13.length === 10) {
     return isbn13

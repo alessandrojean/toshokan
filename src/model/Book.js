@@ -90,6 +90,9 @@ const CBL_ALLOWED_ROLES = ['Autor', 'Ilustrador', 'Roteirista']
 
 const monetaryValidator = decimalComma(2)
 
+/**
+ * A book in the sheet.
+ */
 export default class Book {
   /** @type {?string} */
   sheetLocation = null
@@ -115,7 +118,7 @@ export default class Book {
   /** @type {?string} */
   publisher = null
 
-  /** @type {?object} */
+  /** @type {{ width: number, height: number } | null} */
   dimensions = null
 
   /** @type {?string} */
@@ -124,10 +127,10 @@ export default class Book {
   /** @type {?Date} */
   readAt = null
 
-  /** @type {?object} */
+  /** @type {{ currency: string, value: number, valueStr: string } | null} */
   labelPrice = null
 
-  /** @type {?object} */
+  /** @type {{ currency: string, value: number, valueStr: string } | null} */
   paidPrice = null
 
   /** @type {?string} */
@@ -172,7 +175,7 @@ export default class Book {
   /**
    * Splits the title into the needed parts.
    *
-   * @type {object}
+   * @type {{ title: string, number: string?, main: string, subtitle: string? }}
    */
   get titleParts () {
     const titleRegex = /\s+#(\d+(?:[.,]\d+)?)(?::\s+)?/
@@ -194,8 +197,6 @@ export default class Book {
 
   /**
    * The type of the book barcode.
-   *
-   * @type {string}
    */
   get codeType () {
     return Book.getCodeType(this.code)
@@ -265,9 +266,6 @@ export default class Book {
       : n(this.dimensions.height)
 
     return `${width} x ${height}`
-    // return (this.dimensions?.filter(dm => dm && !isNaN(dm)) || [])
-    //   .map(dm => n(dm, 'dimensions'))
-    //   .join(' x ')
   }
 
   /** @type {string} */
@@ -275,7 +273,11 @@ export default class Book {
     return this.boughtAt ? this.boughtAt.toISOString().substring(0, 10) : ''
   }
 
-  /** @type {string?} */
+  /**
+   * The ISBN information.
+   *
+   * @type {{ countryCode: string, locale: string, flagUrl: string } | null}
+   */
   get isbnData () {
     if (!this.codeType.includes('ISBN')) {
       return null
@@ -300,7 +302,7 @@ export default class Book {
   /**
    * Formats the book as a proper array to be inserted in the sheet.
    *
-   * @returns {any[]}
+   * @returns {string[]}
    */
   toArray () {
     function formatDateToSheet (date) {
@@ -356,7 +358,9 @@ export default class Book {
   /**
    * Creates a book from a DataTable row.
    *
-   * @returns {Book}
+   * @param {google.visualization.DataTable} dataTable The dataTable to lookup
+   * @param {number} i The row index
+   * @returns {Book} The formatted book
    */
   static fromDataTable (dataTable, i) {
     function getProperty (column) {
@@ -406,7 +410,8 @@ export default class Book {
   /**
    * Creates a book from a CBL record.
    *
-   * @returns {Book}
+   * @param {Object} cblBook The CBL record
+   * @returns {Book} A formatted book
    */
   static fromCbl (cblBook) {
     const dimensions = cblBook.Dimensao
@@ -440,7 +445,8 @@ export default class Book {
   /**
    * Creates a book from a Google Book record.
    *
-   * @returns {Book}
+   * @param {Object} googleBook The Google Book record
+   * @returns {Book} A formatted book
    */
   static fromGoogleBooks (googleBook) {
     const volumeInfo = googleBook.volumeInfo
@@ -472,7 +478,9 @@ export default class Book {
   /**
    * Creates a book from a Open Library record.
    *
-   * @returns {Book}
+   * @param {Object} openLibraryBook The Open Library record
+   * @param {Object | null} details The record details
+   * @returns {Book} A formatted book
    */
   static fromOpenLibrary (openLibraryBook, details) {
     const code = openLibraryBook.identifiers.isbn_13
@@ -499,9 +507,7 @@ export default class Book {
         .filter(dm => !isNaN(dm))
 
       Object.assign(book, {
-        synopsis: details.description?.type === '/type/text'
-          ? details.description.value
-          : '',
+        synopsis: details.description || '',
         dimensions: physicalDimensions.includes('centimeters') && dimensions.length === 3
           ? {
               width: dimensions[1],
@@ -518,7 +524,7 @@ export default class Book {
    * Try to obtain the type of the barcode.
    *
    * @param {string} code The barcode of the book.
-   * @returns {string} The type of the code
+   * @returns {'ISBN-13' | 'ISBN-10' | 'ISSN' | 'EAN-13' | 'ID' | 'N/A'} The type of the code
    */
   static getCodeType (code) {
     code = code.replace(/-/g, '')

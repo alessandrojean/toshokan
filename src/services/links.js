@@ -101,7 +101,7 @@ export default function getBookLinks (book, locale) {
     return []
   }
 
-  const isbn = book.code.replaceAll('-', '')
+  const isbn = book.code.replace(/-/g, '')
   const isbn10 = isbn.length === 10 ? isbn : convertIsbn13ToIsbn10(isbn)
 
   const country = book.isbnData?.countryCode
@@ -114,8 +114,8 @@ export default function getBookLinks (book, locale) {
     .map(website => ({
       ...website,
       url: website.url
-        .replaceAll('{isbn}', isbn)
-        .replaceAll('{isbn10}', isbn10)
+        .replace(/\{isbn\}/g, isbn)
+        .replace(/\{isbn10\}/g, isbn10)
     }))
     .sort((a, b) => {
       return (a.category - b.category) ||

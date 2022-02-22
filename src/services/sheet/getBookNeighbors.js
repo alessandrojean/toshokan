@@ -1,59 +1,50 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
 
+import QueryBuilder from '@/data/QueryBuilder'
 import Book, { CollectionColumns, Columns } from '@/model/Book'
 
-export default function getBookNeighbors (sheetId, book) {
+/**
+ * Find the book neighbors.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {Book} book The code to find
+ * @returns {Promise<{ previous: Book, next: Book } | null>} The books found
+ */
+export default async function getBookNeighbors (sheetId, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select *
-    where ${CollectionColumns.TITLE} starts with "${book.titleParts.title}"
-      and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
-      and ${CollectionColumns.GROUP} = "${book.group}"
-    order by ${CollectionColumns.TITLE} asc
-  `)
+  const { TITLE, PUBLISHER, GROUP } = CollectionColumns
+  const query = new QueryBuilder(sheetUrl)
+    .where(TITLE, 'starts with', book.titleParts.title)
+    .andWhere(PUBLISHER, book.publisher)
+    .andWhere(GROUP, book.group)
+    .orderBy([TITLE, 'asc'])
+    .build()
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
 
-        return
-      }
+  const rows = dataTable.getNumberOfRows()
 
-      const dataTable = response.getDataTable()
+  if (rows < 2) {
+    return null
+  }
 
-      const rows = dataTable.getNumberOfRows()
+  let bookRow = 0
 
-      if (rows === 1) {
-        resolve(null)
-        return
-      }
+  for (let i = 0; i < rows; i++) {
+    if (dataTable.getValue(i, Columns.TITLE) === book.title) {
+      bookRow = i
+      break
+    }
+  }
 
-      let bookRow = 0
+  const previous = bookRow > 0
+    ? Book.fromDataTable(dataTable, bookRow - 1)
+    : null
 
-      for (let i = 0; i < rows; i++) {
-        if (dataTable.getValue(i, Columns.TITLE) === book.title) {
-          bookRow = i
-          break
-        }
-      }
+  const next = bookRow < rows - 1
+    ? Book.fromDataTable(dataTable, bookRow + 1)
+    : null
 
-      const previous = bookRow > 0
-        ? Book.fromDataTable(dataTable, bookRow - 1)
-        : null
-
-      const next = bookRow < rows - 1
-        ? Book.fromDataTable(dataTable, bookRow + 1)
-        : null
-
-      resolve({ previous, next })
-    })
-  })
+  return { previous, next }
 }

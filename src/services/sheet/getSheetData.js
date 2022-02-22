@@ -1,3 +1,9 @@
+/**
+ * Get the sheet timezone data and statistics.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @returns The sheet data and statistics
+ */
 export default async function getSheetData (sheetId) {
   const response = await window.gapi.client.sheets.spreadsheets.values
     .batchGet({

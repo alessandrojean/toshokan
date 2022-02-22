@@ -1,46 +1,37 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
 
+import QueryBuilder from '@/data/QueryBuilder'
 import Book, { CollectionColumns } from '@/model/Book'
 
-export default function getBooksFromCollection (sheetId, book) {
+/**
+ * Find books of the same collection.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {Book} book The book to find
+ * @returns {Promise<Book[]>} The books found
+ */
+export default async function getBooksFromCollection (sheetId, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select *
-    where ${CollectionColumns.TITLE} starts with "${book.titleParts.title}"
-      and ${CollectionColumns.PUBLISHER} = "${book.publisher}"
-      and ${CollectionColumns.GROUP} = "${book.group}"
-    order by ${CollectionColumns.TITLE} asc
-  `)
+  const { TITLE, PUBLISHER, GROUP } = CollectionColumns
+  const query = new QueryBuilder(sheetUrl)
+    .where(TITLE, 'starts with', book.titleParts.title + ' #')
+    .andWhere(PUBLISHER, book.publisher)
+    .andWhere(GROUP, book.group)
+    .orderBy([TITLE, 'asc'])
+    .build()
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
+  const rows = dataTable.getNumberOfRows()
+  const books = []
 
-        return
-      }
+  if (rows < 2) {
+    return books
+  }
 
-      const dataTable = response.getDataTable()
-      const rows = dataTable.getNumberOfRows()
-      const books = []
+  for (let i = 0; i < rows; i++) {
+    books.push(Book.fromDataTable(dataTable, i))
+  }
 
-      if (rows < 2) {
-        resolve(books)
-        return
-      }
-
-      for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, i))
-      }
-
-      resolve(books)
-    })
-  })
+  return books
 }

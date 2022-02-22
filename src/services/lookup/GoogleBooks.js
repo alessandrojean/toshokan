@@ -7,7 +7,7 @@ import i18n from '@/i18n'
 import Lookup from './Lookup'
 
 export default class GoogleBooks extends Lookup {
-  createAxios () {
+  _createAxios () {
     return axios.create({
       baseURL: 'https://www.googleapis.com/books/v1'
     })
@@ -30,7 +30,7 @@ export default class GoogleBooks extends Lookup {
         }
       })
 
-      return data.items.map(Book.fromGoogleBooks)
+      return data.items?.map(Book.fromGoogleBooks) || []
     } catch (e) {
       throw new Error(t('isbn.searchError'))
     }

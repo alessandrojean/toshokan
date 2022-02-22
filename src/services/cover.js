@@ -3,7 +3,13 @@ import slugify from 'slugify'
 
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 
-async function directUrl (book) {
+/**
+ * Replace a value directly in a URL.
+ *
+ * @param {import('@/model/Book').default} book The book
+ * @returns {Promise<string>} The cover URL
+ */
+export async function directUrl (book) {
   if (this.condition && !this.condition(book)) {
     return []
   }
@@ -17,7 +23,13 @@ async function directUrl (book) {
   return [this.url.replace(/\{value\}/g, valueToReplace)]
 }
 
-async function wordpress (book) {
+/**
+ * Find the cover in a WordPress website.
+ *
+ * @param {import('@/model/Book').default} book The book
+ * @returns {Promise<string?>} The cover URL
+ */
+export async function wordpress (book) {
   const collection = this.collection || 'posts'
   const searchParam = this.queryParameter || 'search'
   let searchQuery = book[this.searchWith]
@@ -46,8 +58,14 @@ async function wordpress (book) {
   }
 }
 
+/**
+ * Find the cover in WordPress OEmbed.
+ *
+ * @param {import('@/model/Book').default} book The book
+ * @returns {Promise<string?>} The cover URL
+ */
 // eslint-disable-next-line no-unused-vars
-async function oembed (book) {
+export async function oembed (book) {
   const urlPath = this.createPath(book)
 
   try {
@@ -154,6 +172,13 @@ const AVAILABLE_SITES = [
   }
 ]
 
+/**
+ * Find the covers for a book.
+ *
+ * @param {import('@/model/Book').default} book The book
+ * @param {boolean?} forceAmazon If true, will only search on Amazon
+ * @returns {Promise<string[]?>} The covers found
+ */
 export async function findCovers (book, forceAmazon) {
   if (forceAmazon) {
     return await AMAZON.find(book)

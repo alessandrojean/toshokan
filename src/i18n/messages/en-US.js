@@ -606,7 +606,7 @@ export default {
         publisher: 'publisher',
         store: 'store',
         notes: 'notes',
-        tag: 'tag',
+        tags: 'tag',
         boughtAt: 'bought-at',
         boughtBefore: 'bought-before',
         boughtAfter: 'bought-after',

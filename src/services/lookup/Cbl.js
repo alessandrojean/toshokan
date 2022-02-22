@@ -28,7 +28,7 @@ export const PUBLISHER_REPLACEMENTS = {
 }
 
 export default class Cbl extends Lookup {
-  FIELDS_TO_SELECT = [
+  #FIELDS_TO_SELECT = [
     'Authors',
     'Colection',
     'Countries',
@@ -46,7 +46,7 @@ export default class Cbl extends Lookup {
     'Sinopse'
   ]
 
-  createAxios () {
+  _createAxios () {
     return axios.create({
       baseURL: 'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
       headers: {
@@ -56,7 +56,7 @@ export default class Cbl extends Lookup {
     })
   }
 
-  createSearchPayload (query, dataOptions) {
+  #createSearchPayload (query, dataOptions) {
     let payload = {
       count: true,
       facets: ['Imprint,count:50', 'Authors,count:50'],
@@ -66,7 +66,7 @@ export default class Cbl extends Lookup {
       search: query,
       searchFields: 'FormattedKey,RowKey,Authors,Title,Imprint',
       searchMode: 'any',
-      select: this.FIELDS_TO_SELECT.join(','),
+      select: this.#FIELDS_TO_SELECT.join(','),
       skip: 0,
       top: 12
     }
@@ -78,7 +78,7 @@ export default class Cbl extends Lookup {
     return payload
   }
 
-  async internalSearch (query = '', options) {
+  async #internalSearch (query = '', options) {
     const { t } = i18n.global
 
     const queryKey = import.meta.env.VITE_APP_CBL_QUERY_KEY
@@ -87,7 +87,7 @@ export default class Cbl extends Lookup {
       throw new Error(t('isbn.keyMissing'))
     }
 
-    const dataPayload = this.createSearchPayload(query, options.dataOptions)
+    const dataPayload = this.#createSearchPayload(query, options.dataOptions)
 
     try {
       const response = await this.axios.post('search?api-version=2016-09-01', dataPayload)
@@ -105,7 +105,7 @@ export default class Cbl extends Lookup {
       throw new Error(t('isbn.invalid'))
     }
 
-    const searchResults = await this.internalSearch(isbn.replace(/-/g, ''), {
+    const searchResults = await this.#internalSearch(isbn.replace(/-/g, ''), {
       dataOptions: { searchFields: 'FormattedKey,RowKey' }
     })
 

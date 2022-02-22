@@ -1,10 +1,10 @@
 <template>
   <div class="bg-gray-50 sm:shadow sm:rounded-md dark:bg-gray-800" v-if="loading">
-    <div class="motion-safe:animate-pulse flex items-center p-4">
-      <div class="w-10 h-10 shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md bg-gray-400 dark:bg-gray-600"></div>
+    <div class="flex items-center p-4">
+      <div class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md"></div>
       <div class="flex-1 space-y-2">
-        <div class="h-3 bg-gray-400 dark:bg-gray-600 rounded w-24"></div>
-        <div class="h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"></div>
+        <div class="skeleton h-3 w-24"></div>
+        <div class="skeleton h-5 w-32"></div>
       </div>
     </div>
   </div>

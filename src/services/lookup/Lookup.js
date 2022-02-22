@@ -5,28 +5,28 @@ export default class Lookup {
   /**
    * Axios instance to API calls.
    *
-   * @type {typeof import('axios').default}
+   * @type {import('axios').default}
    */
   axios = null
 
   constructor () {
-    this.axios = this.createAxios()
+    this.axios = this._createAxios()
   }
 
   /**
    * Creates the axios instance to be used inside the class.
    *
-   * @returns {typeof import('axios').default} the axios instance
+   * @returns {import('axios').default} the axios instance
    */
-  createAxios () {
+  _createAxios () {
     throw new Error('Not implemented!')
   }
 
   /**
    * Search a book using the ISBN provided.
    *
-   * @param {String} isbn
-   * @returns {Promise<Object[]>} an array of books found
+   * @param {String} isbn The ISBN to search
+   * @returns {Promise<Object[]>} An array of books found
    */
   async search (isbn) {
     throw new Error('Not implemented!')

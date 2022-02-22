@@ -1,45 +1,38 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
+import QueryBuilder from '@/data/QueryBuilder'
 
-export default function getColumnUniqueValues (sheetId, column, alphabetically) {
+/**
+ * Find the unique values and its count from a column.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {string} column The column to lookup.
+ * @param {boolean} alphabetically The default sort
+ * @returns {Promise<{ name: string, count: number }[]}>} The values found
+ */
+export default async function getColumnUniqueValues (sheetId, column, alphabetically) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const orderBy = alphabetically
-    ? `${column} asc`
-    : `count(${column}) desc, ${column} asc`
+  const queryBuilder = new QueryBuilder(sheetUrl)
+    .select(column, `count(${column})`)
+    .groupBy(column)
+    .orderBy([`count(${column})`, 'desc'], [column, 'asc'])
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select ${column}, count(${column})
-    group by ${column}
-    order by ${orderBy}
-  `)
+  if (alphabetically) {
+    queryBuilder.orderBy([column, 'asc'])
+  }
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const query = queryBuilder.build()
+  const dataTable = await query.send()
 
-        return
-      }
+  const rows = dataTable.getNumberOfRows()
+  const values = []
 
-      const dataTable = response.getDataTable()
-
-      const rows = dataTable.getNumberOfRows()
-      const values = []
-
-      for (let i = 0; i < rows; i++) {
-        values.push({
-          name: dataTable.getValue(i, 0),
-          count: dataTable.getValue(i, 1)
-        })
-      }
-
-      resolve(values)
+  for (let i = 0; i < rows; i++) {
+    values.push({
+      name: dataTable.getValue(i, 0),
+      count: dataTable.getValue(i, 1)
     })
-  })
+  }
+
+  return values
 }

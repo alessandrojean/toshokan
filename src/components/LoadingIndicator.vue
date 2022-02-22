@@ -12,7 +12,7 @@
       :class="[
         position,
         zIndex,
-        'flex justify-center items-center inset-0 bg-opacity-75 bg-white dark:bg-gray-900 dark:bg-opacity-75',
+        'flex justify-center items-center inset-0 bg-white/75 dark:bg-gray-900/75',
         blur ? 'backdrop-blur-sm' : ''
       ]"
       v-if="loading"

@@ -127,5 +127,5 @@ export default function useMarkdown (options = {}) {
     return markdown.render(source)
   }
 
-  return { markdown, renderMarkdown }
+  return { markdown, renderMarkdown, escapeHtml: markdown.utils.escapeHtml }
 }

@@ -1,45 +1,35 @@
-import dedent from 'dedent'
-
-import i18n from '@/i18n'
-
 import buildSheetUrl from './buildSheetUrl'
 
 import Book, { CollectionColumns } from '@/model/Book'
+import QueryBuilder from '@/data/QueryBuilder'
 
-export default function getBookByCode (sheetId, code) {
+/**
+ * Find books by the code.
+ *
+ * @param {string} sheetId The sheet to perform the operation
+ * @param {string} code The code to find
+ * @returns {Promise<Book[] | null>} The books found
+ */
+export default async function getBookByCode (sheetId, code) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const query = new window.google.visualization.Query(sheetUrl)
-  query.setQuery(dedent`
-    select *
-    where ${CollectionColumns.CODE} = "${code}"
-  `)
+  const { CODE } = CollectionColumns
+  const query = new QueryBuilder(sheetUrl)
+    .where(CODE, code)
+    .build()
 
-  return new Promise((resolve, reject) => {
-    query.send(response => {
-      if (response.isError()) {
-        const message = i18n.global.t('errors.badQuery', { error: response.getMessage() })
-        reject(new Error(message))
+  const dataTable = await query.send()
+  const rows = dataTable.getNumberOfRows()
 
-        return
-      }
+  if (rows === 0) {
+    return null
+  }
 
-      const dataTable = response.getDataTable()
+  const books = []
 
-      const rows = dataTable.getNumberOfRows()
+  for (let i = 0; i < rows; i++) {
+    books.push(Book.fromDataTable(dataTable, i))
+  }
 
-      if (rows === 0) {
-        resolve(null)
-        return
-      }
-
-      const books = []
-
-      for (let i = 0; i < rows; i++) {
-        books.push(Book.fromDataTable(dataTable, i))
-      }
-
-      resolve(books)
-    })
-  })
+  return books
 }

@@ -60,10 +60,11 @@ export const useSearchStore = defineStore('search', {
 
         this.$patch({
           results,
-          history: Array.from(new Set(newHistory)).slice(0, 6),
           pagination: new Paginator(this.perPage, 4)
             .build(total, this.page)
         })
+
+        this.updateHistory(Array.from(new Set(newHistory)).slice(0, 6))
       } catch (e) {
         this.$patch({
           results: [],
