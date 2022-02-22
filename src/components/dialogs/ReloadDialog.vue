@@ -26,7 +26,7 @@ function close () {
 
 const { t } = useI18n({ useScope: 'global' })
 
-const RELEASE_URL = 'https://api.github.com/repos/alessandrojean/toshokan/releases/tags/v0.2.36'
+const RELEASE_URL = 'https://api.github.com/repos/alessandrojean/toshokan/releases/latest'
 
 const { markdown: md, renderMarkdown } = useMarkdown()
 
