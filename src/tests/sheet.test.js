@@ -8,8 +8,9 @@ describe('Sheet service', () => {
   const queryToString = jest.spyOn(QueryBuilder.prototype, 'toString')
 
   const queryMock = jest.fn().mockReturnValue({
-    send: callback => callback({
+    send: resultFn => resultFn({
       getDataTable: jest.fn().mockReturnValue({
+        getNumberOfColumns: jest.fn().mockReturnValue(0),
         getNumberOfRows: jest.fn().mockReturnValue(0)
       }),
       isError: jest.fn().mockReturnValue(false)
@@ -37,7 +38,7 @@ describe('Sheet service', () => {
       headers: '1'
     })
 
-    expect(queryUrl.pathname).toBe(`/spreadsheets/d/TEST_SHEET_ID/gviz/tq`)
+    expect(queryUrl.pathname).toBe('/spreadsheets/d/TEST_SHEET_ID/gviz/tq')
   })
 
   it('Should build the books by code query correctly', async () => {
@@ -177,6 +178,29 @@ describe('Sheet service', () => {
     expect(setQueryMock).toHaveBeenCalled()
   })
 
+  it('Should build the next reads query correctly', async () => {
+    const { STATUS, READ_AT, TITLE, UPDATED_AT } = CollectionColumns
+    await SheetService.getNextReads('TEST_SHEET_ID')
+
+    expect(queryToString).toHaveBeenCalled()
+    expect(queryToString.mock.instances[0].toObject()).toMatchObject({
+      select: [],
+      where: {
+        restrictions: [
+          [READ_AT, 'is not', 'null'],
+          [STATUS, '=', STATUS_READ],
+          [`dateDiff(now(), ${READ_AT})`, '<=', 6 * 30]
+        ]
+      },
+      orderBy: [
+        [READ_AT, 'desc'],
+        [UPDATED_AT, 'desc'],
+        [TITLE, 'desc']
+      ]
+    })
+    expect(setQueryMock).toHaveBeenCalled()
+  })
+
   describe('Book search', () => {
     it('Should build the query correctly (advanced search)', async () => {
       const { AUTHORS, READ_AT, TITLE, UPDATED_AT } = CollectionColumns
@@ -207,7 +231,7 @@ describe('Sheet service', () => {
     })
 
     it('Should build the query correctly (with dates)', async () => {
-      const { GROUP, READ_AT, TITLE, UPDATED_AT } = CollectionColumns
+      const { GROUP, READ_AT, UPDATED_AT } = CollectionColumns
       await SheetService.searchBooks({
         sheetId: 'TEST_SHEET_ID',
         searchTerm: 'group:manga read-at:2021-12'
@@ -286,7 +310,7 @@ describe('Sheet service', () => {
             restrictions: [[GROUP, '=', 'Manga']]
           }]
         },
-        orderBy: [[CREATED_AT, 'desc']],
+        orderBy: [[CREATED_AT, 'desc']]
       })
       expect(setQueryMock).toHaveBeenCalled()
     })
@@ -301,7 +325,7 @@ describe('Sheet service', () => {
         where: {
           restrictions: [[STATUS, '=', STATUS_FUTURE]]
         },
-        orderBy: [[CREATED_AT, 'desc']],
+        orderBy: [[CREATED_AT, 'desc']]
       })
 
       queryToString.mockClear()
@@ -326,7 +350,7 @@ describe('Sheet service', () => {
         where: {
           restrictions: [[FAVORITE, '=', FAVORITE_ACTIVE]]
         },
-        orderBy: [[CREATED_AT, 'desc']],
+        orderBy: [[CREATED_AT, 'desc']]
       })
       expect(setQueryMock).toHaveBeenCalled()
     })
@@ -345,7 +369,7 @@ describe('Sheet service', () => {
         orderBy: [
           [LABEL_PRICE_CURRENCY, 'asc'],
           [LABEL_PRICE_VALUE, 'asc']
-        ],
+        ]
       })
       expect(setQueryMock).toHaveBeenCalled()
     })
@@ -358,7 +382,7 @@ describe('Sheet service', () => {
       expect(queryToString.mock.instances[0].toObject()).toMatchObject({
         select: [],
         where: { restrictions: [] },
-        orderBy: [[CREATED_AT, 'desc']],
+        orderBy: [[CREATED_AT, 'desc']]
       })
       expect(setQueryMock).toHaveBeenCalledTimes(1)
     })

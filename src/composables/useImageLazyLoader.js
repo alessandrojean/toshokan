@@ -43,7 +43,7 @@ export default function useImageLazyLoader (imageUrl, elRef) {
       }
     })
 
-    observer.value.observe(elRef.value.$el)
+    observer.value.observe(elRef.value.$el || elRef.value)
   }
 
   function disconnectObserver () {

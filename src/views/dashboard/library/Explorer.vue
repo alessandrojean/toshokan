@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col">
     <LibraryHeader
+      :loading="loading"
       :writing="writing"
       @click:new="openCreateDialog"
       @click:filter="filterOpen = true"
@@ -11,14 +12,14 @@
         <section
           class="h-full max-w-7xl mx-auto pt-4 sm:pt-6 px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 !mb-6"
           aria-labelledby="results-title"
-          v-if="(books.length > 0 || sheetLoading || loading || writing) && !sheetIsEmpty"
+          v-if="(sheetLoading || loading || writing || books.length > 0) && !sheetIsEmpty"
         >
           <h2 id="results-title" class="sr-only" hidden aria-live="polite" aria-hidden="true">
             {{
-              t('dashboard.library.items.current', groups.selected.length, {
-                count: groups.selected.length === 1
-                  ? groups.selected[0]
-                  : groups.selected.length
+              t('dashboard.library.items.current', groupsFilter.length, {
+                count: groupsFilter.length === 1
+                  ? groupsFilter[0]
+                  : groupsFilter.length
               })
             }}
           </h2>
@@ -96,6 +97,7 @@
                 :items="books"
                 :sort-direction="sortDirection"
                 :sort-property="sortProperty"
+                :current-page="currentPage"
                 :loading="loading || writing"
                 :selectable="canEdit"
                 :skeleton="sheetLoading || loading || writing"
@@ -110,6 +112,10 @@
                 v-else
                 ref="grid"
                 :items="books"
+                :sort-direction="sortDirection"
+                :sort-property="sortProperty"
+                :current-page="currentPage"
+                :loading="loading || writing"
                 :skeleton-items="18"
               />
             </FadeTransition>
@@ -279,15 +285,20 @@
 </template>
 
 <script>
-import { computed, nextTick, onBeforeMount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import useBookBulkDeleter from '@/composables/useBookBulkDeleter'
-import useBookBulkEditor from '@/composables/useBookBulkEditor'
+import cloneDeep from 'lodash.clonedeep'
+
+import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
+import useBulkEditBookMutation from '@/mutations/useBulkEditBookMutation'
 import { useCollectionStore } from '@/stores/collection'
 import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
+import { STATUS_READ } from '@/model/Book'
+import useBooksQuery from '@/queries/useBooksQuery'
+import useGroupsQuery from '@/queries/useGroupsQuery'
 
 import {
   ChevronLeftIcon,
@@ -313,9 +324,6 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LibraryFiltersDialog from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
 import Paginator from '@/components/Paginator.vue'
-
-import cloneDeep from 'lodash.clonedeep'
-import { STATUS_READ } from '@/model/Book'
 
 export default {
   components: {
@@ -349,8 +357,9 @@ export default {
 
     const filterOpen = ref(false)
 
-    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
+    const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 
+    const currentPage = computed(() => collectionStore.currentPage)
     const paginationInfo = computed(() => collectionStore.paginationInfo)
     const sortProperty = computed(() => collectionStore.sortBy)
     const sortDirection = computed(() => collectionStore.sortDirection)
@@ -376,7 +385,7 @@ export default {
       }
     })
 
-    const sortPropertyNames = {
+    const sortPropertyNames = computed(() => ({
       title: t('book.properties.title'),
       publisher: t('book.properties.publisher'),
       status: t('book.properties.status'),
@@ -385,42 +394,91 @@ export default {
       'labelPrice.value': t('book.properties.labelPrice'),
       createdAt: t('book.properties.createdAt'),
       updatedAt: t('book.properties.updatedAt')
-    }
+    }))
 
-    const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
-
-    const books = computed(() => collectionStore.books.items)
-    const loading = computed(() => {
-      return collectionStore.books.loading ||
-        collectionStore.filters.groups.loading
+    const sortPropertyName = computed(() => {
+      return sortPropertyNames.value[sortProperty.value]
     })
-    const currentPage = computed(() => collectionStore.currentPage)
 
     const route = useRoute()
     const sheetId = computed(() => sheetStore.sheetId)
     const sheetLoading = computed(() => sheetStore.loading)
     const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
+    const groupsFilter = computed(() => collectionStore.filters.groups)
 
-    const groups = computed(() => collectionStore.filters.groups)
+    const queriesEnabled = computed(() => {
+      return !sheetLoading.value && sheetId.value !== null
+    })
 
-    async function updateGroupFromQuery () {
+    const {
+      data: groupsData,
+      isIdle: groupsIdle,
+      isLoading: groupsLoading
+    } = useGroupsQuery({ enabled: queriesEnabled })
+
+    const {
+      data: booksData,
+      isFetching: booksFetching,
+      isIdle: booksIdle,
+      isLoading: booksLoading,
+      isStale: booksStale
+    } = useBooksQuery({
+      favorites: computed(() => collectionStore.favorites),
+      futureItems: computed(() => collectionStore.futureItems),
+      groups: groupsFilter,
+      page: currentPage,
+      sortBy: sortProperty,
+      sortDirection
+    }, { enabled: queriesEnabled })
+
+    const books = computed(() => booksData.value?.books || [])
+
+    const loading = computed(() => {
+      return booksLoading.value || groupsLoading.value ||
+        groupsIdle.value || booksIdle.value
+    })
+
+    watch(groupsData, newGroups => {
+      if (!newGroups) {
+        return
+      }
+
+      // Remove the inexistent groups from selection.
+      const fixedGroups = collectionStore.filters.groups
+        .filter(selGroup => groupsData.value.includes(selGroup))
+
+      collectionStore.updateGroups(fixedGroups)
+    })
+
+    watch(() => booksData.value?.totalResults, newTotals => {
+      collectionStore.updateCurrentPage({
+        page: currentPage.value,
+        totalResults: newTotals
+      })
+    })
+
+    function updateGroupFromQuery () {
       const newGroup = route.query.group
 
-      if (sheetLoading.value || loading.value || !newGroup) {
+      if (sheetLoading.value || loading.value) {
         return false
       }
 
-      if (!sheetIsEmpty.value && groups.value.items.length === 0) {
-        await collectionStore.fetchGroups()
+      if (!newGroup) {
+        // Remove inexistent groups from selection.
+        const fixedGroups = collectionStore.filters.groups
+          .filter(selGroup => groupsData.value.includes(selGroup))
+
+        collectionStore.updateGroups(fixedGroups)
+
+        return false
       }
 
-      const groupExists = groups.value.items
-        .find(grp => grp.name === newGroup)
+      const groupExists = groupsData.value
+        ?.find(grp => grp.name === newGroup)
 
       if (groupExists) {
-        collectionStore.updateGroups({
-          selected: [newGroup]
-        })
+        collectionStore.updateGroups([newGroup])
 
         return true
       }
@@ -431,11 +489,11 @@ export default {
     function updateSortPropertyFromQuery () {
       const newSortProperty = route.query.sortProperty
 
-      if (sheetLoading.value || loading.value || !newSortProperty) {
+      if (sheetLoading.value || !newSortProperty) {
         return false
       }
 
-      if (!sortPropertyNames[newSortProperty]) {
+      if (!sortPropertyNames.value[newSortProperty]) {
         return false
       }
 
@@ -451,36 +509,62 @@ export default {
       return false
     }
 
-    async function updateFromQuery () {
-      const groupChanged = await updateGroupFromQuery()
+    function updateFromQuery () {
+      const groupChanged = updateGroupFromQuery()
       const sortChanged = updateSortPropertyFromQuery()
 
       if (groupChanged || sortChanged || books.value.length === 0) {
-        await collectionStore.fetchBooks(sortChanged ? 1 : currentPage.value)
+        collectionStore.$patch({
+          currentPage: sortChanged ? 1 : currentPage.value
+        })
       }
     }
 
-    watch(sheetLoading, async newSheetLoading => {
+    watch(sheetLoading, newSheetLoading => {
       if (!newSheetLoading) {
-        collectionStore.updateLoading('books', true)
-        await updateFromQuery()
+        updateFromQuery()
       }
     })
 
-    onBeforeMount(() => {
-      if (sheetId.value && books.value.length === 0) {
-        collectionStore.updateLoading('books', true)
-      }
-    })
-
-    onMounted(async () => {
+    onMounted(() => {
       if (sheetId.value) {
-        await updateFromQuery()
+        updateFromQuery()
       }
     })
 
     const table = ref(null)
     const grid = ref(null)
+    const currentView = computed(() => {
+      return viewMode.value === 'table' ? table.value : grid.value
+    })
+
+    const lastFocus = ref(null)
+
+    watch(booksFetching, value => {
+      if (value) {
+        lastFocus.value = document.activeElement
+        lastFocus.value?.blur()
+      }
+    })
+
+    async function handleFocus () {
+      await nextTick()
+
+      const classList = lastFocus.value?.classList
+
+      if (classList?.contains('table-header-button')) {
+        table.value?.focusOnActiveHeader()
+      } else if (classList?.contains('pag-button')) {
+        currentView.value?.focus()
+      }
+    }
+
+    watch(collectionStore.$state, handleFocus)
+    watch(booksLoading, async newValue => {
+      if (newValue) {
+        await handleFocus()
+      }
+    })
 
     async function handlePage (page) {
       window.scroll({
@@ -491,45 +575,31 @@ export default {
 
       const totalResults = collectionStore.paginationInfo.total_results
       collectionStore.updateCurrentPage({ page, totalResults })
-
-      await collectionStore.fetchBooks(page)
-
-      nextTick(() => {
-        const display = (viewMode.value === 'table' ? table : grid)
-
-        display.value?.focus()
-      })
     }
 
     async function handleFilter (filters) {
       selection.value = []
 
-      if (collectionStore.filters.groups.selected !== filters.groups ||
-          collectionStore.sortBy !== filters.sortProperty ||
-          collectionStore.sortDirection !== filters.sortDirection ||
-          collectionStore.favorites !== filters.favorites ||
-          collectionStore.futureItems !== filters.futureItems) {
+      if (
+        collectionStore.filters.groups !== filters.groups ||
+        collectionStore.sortBy !== filters.sortProperty ||
+        collectionStore.sortDirection !== filters.sortDirection ||
+        collectionStore.favorites !== filters.favorites ||
+        collectionStore.futureItems !== filters.futureItems
+      ) {
         const totalResults = collectionStore.paginationInfo.total_results
         collectionStore.updateCurrentPage({
           page: 1,
           totalResults
         })
 
-        collectionStore.updateGroups({ selected: filters.groups })
+        collectionStore.updateGroups(filters.groups)
         collectionStore.updateSort({
           sortBy: filters.sortProperty,
           sortDirection: filters.sortDirection
         })
         collectionStore.updateFavorites(filters.favorites)
         collectionStore.updateFutureItems(filters.futureItems)
-
-        await collectionStore.fetchBooks(1)
-
-        nextTick(() => {
-          const display = (viewMode.value === 'table' ? table : grid)
-
-          display.value?.focus()
-        })
       }
     }
 
@@ -544,10 +614,6 @@ export default {
         sortBy: property,
         sortDirection: direction
       })
-
-      await collectionStore.fetchBooks(1)
-
-      nextTick(() => table.value?.focusOnActiveHeader())
     }
 
     const createDialogOpen = ref(false)
@@ -568,15 +634,21 @@ export default {
     })
 
     const deleteDialogOpen = ref(false)
-    const { bulkDeleteBooks, deleting } = useBookBulkDeleter(booksToDelete)
+    const {
+      mutate: bulkDeleteBooks,
+      isLoading: deleting
+    } = useBulkDeleteBookMutation()
 
-    async function handleDeleteSelection () {
-      await bulkDeleteBooks()
+    function handleDeleteSelection () {
+      bulkDeleteBooks(booksToDelete.value)
     }
 
-    const { bulkUpdateBooks, updating } = useBookBulkEditor()
+    const {
+      mutate: bulkUpdateBooks,
+      isLoading: updating
+    } = useBulkEditBookMutation()
 
-    async function handleBulkMarkAs ({ booksToEdit, newStatus }) {
+    function handleBulkMarkAs ({ booksToEdit, newStatus }) {
       const editedBooks = booksToEdit
         .filter(book => book.status !== newStatus)
         .map(book => {
@@ -587,10 +659,10 @@ export default {
           return clone
         })
 
-      await bulkUpdateBooks(editedBooks)
+      bulkUpdateBooks(editedBooks)
     }
 
-    async function handleBulkToggleFavorite ({ booksToEdit, newFavorite }) {
+    function handleBulkToggleFavorite ({ booksToEdit, newFavorite }) {
       const editedBooks = booksToEdit
         .filter(book => book.favorite !== newFavorite)
         .map(book => {
@@ -599,7 +671,7 @@ export default {
           return clone
         })
 
-      await bulkUpdateBooks(editedBooks)
+      bulkUpdateBooks(editedBooks)
     }
 
     const writing = computed(() => deleting.value || updating.value)
@@ -616,6 +688,7 @@ export default {
       sortDirection,
       sortProperty,
       sortPropertyName,
+      currentPage,
       viewMode,
       handleFilter,
       handleTableSort,
@@ -623,7 +696,7 @@ export default {
       openCreateDialog,
       closeCreateDialog,
       canEdit,
-      groups,
+      groupsFilter,
       selection,
       deleteDialogOpen,
       handleDeleteSelection,

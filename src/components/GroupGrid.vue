@@ -1,6 +1,6 @@
 <template>
   <section
-    v-if="groups.length > 0 || sheetLoading || loading"
+    v-if="sheetLoading || loading || groups.length > 0"
     aria-labelledby="groups-title"
     class="w-full mb-3 mt-8"
   >
@@ -44,33 +44,22 @@
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
+import useGroupsQuery from '@/queries/useGroupsQuery'
 
 export default {
   setup () {
-    const collectionStore = useCollectionStore()
     const sheetStore = useSheetStore()
 
     const sheetLoading = computed(() => sheetStore.loading)
-    const sheetId = computed(() => sheetStore.sheetId)
 
-    const loading = computed(() => collectionStore.filters.groups.loading)
-    const groups = computed(() => collectionStore.filters.groups.items)
-
-    onMounted(async () => {
-      if (sheetId.value && groups.value.length === 0) {
-        await collectionStore.fetchGroups()
-      }
-    })
-
-    watch(sheetId, async newSheetId => {
-      if (newSheetId && groups.value.length === 0) {
-        await collectionStore.fetchGroups()
-      }
+    const { isLoading: loading, data: groups } = useGroupsQuery({
+      enabled: computed(() => {
+        return sheetStore.sheetId !== null && !sheetLoading.value
+      })
     })
 
     const { t, n } = useI18n({ useScope: 'global' })

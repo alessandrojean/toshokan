@@ -24,15 +24,5 @@ export default async function getColumnUniqueValues (sheetId, column, alphabetic
   const query = queryBuilder.build()
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-  const values = []
-
-  for (let i = 0; i < rows; i++) {
-    values.push({
-      name: dataTable.getValue(i, 0),
-      count: dataTable.getValue(i, 1)
-    })
-  }
-
-  return values
+  return dataTable.asArray.map(([name, count]) => ({ name, count }))
 }

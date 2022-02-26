@@ -23,7 +23,7 @@
         enter-to-class="opacity-100"
       >
         <div
-          v-if="showBookInfo"
+          v-if="showBookInfo && collection"
           class="absolute bottom-0 hidden md:flex justify-center translate-y-1/2"
           aria-hidden="true"
         >

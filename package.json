@@ -1,6 +1,6 @@
 {
   "name": "toshokan",
-  "version": "0.2.41",
+  "version": "0.2.42",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -38,6 +38,7 @@
     "slugify": "^1.6.5",
     "vue": "^3.2.31",
     "vue-i18n": "^9.1.9",
+    "vue-query": "^1.19.1",
     "vue-router": "^4.0.12",
     "vue3-apexcharts": "^1.4.1",
     "vuedraggable": "^4.1.0"
@@ -51,6 +52,7 @@
     "@types/gapi.client.sheets": "^4.0.20201029",
     "@types/google.visualization": "^0.0.68",
     "@types/jest": "^27.4.0",
+    "@types/tailwindcss": "^3.0.9",
     "@vitejs/plugin-vue": "^2.2.2",
     "@vue/compiler-sfc": "^3.2.31",
     "@vue/eslint-config-standard": "^6.1.0",
@@ -58,6 +60,7 @@
     "babel-jest": "^27.5.1",
     "eslint": "^8.9.0",
     "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-standard": "^5.0.0",

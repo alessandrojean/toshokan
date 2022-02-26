@@ -1,8 +1,4 @@
 import { defineStore } from 'pinia'
-import Paginator from 'paginator'
-
-import SheetService from '@/services/sheet'
-import { useSheetStore } from '@/stores/sheet'
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
@@ -13,9 +9,7 @@ export const useSearchStore = defineStore('search', {
     page: 1,
     pagination: null,
     sortBy: 'createdAt',
-    sortDirection: 'desc',
-    results: [],
-    loading: false
+    sortDirection: 'desc'
   }),
   actions: {
     clear () {
@@ -24,61 +18,28 @@ export const useSearchStore = defineStore('search', {
         page: 1,
         paginationInfo: null,
         sortBy: 'createdAt',
-        sortDirection: 'desc',
-        results: [],
-        loading: false
+        sortDirection: 'desc'
       })
-    },
-
-    async search ({ query, sortBy, sortDirection, page = 1 }) {
-      this.$patch({
-        loading: true,
-        page,
-        query
-      })
-
-      const sheetStore = useSheetStore()
-      const sheetId = sheetStore.sheetId
-
-      try {
-        this.$patch({
-          sortBy: sortBy || this.sortBy,
-          sortDirection: sortDirection || this.sortDirection
-        })
-
-        const { results, total } = await SheetService.searchBooks({
-          sheetId,
-          searchTerm: query,
-          sort: {
-            sortBy: this.sortBy,
-            sortDirection: this.sortDirection
-          },
-          page
-        })
-
-        const newHistory = [query].concat(this.history)
-
-        this.$patch({
-          results,
-          pagination: new Paginator(this.perPage, 4)
-            .build(total, this.page)
-        })
-
-        this.updateHistory(Array.from(new Set(newHistory)).slice(0, 6))
-      } catch (e) {
-        this.$patch({
-          results: [],
-          page: 1,
-          pagination: null
-        })
-      } finally {
-        this.loading = false
-      }
     },
 
     updateHistory (history) {
       this.history = history
       localStorage.setItem('search_history', JSON.stringify(history))
+    },
+
+    updatePage (page) {
+      this.page = page
+    },
+
+    updatePagination (pagination) {
+      this.pagination = {
+        ...this.pagination,
+        ...pagination
+      }
+    },
+
+    updateQuery (query) {
+      this.query = query
     },
 
     updateSort ({ sortBy, sortDirection }) {

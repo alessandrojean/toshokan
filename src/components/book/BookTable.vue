@@ -30,7 +30,7 @@
                 v-if="selection.length === 0 && !skeleton"
                 type="button"
                 :class="[
-                  'has-ring-focus !pl-4 sm:!pl-6 focus-visible:ring-inset',
+                  'has-ring-focus !pl-4 sm:!pl-6 focus-visible:ring-inset table-header-button',
                   selectable ? 'md:!pl-3' : 'md:!pl-6'
                 ]"
                 :disabled="loading"
@@ -105,7 +105,10 @@
               <button
                 v-if="!column.hidden && !skeleton"
                 type="button"
-                :class="['has-ring-focus focus-visible:ring-inset', column.buttonClass]"
+                :class="[
+                  'has-ring-focus table-header-button focus-visible:ring-inset',
+                  column.buttonClass
+                ]"
                 :disabled="loading"
                 @click="handleSort(column.key)"
               >
@@ -335,6 +338,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
 import {
   ArrowSmDownIcon,
@@ -355,6 +359,7 @@ export default {
   },
 
   props: {
+    currentPage: Number,
     items: Array,
     loading: Boolean,
     selectable: Boolean,
@@ -373,7 +378,9 @@ export default {
     const sheetStore = useSheetStore()
     const router = useRouter()
 
-    const timeZone = computed(() => sheetStore.timeZone)
+    const { data: timeZone } = useTimeZoneQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
 
     function formatDate (date) {
       return d(date, 'long', { timeZone: timeZone.value.name })
@@ -691,7 +698,7 @@ export default {
       emit('select', selection.value)
     }
 
-    watch(items, () => {
+    function clearSelection () {
       selection.value = []
       current.value = 0
 
@@ -700,20 +707,17 @@ export default {
       }
 
       emit('select', selection.value)
-    })
+    }
 
-    watch(() => loading.value || skeleton.value, () => {
-      if (topCheckbox.value) {
-        topCheckbox.value.indeterminate = false
-      }
-    })
+    const { currentPage, sortProperty, sortDirection } = toRefs(props)
+
+    watch(() => loading.value || skeleton.value, clearSelection)
+    watch([currentPage, sortProperty, sortDirection], clearSelection)
 
     function handleDeleteSelection () {
       const booksToDelete = selection.value.map(idx => items.value[idx])
       emit('click:deleteSelection', booksToDelete)
     }
-
-    const { sortProperty, sortDirection } = toRefs(props)
 
     function ariaSorted (property) {
       if (sortProperty.value !== property) {

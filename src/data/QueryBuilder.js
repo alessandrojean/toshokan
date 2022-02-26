@@ -5,7 +5,7 @@ import Query from './Query'
  */
 export default class QueryBuilder {
   #select = []
-  #where = { operator: QueryBuilder.OR, restrictions: [] }
+  #where = null
   #groupBy = []
   #orderBy = []
   #limit = null
@@ -23,6 +23,7 @@ export default class QueryBuilder {
    */
   constructor (sheetUrl) {
     this.#sheetUrl = sheetUrl || ''
+    this.#where = { operator: QueryBuilder.OR, restrictions: [] }
   }
 
   /**
@@ -125,7 +126,7 @@ export default class QueryBuilder {
    * @param  {...any} restrictions The restrictions
    * @returns An AND combined restriction
    */
-   static andNot (...restrictions) {
+  static andNot (...restrictions) {
     return {
       negated: true,
       operator: QueryBuilder.AND,
@@ -246,9 +247,12 @@ export default class QueryBuilder {
         ? 'group by ' + this.#groupBy.join(', ')
         : '',
       (this.#orderBy.length > 0)
-        ? 'order by ' + this.#orderBy
-            .map(([column, sort]) => `${column} ${sort}`)
-            .join(', ')
+        ? 'order by ' +
+          (
+            this.#orderBy
+              .map(([column, sort]) => `${column} ${sort}`)
+              .join(', ')
+          )
         : '',
       (this.#limit !== null) ? 'limit ' + this.#limit : '',
       (this.#offset !== null) ? 'offset ' + this.#offset : ''

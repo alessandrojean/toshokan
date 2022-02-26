@@ -81,6 +81,7 @@
       <button
         v-if="showBookInfo && !book.isFuture"
         class="button is-icon-only px-2.5"
+        :disabled="disabled"
         :title="
           t('dashboard.details.header.options.markAs', {
             status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase() }
@@ -104,6 +105,7 @@
       <button
         v-if="showBookInfo"
         class="button is-icon-only px-2.5"
+        :disabled="disabled"
         :title="t(`dashboard.details.header.options.${book.favorite ? 'removeFromFavorites' : 'addToFavorites' }`)"
         @click="$emit('click:toggleFavorite', $event)"
       >
@@ -119,6 +121,7 @@
       <button
         v-if="showBookInfo"
         class="button is-icon-only px-2.5"
+        :disabled="disabled"
         :title="t('dashboard.details.header.options.delete')"
         @click="$emit('click:delete', $event)"
       >
@@ -232,6 +235,7 @@ import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 import getBookLinks from '@/services/links'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
 import Book from '@/model/Book'
 
@@ -289,7 +293,9 @@ export default {
       return renderMarkdown(book.value.synopsis)
     })
 
-    const timeZone = computed(() => sheetStore.timeZone)
+    const { data: timeZone } = useTimeZoneQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
 
     function formatDate (date, format = 'short') {
       if (date instanceof Date) {

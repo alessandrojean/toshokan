@@ -412,4 +412,12 @@
       text-blue-700 dark:text-blue-400
       dark:border-blue-400/40;
   }
+
+  .arrow-up::before {
+    @apply w-0 h-0 block absolute content-['']
+      top-[-7px] left-1/2 -translate-x-1/2
+      border-l-[7px] border-l-transparent
+      border-r-[7px] border-r-transparent
+      border-b-[7px] border-b-white;
+  }
 }

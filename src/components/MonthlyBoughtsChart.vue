@@ -41,8 +41,8 @@ import { useI18n } from 'vue-i18n'
 import colors from 'tailwindcss/colors'
 
 import useDarkMode from '@/composables/useDarkMode'
-import useMotionSafe from '@/composables/useMotionSafe'
 import { useSheetStore } from '@/stores/sheet'
+import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -63,26 +63,26 @@ export default {
   setup () {
     const sheetStore = useSheetStore()
 
-    const loading = computed(() => sheetStore.loading)
-    const stats = computed(() => sheetStore.stats)
+    const { data: stats, isLoading, isIdle } = useStatisticsQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
+
+    const loading = computed(() => isLoading.value || isIdle.value)
 
     const { t, d, locale } = useI18n({ useScope: 'global' })
 
     const { darkMode } = useDarkMode()
-    const { motionSafe } = useMotionSafe()
 
     const localeStr = computed(() => {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
     })
 
-    const monthly = computed(() => (stats.value.monthly || []).slice(-6))
+    const monthly = computed(() => (stats.value?.monthly || []).slice(-6))
 
     const itemsBought = computed(() => ({
       options: {
         chart: {
-          animations: {
-            enabled: motionSafe.value
-          },
+          animations: { enabled: false },
           id: 'monthly-boughts',
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,

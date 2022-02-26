@@ -9,12 +9,15 @@
         :class="idx === 5 ? 'md:hidden lg:block' : ''"
         class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
       >
-        <BookCard loading />
+        <BookCard loading :image-only="collection === 'next-reads'" />
       </div>
     </div>
   </div>
 
-  <section v-else-if="collectionItems.length > 0" aria-labelledby="last-added-title">
+  <section
+    v-else-if="collectionItems?.length > 0"
+    aria-labelledby="last-added-title"
+  >
     <div class="flex justify-between items-center w-full mt-8 mb-2">
       <h2 id="last-added-title" class="font-medium font-display text-lg dark:text-gray-200">
         {{ title }}
@@ -53,25 +56,47 @@
           :book="book"
           :loading="loading"
           :tabindex="focused === bookIdx ? '0' : '-1'"
+          :image-only="collection === 'next-reads'"
           @keydown="handleKeydown"
-        />
+        >
+          <template #actions v-if="collection === 'next-reads'">
+            <BookCardReadingActions
+              :book="book"
+              :disabled="editing"
+              :editing="editingBookId === book.id"
+              @click:check="handleReadToday(book)"
+              @click:calendar="handleRead(book, $event)"
+            />
+          </template>
+        </BookCard>
       </li>
     </ul>
   </section>
 </template>
 
 <script>
-import { computed, onMounted, ref, toRefs, watch } from 'vue'
+import { computed, ref, toRefs } from 'vue'
 
+import cloneDeep from 'lodash.clonedeep'
+
+import { STATUS_READ } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
+import useLastAddedQuery from '@/queries/useLastAddedQuery'
+import useLatestReadingsQuery from '@/queries/useLatestReadingsQuery'
+import useNextReadsQuery from '@/queries/useNextReadsQuery'
 
 import { ArrowSmRightIcon } from '@heroicons/vue/solid'
 
 import BookCard from '@/components/book/BookCard.vue'
-import { useCollectionStore } from '@/stores/collection'
+import BookCardReadingActions from '@/components/book/BookCardReadingActions.vue'
+import useEditBookMutation from '@/mutations/useEditBookMutation'
 
 export default {
-  components: { BookCard, ArrowSmRightIcon },
+  components: {
+    ArrowSmRightIcon,
+    BookCard,
+    BookCardReadingActions
+  },
 
   props: {
     collection: {
@@ -92,38 +117,22 @@ export default {
 
   setup (props) {
     const { collection } = toRefs(props)
-    const collectionStore = useCollectionStore()
     const sheetStore = useSheetStore()
 
     const sheetLoading = computed(() => sheetStore.loading)
     const sheetId = computed(() => sheetStore.sheetId)
+    const enabled = computed(() => sheetId.value !== null)
 
-    const loading = computed(() => {
-      return collectionStore.carousels[collection.value].loading
-    })
-    const collectionItems = computed(() => {
-      return collectionStore.carousels[collection.value].items
-    })
-
-    async function fetchCollectionItems () {
-      focused.value = 0
-
-      const method = collection.value.substring(0, 1).toUpperCase() +
-        collection.value.substring(1)
-      await collectionStore['fetch' + method]?.()
+    const collectionMapping = {
+      'last-added': useLastAddedQuery,
+      'latest-readings': useLatestReadingsQuery,
+      'next-reads': useNextReadsQuery
     }
 
-    onMounted(() => {
-      if (sheetId.value && collectionItems.value.length === 0) {
-        fetchCollectionItems()
-      }
-    })
-
-    watch(sheetId, newSheetId => {
-      if (newSheetId && collectionItems.value.length === 0) {
-        fetchCollectionItems()
-      }
-    })
+    const {
+      isLoading: loading,
+      data: collectionItems
+    } = collectionMapping[collection.value]({ enabled })
 
     const carousel = ref(null)
     const focused = ref(0)
@@ -140,7 +149,7 @@ export default {
         return
       }
 
-      if (!allowedKeys.includes(key)) {
+      if (!allowedKeys.includes(key) || editing.value) {
         return
       }
 
@@ -170,9 +179,39 @@ export default {
       }
 
       const li = carousel.value?.children?.[focused.value]
-      const card = li?.children?.[0]
+      let card = li?.children?.[0]
+
+      if (collection.value === 'next-reads') {
+        card = card?.children?.[0]
+      }
 
       card?.focus()
+    }
+
+    const { isLoading: editing, mutate: edit } = useEditBookMutation()
+    const editingBookId = ref(null)
+
+    function handleRead (book, readAt) {
+      if (editing.value) {
+        return
+      }
+
+      /** @type {import('@/model/Book').default} */
+      const newBook = cloneDeep(book)
+      newBook.status = STATUS_READ
+      newBook.readAt = readAt
+
+      editingBookId.value = newBook.id
+
+      edit(newBook, {
+        onSuccess () {
+          editingBookId.value = null
+        }
+      })
+    }
+
+    function handleReadToday (book) {
+      handleRead(book, new Date())
     }
 
     return {
@@ -181,7 +220,11 @@ export default {
       collectionItems,
       carousel,
       focused,
-      handleKeydown
+      handleKeydown,
+      editing,
+      editingBookId,
+      handleRead,
+      handleReadToday
     }
   }
 }

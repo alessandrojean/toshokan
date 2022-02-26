@@ -97,6 +97,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
+import useGroupsQuery from '@/queries/useGroupsQuery'
 
 import {
   ArchiveIcon,
@@ -119,6 +120,7 @@ export default {
   },
 
   props: {
+    loading: Boolean,
     writing: Boolean
   },
 
@@ -132,9 +134,9 @@ export default {
     const sheetStore = useSheetStore()
     const { t } = useI18n({ useScope: 'global' })
 
-    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
+    const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 
-    const sortPropertyNames = {
+    const sortPropertyNames = computed(() => ({
       title: t('book.properties.title'),
       publisher: t('book.properties.publisher'),
       status: t('book.properties.status'),
@@ -144,27 +146,33 @@ export default {
       boughtAt: t('book.properties.boughtAt'),
       createdAt: t('book.properties.createdAt'),
       updatedAt: t('book.properties.updatedAt')
-    }
+    }))
 
     const sortProperty = computed(() => collectionStore.sortBy)
-    const sortPropertyName = computed(() => sortPropertyNames[sortProperty.value])
+    const sortPropertyName = computed(() => {
+      return sortPropertyNames.value[sortProperty.value]
+    })
     const sortDirection = computed(() => collectionStore.sortDirection)
 
-    const loading = computed(() => collectionStore.books.loading)
     const sheetLoading = computed(() => sheetStore.loading)
     const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
-    const groups = computed(() => collectionStore.filters.groups)
+
+    const { data: allGroups } = useGroupsQuery({
+      enabled: computed(() => !sheetLoading.value)
+    })
+
+    const selectedGroups = computed(() => collectionStore.filters.groups)
 
     const currentGroups = computed(() => {
-      if (groups.value.selected.length === groups.value.items.length) {
+      if (selectedGroups.value.length === allGroups.value?.length) {
         return t('dashboard.library.allGroups')
       }
 
-      if (groups.value.selected.length === 1) {
-        return groups.value.selected[0]
+      if (selectedGroups.value.length === 1) {
+        return selectedGroups.value[0]
       }
 
-      return t('dashboard.library.groupCount', groups.value.selected.length)
+      return t('dashboard.library.groupCount', selectedGroups.value.length)
     })
 
     const canEdit = computed(() => sheetStore.canEdit)
@@ -176,7 +184,6 @@ export default {
 
     return {
       t,
-      loading,
       sheetLoading,
       sheetLoadedOnce,
       sheetIsEmpty,

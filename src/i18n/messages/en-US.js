@@ -157,6 +157,10 @@ export default {
       `,
       view: 'View',
       newBook: 'New book'
+    },
+    card: {
+      markAsRead: 'Mark as read',
+      markAsReadToday: 'Mark as read today'
     }
   },
   isbn: {
@@ -431,6 +435,7 @@ export default {
       },
       lastAdded: 'Books created recently',
       latestReadings: 'Latest readings',
+      nextReads: 'Next reads',
       groups: 'Groups',
       empty: {
         title: 'You don\'t have any books yet',

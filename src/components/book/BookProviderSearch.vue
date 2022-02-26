@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { SearchIcon } from '@heroicons/vue/solid'
@@ -138,9 +138,9 @@ import { SearchIcon } from '@heroicons/vue/solid'
 import Alert from '@/components/Alert.vue'
 import BookSelector from '@/components/book/BookSelector.vue'
 
-import useBookInserter from '@/composables/useBookInserter'
-import useIsbnSearch from '@/composables/useIsbnSearch'
 import useMarkdown from '@/composables/useMarkdown'
+import useBookExistsQuery from '@/queries/useBookExistsQuery'
+import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
 
 export default {
   components: {
@@ -158,15 +158,14 @@ export default {
     const searchInput = ref(null)
 
     const {
-      errorMessage: searchError,
-      failed: searchFailed,
-      noResultsFound,
-      results: searchResults,
-      search: isbnSearch,
-      searching
-    } = useIsbnSearch(isbnQuery)
+      error: searchError,
+      isError: searchFailed,
+      data: searchResults,
+      isLoading: searching,
+      refetch: isbnSearch
+    } = useIsbnSearchQuery(isbnQuery, { enabled: false })
 
-    const { checkIfExists } = useBookInserter()
+    const noResultsFound = computed(() => searchResults.value?.length === 0)
 
     function handleSearchSelect (selectedBook) {
       context.emit('select', selectedBook)
@@ -184,23 +183,23 @@ export default {
 
       searchInput.value?.blur()
       await searchInSheet()
-      await isbnSearch()
+      await isbnSearch.value()
 
       context.emit('search', false)
       loading.value = false
     }
 
-    const existInSheet = ref(false)
-    const existingIds = ref(null)
+    const {
+      data: existingIds,
+      refetch: checkIfExists
+    } = useBookExistsQuery(isbnQuery, { enabled: false })
+
     const proceedAnyway = ref(false)
-    const searchingInSheet = ref(false)
+    const existInSheet = computed(() => existingIds.value?.length > 0)
 
     async function searchInSheet () {
-      searchingInSheet.value = true
-      existingIds.value = await checkIfExists(isbnQuery.value)
-      existInSheet.value = existingIds.value && existingIds.value.length > 0
+      await checkIfExists.value()
       proceedAnyway.value = !existInSheet.value
-      searchingInSheet.value = false
     }
 
     const { renderMarkdown } = useMarkdown()

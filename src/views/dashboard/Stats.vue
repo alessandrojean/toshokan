@@ -15,19 +15,19 @@
 
         <div class="space-y-3 sm:space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <BasicBarChart
-            :series="(stats.publishers || []).slice(0, 10)"
+            :series="(stats?.publishers || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.publishersRankTitle')"
             :loading="loading"
           />
           <BasicBarChart
-            :series="(stats.authors || []).slice(0, 10)"
+            :series="(stats?.authors || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.authorsRankTitle')"
             :loading="loading"
           />
           <BasicBarChart
-            :series="(stats.series || []).slice(0, 10)"
+            :series="(stats?.series || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.seriesRankTitle')"
             :loading="loading"
@@ -84,6 +84,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
+import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import {
   ExclamationCircleIcon,
@@ -111,10 +112,14 @@ export default {
     const sheetStore = useSheetStore()
     const router = useRouter()
 
-    const loading = computed(() => sheetStore.loading)
-    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
-    const tooEarly = computed(() => sheetStore.stats.monthly?.length === 1)
-    const stats = computed(() => sheetStore.stats)
+    const { data: stats, isLoading, isIdle } = useStatisticsQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
+
+    const loading = computed(() => isLoading.value || isIdle.value)
+
+    const sheetIsEmpty = computed(() => sheetStore.isEmpty)
+    const tooEarly = computed(() => stats.value?.monthly?.length === 1)
 
     const shared = computed(() => sheetStore.shared)
 

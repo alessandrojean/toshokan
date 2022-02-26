@@ -38,7 +38,6 @@ import { useI18n } from 'vue-i18n'
 import colors from 'tailwindcss/colors'
 
 import useDarkMode from '@/composables/useDarkMode'
-import useMotionSafe from '@/composables/useMotionSafe'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -67,7 +66,6 @@ export default {
     const { locale } = useI18n({ useScope: 'global' })
 
     const { darkMode } = useDarkMode()
-    const { motionSafe } = useMotionSafe()
 
     const localeStr = computed(() => {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
@@ -78,9 +76,7 @@ export default {
     const plot = computed(() => ({
       options: {
         chart: {
-          animations: {
-            enabled: motionSafe.value
-          },
+          animations: { enabled: false },
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
           toolbar: { show: false },

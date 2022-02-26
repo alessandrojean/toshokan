@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  plugins: ['jest'],
   env: {
     browser: true,
     node: true,

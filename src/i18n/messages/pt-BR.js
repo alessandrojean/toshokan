@@ -157,6 +157,10 @@ export default {
       `,
       view: 'Visualizar',
       newBook: 'Novo livro'
+    },
+    card: {
+      markAsRead: 'Marcar como lido',
+      markAsReadToday: 'Marcar como lido hoje'
     }
   },
   isbn: {
@@ -432,6 +436,7 @@ export default {
       },
       lastAdded: 'Últimos adicionados',
       latestReadings: 'Últimas leituras',
+      nextReads: 'Próximas leituras',
       groups: 'Grupos',
       empty: {
         title: 'Você ainda não possui nenhum livro',

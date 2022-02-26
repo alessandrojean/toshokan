@@ -21,11 +21,11 @@
           <button
             class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
-            :disabled="loading"
+            :disabled="loading || isFetching"
           >
             <span
               aria-hidden="true"
-              :class="loading ? 'motion-safe:animate-spin' : ''"
+              :class="(loading || isFetching) ? 'motion-safe:animate-spin' : ''"
               class="origin-center w-5 h-5 -ml-1 mr-2"
             >
               <RefreshIcon class="-scale-x-100 !mx-0" />
@@ -36,7 +36,7 @@
             v-if="canChange"
             class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openSheetChooser"
-            :disabled="loading"
+            :disabled="loading || isFetching"
           >
             <span aria-hidden="true">
               <CollectionIcon />
@@ -64,29 +64,29 @@
 
         <section
           v-if="!sheetIsEmpty"
-          :aria-labelledby="loading? '' : 'overview-title'"
+          :aria-labelledby="loading ? '' : 'overview-title'"
         >
           <div v-if="loading" class="skeleton h-6 w-40 mb-3"></div>
           <h2 v-else id="overview-title" class="font-medium font-display text-lg mb-2 dark:text-gray-200">
             {{ t('dashboard.home.overview.title') }}
           </h2>
 
-          <ul class="sr-only" v-if="!loading">
+          <ul class="sr-only" v-if="statsSuccess">
             <li>
               {{ t('dashboard.home.overview.stats.count') }}:
-              {{ t('dashboard.home.overview.item', stats.count, { n: n(stats.count, 'integer') }) }}
+              {{ t('dashboard.home.overview.item', stats?.count || 0, { n: n(stats?.count || 0, 'integer') }) }}
             </li>
             <li>
               {{ t('dashboard.home.overview.stats.read') }}:
-              {{ n(stats.status?.percent || 0.0, 'percent') }}
+              {{ n(stats?.status?.percent || 0.0, 'percent') }}
             </li>
             <li v-if="!shared">
               {{ t('dashboard.home.overview.stats.totalExpense') }}:
-              {{ n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money.currency }) }}
+              {{ n(stats?.money?.totalSpentPaid || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' }) }}
             </li>
             <li v-if="!shared">
               {{ t('dashboard.home.overview.stats.totalSavings') }}:
-              {{ n(stats.money?.saved || 0.0, 'currency', { currency: stats.money.currency }) }}</li>
+              {{ n(stats?.money?.saved || 0.0, 'currency', { currency: stats?.money?.currency }) }}</li>
           </ul>
 
           <!-- Stats -->
@@ -96,8 +96,8 @@
           >
             <StatCard
               :title="t('dashboard.home.overview.stats.count')"
-              :value="n(stats.count || 0.0, 'integer')"
-              :loading="loading"
+              :value="n(stats?.count || 0.0, 'integer')"
+              :loading="!statsSuccess"
             >
               <template v-slot:icon="{ cssClass }">
                 <BookOpenIcon :class="cssClass" />
@@ -106,8 +106,8 @@
 
             <StatCard
               :title="t('dashboard.home.overview.stats.read')"
-              :value="n(stats.status?.percent || 0.0, 'percent')"
-              :loading="loading"
+              :value="n(stats?.status?.percent || 0.0, 'percent')"
+              :loading="!statsSuccess"
             >
               <template v-slot:icon="{ cssClass }">
                 <BookmarkIcon :class="cssClass" />
@@ -116,8 +116,8 @@
 
             <StatCard
               :title="t('dashboard.home.overview.stats.totalExpense')"
-              :value="n(stats.money?.totalSpentPaid || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
-              :loading="loading"
+              :value="n(stats?.money?.totalSpentPaid || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' })"
+              :loading="!statsSuccess"
               :always-hidden="shared"
               sensitive
             >
@@ -128,8 +128,8 @@
 
             <StatCard
               :title="t('dashboard.home.overview.stats.totalSavings')"
-              :value="n(stats.money?.saved || 0.0, 'currency', { currency: stats.money?.currency || 'USD' })"
-              :loading="loading"
+              :value="n(stats?.money?.saved || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' })"
+              :loading="!statsSuccess"
               :always-hidden="shared"
               sensitive
             >
@@ -140,10 +140,16 @@
           </div>
         </section>
 
+        <!-- Next reads -->
+        <BookCarousel
+          :title="t('dashboard.home.nextReads')"
+          collection="next-reads"
+        />
+
         <!-- Last added books -->
         <BookCarousel
           :title="t('dashboard.home.lastAdded')"
-          collection="lastAdded"
+          collection="last-added"
           :button-text="t('dashboard.home.viewAll')"
           :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'createdAt' } }"
         />
@@ -151,7 +157,7 @@
         <!-- Latest readings -->
         <BookCarousel
           :title="t('dashboard.home.latestReadings')"
-          collection="latestReadings"
+          collection="latest-readings"
           :button-text="t('dashboard.home.viewAll')"
           :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
         />
@@ -206,10 +212,11 @@
 <script>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useIsFetching, useQueryClient } from 'vue-query'
 
 import { useAuthStore } from '@/stores/auth'
-import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
+import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import {
   BookOpenIcon,
@@ -252,27 +259,32 @@ export default {
 
   setup () {
     const authStore = useAuthStore()
-    const collectionStore = useCollectionStore()
     const sheetStore = useSheetStore()
     const { n, t } = useI18n({ useScope: 'global' })
 
-    const sheetIsEmpty = computed(() => sheetStore.sheetIsEmpty)
+    const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 
     const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
     const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
     const profileName = computed(() => authStore.profileName)
     const loading = computed(() => sheetStore.loading)
-    const stats = computed(() => sheetStore.stats)
     const shared = computed(() => sheetStore.shared)
 
+    const {
+      data: stats,
+      isLoading: statsLoading,
+      isSuccess: statsSuccess
+    } = useStatisticsQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
+
     const isDev = ref(import.meta.env.DEV)
+    const queryClient = useQueryClient()
+    const isFetching = useIsFetching()
 
     async function reload () {
-      await sheetStore.loadSheetData()
-      await collectionStore.fetchLastAdded()
-      await collectionStore.fetchLatestReadings()
-      await collectionStore.fetchGroups()
-      collectionStore.clearItems(null, 'books')
+      queryClient.resetQueries()
+      queryClient.refetchQueries()
     }
 
     const createDialogOpen = ref(false)
@@ -301,10 +313,13 @@ export default {
     return {
       sheetIsEmpty,
       loading,
+      isFetching,
       ownerDisplayName,
       ownerPictureUrl,
       profileName,
       stats,
+      statsLoading,
+      statsSuccess,
       shared,
       isDev,
       reload,

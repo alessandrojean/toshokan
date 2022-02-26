@@ -29,7 +29,7 @@
             <BookInformation
               :loading="!showBookInfo"
               :book="book"
-              :disabled="editing"
+              :disabled="writing"
               @click:edit="openEditDialog"
               @click:toggleFavorite="toggleFavorite"
               @click:toggleStatus="toggleStatus"
@@ -56,7 +56,7 @@
 
     <BookEditDialog
       :is-open="editDialogOpen"
-      :book="book"
+      :book="bookToEdit"
       @close="closeEditDialog"
       @edit="handleEdit"
     />
@@ -68,10 +68,14 @@ import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
-import useBookDeleter from '@/composables/useBookDeleter'
-import useBookEditor from '@/composables/useBookEditor'
-import useBookFinder from '@/composables/useBookFinder'
+import cloneDeep from 'lodash.clonedeep'
+
+import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
+import useEditBookMutation from '@/mutations/useEditBookMutation'
+import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
+import useBookQuery from '@/queries/useBookQuery'
+import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookCover from '@/components/book/BookCover.vue'
@@ -79,10 +83,6 @@ import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
-
-import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
-
-import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
@@ -101,56 +101,48 @@ export default {
     const sheetStore = useSheetStore()
 
     const bookId = computed(() => route.params.bookId)
-
-    const {
-      book,
-      bookFound,
-      collection,
-      findTheBook
-    } = useBookFinder()
-
     const loading = computed(() => sheetStore.loading)
 
+    const enabled = computed(() => {
+      return !loading.value && !!bookId.value
+    })
+
+    const { isLoading, data: book } = useBookQuery(bookId, { enabled })
+
+    const { data: collection } = useBookCollectionQuery(book, {
+      enabled: computed(() => {
+        return enabled.value &&
+          book.value?.titleParts !== undefined &&
+          book.value.titleParts.number !== null
+      })
+    })
+
     const redirectToHome = () => {
-      if (!deleted.value) {
-        router.replace({ name: 'DashboardHome' })
-      }
+      router.replace({ name: 'DashboardLibrary' })
     }
 
-    onMounted(async () => {
-      if (!loading.value && bookId.value) {
-        await findTheBook(bookId.value, redirectToHome)
+    watch(book, newBook => {
+      if (newBook === null) {
+        redirectToHome()
+        return
       }
-    })
 
-    watch(loading, async newValue => {
-      if (!newValue && bookId.value && !deleted.value) {
-        await findTheBook(bookId.value, redirectToHome)
-      }
-    })
-
-    watch(bookId, async newId => {
-      if (newId && !loading.value) {
-        await findTheBook(newId, redirectToHome)
-      }
-    })
-
-    watch(book, newValue => {
-      if (newValue) {
-        document.title = newValue.title + ' | ' + t('app.name')
+      if (newBook !== undefined) {
+        document.title = newBook.title + ' | ' + t('app.name')
       }
     })
 
     const showBookInfo = computed(() => {
-      return !loading.value && bookFound.value && !editing.value
+      return !loading.value && !isLoading.value && book.value
     })
 
-    const editing = ref(false)
-    const editDialogOpen = ref(false)
+    const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
 
-    const { updateBook } = useBookEditor()
+    const editDialogOpen = ref(false)
+    const bookToEdit = ref(null)
 
     function openEditDialog () {
+      bookToEdit.value = cloneDeep(book.value)
       editDialogOpen.value = true
     }
 
@@ -158,14 +150,8 @@ export default {
       editDialogOpen.value = false
     }
 
-    async function handleEdit (editedBook) {
-      try {
-        editing.value = true
-        await updateBook(editedBook)
-        await findTheBook(editedBook.id, redirectToHome)
-      } finally {
-        editing.value = false
-      }
+    function handleEdit (editedBook) {
+      updateBook(editedBook)
     }
 
     function toDateInputValue (date) {
@@ -175,55 +161,36 @@ export default {
       return local
     }
 
-    async function toggleStatus () {
+    function toggleStatus () {
       if (book.value.isFuture) {
         return
       }
 
-      try {
-        editing.value = true
+      /** @type {Book} */
+      const updatedBook = cloneDeep(book.value)
+      updatedBook.status = updatedBook.isRead
+        ? STATUS_UNREAD
+        : STATUS_READ
+      updatedBook.readAt = updatedBook.isRead
+        ? toDateInputValue(new Date())
+        : null
 
-        /** @type {Book} */
-        const updatedBook = cloneDeep(book.value)
-        updatedBook.status = updatedBook.isRead
-          ? STATUS_UNREAD
-          : STATUS_READ
-        updatedBook.readAt = updatedBook.isRead
-          ? toDateInputValue(new Date())
-          : null
-
-        await updateBook(updatedBook)
-        await findTheBook(bookId.value, redirectToHome)
-      } finally {
-        editing.value = false
-      }
+      updateBook(updatedBook)
     }
 
-    async function toggleFavorite () {
-      try {
-        editing.value = true
+    function toggleFavorite () {
+      /** @type {Book} */
+      const updatedBook = cloneDeep(book.value)
+      updatedBook.favorite = !updatedBook.favorite
 
-        /** @type {Book} */
-        const updatedBook = cloneDeep(book.value)
-        updatedBook.favorite = !updatedBook.favorite
-
-        await updateBook(updatedBook)
-        await findTheBook(bookId.value, redirectToHome)
-      } finally {
-        editing.value = false
-      }
+      updateBook(updatedBook)
     }
 
     const deleteModalOpen = ref(false)
-    const { deleteBook, deleted } = useBookDeleter(book)
+    const { mutate: deleteBook, isLoading: deleting } = useDeleteBookMutation()
 
-    async function handleDelete () {
-      try {
-        editing.value = true
-        await deleteBook()
-      } finally {
-        router.replace({ name: 'DashboardLibrary' })
-      }
+    function handleDelete () {
+      deleteBook(book.value)
     }
 
     function openDeleteModal () {
@@ -231,6 +198,8 @@ export default {
         deleteModalOpen.value = true
       })
     }
+
+    const writing = computed(() => editing.value || deleting.value)
 
     const setNavbarTransparent = inject('setNavbarTransparent')
 
@@ -242,10 +211,10 @@ export default {
       bookId,
       loading,
       book,
-      bookFound,
       collection,
       showBookInfo,
-      editing,
+      writing,
+      bookToEdit,
       handleEdit,
       editDialogOpen,
       openEditDialog,

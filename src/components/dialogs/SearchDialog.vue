@@ -73,7 +73,7 @@
               <button
                 type="reset"
                 class="clear-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
-                v-if="!searchLoading && searchedOnce && searchQuery.length > 0"
+                v-if="!searchLoading && searchQuery.length > 0"
                 @click="clearSearch(true)"
               >
                 <span aria-hidden="true">
@@ -109,7 +109,7 @@
 
           <FadeTransition>
             <div
-              v-if="searchedOnce && searchResults.length === 0"
+              v-if="searchResults?.length === 0"
               class="no-results select-none"
             >
               <i18n-t keypath="dashboard.search.noResultsFound" tag="p" scope="global">
@@ -118,7 +118,7 @@
             </div>
 
             <div
-              v-else-if="searchResults.length > 0"
+              v-else-if="searchResults?.length > 0 && searchQuery.length > 0"
               tabindex="-1"
               ref="results"
               class="results"
@@ -174,7 +174,7 @@
                 </div>
 
                 <ul
-                  class="divide-y divide-gray-200 dark:divide-gray-700"
+                  class="divide-y divide-gray-200 dark:divide-gray-700 mt-3"
                   ref="resultsList"
                   id="search-options"
                   aria-labelledby="results-header"
@@ -254,7 +254,7 @@
           </FadeTransition>
 
           <LoadingIndicator
-            :loading="searchLoading"
+            :loading="searchLoading || (isFetching && isPreviousData)"
             :blur="false"
             z-index="z-50"
           />
@@ -265,11 +265,15 @@
 </template>
 
 <script>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+import PaginatorUtil from 'paginator'
 
 import { useSearchStore } from '@/stores/search'
 import { useSheetStore } from '@/stores/sheet'
+import { PER_PAGE } from '@/services/sheet/constants'
+import useBookSearchQuery from '@/queries/useBookSearchQuery'
 
 import {
   Dialog,
@@ -320,17 +324,14 @@ export default {
 
   setup (props, context) {
     const { t, locale } = useI18n({ useScope: 'global' })
+    const { isOpen } = toRefs(props)
 
     const searchStore = useSearchStore()
     const sheetStore = useSheetStore()
 
-    const loading = computed(() => sheetStore.loading)
-
     const searchQuery = ref('')
     const searchedOnce = ref(false)
     const searchedTerm = ref('')
-    const searchLoading = computed(() => searchStore.loading)
-    const searchResults = computed(() => searchStore.results)
     const searchHistory = computed(() => searchStore.history)
     const searchPagination = computed(() => searchStore.pagination)
 
@@ -338,7 +339,60 @@ export default {
     const results = ref(null)
     const dialogContent = ref(null)
 
+    const sortBy = computed({
+      get: () => searchStore.sortBy,
+      set: val => searchStore.updateSort({ sortBy: val })
+    })
+
+    const sortDirection = computed({
+      get: () => searchStore.sortDirection,
+      set: val => searchStore.updateSort({ sortDirection: val })
+    })
+
+    const searchEnabled = computed(() => {
+      return isOpen.value && searchQuery.value.length > 0
+    })
+
+    const {
+      isLoading: searchLoading,
+      data: searchData,
+      isFetching,
+      isPreviousData,
+      remove
+    } = useBookSearchQuery({
+      query: searchQuery,
+      sortBy,
+      sortDirection,
+      page: computed(() => searchStore.page)
+    }, { enabled: searchEnabled, keepPreviousData: true })
+
+    const searchResults = computed(() => searchData.value?.results)
+
+    watch(searchData, newData => {
+      if (newData !== undefined) {
+        searchItemFocused.value = 0
+        historyItemFocused.value = 0
+
+        if (searchQuery.value.length > 0) {
+          const newHistory = [searchQuery.value].concat(searchHistory.value)
+
+          searchStore.updateHistory(
+            Array.from(new Set(newHistory)).slice(0, 6)
+          )
+        }
+
+        searchedTerm.value = searchQuery.value
+
+        const pagination = new PaginatorUtil(PER_PAGE, 4)
+          .build(newData.total, searchStore.page)
+
+        searchStore.updatePagination(pagination)
+      }
+    })
+
     async function clearSearch (focusOnInput) {
+      remove.value()
+
       searchQuery.value = ''
       searchedOnce.value = false
       searchedTerm.value = ''
@@ -355,41 +409,32 @@ export default {
       context.emit('close')
     }
 
-    async function search (query, page = 1) {
-      const searchTerm = query || searchQuery.value
-      searchQuery.value = searchTerm
+    function search (query) {
+      searchQuery.value = query
+      searchStore.updateQuery(query)
+    }
 
-      const focusedElement = document.activeElement
+    const lastFocus = ref(null)
 
-      if (!loading.value && !searchLoading.value && searchTerm.length > 0) {
-        focusedElement?.blur()
-        searchItemFocused.value = 0
-        historyItemFocused.value = 0
+    watch(isFetching, async newIsFetching => {
+      if (newIsFetching) {
+        lastFocus.value = document.activeElement
+        lastFocus.value?.blur()
 
-        await searchStore.search({ query: searchTerm, page })
-
-        searchQuery.value = searchTerm
-        searchedOnce.value = true
-        searchedTerm.value = searchTerm
-
-        nextTick(() => {
-          if (
-            focusedElement?.classList.contains('history-item') ||
-            focusedElement?.classList.contains('pag-button')
-          ) {
-            setTimeout(() => {
-              focusOnElement(resultsList.value, searchItemFocused.value)
-            }, 210)
-          } else {
-            focusedElement?.focus()
-          }
-        })
+        return
       }
-    }
 
-    async function handleSubmit () {
-      await search()
-    }
+      await nextTick()
+
+      if (
+        lastFocus.value?.classList.contains('history-item') ||
+        lastFocus.value?.classList.contains('pag-button')
+      ) {
+        setTimeout(() => { focusOnResults() }, 210)
+      } else {
+        lastFocus.value?.focus()
+      }
+    })
 
     function createDebounce () {
       let timeout = null
@@ -401,26 +446,8 @@ export default {
     }
 
     watch(searchQuery, async (newQuery, oldQuery) => {
-      if (newQuery.length > 0 && !searchLoading.value && newQuery !== oldQuery) {
-        await search()
-      } else if (newQuery.length === 0 && oldQuery.length > 0) {
+      if (newQuery.length === 0 && oldQuery.length > 0) {
         clearSearch()
-      }
-    })
-
-    const sortBy = computed({
-      get: () => searchStore.sortBy,
-      set: async val => {
-        searchStore.updateSort({ sortBy: val })
-        await search()
-      }
-    })
-
-    const sortDirection = computed({
-      get: () => searchStore.sortDirection,
-      set: async val => {
-        searchStore.updateSort({ sortDirection: val })
-        await search()
       }
     })
 
@@ -451,7 +478,7 @@ export default {
     }
 
     async function handlePageChange (page) {
-      await search(null, page)
+      searchStore.updatePage(page)
     }
 
     const shared = computed(() => sheetStore.shared)
@@ -565,7 +592,7 @@ export default {
     }
 
     function focusOnResults () {
-      if (!searchLoading.value && searchResults.value.length > 0) {
+      if (!searchLoading.value && searchedTerm.value.length > 0 && searchResults.value.length > 0) {
         focusOnElement(resultsList.value, searchItemFocused.value)
       } else if (searchHistory.value.length > 0) {
         focusOnElement(historyList.value, historyItemFocused.value)
@@ -584,10 +611,11 @@ export default {
       searchPagination,
       searchInput,
       dialogContent,
+      isFetching,
+      isPreviousData,
       results,
-      handleSubmit,
-      clearSearch,
       search,
+      clearSearch,
       debounce: createDebounce(),
       sortBy,
       sortDirection,

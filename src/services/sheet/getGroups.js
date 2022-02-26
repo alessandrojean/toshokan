@@ -20,12 +20,10 @@ export default async function getGroups (sheetId) {
     .build()
 
   const dataTable = await query.send()
-
-  const rows = dataTable.getNumberOfRows()
   const groupMap = new Map()
 
-  for (let i = 0; i < rows; i++) {
-    const group = dataTable.getValue(i, 0)
+  dataTable.asArray.forEach(rowData => {
+    const [group, status, count] = rowData
 
     if (!groupMap.has(group)) {
       groupMap.set(group, {
@@ -37,8 +35,6 @@ export default async function getGroups (sheetId) {
     }
 
     const groupObj = groupMap.get(group)
-    const status = dataTable.getValue(i, 1)
-    const count = dataTable.getValue(i, 2)
 
     if (status === STATUS_FUTURE) {
       groupObj.futureCount = count
@@ -47,10 +43,8 @@ export default async function getGroups (sheetId) {
     }
 
     groupObj.totalCount += count
-  }
+  })
 
-  const groups = Array.from(groupMap.values())
+  return Array.from(groupMap.values())
     .sort((a, b) => b.count - a.count)
-
-  return groups
 }

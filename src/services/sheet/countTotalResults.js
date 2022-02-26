@@ -20,7 +20,7 @@ export default async function countTotalResults (sheetId, query) {
 
   const dataTable = await newQuery.send()
 
-  if (dataTable.getNumberOfRows() === 0) {
+  if (dataTable.rows === 0) {
     return 0
   }
 

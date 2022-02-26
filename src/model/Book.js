@@ -358,52 +358,47 @@ export default class Book {
   /**
    * Creates a book from a DataTable row.
    *
-   * @param {google.visualization.DataTable} dataTable The dataTable to lookup
-   * @param {number} i The row index
+   * @param {any[]} row The data table row data
    * @returns {Book} The formatted book
    */
-  static fromDataTable (dataTable, i) {
-    function getProperty (column) {
-      return dataTable.getValue(i, column)
-    }
-
-    const row = getProperty(Columns.ROW)
-    const dimensions = getProperty(Columns.DIMENSIONS).split(' × ')
+  static fromDataTable (rowData) {
+    const row = rowData[Columns.ROW]
+    const dimensions = rowData[Columns.DIMENSIONS].split(' × ')
 
     return new Book({
       sheetLocation: `Collection!B${row}`,
       row,
-      id: getProperty(Columns.ID),
-      code: getProperty(Columns.CODE),
-      group: getProperty(Columns.GROUP),
-      title: getProperty(Columns.TITLE),
-      authors: getProperty(Columns.AUTHORS).split(/;\s+/g),
-      publisher: getProperty(Columns.PUBLISHER),
+      id: rowData[Columns.ID],
+      code: rowData[Columns.CODE],
+      group: rowData[Columns.GROUP],
+      title: rowData[Columns.TITLE],
+      authors: rowData[Columns.AUTHORS].split(/;\s+/g),
+      publisher: rowData[Columns.PUBLISHER],
       dimensions: {
         width: parseFloat(dimensions[0]),
         height: parseFloat(dimensions[1])
       },
-      status: getProperty(Columns.STATUS),
-      readAt: getProperty(Columns.READ_AT),
+      status: rowData[Columns.STATUS],
+      readAt: rowData[Columns.READ_AT],
       labelPrice: {
-        currency: getProperty(Columns.LABEL_PRICE_CURRENCY),
-        value: getProperty(Columns.LABEL_PRICE_VALUE)
+        currency: rowData[Columns.LABEL_PRICE_CURRENCY],
+        value: rowData[Columns.LABEL_PRICE_VALUE]
       },
       paidPrice: {
-        currency: getProperty(Columns.PAID_PRICE_CURRENCY),
-        value: getProperty(Columns.PAID_PRICE_VALUE)
+        currency: rowData[Columns.PAID_PRICE_CURRENCY],
+        value: rowData[Columns.PAID_PRICE_VALUE]
       },
-      store: getProperty(Columns.STORE),
-      coverUrl: getProperty(Columns.COVER_URL) || '',
-      boughtAt: getProperty(Columns.BOUGHT_AT),
-      favorite: getProperty(Columns.FAVORITE) === FAVORITE_ACTIVE,
-      synopsis: getProperty(Columns.SYNOPSIS) || '',
-      notes: getProperty(Columns.NOTES) || '',
-      tags: getProperty(Columns.TAGS)
-        ? getProperty(Columns.TAGS).split(/,\s*/).map(t => t.toUpperCase())
+      store: rowData[Columns.STORE],
+      coverUrl: rowData[Columns.COVER_URL] || '',
+      boughtAt: rowData[Columns.BOUGHT_AT],
+      favorite: rowData[Columns.FAVORITE] === FAVORITE_ACTIVE,
+      synopsis: rowData[Columns.SYNOPSIS] || '',
+      notes: rowData[Columns.NOTES] || '',
+      tags: rowData[Columns.TAGS]
+        ? rowData[Columns.TAGS].split(/,\s*/).map(t => t.toUpperCase())
         : [],
-      createdAt: getProperty(Columns.CREATED_AT),
-      updatedAt: getProperty(Columns.UPDATED_AT)
+      createdAt: rowData[Columns.CREATED_AT],
+      updatedAt: rowData[Columns.UPDATED_AT]
     })
   }
 

@@ -140,7 +140,7 @@ export function createSearchKeywords () {
  * @param {string} options.sort.sortBy The column to order
  * @param {'asc' | 'desc'} options.sort.sortDirection The sort direction
  * @param {number} options.page The page
- * @returns {Promise<{ results: Book[], totalResults: number }>} The books found
+ * @returns {Promise<{ results: Book[], total: number }>} The books found
  */
 export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1 }) {
   const sheetUrl = buildSheetUrl(sheetId)
@@ -234,9 +234,11 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
                 const [start, end] = dates.map(isoDate)
 
                 return start && end
-                  ? QueryBuilder.and(
-                      [column, '>= date', start],
-                      [column, '<= date', end]
+                  ? (
+                      QueryBuilder.and(
+                        [column, '>= date', start],
+                        [column, '<= date', end]
+                      )
                     )
                   : [column, `${operation} date`, start]
               }
@@ -309,9 +311,11 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
                 const [start, end] = dates.map(isoDate)
 
                 return start && end
-                  ? QueryBuilder.andNot(
-                      [column, '>= date', start],
-                      [column, '<= date', end]
+                  ? (
+                      QueryBuilder.andNot(
+                        [column, '>= date', start],
+                        [column, '<= date', end]
+                      )
                     )
                   : [column, `${inverseOperation} date`, start]
               }
@@ -356,12 +360,8 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
 
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-  const books = []
-
-  for (let i = 0; i < rows; i++) {
-    books.push(Book.fromDataTable(dataTable, i))
+  return {
+    results: dataTable.asArray.map(Book.fromDataTable),
+    total: totalResults
   }
-
-  return { results: books, total: totalResults }
 }

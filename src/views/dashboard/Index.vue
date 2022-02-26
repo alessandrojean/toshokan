@@ -31,6 +31,8 @@
       :is-open="searchDialogIsOpen"
       @close="closeSearchDialog"
     />
+
+    <!-- <VueQueryDevTools position="bottom-right" /> -->
   </div>
 </template>
 
@@ -38,6 +40,7 @@
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+// import { VueQueryDevTools } from 'vue-query/devtools'
 
 import { useAuthStore } from '@/stores/auth'
 import { useSheetStore } from '@/stores/sheet'
@@ -54,6 +57,7 @@ export default {
     DashboardFooter,
     MobileNavbar,
     SearchDialog
+    // VueQueryDevTools
   },
 
   setup () {
@@ -63,13 +67,12 @@ export default {
     const router = useRouter()
 
     const signedIn = computed(() => authStore.signedIn)
-    const loadedOnce = computed(() => sheetStore.loadedOnce)
     const hasGrantedScopes = computed(() => authStore.hasGrantedScopes)
 
-    async function loadSheetData () {
-      if (!loadedOnce.value) {
+    async function findSheetId () {
+      if (sheetStore.sheetId === null) {
         try {
-          await sheetStore.loadSheetData()
+          await sheetStore.findSheetId()
         } catch (e) {
           const error = !hasGrantedScopes.value
             ? new Error(t('errors.missingScopes'))
@@ -82,7 +85,7 @@ export default {
       }
     }
 
-    onMounted(loadSheetData)
+    onMounted(findSheetId)
 
     watch(signedIn, newValue => {
       if (!newValue) {
@@ -159,7 +162,7 @@ export default {
     })
 
     return {
-      loadSheetData,
+      findSheetId,
       signedIn,
       t,
       searchDialog,

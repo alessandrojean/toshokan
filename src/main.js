@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { VueQueryPlugin } from 'vue-query'
 import App from '@/App.vue'
 import router from '@/router'
 import i18n from '@/i18n'
@@ -11,6 +12,7 @@ getTheme()
 
 createApp(App)
   .use(createPinia())
+  .use(VueQueryPlugin)
   .use(router)
   .use(i18n)
   .mount('#app')

@@ -41,8 +41,8 @@ import { useI18n } from 'vue-i18n'
 import colors from 'tailwindcss/colors'
 
 import useDarkMode from '@/composables/useDarkMode'
-import useMotionSafe from '@/composables/useMotionSafe'
 import { useSheetStore } from '@/stores/sheet'
+import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -63,8 +63,11 @@ export default {
   setup () {
     const sheetStore = useSheetStore()
 
-    const loading = computed(() => sheetStore.loading)
-    const stats = computed(() => sheetStore.stats)
+    const { data: stats, isLoading, isIdle } = useStatisticsQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
+
+    const loading = computed(() => isLoading.value || isIdle.value)
 
     const { n, t, d, locale } = useI18n({ useScope: 'global' })
 
@@ -73,14 +76,11 @@ export default {
     })
 
     const { darkMode } = useDarkMode()
-    const { motionSafe } = useMotionSafe()
 
     const expenses = computed(() => ({
       options: {
         chart: {
-          animations: {
-            enabled: motionSafe.value
-          },
+          animations: { enabled: false },
           id: 'monthly-expenses',
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
@@ -102,7 +102,7 @@ export default {
           }
         },
         xaxis: {
-          categories: (stats.value.monthly || [])
+          categories: (stats.value?.monthly || [])
             .map(m => m.month.toISOString()),
           labels: {
             formatter: (value) => {
@@ -130,7 +130,7 @@ export default {
       series: [
         {
           name: t('dashboard.stats.monthlyExpense'),
-          data: (stats.value.monthly || []).map(m => m.totalSpent)
+          data: (stats.value?.monthly || []).map(m => m.totalSpent)
         }
       ]
     }))

@@ -283,10 +283,14 @@ import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
-import useBookInserter from '@/composables/useBookInserter'
+import cloneDeep from 'lodash.clonedeep'
+
 import useMarkdown from '@/composables/useMarkdown'
 import useImageLoader from '@/composables/useImageLoader'
+import Book, { STATUS_UNREAD } from '@/model/Book'
+import useCreateBookMutation from '@/mutations/useCreateBookMutation'
 import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
 import {
   Dialog,
@@ -309,10 +313,6 @@ import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import BulletSteps from '@/components/BulletSteps.vue'
 import DescriptionList from '@/components/DescriptionList.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-
-import Book, { STATUS_UNREAD } from '@/model/Book'
-
-import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
@@ -513,11 +513,18 @@ export default {
     } = useImageLoader(bookCoverUrl)
 
     const router = useRouter()
-    const { inserting, insertBook } = useBookInserter(book)
+    const {
+      mutate: insertBook,
+      isLoading: inserting
+    } = useCreateBookMutation()
     const bookCreatedId = ref(null)
 
-    async function handleInsertBook () {
-      bookCreatedId.value = await insertBook()
+    function handleInsertBook () {
+      insertBook(book, {
+        onSuccess (data) {
+          bookCreatedId.value = data
+        }
+      })
     }
 
     function viewBook (bookId) {
@@ -582,7 +589,9 @@ function useRevisionStep (book) {
   const { t, d, n } = useI18n({ useScope: 'global' })
   const sheetStore = useSheetStore()
 
-  const timeZone = computed(() => sheetStore.timeZone)
+  const { data: timeZone } = useTimeZoneQuery({
+    enabled: computed(() => sheetStore.sheetId !== null)
+  })
 
   function formatPrice ({ value, currency }) {
     return n(value, 'currency', { currency })

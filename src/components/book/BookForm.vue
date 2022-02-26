@@ -211,16 +211,19 @@
 import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useCollectionStore } from '@/stores/collection'
-
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
-import { UserAddIcon } from '@heroicons/vue/solid'
-
-import { decimalComma, dimension } from '@/util/validators'
+import cloneDeep from 'lodash.clonedeep'
 
 import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
+import { useSheetStore } from '@/stores/sheet'
+import useGroupsQuery from '@/queries/useGroupsQuery'
+import usePublishersQuery from '@/queries/usePublishersQuery'
+import useStoresQuery from '@/queries/useStoresQuery'
+import { decimalComma, dimension } from '@/util/validators'
+
+import { UserAddIcon } from '@heroicons/vue/solid'
 
 import Alert from '@/components/Alert.vue'
 import DimensionField from '@/components/fields/DimensionField.vue'
@@ -228,8 +231,6 @@ import MarkdownField from '@/components/fields/MarkdownField.vue'
 import MonetaryField from '@/components/fields/MonetaryField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
-
-import cloneDeep from 'lodash.clonedeep'
 
 export default {
   name: 'BookForm',
@@ -365,34 +366,25 @@ export default {
       v$.value.$reset()
     }
 
-    const collectionStore = useCollectionStore()
+    const sheetStore = useSheetStore()
+    const optionsEnabled = computed(() => sheetStore.sheetId !== null)
 
-    const publisherOptions = computed(() => collectionStore.filters.publishers.items)
-    const storeOptions = computed(() => collectionStore.filters.stores.items)
+    const { data: groupData } = useGroupsQuery({ enabled: optionsEnabled })
+    const { data: publishersData } = usePublishersQuery({ enabled: optionsEnabled })
+    const { data: storesData } = useStoresQuery({ enabled: optionsEnabled })
+
     const groupOptions = computed(() => {
-      return collectionStore.filters.groups.items
-        .slice()
+      return (groupData.value || []).slice()
         .sort((a, b) => a.name.localeCompare(b, locale.value))
     })
+
+    const publisherOptions = computed(() => publishersData.value || [])
+    const storeOptions = computed(() => storesData.value || [])
 
     onMounted(() => {
       if (touchOnMount.value) {
         v$.value.$touch()
         context.emit('error', v$.value.$anyDirty && v$.value.$invalid)
-      }
-    })
-
-    onMounted(async () => {
-      if (publisherOptions.value.length === 0) {
-        await collectionStore.fetchPublishers()
-      }
-
-      if (storeOptions.value.length === 0) {
-        await collectionStore.fetchStores()
-      }
-
-      if (groupOptions.value.length === 0) {
-        await collectionStore.fetchGroups()
       }
     })
 

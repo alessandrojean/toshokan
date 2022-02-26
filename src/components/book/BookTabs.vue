@@ -153,6 +153,7 @@ import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
 import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
 import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
@@ -233,7 +234,9 @@ export default {
       return n(value, 'currency', { currency })
     }
 
-    const timeZone = computed(() => sheetStore.timeZone)
+    const { data: timeZone } = useTimeZoneQuery({
+      enabled: computed(() => sheetStore.sheetId !== null)
+    })
 
     function formatDate (date, format = 'short') {
       if (typeof date === 'string' && date.length > 0) {

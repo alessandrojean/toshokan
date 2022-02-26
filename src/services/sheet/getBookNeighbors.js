@@ -23,27 +23,19 @@ export default async function getBookNeighbors (sheetId, book) {
 
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-
-  if (rows < 2) {
+  if (dataTable.rows < 2) {
     return null
   }
 
-  let bookRow = 0
-
-  for (let i = 0; i < rows; i++) {
-    if (dataTable.getValue(i, Columns.TITLE) === book.title) {
-      bookRow = i
-      break
-    }
-  }
+  const bookRow = dataTable.asArray
+    .findIndex(rowData => rowData[Columns.TITLE] === book.title)
 
   const previous = bookRow > 0
-    ? Book.fromDataTable(dataTable, bookRow - 1)
+    ? Book.fromDataTable(dataTable.getRow(bookRow - 1))
     : null
 
-  const next = bookRow < rows - 1
-    ? Book.fromDataTable(dataTable, bookRow + 1)
+  const next = bookRow < dataTable.rows - 1
+    ? Book.fromDataTable(dataTable.getRow(bookRow + 1))
     : null
 
   return { previous, next }

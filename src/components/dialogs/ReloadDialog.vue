@@ -1,11 +1,11 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
 import useMarkdown from '@/composables/useMarkdown'
+import useGitHubReleaseQuery from '@/queries/useGitHubReleaseQuery'
 
-import axios from 'axios'
 import chunk from 'lodash.chunk'
 
 import {
@@ -26,11 +26,9 @@ function close () {
 
 const { t } = useI18n({ useScope: 'global' })
 
-const RELEASE_URL = 'https://api.github.com/repos/alessandrojean/toshokan/releases/latest'
-
 const { markdown: md, renderMarkdown } = useMarkdown()
 
-const releaseNotesMarkdown = ref(null)
+const { data: releaseNotesMarkdown } = useGitHubReleaseQuery()
 
 const sections = computed(() => {
   if (!releaseNotesMarkdown.value) {
@@ -47,18 +45,6 @@ const sections = computed(() => {
       body: renderMarkdown(body)
     }))
 })
-
-async function fetchReleaseNotes () {
-  try {
-    const { data } = await axios.get(RELEASE_URL)
-
-    releaseNotesMarkdown.value = data?.body
-  } catch (_) {
-    // Do nothing.
-  }
-}
-
-onMounted(fetchReleaseNotes)
 </script>
 
 <template>

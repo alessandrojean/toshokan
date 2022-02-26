@@ -1,54 +1,36 @@
 <template>
   <div>
-    <template v-if="sheetLoading || (loading && items.length === 0)">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5">
-        <BookCard
-          v-for="tempBook in skeletonItems"
-          :key="tempBook"
-          :loading="true"
-        />
-      </div>
-      <div class="motion-safe:animate-pulse mt-6 w-full h-28 md:h-14 bg-gray-400 dark:bg-gray-600 rounded"></div>
-    </template>
-    <template v-else>
-      <ul
-        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
-        v-if="!loading"
-        ref="grid"
-      >
-        <li
-          v-for="(book, bookIdx) in items"
-          :key="book.id"
-        >
-          <BookCard
-            :book="book"
-            :loading="loading"
-            :tabindex="bookIdx === focused ? '0' : '-1'"
-            @keydown="handleKeydown"
-          />
-        </li>
-      </ul>
-
-      <div
-        class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
-        v-else
+    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5">
+      <BookCard
+        v-for="tempBook in skeletonItems"
+        :key="tempBook"
+        :loading="true"
+      />
+    </div>
+    <ul
+      v-else
+      class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
+      ref="grid"
+    >
+      <li
+        v-for="(book, bookIdx) in items"
+        :key="book.id"
       >
         <BookCard
-          v-for="tempBook in skeletonItems"
-          :key="tempBook"
-          :loading="true"
+          class="scroll-mt-20"
+          :book="book"
+          :loading="loading"
+          :tabindex="bookIdx === focused ? '0' : '-1'"
+          @keydown="handleKeydown"
         />
-      </div>
-    </template>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
+import { nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-import { useCollectionStore } from '@/stores/collection'
-import { useSheetStore } from '@/stores/sheet'
 
 import BookCard from '@/components/book/BookCard.vue'
 
@@ -56,22 +38,26 @@ export default {
   components: { BookCard },
 
   props: {
+    currentPage: String,
     items: Array,
-    skeletonItems: Number
+    loading: Boolean,
+    skeletonItems: Number,
+    sortDirection: String,
+    sortProperty: String
   },
 
   setup (props) {
-    const collectionStore = useCollectionStore()
-    const sheetStore = useSheetStore()
-
-    const sheetLoading = computed(() => sheetStore.loading)
-    const loading = computed(() => collectionStore.books.loading)
-
     const { t } = useI18n({ useScope: 'global' })
 
     const focused = ref(0)
     const grid = ref(null)
-    const { items } = toRefs(props)
+    const {
+      items,
+      loading,
+      currentPage,
+      sortDirection,
+      sortProperty
+    } = toRefs(props)
 
     const columnSize = {
       '1024px': 6, // lg
@@ -147,7 +133,7 @@ export default {
     }
 
     watch(
-      () => sheetLoading.value || loading.value,
+      [loading, currentPage, sortDirection, sortProperty],
       () => { focused.value = 0 }
     )
 
@@ -161,8 +147,6 @@ export default {
     }
 
     return {
-      sheetLoading,
-      loading,
       focused,
       grid,
       handleKeydown,

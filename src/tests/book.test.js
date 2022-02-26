@@ -45,7 +45,7 @@ it('Should format to insert in the sheet correctly', () => {
 
   expect(bookFormatted).toHaveLength(23)
   expect(bookFormatted.slice(0, 22)).toStrictEqual([
-    `=ROW()`,
+    '=ROW()',
     testBook.id,
     testBook.code,
     testBook.group,
@@ -72,11 +72,7 @@ it('Should format to insert in the sheet correctly', () => {
 
 it('Should parse the book from the sheet correctly', () => {
   const formattedBook = testBook.toArray()
-  const dataTable = {
-    getValue: jest.fn().mockImplementation((i, j) => formattedBook[j])
-  }
-
-  const book = Book.fromDataTable(dataTable, 0)
+  const book = Book.fromDataTable(formattedBook)
 
   expect(book).toBeInstanceOf(Book)
   expect(book).toMatchObject({
@@ -100,7 +96,7 @@ it('Should split the titles correctly', () => {
       main: 'AKIRA #01',
       subtitle: 'Part 1 - Tetsuo'
     },
-    'Gyo': {
+    Gyo: {
       title: 'Gyo',
       number: null,
       main: 'Gyo',
@@ -108,21 +104,24 @@ it('Should split the titles correctly', () => {
     }
   }
 
-  for (let [title, titleParts] of Object.entries(titles)) {
+  for (const [title, titleParts] of Object.entries(titles)) {
     expect(new Book({ title }).titleParts).toStrictEqual(titleParts)
   }
 })
 
 it('Should detect the correct code type', () => {
   const codes = {
+    // eslint-disable-next-line quote-props
     '9788545702870': 'ISBN-13',
+    // eslint-disable-next-line quote-props
     '8576161877': 'ISBN-10',
+    // eslint-disable-next-line quote-props
     '7897780165585': 'EAN-13',
     'a-random-string': 'ID',
     'N/A': 'N/A'
   }
 
-  for (let [code, type] of Object.entries(codes)) {
+  for (const [code, type] of Object.entries(codes)) {
     expect(Book.getCodeType(code)).toBe(type)
   }
 })

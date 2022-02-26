@@ -7,25 +7,37 @@
           aria-hidden="true"
         />
       </div>
-      <div v-if="mode === 'compact'" class="absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3 space-y-2">
+      <div
+        v-if="mode === 'compact' && !imageOnly"
+        class="absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3 space-y-2"
+      >
         <div class="bg-gray-50 dark:bg-gray-500 h-4 w-3/4 rounded"></div>
         <div class="bg-gray-50 dark:bg-gray-500 h-3 w-1/2 rounded"></div>
       </div>
     </div>
-    <div v-if="mode === 'comfortable'" class="mt-3 space-y-1">
+    <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3 space-y-1">
       <div class="skeleton h-4 w-3/4 rounded"></div>
       <div class="skeleton h-3 w-1/2 rounded"></div>
     </div>
   </div>
-  <router-link
+  <component
     v-else
-    :to="{ name: 'BookDetails', params: { bookId: book.id } }"
-    class="book-link group focus:outline-none"
+    :is="imageOnly ? 'div' : 'RouterLink'"
+    :to="!imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
+    class="book-link group focus:outline-none relative"
     ref="loadedCard"
     :title="book.title"
-    :aria-current="current ? 'page' : undefined"
+    :aria-current="current && !imageOnly ? 'page' : undefined"
+    :tabindex="!imageOnly ? tabindex : undefined"
   >
-    <div :class="blurCover ? 'blurred' : ''" class="book-card">
+    <component
+      :is="imageOnly ? 'RouterLink' : 'div'"
+      :class="blurCover ? 'blurred' : ''"
+      :to="imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
+      class="book-card focus:outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
+      :aria-current="current && imageOnly ? 'page' : undefined"
+      :tabindex="imageOnly ? tabindex : undefined"
+    >
       <transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
@@ -67,7 +79,7 @@
       </transition>
 
       <div
-        v-if="book.isRead || current || book.isFuture"
+        v-if="(book.isRead || current || book.isFuture) && !imageOnly"
         class="badge-wrapper"
       >
         <span v-if="current" class="current-volume">
@@ -90,7 +102,10 @@
       </div>
 
       <FadeTransition>
-        <div v-if="mode === 'compact'" class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3">
+        <div
+          v-if="mode === 'compact' && !imageOnly"
+          class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3"
+        >
           <div class="inline-flex text-white w-full items-center">
             <div class="inline-flex flex-col grow min-w-0">
               <span class="font-semibold font-display text-sm truncate max-w-full">
@@ -106,9 +121,16 @@
           </div>
         </div>
       </FadeTransition>
+    </component>
+
+    <div
+      v-if="$slots.actions"
+      class="w-full relative -mt-4 flex justify-center motion-safe:transition actions"
+    >
+      <slot name="actions" />
     </div>
 
-    <div v-if="mode === 'comfortable'" class="mt-3">
+    <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3">
       <p class="text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">
         {{ book.titleParts.title }}
       </p>
@@ -116,7 +138,7 @@
         {{ volume }}
       </p>
     </div>
-  </router-link>
+  </component>
 </template>
 
 <script>
@@ -149,10 +171,12 @@ export default {
       type: Book
     },
     current: Boolean,
+    imageOnly: Boolean,
     loading: {
       type: Boolean,
       required: true
-    }
+    },
+    tabindex: String
   },
 
   setup (props) {
@@ -227,10 +251,10 @@ export default {
 <style lang="postcss" scoped>
 .book-card {
   will-change: transform, box-shadow;
-  @apply relative shadow rounded-md overflow-hidden
+  @apply relative shadow rounded-md overflow-hidden block
     bg-gray-200 dark:bg-gray-700
     aspect-w-2 aspect-h-3
-    motion-safe:transition;
+    motion-safe:transition-all;
 }
 
 .book-link:focus-visible .book-card {

@@ -82,7 +82,7 @@ describe('CBL', () => {
     delete process.env.VITE_APP_CBL_QUERY_KEY
 
     const cbl = new Cbl()
-    const search = jest.spyOn(cbl, 'search')
+    jest.spyOn(cbl, 'search')
 
     await expect(cbl.search('9788545702870')).rejects
       .toThrowError('Authorization key missing.')
@@ -141,7 +141,7 @@ describe('Google Books', () => {
     expect(results).toHaveLength(0)
   })
 
-  it ('Should fail if the ISBN is invalid', async () => {
+  it('Should fail if the ISBN is invalid', async () => {
     const googleBooks = new GoogleBooks()
     const search = jest.spyOn(googleBooks, 'search')
 
@@ -158,7 +158,7 @@ describe('Open Library', () => {
       data: {
         'ISBN:9788545702870': {
           identifiers: {
-            'isbn_13': ['9788545702870']
+            isbn_13: ['9788545702870']
           },
           title: 'Akira vol. 1',
           authors: [{ name: 'Katsuhiro Otomo' }],
@@ -169,7 +169,7 @@ describe('Open Library', () => {
 
     axiosGet.mockResolvedValueOnce({
       data: {
-        'physical_dimensions': '25.6 x 17.8 x 1 centimeters'
+        physical_dimensions: '25.6 x 17.8 x 1 centimeters'
       }
     })
 
@@ -201,7 +201,7 @@ describe('Open Library', () => {
     expect(results).toHaveLength(0)
   })
 
-  it ('Should fail if the ISBN is invalid', async () => {
+  it('Should fail if the ISBN is invalid', async () => {
     const openLibrary = new OpenLibrary()
     const search = jest.spyOn(openLibrary, 'search')
 

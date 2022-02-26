@@ -19,17 +19,10 @@ export default async function getBookByCode (sheetId, code) {
     .build()
 
   const dataTable = await query.send()
-  const rows = dataTable.getNumberOfRows()
 
-  if (rows === 0) {
+  if (dataTable.rows === 0) {
     return null
   }
 
-  const books = []
-
-  for (let i = 0; i < rows; i++) {
-    books.push(Book.fromDataTable(dataTable, i))
-  }
-
-  return books
+  return dataTable.asArray.map(Book.fromDataTable)
 }

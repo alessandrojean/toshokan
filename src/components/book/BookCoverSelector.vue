@@ -16,7 +16,7 @@
           enter-to-class="opacity-100"
         >
           <RadioGroup
-            v-if="results.length > 0"
+            v-if="results?.length > 0"
             :model-value="coverUrl"
             @update:model-value="$emit('update:coverUrl', $event)"
           >
@@ -124,13 +124,13 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { computed, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import useVuelidate from '@vuelidate/core'
 import { helpers, required, url } from '@vuelidate/validators'
 
-import useCoverFinder from '@/composables/useCoverFinder'
+import useCoverQuery from '@/queries/useCoverQuery'
 
 import {
   RadioGroup,
@@ -176,13 +176,9 @@ export default {
     const { t } = useI18n({ useScope: 'global' })
 
     const {
-      clearResults,
-      finding,
-      findCover,
-      results: coverResults
-    } = useCoverFinder(book.value)
-
-    onMounted(findCover)
+      isLoading: finding,
+      data: coverResults
+    } = useCoverQuery(book, { enabled: true })
 
     watch(finding, newValue => context.emit('update:finding', newValue))
 
@@ -215,7 +211,7 @@ export default {
     }
 
     const results = computed(() => {
-      const allImages = coverResults.value
+      const allImages = (coverResults.value || [])
         .concat(customs.value)
         .filter(url => errors.value.indexOf(url) === -1)
 
@@ -249,9 +245,7 @@ export default {
     }
 
     return {
-      clearResults,
       finding,
-      findCover,
       results,
       state,
       v$,

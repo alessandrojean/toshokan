@@ -4,18 +4,11 @@ import SheetService from '@/services/sheet'
 
 export const useSheetStore = defineStore('sheet', {
   state: () => ({
+    isEmpty: false,
     loadedOnce: false,
-    loading: true,
     options: [],
     selected: null,
-    sheetId: null,
-    stats: {},
-    timeZone: {
-      name: 'America/Sao_Paulo',
-      offset: -3,
-      offsetStr: '-03:00',
-      timezoneOffset: 180
-    }
+    sheetId: null
   }),
   getters: {
     canChange () {
@@ -24,6 +17,14 @@ export const useSheetStore = defineStore('sheet', {
 
     canEdit () {
       return this.selected?.capabilities?.canEdit
+    },
+
+    loadedOnce () {
+      return this.sheetId !== null
+    },
+
+    loading () {
+      return this.sheetId === null
     },
 
     ownerDisplayName () {
@@ -36,10 +37,6 @@ export const useSheetStore = defineStore('sheet', {
 
     shared () {
       return this.selected && this.selected.ownedByMe === false
-    },
-
-    sheetIsEmpty () {
-      return this.stats.count === 0
     }
   },
   actions: {
@@ -58,31 +55,8 @@ export const useSheetStore = defineStore('sheet', {
       return sheet.id
     },
 
-    /**
-     * Load the minimum data needed for the sheet.
-     */
-    async loadSheetData (persistLoading) {
-      this.updateLoading(true)
-
-      let sheetId = this.sheetId
-
-      if (!sheetId) {
-        sheetId = await this.findSheetId()
-      }
-
-      const sheetData = await SheetService.getSheetData(sheetId)
-
-      this.updateStats(sheetData.stats)
-      this.updateTimeZone(sheetData.timeZone)
-
-      if (!persistLoading) {
-        this.updateLoading(false)
-      }
-    },
-
-    updateLoading (loading) {
-      this.loading = loading
-      this.loadedOnce = true
+    updateIsEmpty (isEmpty) {
+      this.isEmpty = isEmpty
     },
 
     updateOptions (options) {
@@ -96,14 +70,6 @@ export const useSheetStore = defineStore('sheet', {
     updateSheetId (sheetId) {
       this.sheetId = sheetId
       localStorage.setItem('last_sheet_opened', sheetId)
-    },
-
-    updateStats (stats) {
-      this.stats = { ...this.stats, ...stats }
-    },
-
-    updateTimeZone (timeZone) {
-      this.timeZone = { ...this.timeZone, ...timeZone }
     },
 
     resetLoadedOnce () {

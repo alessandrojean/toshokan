@@ -25,12 +25,5 @@ export default async function getLatestReadings (sheetId, options = {}) {
 
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-  const books = []
-
-  for (let i = 0; i < rows; i++) {
-    books.push(Book.fromDataTable(dataTable, i))
-  }
-
-  return books
+  return dataTable.asArray.map(Book.fromDataTable)
 }

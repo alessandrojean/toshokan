@@ -2,6 +2,7 @@ import cloneDeep from 'lodash.clonedeep'
 
 import i18n from '@/i18n'
 import QueryBuilder from './QueryBuilder'
+import DataTable from './DataTable'
 
 /**
  * Enhanced Google Visualization Query.
@@ -30,14 +31,14 @@ export default class Query {
   constructor (dataSourceUrl, { builderObj, queryString }) {
     this.#builderObj = builderObj ? cloneDeep(builderObj) : null
 
-    this.#query = new google.visualization.Query(dataSourceUrl)
+    this.#query = new window.google.visualization.Query(dataSourceUrl)
     this.#query.setQuery(queryString)
   }
 
   /**
    * Executes the query.
    *
-   * @returns {Promise<google.visualization.DataTable>} The DataTable object
+   * @returns {Promise<DataTable>} The DataTable object
    */
   async send () {
     return new Promise((resolve, reject) => {
@@ -51,7 +52,7 @@ export default class Query {
           return
         }
 
-        resolve(response.getDataTable())
+        resolve(new DataTable(response.getDataTable()))
       })
     })
   }

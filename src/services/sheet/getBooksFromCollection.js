@@ -22,16 +22,10 @@ export default async function getBooksFromCollection (sheetId, book) {
     .build()
 
   const dataTable = await query.send()
-  const rows = dataTable.getNumberOfRows()
-  const books = []
 
-  if (rows < 2) {
-    return books
+  if (dataTable.rows < 2) {
+    return []
   }
 
-  for (let i = 0; i < rows; i++) {
-    books.push(Book.fromDataTable(dataTable, i))
-  }
-
-  return books
+  return dataTable.asArray.map(Book.fromDataTable)
 }

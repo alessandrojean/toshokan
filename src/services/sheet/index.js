@@ -13,6 +13,7 @@ import getBooksFromGroup from './getBooksFromGroup'
 import getColumnUniqueValues from './getColumnUniqueValues'
 import getGroups from './getGroups'
 import getLatestReadings from './getLatestReadings'
+import getNextReads from './getNextReads'
 import getPublishers from './getPublishers'
 import getSheetData from './getSheetData'
 import getStores from './getStores'
@@ -36,6 +37,7 @@ export default {
   getColumnUniqueValues,
   getGroups,
   getLatestReadings,
+  getNextReads,
   getPublishers,
   getSheetData,
   getStores,

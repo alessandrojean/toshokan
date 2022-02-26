@@ -49,7 +49,7 @@ export default async function getBooks (sheetId, page = 1, options = {}) {
     )
   }
 
-  if (options.groups) {
+  if (options.groups && options.groups.length > 0) {
     const groupConditions = options.groups
       .map(group => [GROUP, '=', group])
 
@@ -74,12 +74,8 @@ export default async function getBooks (sheetId, page = 1, options = {}) {
 
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-  const books = []
-
-  for (let i = 0; i < rows; i++) {
-    books.push(Book.fromDataTable(dataTable, i))
+  return {
+    books: dataTable.asArray.map(Book.fromDataTable),
+    totalResults
   }
-
-  return { books, totalResults }
 }

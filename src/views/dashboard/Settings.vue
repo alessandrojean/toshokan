@@ -255,6 +255,7 @@
 <script>
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryClient } from 'vue-query'
 
 import { useAuthStore } from '@/stores/auth'
 import { useCollectionStore } from '@/stores/collection'
@@ -302,6 +303,7 @@ export default {
     const collectionStore = useCollectionStore()
     const settingsStore = useSettingsStore()
     const sheetStore = useSheetStore()
+    const queryClient = useQueryClient()
 
     const settings = reactive({
       appearence: {
@@ -341,9 +343,11 @@ export default {
 
       if (locale.value !== appearence.locale) {
         locale.value = appearence.locale
-        await sheetStore.loadSheetData()
-        collectionStore.clearCarouselItems('lastAdded', 'latestReadings')
-        collectionStore.clearItems(null, 'books')
+        queryClient.invalidateQueries('statistics')
+        queryClient.invalidateQueries('last-added')
+        queryClient.invalidateQueries('latest-readings')
+        queryClient.invalidateQueries('books')
+        queryClient.invalidateQueries('book')
       }
 
       settingsStore.updateTheme(appearence.theme)

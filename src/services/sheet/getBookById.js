@@ -20,11 +20,9 @@ export default async function getBookById (sheetId, id) {
 
   const dataTable = await query.send()
 
-  const rows = dataTable.getNumberOfRows()
-
-  if (rows === 0) {
+  if (dataTable.rows === 0) {
     return null
   }
 
-  return Book.fromDataTable(dataTable, 0)
+  return Book.fromDataTable(dataTable.getRow(0))
 }

@@ -208,6 +208,8 @@ import {
   INDIFERENT,
   ONLY
 } from '@/stores/collection'
+import { useSheetStore } from '@/stores/sheet'
+import useGroupsQuery from '@/queries/useGroupsQuery'
 
 import slugify from 'slugify'
 
@@ -275,8 +277,13 @@ export default {
       return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
     })
 
+    const sheetStore = useSheetStore()
+    const groupsEnabled = computed(() => sheetStore.sheetId !== null)
+
+    const { data: groupsData } = useGroupsQuery({ enabled: groupsEnabled })
+
     const groups = computed(() => {
-      const values = collectionStore.filters.groups.items
+      const values = groupsData.value?.slice() || []
 
       if (state.futureItems === HIDE) {
         return values
@@ -297,7 +304,7 @@ export default {
         Object.assign(state, {
           favorites: collectionStore.favorites,
           futureItems: collectionStore.futureItems,
-          groups: collectionStore.filters.groups.selected,
+          groups: collectionStore.filters.groups,
           sortDirection: collectionStore.sortDirection,
           sortProperty: collectionStore.sortBy
         })
@@ -318,7 +325,7 @@ export default {
     const state = reactive({
       favorites: collectionStore.favorites,
       futureItems: collectionStore.futureItems,
-      groups: collectionStore.filters.groups.selected,
+      groups: collectionStore.filters.groups,
       sortDirection: collectionStore.sortDirection,
       sortProperty: collectionStore.sortBy
     })

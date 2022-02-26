@@ -182,6 +182,7 @@
 <script>
 import { computed, inject, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryClient } from 'vue-query'
 
 import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
@@ -238,6 +239,7 @@ export default {
 
     const collectionStore = useCollectionStore()
     const sheetStore = useSheetStore()
+    const queryClient = useQueryClient()
 
     function closeDialog () {
       context.emit('close')
@@ -250,16 +252,15 @@ export default {
       return options.value.find(file => file.id === selected.value)
     })
 
-    async function selectCurrent () {
+    function selectCurrent () {
       closeDialog()
 
       if (selected.value !== sheetStore.sheetId) {
-        sheetStore.updateLoading(true)
         sheetStore.updateSheetId(selected.value)
         sheetStore.updateSelected(selectedSheet.value)
 
-        await sheetStore.loadSheetData(true)
-        await collectionStore.invalidateAndFetch()
+        queryClient.resetQueries()
+        queryClient.refetchQueries()
       }
     }
 
