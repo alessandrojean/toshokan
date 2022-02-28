@@ -15,7 +15,7 @@ import Book, {
  * @param {string} sheetId The sheet to perform the operation
  * @param {number} page The page of results
  * @param {Object} options The search searchOptions
- * @param {string?} options.orderBy The column to sort
+ * @param {string[]?} options.orderBy The column to sort
  * @param {('asc' | 'desc')?} options.orderDirection The sort direction
  * @param {number?} options.limit The results limit
  * @param {string[]?} options.groups The groups to match
@@ -28,26 +28,17 @@ export default async function getBooks (sheetId, page = 1, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { CREATED_AT, FAVORITE, GROUP, STATUS } = CollectionColumns
+  const orderBy = (options.orderBy || [CREATED_AT])
+    .map(property => {
+      return (typeof property === 'string')
+        ? [property, options.orderDirection || 'desc']
+        : property
+    })
+
   const queryBuilder = new QueryBuilder(sheetUrl)
-    .orderBy([options.orderBy || CREATED_AT, options.orderDirection || 'desc'])
+    .orderBy(...orderBy)
     .limit(options.limit || PER_PAGE)
     .offset((page - 1) * PER_PAGE)
-
-  const orderBy = queryBuilder.toObject().orderBy
-
-  if (
-    orderBy[0][0] === CollectionColumns.LABEL_PRICE_VALUE ||
-    orderBy[0][0] === CollectionColumns.PAID_PRICE_VALUE
-  ) {
-    const currencyColumn = orderBy[0][0] === CollectionColumns.LABEL_PRICE_VALUE
-      ? CollectionColumns.LABEL_PRICE_CURRENCY
-      : CollectionColumns.PAID_PRICE_CURRENCY
-
-    queryBuilder.orderBy(
-      [currencyColumn, 'asc'],
-      ...orderBy
-    )
-  }
 
   if (options.groups && options.groups.length > 0) {
     const groupConditions = options.groups

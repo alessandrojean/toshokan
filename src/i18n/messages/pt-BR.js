@@ -171,6 +171,9 @@ export default {
   sheet: {
     notFound: 'Planilha não encontrada.'
   },
+  table: {
+    selectAll: 'Selecionar todos'
+  },
   footer: {
     links: {
       a11y: 'Acessibilidade',
@@ -689,6 +692,21 @@ export default {
             Remove a permissão de acesso do Toshokan de sua Conta do Google.
           `,
           remove: 'Remover acesso'
+        }
+      },
+      development: {
+        title: 'Desenvolvimento',
+        showVueQueryDevTools: {
+          label: 'Exibir o DevTools do vue-query',
+          description: `
+            Se ativado, o DevTools do vue-query ficará visível.
+          `
+        },
+        useDevSheet: {
+          label: 'Usar somente planilhas de desenvolvimento',
+          description: `
+            Se ativado, somente as planilhas de desenvolvimento serão exibidas.
+          `
         }
       }
     },

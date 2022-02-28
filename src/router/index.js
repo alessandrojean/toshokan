@@ -114,15 +114,6 @@ const routes = [
         meta: {
           title: () => t('app.routes.dashboard.stats')
         }
-      },
-      {
-        path: 'settings',
-        name: 'DashboardSettings',
-        component: () => import('../views/dashboard/Settings.vue'),
-        meta: {
-          title: () => t('app.routes.dashboard.settings'),
-          more: true
-        }
       }
     ]
   },

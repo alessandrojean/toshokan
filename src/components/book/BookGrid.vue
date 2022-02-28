@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5">
+    <div v-if="loading" class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2.5 sm:gap-4">
       <BookCard
         v-for="tempBook in skeletonItems"
         :key="tempBook"
@@ -9,7 +9,7 @@
     </div>
     <ul
       v-else
-      class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-5"
+      class="mb-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2.5 sm:gap-4"
       ref="grid"
     >
       <li
@@ -38,7 +38,7 @@ export default {
   components: { BookCard },
 
   props: {
-    currentPage: String,
+    currentPage: Number,
     items: Array,
     loading: Boolean,
     skeletonItems: Number,

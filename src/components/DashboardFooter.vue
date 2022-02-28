@@ -1,14 +1,27 @@
 <template>
   <footer class="hidden sm:block bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 py-4" role="contentinfo">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-between">
-      <p class="text-sm text-gray-500 dark:text-gray-400">
+      <p class="text-sm text-gray-500 dark:text-gray-300">
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
 
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-2">
+          <router-link
+            :to="{ name: 'Instructions' }"
+            :title="t('about.instructions.title')"
+            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
+          >
+            <span class="sr-only">
+              {{ t('about.instructions.title') }}
+            </span>
+            <span aria-hidden="true">
+              <QuestionMarkCircleIcon class="w-6 h-6" />
+            </span>
+          </router-link>
+
           <button
-            class="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded has-ring-focus"
+            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
             :title="t('footer.donate.actionDonate')"
             @click="donateDialogOpen = true"
           >
@@ -24,7 +37,7 @@
             :href="githubLink"
             target="_blank"
             title="GitHub"
-            class="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded has-ring-focus"
+            class="p-2 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
           >
             <span class="sr-only">GitHub</span>
             <span aria-hidden="true">
@@ -36,7 +49,7 @@
         <a
           :href="releaseLink"
           target="_blank"
-          class="block text-gray-500 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xs border hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-500 rounded py-0.5 px-1.5 font-medium has-ring-focus"
+          class="block text-gray-500 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 text-xs border hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 rounded py-0.5 px-1.5 font-medium has-ring-focus"
         >
           v{{ appVersion }}
         </a>
@@ -50,7 +63,7 @@
 <script>
 import { useI18n } from 'vue-i18n'
 
-import { CurrencyDollarIcon } from '@heroicons/vue/outline'
+import { CurrencyDollarIcon, QuestionMarkCircleIcon } from '@heroicons/vue/outline'
 
 import DonationDialog from '@/components/dialogs/DonationDialog.vue'
 import GitHubIcon from '@/components/icons/GitHubIcon.vue'
@@ -62,7 +75,8 @@ export default {
   components: {
     CurrencyDollarIcon,
     DonationDialog,
-    GitHubIcon
+    GitHubIcon,
+    QuestionMarkCircleIcon
   },
 
   setup () {

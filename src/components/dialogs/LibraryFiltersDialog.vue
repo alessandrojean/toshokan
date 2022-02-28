@@ -17,7 +17,7 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="absolute inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity backdrop-blur-sm" />
+          <DialogOverlay class="dialog-overlay" />
         </TransitionChild>
         <div class="fixed inset-x-0 sm:inset-x-auto sm:inset-y-0 bottom-0 sm:right-0 sm:pl-10 max-w-full flex">
           <TransitionChild
@@ -31,7 +31,7 @@
           >
             <div class="relative w-screen sm:max-w-md">
               <form
-                class="h-full flex flex-col sm:py-4 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl"
+                class="h-full flex flex-col sm:py-4 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl ring-1 ring-black/5"
                 @submit.prevent="handleFilter"
               >
                 <div class="flex justify-between items-center pt-4 sm:pt-0 px-4 sm:px-6">
@@ -359,7 +359,7 @@ export default {
               {
                 key: INDIFERENT,
                 value: INDIFERENT,
-                label: t('dashboard.library.filters.favorites.indiferent'),
+                label: t('dashboard.library.filters.favorites.indiferent')
               },
               {
                 key: ONLY,

@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { useQuery } from 'vue-query'
 
+import { PropertyToColumn } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import searchBooks from '@/services/sheet/searchBooks'
 
@@ -16,7 +17,7 @@ export default function useBookSearchQuery (
       sheetId: sheetId.value,
       searchTerm: query.value,
       sort: {
-        sortBy: sortBy.value,
+        sortBy: PropertyToColumn[sortBy.value],
         sortDirection: sortDirection.value
       },
       page: page.value

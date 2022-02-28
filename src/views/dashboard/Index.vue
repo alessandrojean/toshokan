@@ -32,7 +32,17 @@
       @close="closeSearchDialog"
     />
 
-    <!-- <VueQueryDevTools position="bottom-right" /> -->
+    <SettingsDialog
+      :is-open="settingsDialogIsOpen"
+      @close="closeSettingsDialog"
+    />
+
+    <BetaWarning />
+
+    <VueQueryDevTools
+      v-if="showVueQueryDevTools"
+      position="bottom-right"
+    />
   </div>
 </template>
 
@@ -40,30 +50,36 @@
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-// import { VueQueryDevTools } from 'vue-query/devtools'
+import { VueQueryDevTools } from 'vue-query/devtools'
 
 import { useAuthStore } from '@/stores/auth'
+import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import { useStore } from '@/stores/main'
 
 import AppNavbar from '@/components/AppNavbar.vue'
+import BetaWarning from '@/components/BetaWarning.vue'
 import DashboardFooter from '@/components/DashboardFooter.vue'
 import MobileNavbar from '@/components/MobileNavbar.vue'
 import SearchDialog from '@/components/dialogs/SearchDialog.vue'
+import SettingsDialog from '@/components/dialogs/SettingsDialog.vue'
 
 export default {
   components: {
     AppNavbar,
+    BetaWarning,
     DashboardFooter,
     MobileNavbar,
-    SearchDialog
-    // VueQueryDevTools
+    SearchDialog,
+    SettingsDialog,
+    VueQueryDevTools
   },
 
   setup () {
     const authStore = useAuthStore()
     const mainStore = useStore()
     const sheetStore = useSheetStore()
+    const settingsStore = useSettingsStore()
     const router = useRouter()
 
     const signedIn = computed(() => authStore.signedIn)
@@ -78,7 +94,6 @@ export default {
             ? new Error(t('errors.missingScopes'))
             : e
 
-          sheetStore.resetLoadedOnce()
           mainStore.updateCriticalError(error)
           router.replace({ name: 'Error' })
         }
@@ -90,7 +105,6 @@ export default {
     watch(signedIn, newValue => {
       if (!newValue) {
         router.replace('/')
-        sheetStore.resetLoadedOnce()
       }
     })
 
@@ -161,6 +175,20 @@ export default {
       document.removeEventListener('keydown', handleKeyDown)
     })
 
+    const settingsDialogIsOpen = ref(false)
+
+    function showSettingsDialog (delay = 200) {
+      setTimeout(() => { settingsDialogIsOpen.value = true }, delay)
+    }
+
+    function closeSettingsDialog () {
+      settingsDialogIsOpen.value = false
+    }
+
+    provide('showSettingsDialog', showSettingsDialog)
+
+    const showVueQueryDevTools = computed(() => settingsStore.showVueQueryDevTools)
+
     return {
       findSheetId,
       signedIn,
@@ -169,7 +197,10 @@ export default {
       searchDialogIsOpen,
       showSearchDialog,
       closeSearchDialog,
-      navbarTransparent
+      navbarTransparent,
+      closeSettingsDialog,
+      settingsDialogIsOpen,
+      showVueQueryDevTools
     }
   }
 }

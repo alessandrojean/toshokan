@@ -48,7 +48,6 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from './stores/auth'
-import { useSheetStore } from './stores/sheet'
 import { useStore } from '@/stores/main'
 
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
@@ -63,7 +62,6 @@ export default {
   setup () {
     const authStore = useAuthStore()
     const mainStore = useStore()
-    const sheetStore = useSheetStore()
     const { t, locale } = useI18n({ useScope: 'global' })
 
     const authStarted = computed(() => authStore.started)
@@ -98,7 +96,6 @@ export default {
       document.title = route.meta.title() + ' | ' + t('app.name')
       document.documentElement.lang = newLocale
       localStorage.setItem('locale', newLocale)
-      sheetStore.resetLoadedOnce()
     })
 
     return {

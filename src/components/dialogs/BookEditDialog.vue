@@ -313,7 +313,7 @@ export default {
 .dialog-content {
   @apply relative flex flex-col w-full max-w-2xl h-full
     overflow-hidden text-left bg-white dark:bg-gray-800
-    sm:shadow-xl sm:rounded-lg;
+    sm:shadow-xl sm:rounded-lg ring-1 ring-black/5;
 }
 
 .dialog-header {

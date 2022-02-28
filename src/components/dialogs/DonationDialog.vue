@@ -27,7 +27,7 @@
         leave-to="opacity-0 scale-95"
       >
         <div
-          class="inline-block w-full max-w-lg px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3"
+          class="inline-block w-full max-w-lg px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
         >
           <div class="flex justify-between items-center">
             <DialogTitle

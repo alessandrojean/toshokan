@@ -66,15 +66,24 @@ export const CollectionColumns = {
 }
 
 export const PropertyToColumn = {
-  title: CollectionColumns.TITLE,
-  publisher: CollectionColumns.PUBLISHER,
-  status: CollectionColumns.STATUS,
-  'paidPrice.value': CollectionColumns.PAID_PRICE_VALUE,
-  'labelPrice.value': CollectionColumns.LABEL_PRICE_VALUE,
-  boughtAt: CollectionColumns.BOUGHT_AT,
-  readAt: CollectionColumns.READ_AT,
-  createdAt: CollectionColumns.CREATED_AT,
-  updatedAt: CollectionColumns.UPDATED_AT
+  title: [CollectionColumns.TITLE],
+  publisher: [CollectionColumns.PUBLISHER],
+  status: [CollectionColumns.STATUS],
+  'paidPrice.value': [
+    [CollectionColumns.PAID_PRICE_CURRENCY, 'asc'],
+    CollectionColumns.PAID_PRICE_VALUE
+  ],
+  'labelPrice.value': [
+    [CollectionColumns.LABEL_PRICE_CURRENCY, 'asc'],
+    CollectionColumns.LABEL_PRICE_VALUE
+  ],
+  boughtAt: [CollectionColumns.BOUGHT_AT],
+  readAt: [
+    CollectionColumns.READ_AT,
+    CollectionColumns.UPDATED_AT
+  ],
+  createdAt: [CollectionColumns.CREATED_AT],
+  updatedAt: [CollectionColumns.UPDATED_AT]
 }
 
 export const STATUS_READ = 'READ'

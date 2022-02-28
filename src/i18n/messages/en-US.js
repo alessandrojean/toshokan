@@ -171,6 +171,9 @@ export default {
   sheet: {
     notFound: 'Sheet not found.'
   },
+  table: {
+    selectAll: 'Select all'
+  },
   footer: {
     links: {
       a11y: 'Accessibility',
@@ -685,6 +688,21 @@ export default {
             Removes the access permission granted to Toshokan from your Google Account.
           `,
           remove: 'Remove access'
+        }
+      },
+      development: {
+        title: 'Development',
+        showVueQueryDevTools: {
+          label: 'Show vue-query DevTools',
+          description: `
+            If enabled, the vue-query DevTools will be visible.
+          `
+        },
+        useDevSheet: {
+          label: 'Use development sheets only',
+          description: `
+            If enabled, only development sheets will be shown to select.
+          `
         }
       }
     },

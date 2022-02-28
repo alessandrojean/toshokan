@@ -91,16 +91,15 @@
                 </div>
               </div>
               <div class="py-1">
-                <router-link
-                  :to="{ name: 'DashboardSettings' }"
+                <PopoverButton
                   class="group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700 hover:bg-gray-100"
-                  @click="close"
+                  @click="showSettingsDialog(close)"
                 >
                   <span aria-hidden="true">
                     <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
                   </span>
                   {{ t('dashboard.header.menu.settings') }}
-                </router-link>
+                </PopoverButton>
               </div>
               <div class="pt-1">
                 <PopoverButton
@@ -122,7 +121,7 @@
 </template>
 
 <script>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
@@ -222,6 +221,13 @@ export default {
     onMounted(() => window.addEventListener('scroll', handleScroll))
     onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
+    const showSettingsDialogFn = inject('showSettingsDialog')
+
+    function showSettingsDialog (close) {
+      close()
+      showSettingsDialogFn()
+    }
+
     return {
       items,
       profileEmail,
@@ -229,6 +235,7 @@ export default {
       profileName,
       signOut,
       show,
+      showSettingsDialog,
       t
     }
   }

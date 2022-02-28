@@ -3,17 +3,17 @@ import i18n from '@/i18n'
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
 const SHEET_DEV_SUFFIX = '-dev'
-const SHEET_USE_DEV_VERSION = true
 
 /**
  * Find the sheet ID and other matches.
  *
+ * @param {boolean} useDevSheet If it should only get dev sheets
  * @returns The sheet and other matches
  */
-export default async function findSheetId () {
+export default async function findSheetId (useDevSheet = false) {
   // Use a development only sheet to prevent issues during tests.
   const isDevEnvironment = import.meta.env.DEV
-  const sheetSuffix = (isDevEnvironment && SHEET_USE_DEV_VERSION)
+  const sheetSuffix = (isDevEnvironment && useDevSheet)
     ? SHEET_DEV_SUFFIX
     : ''
   const fileName = SHEET_FILE_NAME + sheetSuffix

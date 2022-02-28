@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 
 import SheetService from '@/services/sheet'
+import { useSettingsStore } from './settings'
 
 export const useSheetStore = defineStore('sheet', {
   state: () => ({
     isEmpty: false,
-    loadedOnce: false,
     options: [],
     selected: null,
     sheetId: null
@@ -46,7 +46,10 @@ export const useSheetStore = defineStore('sheet', {
      * @returns {Promise<string>} the sheet ID
      */
     async findSheetId () {
-      const { sheet, options } = await SheetService.findSheetId()
+      const settingsStore = useSettingsStore()
+      const useDevSheet = settingsStore.useDevSheet
+
+      const { sheet, options } = await SheetService.findSheetId(useDevSheet)
 
       this.updateSheetId(sheet.id)
       this.updateSelected(sheet)
@@ -70,10 +73,6 @@ export const useSheetStore = defineStore('sheet', {
     updateSheetId (sheetId) {
       this.sheetId = sheetId
       localStorage.setItem('last_sheet_opened', sheetId)
-    },
-
-    resetLoadedOnce () {
-      this.loadedOnce = false
     }
   }
 })

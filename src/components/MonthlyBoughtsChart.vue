@@ -4,9 +4,9 @@
     :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
   >
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else id="monthly-boughts-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
+    <h2 v-else id="monthly-boughts-title" class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
       {{ t('dashboard.stats.booksBoughtAndRead.title') }}
-    </h3>
+    </h2>
     <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img">
       <transition
         mode="out-in"
@@ -38,9 +38,8 @@
 import { computed, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import colors from 'tailwindcss/colors'
-
 import useDarkMode from '@/composables/useDarkMode'
+import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
@@ -62,6 +61,7 @@ export default {
 
   setup () {
     const sheetStore = useSheetStore()
+    const { theme } = useTailwindTheme()
 
     const { data: stats, isLoading, isIdle } = useStatisticsQuery({
       enabled: computed(() => sheetStore.sheetId !== null)
@@ -83,16 +83,26 @@ export default {
       options: {
         chart: {
           animations: { enabled: false },
+          fontFamily: theme.fontFamily.sans.join(', '),
           id: 'monthly-boughts',
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
+          selection: { enabled: false },
           toolbar: { show: false },
           zoom: { enabled: false }
         },
-        colors: [colors.indigo[500], colors.indigo[300]],
+        states: {
+          active: { filter: { type: 'none' } }
+        },
+        colors: [
+          theme.colors.primary[500],
+          theme.colors.cyan[500]
+        ],
         fill: { opacity: 1.0 },
         grid: {
-          borderColor: darkMode.value ? colors.slate[600] : colors.slate[200]
+          borderColor: darkMode.value
+            ? theme.colors.slate[600]
+            : theme.colors.slate[200]
         },
         tooltip: { enabled: false },
         xaxis: {
@@ -104,7 +114,9 @@ export default {
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
-              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
+              colors: darkMode.value
+                ? theme.colors.slate[300]
+                : theme.colors.slate[600]
             }
           }
         },
@@ -112,13 +124,17 @@ export default {
           labels: {
             formatter: val => val.toFixed(0),
             style: {
-              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
+              colors: darkMode.value
+                ? theme.colors.slate[300]
+                : theme.colors.slate[600]
             }
           }
         },
         legend: {
           labels: {
-            colors: darkMode.value ? colors.slate[300] : colors.slate[600],
+            colors: darkMode.value
+              ? theme.colors.slate[300]
+              : theme.colors.slate[600],
             useSeriesColors: false
           },
           onItemClick: {
@@ -129,7 +145,11 @@ export default {
           enabled: true,
           offsetY: -20,
           style: {
-            colors: [darkMode.value ? colors.slate[100] : colors.slate[700]]
+            colors: [
+              darkMode.value
+                ? theme.colors.slate[100]
+                : theme.colors.slate[700]
+            ]
           }
         },
         stroke: {

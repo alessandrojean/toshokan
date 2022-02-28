@@ -133,6 +133,6 @@ const sections = computed(() => {
 .dialog-content {
   @apply relative flex flex-col w-full sm:max-w-lg lg:max-w-xl
     overflow-hidden text-left bg-white dark:bg-gray-800
-    shadow-xl rounded-lg;
+    shadow-xl rounded-lg ring-1 ring-black/5;
 }
 </style>

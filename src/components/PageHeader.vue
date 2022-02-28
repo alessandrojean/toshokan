@@ -1,5 +1,5 @@
 <template>
-  <header class="h-16">
+  <header class="h-16 select-none">
     <div class="max-w-prose mx-auto px-4 sm:px-6 lg:px-0 flex items-center justify-between h-full">
       <router-link
         :to="{ name: 'Home' }"
@@ -12,6 +12,9 @@
         <span class="text-gray-800 dark:text-gray-200 font-display font-semibold text-xl ml-3" aria-hidden="true">
           {{ t('app.name') }}
         </span>
+        <sup class="text-gray-500 dark:text-gray-400 font-semibold text-[0.6rem] align-super ml-0.5">
+          BETA
+        </sup>
       </router-link>
       <div class="inline-flex shrink-0">
         <ThemeToggle light />

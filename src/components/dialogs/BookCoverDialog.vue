@@ -118,7 +118,7 @@ export default {
   @apply relative flex flex-col items-center align-middle
     min-w-0 max-w-full max-h-full overflow-visible
     text-left bg-white dark:bg-gray-800
-    shadow-xl rounded-xl;
+    shadow-xl rounded-xl ring-1 ring-black/5;
 }
 
 .close-button {

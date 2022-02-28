@@ -132,6 +132,7 @@
       <TextField
         class="col-span-7 sm:col-span-5 md:col-span-6"
         input-type="date"
+        input-class="tabular-nums"
         :max="toDateInputValue(new Date())"
         :label="t('book.properties.boughtAt')"
         :model-value="modelValue.boughtAtStr"

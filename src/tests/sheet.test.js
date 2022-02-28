@@ -1,5 +1,5 @@
 import QueryBuilder from '@/data/QueryBuilder'
-import Book, { CollectionColumns, FAVORITE_ACTIVE, STATUS_FUTURE, STATUS_READ } from '@/model/Book'
+import Book, { CollectionColumns, FAVORITE_ACTIVE, PropertyToColumn, STATUS_FUTURE, STATUS_READ } from '@/model/Book'
 import SheetService from '@/services/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
 
@@ -358,7 +358,7 @@ describe('Sheet service', () => {
     it('Should build the query correctly (with currency order by)', async () => {
       const { LABEL_PRICE_VALUE, LABEL_PRICE_CURRENCY } = CollectionColumns
       await SheetService.getBooks('TEST_SHEET_ID', 1, {
-        orderBy: LABEL_PRICE_VALUE,
+        orderBy: PropertyToColumn['labelPrice.value'],
         orderDirection: 'asc'
       })
 

@@ -63,7 +63,7 @@ export default {
 }
 
 .footer p {
-  @apply text-gray-400;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .footer a {

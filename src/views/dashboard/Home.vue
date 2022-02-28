@@ -60,8 +60,6 @@
 
     <div class="flex-1">
       <div class="h-full max-w-7xl mx-auto py-6 px-5 md:px-8">
-        <BetaWarning />
-
         <section
           v-if="!sheetIsEmpty"
           :aria-labelledby="loading ? '' : 'overview-title'"
@@ -71,29 +69,8 @@
             {{ t('dashboard.home.overview.title') }}
           </h2>
 
-          <ul class="sr-only" v-if="statsSuccess">
-            <li>
-              {{ t('dashboard.home.overview.stats.count') }}:
-              {{ t('dashboard.home.overview.item', stats?.count || 0, { n: n(stats?.count || 0, 'integer') }) }}
-            </li>
-            <li>
-              {{ t('dashboard.home.overview.stats.read') }}:
-              {{ n(stats?.status?.percent || 0.0, 'percent') }}
-            </li>
-            <li v-if="!shared">
-              {{ t('dashboard.home.overview.stats.totalExpense') }}:
-              {{ n(stats?.money?.totalSpentPaid || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' }) }}
-            </li>
-            <li v-if="!shared">
-              {{ t('dashboard.home.overview.stats.totalSavings') }}:
-              {{ n(stats?.money?.saved || 0.0, 'currency', { currency: stats?.money?.currency }) }}</li>
-          </ul>
-
           <!-- Stats -->
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700"
-            aria-hidden="true"
-          >
+          <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700">
             <StatCard
               :title="t('dashboard.home.overview.stats.count')"
               :value="n(stats?.count || 0.0, 'integer')"
@@ -144,6 +121,8 @@
         <BookCarousel
           :title="t('dashboard.home.nextReads')"
           collection="next-reads"
+          :button-text="t('dashboard.search.history')"
+          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
         />
 
         <!-- Last added books -->
@@ -158,7 +137,7 @@
         <BookCarousel
           :title="t('dashboard.home.latestReadings')"
           collection="latest-readings"
-          :button-text="t('dashboard.home.viewAll')"
+          :button-text="t('dashboard.search.history')"
           :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
         />
 
@@ -229,7 +208,6 @@ import {
 import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
 
 import Avatar from '@/components/Avatar.vue'
-import BetaWarning from '@/components/BetaWarning.vue'
 import BookCarousel from '@/components/book/BookCarousel.vue'
 import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
@@ -241,7 +219,6 @@ export default {
 
   components: {
     Avatar,
-    BetaWarning,
     BookCarousel,
     BookCreateDialog,
     GroupGrid,

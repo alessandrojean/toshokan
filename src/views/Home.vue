@@ -258,7 +258,7 @@ export default {
 }
 
 .cta .button.is-secondary {
-  @apply text-primary-500 dark:text-gray-100;
+  @apply text-primary-600 dark:text-gray-100;
 }
 
 .cta .button:hover {

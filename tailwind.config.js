@@ -173,6 +173,7 @@ module.exports = {
         'supports-backdrop-blur',
         '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))'
       )
+      addVariant('hocus', ['&:hover', '&:focus-visible'])
     },
     function ({ matchUtilities, theme }) {
       matchUtilities(

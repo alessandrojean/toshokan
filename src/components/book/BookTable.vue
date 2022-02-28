@@ -9,10 +9,14 @@
               scope="col"
               class="table-column-header !pl-5 !pr-2 w-6 hidden md:table-cell align-middle"
             >
+              <label for="select-all" class="sr-only">
+                {{ t('table.selectAll') }}
+              </label>
               <input
                 ref="topCheckbox"
                 type="checkbox"
-                class="checkbox"
+                class="checkbox !ml-0"
+                id="select-all"
                 :checked="selection.length === items.length && !skeleton"
                 :disabled="loading || skeleton"
                 @change="handleTopCheckbox($event.target.checked)"
@@ -238,7 +242,7 @@
                         'text-xs truncate max-w-[calc(100vw-8.5rem)] md:max-w-xs lg:max-w-none min-w-0',
                         selection.includes(bookIdx)
                           ? 'text-primary-600 dark:text-gray-300'
-                          : 'text-gray-500 dark:text-gray-400'
+                          : 'text-gray-500 dark:text-gray-300/80'
                       ]"
                     >
                       {{ volumeText(book) }} &middot; {{ book.publisher }}

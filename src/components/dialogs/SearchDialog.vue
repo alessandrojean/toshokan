@@ -656,7 +656,7 @@ input[type="search"]::-webkit-search-results-decoration {
     overflow-hidden text-left
     bg-white dark:bg-gray-800
     shadow-xl rounded-2xl
-    ring-2 ring-gray-600/5;
+    ring-1 ring-black/5;
 }
 
 .search-input-wrapper::after {

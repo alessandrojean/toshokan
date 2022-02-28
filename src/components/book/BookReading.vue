@@ -51,6 +51,7 @@
             v-model="newReadDate"
             class="mt-4 w-56"
             input-type="date"
+            input-class="tabular-nums"
             :help="t('dashboard.details.readingForm.fieldHelp')"
           />
         </div>

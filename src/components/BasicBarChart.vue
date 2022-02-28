@@ -1,9 +1,9 @@
 <template>
   <section class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2">
     <div v-if="loading" class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"></div>
-    <h3 v-else class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
+    <h2 v-else class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100">
       {{ title }}
-    </h3>
+    </h2>
     <div class="aspect-w-3 aspect-h-4 sm:-mx-3" role="img">
       <transition
         mode="out-in"
@@ -35,9 +35,8 @@
 import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import colors from 'tailwindcss/colors'
-
 import useDarkMode from '@/composables/useDarkMode'
+import useTailwindTheme from '@/composables/useTailwindTheme'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
 
@@ -66,6 +65,7 @@ export default {
     const { locale } = useI18n({ useScope: 'global' })
 
     const { darkMode } = useDarkMode()
+    const { theme } = useTailwindTheme()
 
     const localeStr = computed(() => {
       return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
@@ -77,15 +77,21 @@ export default {
       options: {
         chart: {
           animations: { enabled: false },
+          fontFamily: theme.fontFamily.sans.join(', '),
           locales: [apexLocales[locale.value]],
           defaultLocale: localeStr.value,
+          selection: { enabled: false },
           toolbar: { show: false },
           zoom: { enabled: false }
         },
-        colors: [colors.indigo[500]],
+        colors: [theme.colors.primary[500]],
         fill: { opacity: 1.0 },
         grid: {
-          borderColor: darkMode.value ? colors.slate[600] : colors.slate[200]
+          borderColor: darkMode.value
+            ? theme.colors.slate[600]
+            : theme.colors.slate[200],
+          xaxis: { lines: { show: true } },
+          yaxis: { lines: { show: false } }
         },
         tooltip: {
           theme: darkMode.value ? 'dark' : 'light',
@@ -100,20 +106,26 @@ export default {
             hideOverlappingLabels: false,
             showDuplicates: true,
             style: {
-              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
+              colors: darkMode.value
+                ? theme.colors.slate[300]
+                : theme.colors.slate[600]
             }
           }
         },
         yaxis: {
           labels: {
             style: {
-              colors: darkMode.value ? colors.slate[300] : colors.slate[600]
+              colors: darkMode.value
+                ? theme.colors.slate[300]
+                : theme.colors.slate[600]
             }
           }
         },
         legend: {
           labels: {
-            colors: darkMode.value ? colors.slate[300] : colors.slate[600],
+            colors: darkMode.value
+              ? theme.colors.slate[300]
+              : theme.colors.slate[600],
             useSeriesColors: false
           },
           onItemClick: {

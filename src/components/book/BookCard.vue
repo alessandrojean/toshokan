@@ -26,7 +26,7 @@
     :to="!imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
     class="book-link group focus:outline-none relative"
     ref="loadedCard"
-    :title="book.title"
+    :title="!imageOnly ? book.title : undefined"
     :aria-current="current && !imageOnly ? 'page' : undefined"
     :tabindex="!imageOnly ? tabindex : undefined"
   >
@@ -34,9 +34,10 @@
       :is="imageOnly ? 'RouterLink' : 'div'"
       :class="blurCover ? 'blurred' : ''"
       :to="imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
-      class="book-card focus:outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
+      class="book-card !outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
       :aria-current="current && imageOnly ? 'page' : undefined"
       :tabindex="imageOnly ? tabindex : undefined"
+      :title="imageOnly ? book.title : undefined"
     >
       <transition
         mode="out-in"
@@ -108,15 +109,15 @@
         >
           <div class="inline-flex text-white w-full items-center">
             <div class="inline-flex flex-col grow min-w-0">
-              <span class="font-semibold font-display text-sm truncate max-w-full">
+              <span class="font-semibold font-display text-[0.8rem] sm:text-sm truncate max-w-full">
                 {{ book.titleParts.title }}
               </span>
-              <span class="font-medium text-xs">
+              <span class="font-medium text-xxs sm:text-xs">
                 {{ volume }}
               </span>
             </div>
-            <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-2">
-              <BookmarkIcon class="w-5 h-5 text-primary-500" />
+            <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-1 sm:ml-2">
+              <BookmarkIcon class="w-4 sm:w-5 h-4 sm:h-5 text-primary-500" />
             </div>
           </div>
         </div>
@@ -131,10 +132,10 @@
     </div>
 
     <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3">
-      <p class="text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">
+      <p class="text-[0.8rem] sm:text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">
         {{ book.titleParts.title }}
       </p>
-      <p class="text-xs font-medium truncate text-gray-500 dark:text-gray-400">
+      <p class="text-xxs sm:text-xs font-medium truncate text-gray-600 dark:text-gray-400">
         {{ volume }}
       </p>
     </div>

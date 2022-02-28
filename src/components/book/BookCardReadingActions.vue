@@ -14,7 +14,7 @@
           </span>
         </button>
 
-        <Popover>
+        <Popover as="template">
           <PopoverButton
             class="rounded-full p-1 box-content dark:text-gray-300 hover:text-primary-600 dark:hover:text-gray-100 hover:bg-primary-100 dark:hover:bg-gray-500"
             tabindex="-1"
@@ -28,7 +28,7 @@
 
           <ScaleTransition>
             <PopoverPanel
-              class="absolute z-10 -translate-x-1/2 left-1/2 -bottom-2.5"
+              class="absolute z-10 -translate-x-1/2 left-1/2 -bottom-2.5 !ml-0"
               v-slot="{ close }"
             >
               <form
@@ -44,7 +44,7 @@
                   </label>
                   <input
                     type="date"
-                    class="input w-36 text-xs p-2 h-8"
+                    class="input w-36 text-xs p-2 h-8 tabular-nums"
                     v-model="readAt"
                     :disabled="disabled"
                     :id="'read-at-' + book.id"

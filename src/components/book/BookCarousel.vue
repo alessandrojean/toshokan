@@ -16,10 +16,10 @@
 
   <section
     v-else-if="collectionItems?.length > 0"
-    aria-labelledby="last-added-title"
+    :aria-labelledby="collection + '-title'"
   >
     <div class="flex justify-between items-center w-full mt-8 mb-2">
-      <h2 id="last-added-title" class="font-medium font-display text-lg dark:text-gray-200">
+      <h2 :id="collection + '-title'" class="font-medium font-display text-lg dark:text-gray-200">
         {{ title }}
       </h2>
 
@@ -39,8 +39,8 @@
       :class="[
         collectionItems.length < 3
           ? 'grid grid-cols-2'
-          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x md:snap-none flex md:grid',
-        'md:grid-cols-5 lg:grid-cols-6 gap-5'
+          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
+        'md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
       ]"
       ref="carousel"
     >

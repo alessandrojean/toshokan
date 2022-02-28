@@ -69,8 +69,8 @@
       motion-safe:transition-colors;
   }
 
-  .input:hover:not(:focus),
-  .select:hover:not(:focus):not([aria-expanded='true']) {
+  .input:hover:not(:focus):not(:disabled),
+  .select:hover:not(:focus):not([aria-expanded='true']):not(:disabled) {
     @apply border-gray-400 dark:border-gray-500 transition-none;
   }
   
@@ -84,6 +84,11 @@
       ring-opacity-30 dark:ring-opacity-50
       ring-primary-600 dark:ring-primary-500
       border-primary-500 dark:border-primary-400;
+  }
+
+  .input:disabled,
+  .select:disabled {
+    @apply opacity-50;
   }
   
   textarea.input {
@@ -395,21 +400,21 @@
   .badge.is-read,
   .badge.is-green {
     @apply bg-emerald-100 dark:bg-emerald-900/50
-      text-emerald-800 dark:text-emerald-500
+      text-emerald-800 dark:text-emerald-300
       dark:border-emerald-500/40;
   }
 
   .badge.is-unread,
   .badge.is-red {
     @apply bg-red-100 dark:bg-red-900/40
-      text-red-800 dark:text-red-400/90
+      text-red-800 dark:text-red-300
       dark:border-red-400/25;
   }
 
   .badge.is-future,
   .badge.is-blue {
     @apply bg-blue-100 dark:bg-blue-800/40
-      text-blue-700 dark:text-blue-400
+      text-blue-700 dark:text-blue-300
       dark:border-blue-400/40;
   }
 

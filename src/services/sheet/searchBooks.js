@@ -6,7 +6,7 @@ import buildSheetUrl from './buildSheetUrl'
 import countTotalResults from './countTotalResults'
 import { PER_PAGE } from './constants'
 
-import Book, { CollectionColumns, PropertyToColumn } from '@/model/Book'
+import Book, { CollectionColumns } from '@/model/Book'
 import { isoDate as validateDate } from '@/util/validators'
 import QueryBuilder from '@/data/QueryBuilder'
 import { isoDate, lastDayOfMonth } from '@/util/date'
@@ -137,7 +137,7 @@ export function createSearchKeywords () {
  * @param {string} options.sheetId The sheet to perform the operation
  * @param {string} options.searchTerm The search query
  * @param {Object} options.sort The sorting
- * @param {string} options.sort.sortBy The column to order
+ * @param {string[]} options.sort.sortBy The column to order
  * @param {'asc' | 'desc'} options.sort.sortDirection The sort direction
  * @param {number} options.page The page
  * @returns {Promise<{ results: Book[], total: number }>} The books found
@@ -154,11 +154,14 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
 
   if (sort) {
     const builderObj = queryBuilder.toObject()
+    const orderBy = (sort.sortBy || [builderObj.orderBy[0][0]])
+      .map(property => {
+        return !Array.isArray(property)
+          ? [property, sort.sortDirection || builderObj.orderBy[0][1]]
+          : property
+      })
 
-    queryBuilder.orderBy([
-      sort.sortBy ? PropertyToColumn[sort.sortBy] : builderObj.orderBy[0][0],
-      sort.sortDirection || builderObj.orderBy[0][1]
-    ])
+    queryBuilder.orderBy(...orderBy)
   }
 
   const keywords = createSearchKeywords()

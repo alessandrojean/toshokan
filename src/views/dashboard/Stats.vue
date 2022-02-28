@@ -7,26 +7,29 @@
     />
 
     <div class="flex-1">
-      <div v-if="!sheetIsEmpty && !tooEarly" class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 lg:px-8 space-y-6">
-        <div class="space-y-3 sm:space-y-6 md:space-y-0 md:grid md:grid-cols-2 gap-6">
-          <MonthlyExpenseChart />
-          <MonthlyBoughtsChart />
+      <div v-if="!sheetIsEmpty && !tooEarly" class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 lg:px-8 space-y-1 md:space-y-6">
+        <div class="flex overflow-x-scroll md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 gap-6">
+          <MonthlyExpenseChart class="w-full shrink-0 snap-start" />
+          <MonthlyBoughtsChart class="w-full shrink-0 snap-start" />
         </div>
 
-        <div class="space-y-3 sm:space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="flex overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <BasicBarChart
+            class="w-full shrink-0 snap-start"
             :series="(stats?.publishers || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.publishersRankTitle')"
             :loading="loading"
           />
           <BasicBarChart
+            class="w-full shrink-0 snap-start"
             :series="(stats?.authors || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.authorsRankTitle')"
             :loading="loading"
           />
           <BasicBarChart
+            class="w-full shrink-0 snap-start"
             :series="(stats?.series || []).slice(0, 10)"
             :series-name="t('dashboard.stats.bookQuantity')"
             :title="t('dashboard.stats.seriesRankTitle')"

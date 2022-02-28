@@ -18,6 +18,7 @@
     <img
       v-else
       class="avatar-img"
+      alt=""
       :src="pictureUrl"
     >
     <div

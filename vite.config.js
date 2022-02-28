@@ -82,7 +82,18 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
+      'tailwind.config.js': path.resolve(__dirname, 'tailwind.config.js')
+    }
+  },
+  optimizeDeps: {
+    include: [
+      'tailwind.config.js'
+    ]
+  },
+  build: {
+    commonjsOptions: {
+      include: ['tailwind.config.js', 'node_modules/**']
     }
   },
   server: {
@@ -90,5 +101,5 @@ export default defineConfig({
     watch: {
       ignored: ['**/src/tests/**']
     }
-  },
+  }
 })
