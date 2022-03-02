@@ -2,7 +2,7 @@ import { computed, onMounted, onUnmounted, readonly, ref, watch } from 'vue'
 
 import { useSettingsStore, THEME_SYSTEM, THEME_DARK } from '@/stores/settings'
 
-export default function useDarkMode () {
+export default function useDarkMode() {
   const settingsStore = useSettingsStore()
 
   const mediaDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches
@@ -15,7 +15,7 @@ export default function useDarkMode () {
   /**
    * @param {MediaQueryListEvent} event
    */
-  function handleChange (event) {
+  function handleChange(event) {
     if (theme.value === 'system') {
       darkMode.value = event.matches
     }
@@ -23,22 +23,23 @@ export default function useDarkMode () {
 
   if (window.matchMedia) {
     onMounted(() => {
-      window.matchMedia('(prefers-color-scheme: dark)')
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', handleChange)
     })
 
     onUnmounted(() => {
-      window.matchMedia('(prefers-color-scheme: dark)')
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
         .removeEventListener('change', handleChange)
     })
   }
 
-  watch(theme, newValue => {
-    darkMode.value = newValue === THEME_DARK ||
-      (
-        newValue === THEME_SYSTEM &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-      )
+  watch(theme, (newValue) => {
+    darkMode.value =
+      newValue === THEME_DARK ||
+      (newValue === THEME_SYSTEM &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
   })
 
   return {

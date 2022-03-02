@@ -1,3 +1,23 @@
+<script setup>
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { SpeakerphoneIcon, XIcon } from '@heroicons/vue/outline'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+const LOCAL_STORAGE_KEY = 'hide_beta_warning'
+
+const hideBetaWarning = ref(localStorage.getItem(LOCAL_STORAGE_KEY) !== null)
+
+function handleDismiss() {
+  hideBetaWarning.value = true
+  localStorage.setItem(LOCAL_STORAGE_KEY, 'true')
+}
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <FadeTransition>
     <div
@@ -5,7 +25,9 @@
       class="hidden md:block py-4 fixed bottom-0 inset-x-0 z-20"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-primary-600 p-2.5 rounded-md shadow flex items-center justify-between flex-wrap">
+        <div
+          class="bg-primary-600 p-2.5 rounded-md shadow flex items-center justify-between flex-wrap"
+        >
           <div class="w-0 flex-1 flex items-center">
             <span class="flex p-2 rounded-lg bg-primary-800">
               <SpeakerphoneIcon class="h-6 w-6 text-white" aria-hidden="true" />
@@ -34,43 +56,3 @@
     </div>
   </FadeTransition>
 </template>
-
-<script>
-import { onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { SpeakerphoneIcon, XIcon } from '@heroicons/vue/outline'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-
-export default {
-  components: {
-    FadeTransition,
-    SpeakerphoneIcon,
-    XIcon
-  },
-
-  setup () {
-    const hideBetaWarning = ref(true)
-
-    function handleDismiss () {
-      hideBetaWarning.value = true
-      window.localStorage.setItem('hide_beta_warning', 'true')
-    }
-
-    onMounted(() => {
-      const hideFromStorage = window.localStorage.getItem('hide_beta_warning')
-
-      hideBetaWarning.value = hideFromStorage !== null
-    })
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return {
-      hideBetaWarning,
-      handleDismiss,
-      t
-    }
-  }
-}
-</script>

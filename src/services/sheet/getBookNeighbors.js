@@ -10,7 +10,7 @@ import Book, { CollectionColumns, Columns } from '@/model/Book'
  * @param {Book} book The code to find
  * @returns {Promise<{ previous: Book, next: Book } | null>} The books found
  */
-export default async function getBookNeighbors (sheetId, book) {
+export default async function getBookNeighbors(sheetId, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { TITLE, PUBLISHER, GROUP } = CollectionColumns
@@ -27,16 +27,17 @@ export default async function getBookNeighbors (sheetId, book) {
     return null
   }
 
-  const bookRow = dataTable.asArray
-    .findIndex(rowData => rowData[Columns.TITLE] === book.title)
+  const bookRow = dataTable.asArray.findIndex(
+    (rowData) => rowData[Columns.TITLE] === book.title
+  )
 
-  const previous = bookRow > 0
-    ? Book.fromDataTable(dataTable.getRow(bookRow - 1))
-    : null
+  const previous =
+    bookRow > 0 ? Book.fromDataTable(dataTable.getRow(bookRow - 1)) : null
 
-  const next = bookRow < dataTable.rows - 1
-    ? Book.fromDataTable(dataTable.getRow(bookRow + 1))
-    : null
+  const next =
+    bookRow < dataTable.rows - 1
+      ? Book.fromDataTable(dataTable.getRow(bookRow + 1))
+      : null
 
   return { previous, next }
 }

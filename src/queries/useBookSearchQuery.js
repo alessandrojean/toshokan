@@ -5,14 +5,14 @@ import { PropertyToColumn } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import searchBooks from '@/services/sheet/searchBooks'
 
-export default function useBookSearchQuery (
+export default function useBookSearchQuery(
   { query, sortBy, sortDirection, page },
   { enabled, keepPreviousData }
 ) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher () {
+  async function fetcher() {
     return await searchBooks({
       sheetId: sheetId.value,
       searchTerm: query.value,
@@ -25,10 +25,7 @@ export default function useBookSearchQuery (
   }
 
   return useQuery(
-    [
-      'book-search',
-      { query, sortBy, sortDirection, page }
-    ],
+    ['book-search', { query, sortBy, sortDirection, page }],
     fetcher,
     { enabled, keepPreviousData }
   )

@@ -1,3 +1,63 @@
+<script setup>
+import { computed, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useMarkdown from '@/composables/useMarkdown'
+
+import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
+
+import BaseField from './BaseField.vue'
+
+const props = defineProps({
+  error: String,
+  inputClass: String,
+  inputMode: String,
+  inputType: {
+    type: String,
+    default: 'text'
+  },
+  label: String,
+  markdownOptions: {
+    type: Object,
+    default: () => ({})
+  },
+  modelValue: {
+    type: String,
+    required: true
+  },
+  placeholder: String,
+  required: Boolean
+})
+
+defineEmits(['update:modelValue'])
+
+const { error, help, list, markdownOptions, modelValue } = toRefs(props)
+
+const hasError = computed(() => error.value && error.value.length > 0)
+const hasHelp = computed(() => help.value && help.value.length > 0)
+const hasList = computed(() => list.value && list.value.length > 0)
+
+const characterCount = computed(() => modelValue.value.length)
+
+const { renderMarkdown } = useMarkdown(markdownOptions.value)
+
+const markdownContent = ref(renderMarkdown(modelValue.value))
+
+const currentTab = ref(0)
+
+function changedTab(index) {
+  currentTab.value = index
+
+  if (index === 1) {
+    markdownContent.value = renderMarkdown(modelValue.value)
+  }
+}
+
+const hasFocus = ref(false)
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <BaseField
     :label="label"
@@ -59,10 +119,7 @@
           </a>
           <Tab class="tab has-ring-focus shrink-0">Editor</Tab>
           <Tab class="tab has-ring-focus shrink-0">Visualização</Tab>
-          <span
-            v-if="characterCount > 0"
-            class="characters flex-grow"
-          >
+          <span v-if="characterCount > 0" class="characters flex-grow">
             {{ characterCount }}
           </span>
         </TabList>
@@ -70,97 +127,6 @@
     </div>
   </BaseField>
 </template>
-
-<script>
-import { computed, ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanels,
-  TabPanel
-} from '@headlessui/vue'
-
-import BaseField from './BaseField.vue'
-
-import useMarkdown from '@/composables/useMarkdown'
-
-export default {
-  components: {
-    BaseField,
-    Tab,
-    TabGroup,
-    TabList,
-    TabPanels,
-    TabPanel
-  },
-
-  props: {
-    error: String,
-    inputClass: String,
-    inputMode: String,
-    inputType: {
-      type: String,
-      default: 'text'
-    },
-    label: String,
-    markdownOptions: {
-      type: Object,
-      default: () => ({})
-    },
-    modelValue: {
-      type: String,
-      required: true
-    },
-    placeholder: String,
-    required: Boolean
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props) {
-    const { error, help, list, markdownOptions, modelValue } = toRefs(props)
-
-    const hasError = computed(() => error.value && error.value.length > 0)
-    const hasHelp = computed(() => help.value && help.value.length > 0)
-    const hasList = computed(() => list.value && list.value.length > 0)
-
-    const characterCount = computed(() => modelValue.value.length)
-
-    const { renderMarkdown } = useMarkdown(markdownOptions.value)
-
-    const markdownContent = ref(renderMarkdown(modelValue.value))
-
-    const currentTab = ref(0)
-
-    function changedTab (index) {
-      currentTab.value = index
-
-      if (index === 1) {
-        markdownContent.value = renderMarkdown(modelValue.value)
-      }
-    }
-
-    const hasFocus = ref(false)
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return {
-      hasError,
-      hasHelp,
-      hasList,
-      characterCount,
-      markdownContent,
-      changedTab,
-      hasFocus,
-      currentTab,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .markdown-editor {
@@ -199,7 +165,7 @@ export default {
     border-t-2 border-transparent -mt-px;
 }
 
-.markdown-editor:not(.has-focus) .tab:not([aria-selected="true"]):hover {
+.markdown-editor:not(.has-focus) .tab:not([aria-selected='true']):hover {
   @apply border-gray-300 dark:border-gray-400;
 }
 
@@ -207,7 +173,7 @@ export default {
   @apply text-gray-800 dark:text-gray-300;
 }
 
-.tab[aria-selected="true"] {
+.tab[aria-selected='true'] {
   @apply border-primary-600 dark:border-primary-400
     text-primary-600 dark:text-gray-100;
 }

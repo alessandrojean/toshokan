@@ -1,17 +1,103 @@
+<script setup>
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useIsFetching, useQueryClient } from 'vue-query'
+
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
+import useStatisticsQuery from '@/queries/useStatisticsQuery'
+
+import {
+  BookOpenIcon,
+  BookmarkIcon,
+  CurrencyDollarIcon,
+  EmojiHappyIcon,
+  ExclamationCircleIcon
+} from '@heroicons/vue/outline'
+
+import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
+
+import Avatar from '@/components/Avatar.vue'
+import BookCarousel from '@/components/book/BookCarousel.vue'
+import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
+import GroupGrid from '@/components/GroupGrid.vue'
+import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
+import StatCard from '@/components/StatCard.vue'
+
+const authStore = useAuthStore()
+const sheetStore = useSheetStore()
+const { n, t } = useI18n({ useScope: 'global' })
+
+const sheetIsEmpty = computed(() => sheetStore.isEmpty)
+
+const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
+const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+const profileName = computed(() => authStore.profileName)
+const loading = computed(() => sheetStore.loading)
+const shared = computed(() => sheetStore.shared)
+
+const {
+  data: stats,
+  isLoading: statsLoading,
+  isSuccess: statsSuccess
+} = useStatisticsQuery({
+  enabled: computed(() => sheetStore.sheetId !== null)
+})
+
+const isDev = ref(import.meta.env.DEV)
+const queryClient = useQueryClient()
+const isFetching = useIsFetching()
+
+async function reload() {
+  queryClient.resetQueries()
+  queryClient.refetchQueries()
+}
+
+const createDialogOpen = ref(false)
+
+function openCreateDialog() {
+  createDialogOpen.value = true
+}
+
+function closeCreateDialog() {
+  createDialogOpen.value = false
+}
+
+const canChange = computed(() => sheetStore.canChange)
+const canEdit = computed(() => sheetStore.canEdit)
+
+const sheetChooserOpen = ref(false)
+
+function openSheetChooser() {
+  sheetChooserOpen.value = true
+}
+
+function closeSheetChooser() {
+  sheetChooserOpen.value = false
+}
+</script>
+
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
-      <div class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8">
+      <div
+        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8"
+      >
         <div class="flex-1 flex items-center space-x-4">
           <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
           <div>
-            <h1 class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100">
+            <h1
+              class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100"
+            >
               {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
-            <p v-if="isDev || shared" class="text-sm text-gray-600 dark:text-gray-300">
+            <p
+              v-if="isDev || shared"
+              class="text-sm text-gray-600 dark:text-gray-300"
+            >
               {{
-                shared ?
-                  t('dashboard.sheetChooser.viewing', [ownerDisplayName])
+                shared
+                  ? t('dashboard.sheetChooser.viewing', [ownerDisplayName])
                   : t('footer.dev')
               }}
             </p>
@@ -25,7 +111,7 @@
           >
             <span
               aria-hidden="true"
-              :class="(loading || isFetching) ? 'motion-safe:animate-spin' : ''"
+              :class="loading || isFetching ? 'motion-safe:animate-spin' : ''"
               class="origin-center w-5 h-5 -ml-1 mr-2"
             >
               <RefreshIcon class="-scale-x-100 !mx-0" />
@@ -65,12 +151,18 @@
           :aria-labelledby="loading ? '' : 'overview-title'"
         >
           <div v-if="loading" class="skeleton h-6 w-40 mb-3"></div>
-          <h2 v-else id="overview-title" class="font-medium font-display text-lg mb-2 dark:text-gray-200">
+          <h2
+            v-else
+            id="overview-title"
+            class="font-medium font-display text-lg mb-2 dark:text-gray-200"
+          >
             {{ t('dashboard.home.overview.title') }}
           </h2>
 
           <!-- Stats -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700"
+          >
             <StatCard
               :title="t('dashboard.home.overview.stats.count')"
               :value="n(stats?.count || 0.0, 'integer')"
@@ -93,7 +185,11 @@
 
             <StatCard
               :title="t('dashboard.home.overview.stats.totalExpense')"
-              :value="n(stats?.money?.totalSpentPaid || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' })"
+              :value="
+                n(stats?.money?.totalSpentPaid || 0.0, 'currency', {
+                  currency: stats?.money?.currency || 'USD'
+                })
+              "
               :loading="!statsSuccess"
               :always-hidden="shared"
               sensitive
@@ -105,7 +201,11 @@
 
             <StatCard
               :title="t('dashboard.home.overview.stats.totalSavings')"
-              :value="n(stats?.money?.saved || 0.0, 'currency', { currency: stats?.money?.currency || 'USD' })"
+              :value="
+                n(stats?.money?.saved || 0.0, 'currency', {
+                  currency: stats?.money?.currency || 'USD'
+                })
+              "
               :loading="!statsSuccess"
               :always-hidden="shared"
               sensitive
@@ -122,7 +222,10 @@
           :title="t('dashboard.home.nextReads')"
           collection="next-reads"
           :button-text="t('dashboard.search.history')"
-          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
+          :button-link="{
+            name: 'DashboardLibrary',
+            query: { sortProperty: 'readAt' }
+          }"
         />
 
         <!-- Last added books -->
@@ -130,7 +233,10 @@
           :title="t('dashboard.home.lastAdded')"
           collection="last-added"
           :button-text="t('dashboard.home.viewAll')"
-          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'createdAt' } }"
+          :button-link="{
+            name: 'DashboardLibrary',
+            query: { sortProperty: 'createdAt' }
+          }"
         />
 
         <!-- Latest readings -->
@@ -138,7 +244,10 @@
           :title="t('dashboard.home.latestReadings')"
           collection="latest-readings"
           :button-text="t('dashboard.search.history')"
-          :button-link="{ name: 'DashboardLibrary', query: { sortProperty: 'readAt' } }"
+          :button-link="{
+            name: 'DashboardLibrary',
+            query: { sortProperty: 'readAt' }
+          }"
         />
 
         <!-- Groups -->
@@ -151,7 +260,9 @@
           class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
         >
           <span aria-hidden="true">
-            <ExclamationCircleIcon class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600" />
+            <ExclamationCircleIcon
+              class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600"
+            />
           </span>
           <h2
             id="empty-sheet-title"
@@ -176,10 +287,7 @@
       </div>
     </div>
 
-    <BookCreateDialog
-      :is-open="createDialogOpen"
-      @close="closeCreateDialog"
-    />
+    <BookCreateDialog :is-open="createDialogOpen" @close="closeCreateDialog" />
 
     <SheetChooserDialog
       :is-open="sheetChooserOpen"
@@ -187,130 +295,3 @@
     />
   </div>
 </template>
-
-<script>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useIsFetching, useQueryClient } from 'vue-query'
-
-import { useAuthStore } from '@/stores/auth'
-import { useSheetStore } from '@/stores/sheet'
-import useStatisticsQuery from '@/queries/useStatisticsQuery'
-
-import {
-  BookOpenIcon,
-  BookmarkIcon,
-  CurrencyDollarIcon,
-  EmojiHappyIcon,
-  ExclamationCircleIcon
-} from '@heroicons/vue/outline'
-
-import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
-
-import Avatar from '@/components/Avatar.vue'
-import BookCarousel from '@/components/book/BookCarousel.vue'
-import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
-import GroupGrid from '@/components/GroupGrid.vue'
-import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
-import StatCard from '@/components/StatCard.vue'
-
-export default {
-  name: 'DashboardHome',
-
-  components: {
-    Avatar,
-    BookCarousel,
-    BookCreateDialog,
-    GroupGrid,
-    SheetChooserDialog,
-    StatCard,
-    BookOpenIcon,
-    BookmarkIcon,
-    CollectionIcon,
-    CurrencyDollarIcon,
-    EmojiHappyIcon,
-    ExclamationCircleIcon,
-    PlusIcon,
-    RefreshIcon
-  },
-
-  setup () {
-    const authStore = useAuthStore()
-    const sheetStore = useSheetStore()
-    const { n, t } = useI18n({ useScope: 'global' })
-
-    const sheetIsEmpty = computed(() => sheetStore.isEmpty)
-
-    const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
-    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
-    const profileName = computed(() => authStore.profileName)
-    const loading = computed(() => sheetStore.loading)
-    const shared = computed(() => sheetStore.shared)
-
-    const {
-      data: stats,
-      isLoading: statsLoading,
-      isSuccess: statsSuccess
-    } = useStatisticsQuery({
-      enabled: computed(() => sheetStore.sheetId !== null)
-    })
-
-    const isDev = ref(import.meta.env.DEV)
-    const queryClient = useQueryClient()
-    const isFetching = useIsFetching()
-
-    async function reload () {
-      queryClient.resetQueries()
-      queryClient.refetchQueries()
-    }
-
-    const createDialogOpen = ref(false)
-
-    function openCreateDialog () {
-      createDialogOpen.value = true
-    }
-
-    function closeCreateDialog () {
-      createDialogOpen.value = false
-    }
-
-    const canChange = computed(() => sheetStore.canChange)
-    const canEdit = computed(() => sheetStore.canEdit)
-
-    const sheetChooserOpen = ref(false)
-
-    function openSheetChooser () {
-      sheetChooserOpen.value = true
-    }
-
-    function closeSheetChooser () {
-      sheetChooserOpen.value = false
-    }
-
-    return {
-      sheetIsEmpty,
-      loading,
-      isFetching,
-      ownerDisplayName,
-      ownerPictureUrl,
-      profileName,
-      stats,
-      statsLoading,
-      statsSuccess,
-      shared,
-      isDev,
-      reload,
-      createDialogOpen,
-      openCreateDialog,
-      closeCreateDialog,
-      canChange,
-      canEdit,
-      sheetChooserOpen,
-      openSheetChooser,
-      closeSheetChooser,
-      n,
-      t
-    }
-  }
-}
-</script>

@@ -10,13 +10,11 @@ import QueryBuilder from '@/data/QueryBuilder'
  * @param {string} code The code to find
  * @returns {Promise<Book[] | null>} The books found
  */
-export default async function getBookByCode (sheetId, code) {
+export default async function getBookByCode(sheetId, code) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { CODE } = CollectionColumns
-  const query = new QueryBuilder(sheetUrl)
-    .where(CODE, code)
-    .build()
+  const query = new QueryBuilder(sheetUrl).where(CODE, code).build()
 
   const dataTable = await query.send()
 

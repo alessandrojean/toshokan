@@ -72,8 +72,9 @@ describe('CBL', () => {
     const cbl = new Cbl()
     const search = jest.spyOn(cbl, 'search')
 
-    await expect(cbl.search('9788545702871')).rejects
-      .toThrowError('The informed ISBN is invalid.')
+    await expect(cbl.search('9788545702871')).rejects.toThrowError(
+      'The informed ISBN is invalid.'
+    )
 
     expect(search).toHaveBeenCalled()
   })
@@ -84,8 +85,9 @@ describe('CBL', () => {
     const cbl = new Cbl()
     jest.spyOn(cbl, 'search')
 
-    await expect(cbl.search('9788545702870')).rejects
-      .toThrowError('Authorization key missing.')
+    await expect(cbl.search('9788545702870')).rejects.toThrowError(
+      'Authorization key missing.'
+    )
   })
 })
 
@@ -145,8 +147,9 @@ describe('Google Books', () => {
     const googleBooks = new GoogleBooks()
     const search = jest.spyOn(googleBooks, 'search')
 
-    await expect(googleBooks.search('9788545702871')).rejects
-      .toThrowError('The informed ISBN is invalid.')
+    await expect(googleBooks.search('9788545702871')).rejects.toThrowError(
+      'The informed ISBN is invalid.'
+    )
 
     expect(search).toHaveBeenCalled()
   })
@@ -205,8 +208,9 @@ describe('Open Library', () => {
     const openLibrary = new OpenLibrary()
     const search = jest.spyOn(openLibrary, 'search')
 
-    await expect(openLibrary.search('9788545702871')).rejects
-      .toThrowError('The informed ISBN is invalid.')
+    await expect(openLibrary.search('9788545702871')).rejects.toThrowError(
+      'The informed ISBN is invalid.'
+    )
 
     expect(search).toHaveBeenCalled()
   })

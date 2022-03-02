@@ -7,13 +7,13 @@ import i18n from '@/i18n'
 import Lookup from './Lookup'
 
 export default class GoogleBooks extends Lookup {
-  _createAxios () {
+  _createAxios() {
     return axios.create({
       baseURL: 'https://www.googleapis.com/books/v1'
     })
   }
 
-  async search (isbn) {
+  async search(isbn) {
     const { t } = i18n.global
 
     if (!validateIsbn(isbn)) {

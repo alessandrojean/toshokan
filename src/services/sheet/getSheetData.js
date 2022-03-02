@@ -4,9 +4,9 @@
  * @param {string} sheetId The sheet to perform the operation
  * @returns The sheet data and statistics
  */
-export default async function getSheetData (sheetId) {
-  const response = await window.gapi.client.sheets.spreadsheets.values
-    .batchGet({
+export default async function getSheetData(sheetId) {
+  const response = await window.gapi.client.sheets.spreadsheets.values.batchGet(
+    {
       spreadsheetId: sheetId,
       ranges: [
         'TotalItems',
@@ -18,7 +18,8 @@ export default async function getSheetData (sheetId) {
         'PublisherRank',
         'Currency'
       ]
-    })
+    }
+  )
 
   const stats = {
     count: parseInt(response.result.valueRanges[0].values[0][0]),
@@ -37,8 +38,8 @@ export default async function getSheetData (sheetId) {
     monthly: (response.result.valueRanges[3].values || [])
       .slice(0, 10)
       .reverse()
-      .filter(row => row[0].length > 0)
-      .map(row => ({
+      .filter((row) => row[0].length > 0)
+      .map((row) => ({
         month: new Date(`${row[0]}-02`),
         totalSpent: parseFloat(row[1]),
         count: parseInt(row[2], 10),
@@ -46,20 +47,19 @@ export default async function getSheetData (sheetId) {
       })),
     authors: (response.result.valueRanges[4].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
     series: (response.result.valueRanges[5].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
     publishers: (response.result.valueRanges[6].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) }))
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) }))
   }
 
-  const propertiesResponse = await window.gapi.client.sheets.spreadsheets
-    .get({
-      spreadsheetId: sheetId,
-      fields: 'properties.timeZone'
-    })
+  const propertiesResponse = await window.gapi.client.sheets.spreadsheets.get({
+    spreadsheetId: sheetId,
+    fields: 'properties.timeZone'
+  })
 
   const timeZoneName = propertiesResponse.result.properties.timeZone
   const offset = parseInt(
@@ -75,10 +75,11 @@ export default async function getSheetData (sheetId) {
   const timeZone = {
     name: timeZoneName,
     offset,
-    offsetStr: offset.toLocaleString('en-US', {
-      minimumIntegerDigits: 2,
-      signDisplay: 'always'
-    }) + ':00',
+    offsetStr:
+      offset.toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+        signDisplay: 'always'
+      }) + ':00',
     timezoneOffset: -offset * 60
   }
 

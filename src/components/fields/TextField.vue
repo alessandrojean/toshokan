@@ -1,3 +1,44 @@
+<script setup>
+import { computed, toRefs } from 'vue'
+
+import { SelectorIcon } from '@heroicons/vue/solid'
+
+import BaseField from './BaseField.vue'
+
+const props = defineProps({
+  error: String,
+  help: String,
+  inputClass: String,
+  inputMode: String,
+  inputType: {
+    type: String,
+    default: 'text'
+  },
+  label: String,
+  list: Array,
+  listText: Function,
+  listValue: Function,
+  max: String,
+  modelValue: {
+    type: String,
+    required: true
+  },
+  multiline: Boolean,
+  placeholder: String,
+  prefixClass: String,
+  required: Boolean,
+  suffixClass: String
+})
+
+defineEmits(['update:modelValue'])
+
+const { error, help, list } = toRefs(props)
+
+const hasError = computed(() => error.value && error.value.length > 0)
+const hasHelp = computed(() => help.value && help.value.length > 0)
+const hasList = computed(() => list.value && list.value.length > 0)
+</script>
+
 <template>
   <BaseField
     :label="label"
@@ -9,10 +50,7 @@
     <div class="group relative field-wrapper">
       <div
         v-if="$slots.prefix"
-        :class="[
-          'absolute inset-y-0 left-0 flex items-center',
-          prefixClass
-        ]"
+        :class="['absolute inset-y-0 left-0 flex items-center', prefixClass]"
       >
         <slot name="prefix" />
       </div>
@@ -42,7 +80,7 @@
         :inputmode="inputMode"
         :max="max"
         @input="$emit('update:modelValue', $event.target.value)"
-      >
+      />
       <template v-if="hasList">
         <datalist :id="inputId + '-list'">
           <option
@@ -59,69 +97,13 @@
       </template>
       <div
         v-if="$slots.suffix"
-        :class="[
-          'absolute inset-y-0 right-0 flex items-center',
-          suffixClass
-        ]"
+        :class="['absolute inset-y-0 right-0 flex items-center', suffixClass]"
       >
         <slot name="suffix" />
       </div>
     </div>
   </BaseField>
 </template>
-
-<script>
-import { computed, toRefs } from 'vue'
-
-import { SelectorIcon } from '@heroicons/vue/solid'
-
-import BaseField from './BaseField.vue'
-
-export default {
-  components: { BaseField, SelectorIcon },
-
-  props: {
-    error: String,
-    help: String,
-    inputClass: String,
-    inputMode: String,
-    inputType: {
-      type: String,
-      default: 'text'
-    },
-    label: String,
-    list: Array,
-    listText: Function,
-    listValue: Function,
-    max: String,
-    modelValue: {
-      type: String,
-      required: true
-    },
-    multiline: Boolean,
-    placeholder: String,
-    prefixClass: String,
-    required: Boolean,
-    suffixClass: String
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props) {
-    const { error, help, list } = toRefs(props)
-
-    const hasError = computed(() => error.value && error.value.length > 0)
-    const hasHelp = computed(() => help.value && help.value.length > 0)
-    const hasList = computed(() => list.value && list.value.length > 0)
-
-    return {
-      hasError,
-      hasHelp,
-      hasList
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .selector-icon {

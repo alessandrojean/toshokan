@@ -1,21 +1,28 @@
 module.exports = {
   root: true,
-  plugins: ['jest'],
+  plugins: ['jest', 'prettier'],
   env: {
     browser: true,
     node: true,
     'jest/globals': true
   },
-  extends: [
-    'plugin:vue/vue3-essential',
-    '@vue/standard'
-  ],
+  extends: ['plugin:vue/vue3-essential', 'prettier'],
+  parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@babel/eslint-parser'
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
+    'prettier/prettier': [
+      'warn',
+      {
+        semi: false,
+        printWidth: 80,
+        singleQuote: true,
+        trailingComma: 'none'
+      }
+    ]
   }
 }

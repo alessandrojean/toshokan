@@ -4,13 +4,13 @@ import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import updateBook from '@/services/sheet/updateBook'
 
-export default function useEditBookMutation () {
+export default function useEditBookMutation() {
   const collectionStore = useCollectionStore()
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
-  return useMutation(book => updateBook(sheetStore.sheetId, book), {
-    onSuccess (_, book) {
+  return useMutation((book) => updateBook(sheetStore.sheetId, book), {
+    onSuccess(_, book) {
       const groups = collectionStore.filters.groups
 
       if (!groups.includes(book.group) && groups.length > 0) {
@@ -19,17 +19,17 @@ export default function useEditBookMutation () {
         })
       }
 
-      queryClient.setQueriesData('books', oldData => {
+      queryClient.setQueriesData('books', (oldData) => {
         return {
           ...oldData,
-          books: oldData.books.map(oldBook => {
+          books: oldData.books.map((oldBook) => {
             return oldBook.id === book.id ? book : oldBook
           })
         }
       })
       queryClient.setQueryData(['book', book.id], book)
     },
-    onSettled () {
+    onSettled() {
       queryClient.invalidateQueries('last-added')
       queryClient.invalidateQueries('latest-readings')
       queryClient.invalidateQueries('next-reads')

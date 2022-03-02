@@ -1,3 +1,41 @@
+<script setup>
+import { inject, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import {
+  TransitionRoot,
+  TransitionChild,
+  Dialog,
+  DialogOverlay,
+  DialogTitle
+} from '@headlessui/vue'
+
+import { XIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({
+  coverUrl: {
+    type: String,
+    required: true
+  },
+  open: {
+    type: Boolean
+  }
+})
+
+defineEmits(['close'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+const { open } = toRefs(props)
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+watch(open, (newOpen) => {
+  newOpen ? disableSearchShortcut() : enableSearchShortcut()
+})
+</script>
+
 <template>
   <TransitionRoot :show="open" as="template">
     <Dialog as="template" @close="$emit('close')">
@@ -54,59 +92,6 @@
     </Dialog>
   </TransitionRoot>
 </template>
-
-<script>
-import { inject, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  TransitionRoot,
-  TransitionChild,
-  Dialog,
-  DialogOverlay,
-  DialogTitle
-} from '@headlessui/vue'
-
-import { XIcon } from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogOverlay,
-    DialogTitle,
-    XIcon
-  },
-
-  props: {
-    coverUrl: {
-      type: String,
-      required: true
-    },
-    open: {
-      type: Boolean
-    }
-  },
-
-  emits: ['close'],
-
-  setup (props) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const { open } = toRefs(props)
-
-    const disableSearchShortcut = inject('disableSearchShortcut')
-    const enableSearchShortcut = inject('enableSearchShortcut')
-
-    watch(open, newOpen => {
-      newOpen ? disableSearchShortcut() : enableSearchShortcut()
-    })
-
-    return { t }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .dialog {

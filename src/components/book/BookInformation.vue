@@ -1,3 +1,155 @@
+<script setup>
+import { computed, inject, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useMarkdown from '@/composables/useMarkdown'
+import Book from '@/model/Book'
+import getBookLinks from '@/services/links'
+import { useSettingsStore } from '@/stores/settings'
+import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+import { convertIsbn13ToIsbn10 } from '@/util/isbn'
+
+import {
+  BookmarkIcon as BookmarkSolidIcon,
+  ExternalLinkIcon,
+  GlobeAltIcon,
+  PencilIcon,
+  StarIcon as StarSolidIcon
+} from '@heroicons/vue/solid'
+import {
+  BookmarkIcon as BookmarkOutlineIcon,
+  ClockIcon,
+  StarIcon as StarOutlineIcon,
+  TrashIcon
+} from '@heroicons/vue/outline'
+
+import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
+import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+const props = defineProps({
+  book: Book,
+  disabled: Boolean,
+  loading: Boolean
+})
+
+defineEmits([
+  'click:edit',
+  'click:delete',
+  'click:toggleFavorite',
+  'click:toggleStatus',
+  'click:updateCover'
+])
+
+const { book, loading } = toRefs(props)
+const { t, d, locale } = useI18n({ useScope: 'global' })
+const settingsStore = useSettingsStore()
+const sheetStore = useSheetStore()
+
+const showBookInfo = computed(() => {
+  return !loading.value && book.value
+})
+
+const { renderMarkdown } = useMarkdown({ disable: ['image'] })
+
+const synopsisRendered = computed(() => {
+  if (!showBookInfo.value) {
+    return ''
+  }
+
+  if (book.value.synopsis.length === 0) {
+    return `<em>${t('book.emptySynopsis')}</em>`
+  }
+
+  return renderMarkdown(book.value.synopsis)
+})
+
+const { data: timeZone } = useTimeZoneQuery({
+  enabled: computed(() => sheetStore.sheetId !== null)
+})
+
+function formatDate(date, format = 'short') {
+  if (date instanceof Date) {
+    return d(date, format, { timeZone: timeZone.value.name })
+  }
+
+  return t('dashboard.details.info.dateUnknown')
+}
+
+const readAt = computed(() => {
+  return showBookInfo.value && book.value.readAt
+    ? formatDate(book.value.readAt)
+    : t('dashboard.details.info.dateUnknown')
+})
+
+const createdAt = computed(() => {
+  return showBookInfo.value && book.value.createdAt
+    ? formatDate(book.value.createdAt, 'long')
+    : ''
+})
+
+const updatedAt = computed(() => {
+  return showBookInfo.value && book.value.updatedAt
+    ? formatDate(book.value.updatedAt, 'long')
+    : ''
+})
+
+const country = computed(() => {
+  if (!showBookInfo.value) {
+    return []
+  }
+
+  return book.value?.isbnData
+})
+
+const isbn10 = computed(() => {
+  if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
+    return null
+  }
+
+  if (book.value.codeType === 'ISBN-10') {
+    return book.value.code
+  }
+
+  return convertIsbn13ToIsbn10(book.value.code)
+})
+
+const spoilerMode = computed(() => settingsStore.spoilerMode)
+
+const blurSynopsis = computed(() => {
+  return (
+    showBookInfo.value &&
+    spoilerMode.value.synopsis &&
+    !book.value.isRead &&
+    book.value.synopsis.length > 0
+  )
+})
+
+const externalLinks = computed(() => {
+  return getBookLinks(book.value, locale.value)
+})
+
+const separator = computed(() => {
+  return t('dashboard.details.header.authorSeparator')
+})
+
+const lastSeparator = computed(() => {
+  return t('dashboard.details.header.authorLastSeparator')
+})
+
+const showSearchDialog = inject('showSearchDialog')
+
+function searchByAuthor(author, event) {
+  event.preventDefault()
+
+  const query = `${t('dashboard.search.keywords.author')}:"${author}"`
+  showSearchDialog(query)
+}
+
+const canEdit = computed(() => sheetStore.canEdit)
+</script>
+
 <template>
   <div class="space-y-6 md:space-y-8">
     <div>
@@ -10,12 +162,11 @@
       />
 
       <!-- Book title -->
-      <h2
-        v-if="showBookInfo"
-        class="book-title"
-      >
+      <h2 v-if="showBookInfo" class="book-title">
         <span aria-hidden="true" v-if="book.isFuture">
-          <ClockIcon class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500" />
+          <ClockIcon
+            class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500"
+          />
         </span>
         {{ book.titleParts.main }}
       </h2>
@@ -51,7 +202,11 @@
     <div
       v-if="showBookInfo"
       v-html="synopsisRendered"
-      :class="blurSynopsis ? 'md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto' : ''"
+      :class="
+        blurSynopsis
+          ? 'md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto'
+          : ''
+      "
       class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-none"
     />
     <div v-else class="flex flex-col space-y-2">
@@ -84,8 +239,8 @@
         :disabled="disabled"
         :title="
           t('dashboard.details.header.options.markAs', {
-            status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase() }
-          )
+            status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase()
+          })
         "
         @click="$emit('click:toggleStatus', $event)"
       >
@@ -96,8 +251,8 @@
         <span class="sr-only">
           {{
             t('dashboard.details.header.options.markAs', {
-              status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase() }
-            )
+              status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase()
+            })
           }}
         </span>
       </button>
@@ -106,7 +261,13 @@
         v-if="showBookInfo"
         class="button is-icon-only px-2.5"
         :disabled="disabled"
-        :title="t(`dashboard.details.header.options.${book.favorite ? 'removeFromFavorites' : 'addToFavorites' }`)"
+        :title="
+          t(
+            `dashboard.details.header.options.${
+              book.favorite ? 'removeFromFavorites' : 'addToFavorites'
+            }`
+          )
+        "
         @click="$emit('click:toggleFavorite', $event)"
       >
         <span aria-hidden="true">
@@ -114,7 +275,13 @@
           <StarOutlineIcon v-else />
         </span>
         <span class="sr-only">
-          {{ t(`dashboard.details.header.options.${book.favorite ? 'removeFromFavorites' : 'addToFavorites' }`) }}
+          {{
+            t(
+              `dashboard.details.header.options.${
+                book.favorite ? 'removeFromFavorites' : 'addToFavorites'
+              }`
+            )
+          }}
         </span>
       </button>
 
@@ -135,14 +302,24 @@
     </div>
 
     <!-- Book metadata -->
-    <div class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+    <div
+      class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-300"
+    >
       <dl v-if="showBookInfo" class="space-y-1">
         <div v-if="book.codeType !== 'N/A'" class="flex">
-          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ book.codeType }}</dt>
+          <dt
+            class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400"
+          >
+            {{ book.codeType }}
+          </dt>
           <dd class="grow text-right sm:text-left">{{ book.code }}</dd>
         </div>
         <div class="flex">
-          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ t('book.properties.createdAt') }}</dt>
+          <dt
+            class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400"
+          >
+            {{ t('book.properties.createdAt') }}
+          </dt>
           <dd class="tabular-nums grow text-right sm:text-left">
             <time :datetime="book.createdAt.toISOString()">
               {{ createdAt }}
@@ -150,7 +327,11 @@
           </dd>
         </div>
         <div class="flex">
-          <dt class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400">{{ t('book.properties.updatedAt') }}</dt>
+          <dt
+            class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400"
+          >
+            {{ t('book.properties.updatedAt') }}
+          </dt>
           <dd class="tabular-nums grow text-right sm:text-left">
             <time :datetime="book.updatedAt.toISOString()">
               {{ updatedAt }}
@@ -166,33 +347,19 @@
 
       <BookOwnerBadge v-if="showBookInfo" />
 
-      <transition
-        mode="out-in"
-        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-      >
+      <FadeTransition>
         <ul
           v-if="showBookInfo && externalLinks.length > 0"
           class="flex flex-wrap"
         >
-          <li
-            v-for="link in externalLinks"
-            :key="link.url"
-          >
+          <li v-for="link in externalLinks" :key="link.url">
             <a
               class="book-external-link group has-ring-focus"
               target="_blank"
               :href="link.url"
             >
               <span aria-hidden="true" class="icon">
-                <component
-                  v-if="link.icon"
-                  :is="link.icon"
-                />
+                <component v-if="link.icon" :is="link.icon" />
                 <GlobeAltIcon v-else />
               </span>
               <span>{{ link.title }}</span>
@@ -202,198 +369,10 @@
             </a>
           </li>
         </ul>
-      </transition>
+      </FadeTransition>
     </div>
   </div>
 </template>
-
-<script>
-import { computed, inject, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useMarkdown from '@/composables/useMarkdown'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-
-import {
-  BookmarkIcon as BookmarkSolidIcon,
-  ExternalLinkIcon,
-  GlobeAltIcon,
-  PencilIcon,
-  StarIcon as StarSolidIcon
-} from '@heroicons/vue/solid'
-import {
-  BookmarkIcon as BookmarkOutlineIcon,
-  ClockIcon,
-  StarIcon as StarOutlineIcon,
-  TrashIcon
-} from '@heroicons/vue/outline'
-
-import Avatar from '@/components/Avatar.vue'
-import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
-import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
-
-import { convertIsbn13ToIsbn10 } from '@/util/isbn'
-import getBookLinks from '@/services/links'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
-
-import Book from '@/model/Book'
-
-export default {
-  components: {
-    Avatar,
-    BookBreadcrumb,
-    BookOwnerBadge,
-    BookmarkOutlineIcon,
-    BookmarkSolidIcon,
-    ClockIcon,
-    ExternalLinkIcon,
-    GlobeAltIcon,
-    PencilIcon,
-    StarOutlineIcon,
-    StarSolidIcon,
-    TrashIcon
-  },
-
-  props: {
-    book: Book,
-    disabled: Boolean,
-    loading: Boolean
-  },
-
-  emits: [
-    'click:edit',
-    'click:delete',
-    'click:toggleFavorite',
-    'click:toggleStatus',
-    'click:updateCover'
-  ],
-
-  setup (props) {
-    const { book, loading } = toRefs(props)
-    const { t, d, locale } = useI18n({ useScope: 'global' })
-    const settingsStore = useSettingsStore()
-    const sheetStore = useSheetStore()
-
-    const showBookInfo = computed(() => {
-      return !loading.value && book.value
-    })
-
-    const { renderMarkdown } = useMarkdown({ disable: ['image'] })
-
-    const synopsisRendered = computed(() => {
-      if (!showBookInfo.value) {
-        return ''
-      }
-
-      if (book.value.synopsis.length === 0) {
-        return `<em>${t('book.emptySynopsis')}</em>`
-      }
-
-      return renderMarkdown(book.value.synopsis)
-    })
-
-    const { data: timeZone } = useTimeZoneQuery({
-      enabled: computed(() => sheetStore.sheetId !== null)
-    })
-
-    function formatDate (date, format = 'short') {
-      if (date instanceof Date) {
-        return d(date, format, { timeZone: timeZone.value.name })
-      }
-
-      return t('dashboard.details.info.dateUnknown')
-    }
-
-    const readAt = computed(() => {
-      return showBookInfo.value && book.value.readAt
-        ? formatDate(book.value.readAt)
-        : t('dashboard.details.info.dateUnknown')
-    })
-
-    const createdAt = computed(() => {
-      return showBookInfo.value && book.value.createdAt
-        ? formatDate(book.value.createdAt, 'long')
-        : ''
-    })
-
-    const updatedAt = computed(() => {
-      return showBookInfo.value && book.value.updatedAt
-        ? formatDate(book.value.updatedAt, 'long')
-        : ''
-    })
-
-    const country = computed(() => {
-      if (!showBookInfo.value) {
-        return []
-      }
-
-      return book.value?.isbnData
-    })
-
-    const isbn10 = computed(() => {
-      if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
-        return null
-      }
-
-      if (book.value.codeType === 'ISBN-10') {
-        return book.value.code
-      }
-
-      return convertIsbn13ToIsbn10(book.value.code)
-    })
-
-    const spoilerMode = computed(() => settingsStore.spoilerMode)
-
-    const blurSynopsis = computed(() => {
-      return showBookInfo.value && spoilerMode.value.synopsis &&
-        !book.value.isRead && book.value.synopsis.length > 0
-    })
-
-    const externalLinks = computed(() => {
-      return getBookLinks(book.value, locale.value)
-    })
-
-    const separator = computed(() => {
-      return t('dashboard.details.header.authorSeparator')
-    })
-
-    const lastSeparator = computed(() => {
-      return t('dashboard.details.header.authorLastSeparator')
-    })
-
-    const showSearchDialog = inject('showSearchDialog')
-
-    function searchByAuthor (author, event) {
-      event.preventDefault()
-
-      const query = `${t('dashboard.search.keywords.author')}:"${author}"`
-      showSearchDialog(query)
-    }
-
-    const canEdit = computed(() => sheetStore.canEdit)
-
-    return {
-      showBookInfo,
-      synopsisRendered,
-      readAt,
-      createdAt,
-      updatedAt,
-      t,
-      locale,
-      isbn10,
-      country,
-      spoilerMode,
-      blurSynopsis,
-      externalLinks,
-      separator,
-      lastSeparator,
-      searchByAuthor,
-      canEdit
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .book-title {

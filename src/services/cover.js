@@ -9,7 +9,7 @@ import { convertIsbn13ToIsbn10 } from '@/util/isbn'
  * @param {import('@/model/Book').default} book The book
  * @returns {Promise<string>} The cover URL
  */
-export async function directUrl (book) {
+export async function directUrl(book) {
   if (this.condition && !this.condition(book)) {
     return []
   }
@@ -29,7 +29,7 @@ export async function directUrl (book) {
  * @param {import('@/model/Book').default} book The book
  * @returns {Promise<string?>} The cover URL
  */
-export async function wordpress (book) {
+export async function wordpress(book) {
   const collection = this.collection || 'posts'
   const searchParam = this.queryParameter || 'search'
   let searchQuery = book[this.searchWith]
@@ -39,20 +39,23 @@ export async function wordpress (book) {
   }
 
   try {
-    const response = await axios.get(this.url + '/wp-json/wp/v2/' + collection, {
-      params: {
-        _embed: 'wp:featuredmedia',
-        [searchParam]: searchQuery
+    const response = await axios.get(
+      this.url + '/wp-json/wp/v2/' + collection,
+      {
+        params: {
+          _embed: 'wp:featuredmedia',
+          [searchParam]: searchQuery
+        }
       }
-    })
+    )
 
     if (response.data.length === 0) {
       return []
     }
 
     return response.data
-      .filter(item => item._embedded['wp:featuredmedia'])
-      .map(item => item._embedded['wp:featuredmedia'][0].source_url)
+      .filter((item) => item._embedded['wp:featuredmedia'])
+      .map((item) => item._embedded['wp:featuredmedia'][0].source_url)
   } catch (e) {
     return []
   }
@@ -65,13 +68,15 @@ export async function wordpress (book) {
  * @returns {Promise<string?>} The cover URL
  */
 // eslint-disable-next-line no-unused-vars
-export async function oembed (book) {
+export async function oembed(book) {
   const urlPath = this.createPath(book)
 
   try {
     const url = encodeURIComponent(this.baseUrl + urlPath)
 
-    const response = await axios.get(this.baseUrl + '/wp-json/oembed/1.0/embed?url=' + url)
+    const response = await axios.get(
+      this.baseUrl + '/wp-json/oembed/1.0/embed?url=' + url
+    )
 
     if (!response.data.thumbnail_url) {
       return []
@@ -85,9 +90,9 @@ export async function oembed (book) {
 
 const AMAZON = {
   url: 'https://images-na.ssl-images-amazon.com/images/P/{value}.01._SCRM_SL700_.jpg',
-  condition: book => book.codeType.includes('ISBN'),
+  condition: (book) => book.codeType.includes('ISBN'),
   property: 'code',
-  propertyTransformer: isbn => {
+  propertyTransformer: (isbn) => {
     isbn = isbn.replace(/-/g, '')
 
     if (isbn.length === 10) {
@@ -136,7 +141,7 @@ const AVAILABLE_SITES = [
     name: 'Shueisha',
     url: 'https://dosbg3xlm0x1t.cloudfront.net/images/items/{value}/1200/{value}.jpg',
     property: 'code',
-    propertyTransformer: isbn => isbn.replace(/-/g, ''),
+    propertyTransformer: (isbn) => isbn.replace(/-/g, ''),
     find: directUrl
   },
   {
@@ -151,14 +156,15 @@ const AVAILABLE_SITES = [
     url: 'https://readvertical.com',
     searchWith: 'code',
     collection: 'product',
-    queryTransformer: isbn => isbn.replace(/-/g, ''),
+    queryTransformer: (isbn) => isbn.replace(/-/g, ''),
     find: wordpress
   },
   {
     name: 'VIZ Media',
     url: 'https://dw9to29mmj727.cloudfront.net/products/{value}.jpg',
     property: 'code',
-    propertyTransformer: isbn => convertIsbn13ToIsbn10(isbn.replace(/-/g, '')),
+    propertyTransformer: (isbn) =>
+      convertIsbn13ToIsbn10(isbn.replace(/-/g, '')),
     find: directUrl
   },
   {
@@ -167,7 +173,7 @@ const AVAILABLE_SITES = [
     searchWith: 'title',
     collection: 'product',
     queryParameter: 'slug',
-    queryTransformer: title => slugify(title),
+    queryTransformer: (title) => slugify(title),
     find: wordpress
   }
 ]
@@ -179,12 +185,14 @@ const AVAILABLE_SITES = [
  * @param {boolean?} forceAmazon If true, will only search on Amazon
  * @returns {Promise<string[]?>} The covers found
  */
-export async function findCovers (book, forceAmazon) {
+export async function findCovers(book, forceAmazon) {
   if (forceAmazon) {
     return await AMAZON.find(book)
   }
 
-  const siteHandler = AVAILABLE_SITES.find(site => site.name === book.publisher)
+  const siteHandler = AVAILABLE_SITES.find(
+    (site) => site.name === book.publisher
+  )
 
   if (!siteHandler) {
     return await AMAZON.find(book)

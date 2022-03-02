@@ -28,7 +28,7 @@ export default class Query {
    * @param {Object | null} options.builderObj The builder object
    * @param {string} options.queryString The query string
    */
-  constructor (dataSourceUrl, { builderObj, queryString }) {
+  constructor(dataSourceUrl, { builderObj, queryString }) {
     this.#builderObj = builderObj ? cloneDeep(builderObj) : null
 
     this.#query = new window.google.visualization.Query(dataSourceUrl)
@@ -40,9 +40,9 @@ export default class Query {
    *
    * @returns {Promise<DataTable>} The DataTable object
    */
-  async send () {
+  async send() {
     return new Promise((resolve, reject) => {
-      this.#query.send(response => {
+      this.#query.send((response) => {
         if (response.isError()) {
           const message = i18n.global.t('errors.badQuery', {
             error: response.getMessage()
@@ -57,7 +57,7 @@ export default class Query {
     })
   }
 
-  newBuilder () {
+  newBuilder() {
     if (this.#builderObj === null) {
       return null
     }

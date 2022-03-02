@@ -1,3 +1,13 @@
+<script setup>
+defineProps({
+  mode: {
+    type: String,
+    default: 'out-in'
+  },
+  simultaneous: Boolean
+})
+</script>
+
 <template>
   <transition
     :mode="!simultaneous ? mode : null"
@@ -11,15 +21,3 @@
     <slot />
   </transition>
 </template>
-
-<script>
-export default {
-  props: {
-    mode: {
-      type: String,
-      default: 'out-in'
-    },
-    simultaneous: Boolean
-  }
-}
-</script>

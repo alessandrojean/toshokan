@@ -1,5 +1,9 @@
 import QueryBuilder from '@/data/QueryBuilder'
-import Book, { CollectionColumns, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import Book, {
+  CollectionColumns,
+  STATUS_READ,
+  STATUS_UNREAD
+} from '@/model/Book'
 import buildSheetUrl from './buildSheetUrl'
 
 /**
@@ -9,10 +13,11 @@ import buildSheetUrl from './buildSheetUrl'
  * @param {string} sheetId The sheet to perform the operation
  * @returns {Promise<Book[]>} The next books to read
  */
-export default async function getNextReads (sheetId) {
+export default async function getNextReads(sheetId) {
   const sheetUrl = buildSheetUrl(sheetId)
 
-  const { TITLE, READ_AT, UPDATED_AT, GROUP, PUBLISHER, STATUS } = CollectionColumns
+  const { TITLE, READ_AT, UPDATED_AT, GROUP, PUBLISHER, STATUS } =
+    CollectionColumns
   const lastReadsQuery = new QueryBuilder(sheetUrl)
     .where(READ_AT)
     .andWhere(STATUS, STATUS_READ)
@@ -23,10 +28,10 @@ export default async function getNextReads (sheetId) {
   const lastReadsResult = await lastReadsQuery.send()
   const lastReads = lastReadsResult.asArray
     .map(Book.fromDataTable)
-    .filter(book => book.titleParts.number !== null)
+    .filter((book) => book.titleParts.number !== null)
     .reduce((array, current) => {
       const series = current.titleParts.title
-      const exists = array.find(book => book.titleParts.title === series)
+      const exists = array.find((book) => book.titleParts.title === series)
 
       if (!exists) {
         array.push(current)
@@ -43,7 +48,7 @@ export default async function getNextReads (sheetId) {
     .where(STATUS, STATUS_UNREAD)
     .andWhere(
       QueryBuilder.or(
-        ...lastReads.map(book => {
+        ...lastReads.map((book) => {
           return [TITLE, 'starts with', book.titleParts.title + ' #']
         })
       )
@@ -55,22 +60,24 @@ export default async function getNextReads (sheetId) {
   const collectionsBooks = collectionsResult.asArray.map(Book.fromDataTable)
 
   return lastReads
-    .map(book => {
+    .map((book) => {
       const readNumber = parseInt(book.titleParts.number)
 
-      const next = collectionsBooks.find(colBook => {
+      const next = collectionsBooks.find((colBook) => {
         const colNumber = parseInt(colBook.titleParts.number)
 
-        return colBook.titleParts.title === book.titleParts.title &&
+        return (
+          colBook.titleParts.title === book.titleParts.title &&
           (colNumber === readNumber + 1 || colNumber === readNumber) &&
           colBook.publisher === book.publisher &&
           colBook.group === book.group
+        )
       })
 
       return { readAt: book.readAt, next }
     })
-    .filter(tuple => tuple.next !== undefined)
+    .filter((tuple) => tuple.next !== undefined)
     .sort((a, b) => b.readAt - a.readAt)
-    .map(tuple => tuple.next)
+    .map((tuple) => tuple.next)
     .slice(0, 6)
 }

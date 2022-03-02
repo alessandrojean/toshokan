@@ -1,5 +1,42 @@
+<script setup>
+import { inject, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import Book from '@/model/Book'
+
+import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({
+  book: Book,
+  loading: Boolean,
+  hideHome: Boolean
+})
+
+const { t } = useI18n({ useScope: 'global' })
+const { book } = toRefs(props)
+
+const showSearchDialog = inject('showSearchDialog')
+
+function showCollection() {
+  const keywords = {
+    [t('dashboard.search.keywords.title')]: book.value.titleParts.title + ' #',
+    [t('dashboard.search.keywords.publisher')]: book.value.publisher,
+    [t('dashboard.search.keywords.group')]: book.value.group
+  }
+
+  const queryString = Object.entries(keywords)
+    .map(([keyword, value]) => `${keyword}:"${value}"`)
+    .join(' ')
+
+  showSearchDialog(queryString)
+}
+</script>
+
 <template>
-  <nav v-if="!loading" class="text-sm font-medium text-gray-500 dark:text-gray-300">
+  <nav
+    v-if="!loading"
+    class="text-sm font-medium text-gray-500 dark:text-gray-300"
+  >
     <ul class="flex space-x-1 md:space-x-3 items-center">
       <li v-if="!hideHome" class="shrink-0">
         <router-link
@@ -37,7 +74,11 @@
           {{ book.group }}
         </router-link>
       </li>
-      <li aria-hidden="true" v-if="book.titleParts.number && !hideHome" class="shrink-0">
+      <li
+        aria-hidden="true"
+        v-if="book.titleParts.number && !hideHome"
+        class="shrink-0"
+      >
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
       <li v-if="book.titleParts.number && !hideHome" class="grow">
@@ -53,48 +94,3 @@
   </nav>
   <div v-else class="skeleton h-5 w-44"></div>
 </template>
-
-<script>
-import { inject, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import Book from '@/model/Book'
-
-import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    ChevronRightIcon,
-    HomeIcon
-  },
-
-  props: {
-    book: Book,
-    loading: Boolean,
-    hideHome: Boolean
-  },
-
-  setup (props) {
-    const { t } = useI18n({ useScope: 'global' })
-    const { book } = toRefs(props)
-
-    const showSearchDialog = inject('showSearchDialog')
-
-    function showCollection () {
-      const keywords = {
-        [t('dashboard.search.keywords.title')]: book.value.titleParts.title + ' #',
-        [t('dashboard.search.keywords.publisher')]: book.value.publisher,
-        [t('dashboard.search.keywords.group')]: book.value.group
-      }
-
-      const queryString = Object.entries(keywords)
-        .map(([keyword, value]) => `${keyword}:"${value}"`)
-        .join(' ')
-
-      showSearchDialog(queryString)
-    }
-
-    return { t, showCollection }
-  }
-}
-</script>

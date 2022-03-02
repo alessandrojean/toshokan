@@ -8,6 +8,6 @@ import { CollectionColumns } from '@/model/Book'
  * @param {string} sheetId The sheet to perform the operation
  * @returns The stores found
  */
-export default async function getStores (sheetId) {
+export default async function getStores(sheetId) {
   return await getColumnUniqueValues(sheetId, CollectionColumns.STORE, true)
 }

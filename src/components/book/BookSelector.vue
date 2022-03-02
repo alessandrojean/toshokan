@@ -1,3 +1,47 @@
+<script setup>
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import {
+  RadioGroup,
+  RadioGroupDescription,
+  RadioGroupLabel,
+  RadioGroupOption
+} from '@headlessui/vue'
+
+defineProps({ options: Array })
+
+const emit = defineEmits(['select'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+const separator = computed(() => {
+  return t('dashboard.details.header.authorSeparator')
+})
+
+function formatAuthors(authors) {
+  let formattedAuthors = (authors || []).join(separator)
+
+  if (authors && authors.length >= 2) {
+    const firstAuthors = (authors || []).slice(0, -1).join(separator.value)
+
+    formattedAuthors = t('dashboard.details.header.authorListComplete', {
+      authors: firstAuthors,
+      lastAuthor: authors[authors.length - 1]
+    })
+  }
+
+  return formattedAuthors
+}
+
+const selected = ref(null)
+
+function setSelected(newValue) {
+  selected.value = newValue
+  emit('select', newValue)
+}
+</script>
+
 <template>
   <RadioGroup
     class="flex flex-col space-y-2"
@@ -31,7 +75,9 @@
         >
           <span
             :class="[
-              checked ? 'bg-white' : 'bg-white dark:bg-gray-850 dark:group-hover:bg-gray-850',
+              checked
+                ? 'bg-white'
+                : 'bg-white dark:bg-gray-850 dark:group-hover:bg-gray-850',
               'inline-block w-1.5 h-1.5 rounded-xl'
             ]"
           />
@@ -82,72 +128,3 @@
     </RadioGroupOption>
   </RadioGroup>
 </template>
-
-<script>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption
-} from '@headlessui/vue'
-
-export default {
-  components: {
-    RadioGroup,
-    RadioGroupDescription,
-    RadioGroupLabel,
-    RadioGroupOption
-  },
-
-  props: {
-    options: Array
-  },
-
-  emits: ['select'],
-
-  setup (_, context) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const separator = computed(() => {
-      return t('dashboard.details.header.authorSeparator')
-    })
-
-    function formatAuthors (authors) {
-      let formattedAuthors = (authors || []).join(separator)
-
-      if (authors && authors.length >= 2) {
-        const firstAuthors = (authors || [])
-          .slice(0, -1)
-          .join(separator.value)
-
-        formattedAuthors = t(
-          'dashboard.details.header.authorListComplete',
-          {
-            authors: firstAuthors,
-            lastAuthor: authors[authors.length - 1]
-          }
-        )
-      }
-
-      return formattedAuthors
-    }
-
-    const selected = ref(null)
-
-    function setSelected (newValue) {
-      selected.value = newValue
-      context.emit('select', newValue)
-    }
-
-    return {
-      formatAuthors,
-      selected,
-      setSelected,
-      t
-    }
-  }
-}
-</script>

@@ -11,31 +11,31 @@ export const useSheetStore = defineStore('sheet', {
     sheetId: null
   }),
   getters: {
-    canChange () {
+    canChange() {
       return this.options.length > 1
     },
 
-    canEdit () {
+    canEdit() {
       return this.selected?.capabilities?.canEdit
     },
 
-    loadedOnce () {
+    loadedOnce() {
       return this.sheetId !== null
     },
 
-    loading () {
+    loading() {
       return this.sheetId === null
     },
 
-    ownerDisplayName () {
+    ownerDisplayName() {
       return this.selected?.owners?.[0]?.displayName
     },
 
-    ownerPictureUrl () {
+    ownerPictureUrl() {
       return this.selected?.owners?.[0]?.photoLink
     },
 
-    shared () {
+    shared() {
       return this.selected && this.selected.ownedByMe === false
     }
   },
@@ -45,7 +45,7 @@ export const useSheetStore = defineStore('sheet', {
      *
      * @returns {Promise<string>} the sheet ID
      */
-    async findSheetId () {
+    async findSheetId() {
       const settingsStore = useSettingsStore()
       const useDevSheet = settingsStore.useDevSheet
 
@@ -58,19 +58,19 @@ export const useSheetStore = defineStore('sheet', {
       return sheet.id
     },
 
-    updateIsEmpty (isEmpty) {
+    updateIsEmpty(isEmpty) {
       this.isEmpty = isEmpty
     },
 
-    updateOptions (options) {
+    updateOptions(options) {
       this.options = options ? options.slice() : []
     },
 
-    updateSelected (sheet) {
+    updateSelected(sheet) {
       this.selected = sheet ? { ...this.selected, ...sheet } : null
     },
 
-    updateSheetId (sheetId) {
+    updateSheetId(sheetId) {
       this.sheetId = sheetId
       localStorage.setItem('last_sheet_opened', sheetId)
     }

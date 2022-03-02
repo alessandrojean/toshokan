@@ -1,3 +1,36 @@
+<script setup>
+import { useI18n } from 'vue-i18n'
+
+import {
+  Listbox,
+  ListboxButton,
+  ListboxLabel,
+  ListboxOption,
+  ListboxOptions
+} from '@headlessui/vue'
+import { CheckIcon, SelectorIcon, TranslateIcon } from '@heroicons/vue/solid'
+
+defineProps({
+  modelValue: {
+    type: String,
+    required: true
+  }
+})
+
+defineEmits(['update:modelValue'])
+
+const { t, availableLocales } = useI18n({ useScope: 'global' })
+
+const localeFlags = {
+  'pt-BR': 'BR',
+  'en-US': 'US'
+}
+
+function createFlagUrl(country) {
+  return `https://hatscripts.github.io/circle-flags/flags/${country.toLowerCase()}.svg`
+}
+</script>
+
 <template>
   <div>
     <div class="md:hidden">
@@ -46,7 +79,7 @@
             :src="createFlagUrl(localeFlags[modelValue])"
             aria-hidden="true"
             class="shrink-0 h-5 w-5 rounded-full"
-          >
+          />
           <span class="ml-2.5 block truncate">
             {{ t('app.localeName', null, { locale: modelValue }) }}
           </span>
@@ -64,7 +97,9 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
-        <ListboxOptions class="absolute z-10 mt-1 w-56 bg-white dark:supports-backdrop-blur:bg-gray-700/80 dark:bg-gray-700 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm">
+        <ListboxOptions
+          class="absolute z-10 mt-1 w-56 bg-white dark:supports-backdrop-blur:bg-gray-700/80 dark:bg-gray-700 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm"
+        >
           <ListboxOption
             as="template"
             v-for="loc in availableLocales"
@@ -99,7 +134,9 @@
               <span
                 v-if="selected"
                 :class="[
-                  active ? 'text-white dark:text-gray-100' : 'text-primary-600 dark:text-primary-400',
+                  active
+                    ? 'text-white dark:text-gray-100'
+                    : 'text-primary-600 dark:text-primary-400',
                   'absolute inset-y-0 right-0 flex items-center pr-4'
                 ]"
               >
@@ -112,52 +149,3 @@
     </Listbox>
   </div>
 </template>
-
-<script>
-import { useI18n } from 'vue-i18n'
-
-import { Listbox, ListboxButton, ListboxLabel, ListboxOption, ListboxOptions } from '@headlessui/vue'
-import { CheckIcon, SelectorIcon, TranslateIcon } from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    Listbox,
-    ListboxButton,
-    ListboxLabel,
-    ListboxOption,
-    ListboxOptions,
-    CheckIcon,
-    SelectorIcon,
-    TranslateIcon
-  },
-
-  props: {
-    modelValue: {
-      type: String,
-      required: true
-    }
-  },
-
-  emits: ['update:modelValue'],
-
-  setup () {
-    const { t, availableLocales } = useI18n({ useScope: 'global' })
-
-    const localeFlags = {
-      'pt-BR': 'BR',
-      'en-US': 'US'
-    }
-
-    function createFlagUrl (country) {
-      return `https://hatscripts.github.io/circle-flags/flags/${country.toLowerCase()}.svg`
-    }
-
-    return {
-      t,
-      localeFlags,
-      availableLocales,
-      createFlagUrl
-    }
-  }
-}
-</script>

@@ -9,9 +9,10 @@ import slugify from 'slugify'
 
 import { useI18n } from 'vue-i18n'
 
-function youtube (md) {
+function youtube(md) {
   const defaultRenderer = md.renderer.rules.image
-  const youtubeRegex = /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed|playlist)?(\?(?:v|list)=|\/)?([^$/\n]+)/
+  const youtubeRegex =
+    /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed|playlist)?(\?(?:v|list)=|\/)?([^$/\n]+)/
 
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
@@ -50,7 +51,7 @@ function youtube (md) {
   }
 }
 
-function imageLazyLoad (md) {
+function imageLazyLoad(md) {
   const defaultRenderer = md.renderer.rules.image
 
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
@@ -66,10 +67,12 @@ function imageLazyLoad (md) {
   }
 }
 
-function externalLinks (md) {
-  const defaultRenderer = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-    return self.renderToken(tokens, idx, options)
-  }
+function externalLinks(md) {
+  const defaultRenderer =
+    md.renderer.rules.link_open ||
+    function (tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options)
+    }
 
   md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
     const aIndex = tokens[idx].attrIndex('target')
@@ -87,7 +90,7 @@ function externalLinks (md) {
   }
 }
 
-export default function useMarkdown (options = {}) {
+export default function useMarkdown(options = {}) {
   const { t } = useI18n({ useScope: 'global' })
 
   let markdown = md(options.mdOptions || {})
@@ -95,10 +98,10 @@ export default function useMarkdown (options = {}) {
     .use(mdDefList)
     .use(mdAnchor, {
       permalink: mdAnchor.permalink.linkInsideHeader(),
-      slugify: s => slugify(s, { lower: true })
+      slugify: (s) => slugify(s, { lower: true })
     })
     .use(mdToc, {
-      slugify: s => slugify(s, { lower: true }),
+      slugify: (s) => slugify(s, { lower: true }),
       listType: 'ol',
       containerHeaderHtml: `<h2>${t('about.summary')}</h2>`
     })
@@ -123,7 +126,7 @@ export default function useMarkdown (options = {}) {
       ...(options.disable || [])
     ])
 
-  function renderMarkdown (source) {
+  function renderMarkdown(source) {
     return markdown.render(source)
   }
 

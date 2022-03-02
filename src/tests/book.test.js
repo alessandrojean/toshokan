@@ -33,7 +33,8 @@ const testBook = new Book({
   },
   store: 'Amazon',
   status: STATUS_READ,
-  coverUrl: 'https://pipocaenanquim.com.br/wp-content/uploads/2021/11/A1uvtpMPsfL.jpeg',
+  coverUrl:
+    'https://pipocaenanquim.com.br/wp-content/uploads/2021/11/A1uvtpMPsfL.jpeg',
   boughtAt: new Date('2022-02-22'),
   readAt: new Date('2022-02-22'),
   createdAt: new Date('2022-02-22T21:00:00.000Z'),
@@ -111,11 +112,11 @@ it('Should split the titles correctly', () => {
 
 it('Should detect the correct code type', () => {
   const codes = {
-    // eslint-disable-next-line quote-props
+    // eslint-disable-next-line
     '9788545702870': 'ISBN-13',
-    // eslint-disable-next-line quote-props
+    // eslint-disable-next-line
     '8576161877': 'ISBN-10',
-    // eslint-disable-next-line quote-props
+    // eslint-disable-next-line
     '7897780165585': 'EAN-13',
     'a-random-string': 'ID',
     'N/A': 'N/A'

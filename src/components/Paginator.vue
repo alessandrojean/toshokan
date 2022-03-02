@@ -1,8 +1,114 @@
+<script setup>
+import { computed, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
+} from '@heroicons/vue/solid'
+
+const props = defineProps({
+  enabled: Boolean,
+  paginationInfo: Object
+})
+
+const emit = defineEmits(['page'])
+
+const { paginationInfo } = toRefs(props)
+
+const links = computed(() => {
+  return paginationInfo.value.last_page + 1 - paginationInfo.value.first_page
+})
+
+const { t } = useI18n({ useScope: 'global' })
+
+function isCurrent(idx) {
+  return (
+    paginationInfo.value.current_page ===
+    paginationInfo.value.first_page + idx - 1
+  )
+}
+
+function changePage(page) {
+  if (page !== paginationInfo.value.current_page) {
+    emit('page', page)
+  }
+}
+
+const paginator = ref(null)
+const focused = ref((paginationInfo.value?.current_page || 1) + 1)
+
+function tabIndex(idx) {
+  return idx === focused.value ? '0' : '-1'
+}
+
+watch(paginationInfo, (newPagination) => {
+  const { current_page: currentPage, first_page: firstPage } = newPagination
+  focused.value = currentPage - firstPage + 2
+})
+
+/**
+ * @param {KeyboardEvent} event
+ * @param {number} idx
+ */
+function handleKeydown(event, idx) {
+  const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+  const { key } = event
+  const {
+    current_page: currentPage,
+    first_page: firstPage,
+    has_previous_page: hasPreviousPage,
+    has_next_page: hasNextPage
+  } = paginationInfo.value
+
+  if (key === 'Tab') {
+    setTimeout(() => {
+      focused.value = currentPage - firstPage + 2
+    })
+    return
+  }
+
+  if (!allowedKeys.includes(key)) {
+    return
+  }
+
+  event.preventDefault()
+
+  if (key === 'ArrowRight' && hasNextPage) {
+    focused.value =
+      focused.value + 1 >= links.value + 4
+        ? hasPreviousPage
+          ? 0
+          : 2
+        : focused.value + 1
+  } else if (key === 'ArrowRight') {
+    focused.value = focused.value + 1 >= links.value + 2 ? 0 : focused.value + 1
+  } else if (key === 'ArrowLeft' && hasPreviousPage) {
+    focused.value =
+      focused.value - 1 < 0
+        ? hasNextPage
+          ? links.value + 3
+          : links.value + 1
+        : focused.value - 1
+  } else if (key === 'ArrowLeft') {
+    focused.value = focused.value - 1 <= 1 ? links.value + 3 : focused.value - 1
+  } else if (key === 'Home') {
+    focused.value = hasPreviousPage ? 0 : 2
+  } else if (key === 'End') {
+    focused.value = hasNextPage ? links.value + 3 : links.value + 1
+  }
+
+  const li = paginator.value?.children?.[focused.value]
+  const button = li?.children?.[0]
+
+  button?.focus()
+}
+</script>
+
 <template>
-  <nav
-    role="navigation"
-    class="relative rounded-md shadow-sm"
-  >
+  <nav role="navigation" class="relative rounded-md shadow-sm">
     <ul class="z-0 inline-flex -space-x-px" ref="paginator">
       <li>
         <button
@@ -36,10 +142,7 @@
         </button>
       </li>
 
-      <li
-        v-for="pageIdx in links"
-        :key="pageIdx"
-      >
+      <li v-for="pageIdx in links" :key="pageIdx">
         <button
           type="button"
           :class="[
@@ -96,130 +199,6 @@
     </ul>
   </nav>
 </template>
-
-<script>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon
-} from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    ChevronDoubleLeftIcon,
-    ChevronDoubleRightIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon
-  },
-
-  props: {
-    enabled: Boolean,
-    paginationInfo: Object
-  },
-
-  emits: ['page'],
-
-  setup (props, context) {
-    const { paginationInfo } = toRefs(props)
-
-    const links = computed(() => {
-      return paginationInfo.value.last_page + 1 - paginationInfo.value.first_page
-    })
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    function isCurrent (idx) {
-      return paginationInfo.value.current_page === paginationInfo.value.first_page + idx - 1
-    }
-
-    function changePage (page) {
-      if (page !== paginationInfo.value.current_page) {
-        context.emit('page', page)
-      }
-    }
-
-    const paginator = ref(null)
-    const focused = ref((paginationInfo.value?.current_page || 1) + 1)
-
-    function tabIndex (idx) {
-      return idx === focused.value ? '0' : '-1'
-    }
-
-    watch(paginationInfo, newPagination => {
-      const { current_page: currentPage, first_page: firstPage } = newPagination
-      focused.value = currentPage - firstPage + 2
-    })
-
-    /**
-     * @param {KeyboardEvent} event
-     * @param {number} idx
-     */
-    function handleKeydown (event, idx) {
-      const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
-      const { key } = event
-      const {
-        current_page: currentPage,
-        first_page: firstPage,
-        has_previous_page: hasPreviousPage,
-        has_next_page: hasNextPage
-      } = paginationInfo.value
-
-      if (key === 'Tab') {
-        setTimeout(() => { focused.value = currentPage - firstPage + 2 })
-        return
-      }
-
-      if (!allowedKeys.includes(key)) {
-        return
-      }
-
-      event.preventDefault()
-
-      if (key === 'ArrowRight' && hasNextPage) {
-        focused.value = focused.value + 1 >= links.value + 4
-          ? (hasPreviousPage ? 0 : 2)
-          : focused.value + 1
-      } else if (key === 'ArrowRight') {
-        focused.value = focused.value + 1 >= links.value + 2
-          ? 0
-          : focused.value + 1
-      } else if (key === 'ArrowLeft' && hasPreviousPage) {
-        focused.value = focused.value - 1 < 0
-          ? (hasNextPage ? links.value + 3 : links.value + 1)
-          : focused.value - 1
-      } else if (key === 'ArrowLeft') {
-        focused.value = focused.value - 1 <= 1
-          ? links.value + 3
-          : focused.value - 1
-      } else if (key === 'Home') {
-        focused.value = hasPreviousPage ? 0 : 2
-      } else if (key === 'End') {
-        focused.value = hasNextPage ? links.value + 3 : links.value + 1
-      }
-
-      const li = paginator.value?.children?.[focused.value]
-      const button = li?.children?.[0]
-
-      button?.focus()
-    }
-
-    return {
-      links,
-      t,
-      isCurrent,
-      changePage,
-      paginator,
-      focused,
-      tabIndex,
-      handleKeydown
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .pag-button {

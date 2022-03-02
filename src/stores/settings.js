@@ -14,7 +14,7 @@ export const THEME_SYSTEM = 'system'
 export const THEME_DARK = 'dark'
 export const THEME_LIGHT = 'light'
 
-export function getTheme () {
+export function getTheme() {
   const theme = localStorage.getItem(LocalStorageKeys.THEME)
 
   if (theme === null) {
@@ -37,7 +37,7 @@ export function getTheme () {
 /**
  * @param {MediaQueryListEvent} event
  */
-function handleThemeChange (event) {
+function handleThemeChange(event) {
   const settingsStore = useSettingsStore()
 
   if (settingsStore.theme === THEME_SYSTEM) {
@@ -49,7 +49,8 @@ function handleThemeChange (event) {
   }
 }
 
-window.matchMedia('(prefers-color-scheme: dark)')
+window
+  .matchMedia('(prefers-color-scheme: dark)')
   .addEventListener('change', handleThemeChange)
 
 const isDevEnvironment = !!import.meta.env.DEV
@@ -58,38 +59,46 @@ export const useSettingsStore = defineStore('settings', {
   state: () => ({
     blurNsfw: localStorage.getItem(LocalStorageKeys.BLUR_NSFW) === 'true',
     gridMode: localStorage.getItem(LocalStorageKeys.GRID_MODE) || 'comfortable',
-    showVueQueryDevTools: isDevEnvironment &&
-      localStorage.getItem(LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS) === 'true',
+    showVueQueryDevTools:
+      isDevEnvironment &&
+      localStorage.getItem(LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS) ===
+        'true',
     spoilerMode: {
-      cover: localStorage.getItem(LocalStorageKeys.SPOILER_MODE_COVER) === 'true',
-      synopsis: localStorage.getItem(LocalStorageKeys.SPOILER_MODE_SYNOPSIS) === 'true'
+      cover:
+        localStorage.getItem(LocalStorageKeys.SPOILER_MODE_COVER) === 'true',
+      synopsis:
+        localStorage.getItem(LocalStorageKeys.SPOILER_MODE_SYNOPSIS) === 'true'
     },
     theme: getTheme(),
     useDevSheet: isDevEnvironment,
     viewMode: localStorage.getItem(LocalStorageKeys.VIEW_MODE) || 'grid'
   }),
   actions: {
-    updateBlurNsfw (blurNsfw) {
+    updateBlurNsfw(blurNsfw) {
       this.blurNsfw = blurNsfw
 
       localStorage.setItem(LocalStorageKeys.BLUR_NSFW, blurNsfw)
     },
 
-    updateGridMode (gridMode) {
+    updateGridMode(gridMode) {
       this.gridMode = gridMode
 
       localStorage.setItem(LocalStorageKeys.GRID_MODE, gridMode)
     },
 
-    updateShowVueQueryDevTools (showVueQueryDevTools) {
+    updateShowVueQueryDevTools(showVueQueryDevTools) {
       this.showVueQueryDevTools = showVueQueryDevTools
 
-      localStorage.setItem(LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS, showVueQueryDevTools)
+      localStorage.setItem(
+        LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS,
+        showVueQueryDevTools
+      )
     },
 
-    updateSpoilerMode (spoilerMode) {
+    updateSpoilerMode(spoilerMode) {
       this.spoilerMode.cover = spoilerMode.cover || this.spoilerMode.cover
-      this.spoilerMode.synopsis = spoilerMode.synopsis || this.spoilerMode.synopsis
+      this.spoilerMode.synopsis =
+        spoilerMode.synopsis || this.spoilerMode.synopsis
 
       localStorage.setItem(
         LocalStorageKeys.SPOILER_MODE_COVER,
@@ -101,7 +110,7 @@ export const useSettingsStore = defineStore('settings', {
       )
     },
 
-    updateTheme (theme) {
+    updateTheme(theme) {
       this.theme = theme
 
       if (theme === THEME_SYSTEM) {
@@ -121,11 +130,11 @@ export const useSettingsStore = defineStore('settings', {
       }
     },
 
-    updateUseDevSheet (useDevSheet) {
+    updateUseDevSheet(useDevSheet) {
       this.useDevSheet = useDevSheet
     },
 
-    updateViewMode (viewMode) {
+    updateViewMode(viewMode) {
       this.viewMode = viewMode
 
       localStorage.setItem(LocalStorageKeys.VIEW_MODE, viewMode)

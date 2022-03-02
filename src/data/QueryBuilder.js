@@ -21,7 +21,7 @@ export default class QueryBuilder {
    *
    * @param {string?} sheetUrl The sheet URL
    */
-  constructor (sheetUrl) {
+  constructor(sheetUrl) {
     this.#sheetUrl = sheetUrl || ''
     this.#where = { operator: QueryBuilder.OR, restrictions: [] }
   }
@@ -32,7 +32,7 @@ export default class QueryBuilder {
    * @param  {...string} columns The columns to select
    * @returns {QueryBuilder} The current instance
    */
-  select (...columns) {
+  select(...columns) {
     this.#select = columns.length > 0 ? columns : []
 
     return this
@@ -46,7 +46,7 @@ export default class QueryBuilder {
    * @param {string} value The value
    * @returns {QueryBuilder} The current instance
    */
-  where (column, op, value) {
+  where(column, op, value) {
     if (arguments.length === 3) {
       this.#where.restrictions.push([column, op, value])
     } else if (arguments.length === 2 && op === null) {
@@ -72,7 +72,7 @@ export default class QueryBuilder {
    * @param {string} value The value
    * @returns {QueryBuilder} The current instance
    */
-  andWhere (column, op, value) {
+  andWhere(column, op, value) {
     this.#where.operator = QueryBuilder.AND
     this.where(...arguments)
 
@@ -87,7 +87,7 @@ export default class QueryBuilder {
    * @param {string} value The value
    * @returns {QueryBuilder} The current instance
    */
-  orWhere (column, op, value) {
+  orWhere(column, op, value) {
     this.#where.operator = QueryBuilder.OR
     this.where(...arguments)
 
@@ -100,7 +100,7 @@ export default class QueryBuilder {
    * @param  {...any} restrictions The restrictions
    * @returns An OR combined restriction
    */
-  static or (...restrictions) {
+  static or(...restrictions) {
     return {
       operator: QueryBuilder.OR,
       restrictions
@@ -113,7 +113,7 @@ export default class QueryBuilder {
    * @param  {...any} restrictions The restrictions
    * @returns An AND combined restriction
    */
-  static and (...restrictions) {
+  static and(...restrictions) {
     return {
       operator: QueryBuilder.AND,
       restrictions
@@ -126,7 +126,7 @@ export default class QueryBuilder {
    * @param  {...any} restrictions The restrictions
    * @returns An AND combined restriction
    */
-  static andNot (...restrictions) {
+  static andNot(...restrictions) {
     return {
       negated: true,
       operator: QueryBuilder.AND,
@@ -140,7 +140,7 @@ export default class QueryBuilder {
    * @param  {...string} columns The columns to group
    * @returns {QueryBuilder} The current instance
    */
-  groupBy (...columns) {
+  groupBy(...columns) {
     this.#groupBy = columns.length > 0 ? columns : []
 
     return this
@@ -152,7 +152,7 @@ export default class QueryBuilder {
    * @param  {...[string, 'asc' | 'desc']} columns The columns to sort
    * @returns {QueryBuilder} The current instance
    */
-  orderBy (...columns) {
+  orderBy(...columns) {
     this.#orderBy = columns.length > 0 ? columns : []
 
     return this
@@ -164,7 +164,7 @@ export default class QueryBuilder {
    * @param {number | null | undefined} limit The limit
    * @returns {QueryBuilder} The current instance
    */
-  limit (limit) {
+  limit(limit) {
     this.#limit = limit
 
     return this
@@ -176,7 +176,7 @@ export default class QueryBuilder {
    * @param {number | null | undefined} offset The offset
    * @returns {QueryBuilder} The current instance
    */
-  offset (offset) {
+  offset(offset) {
     this.#offset = offset
 
     return this
@@ -185,7 +185,7 @@ export default class QueryBuilder {
   /**
    * Convert the query to an object.
    */
-  toObject () {
+  toObject() {
     return {
       select: this.#select,
       where: this.#where,
@@ -203,7 +203,7 @@ export default class QueryBuilder {
    * @param {Object} obj The object
    * @returns {QueryBuilder} The instance
    */
-  static fromObject (obj) {
+  static fromObject(obj) {
     const qb = new QueryBuilder()
     qb.#select = obj.select || qb.#select
     qb.#where = obj.where || qb.#where
@@ -216,18 +216,21 @@ export default class QueryBuilder {
     return qb
   }
 
-  #whereString (where) {
+  #whereString(where) {
     if (Array.isArray(where)) {
       const [column, op, value] = where
-      const fixedValue = typeof value === 'string'
-        ? (op === 'is' || op === 'is not' ? value : `"${value}"`)
-        : value
+      const fixedValue =
+        typeof value === 'string'
+          ? op === 'is' || op === 'is not'
+            ? value
+            : `"${value}"`
+          : value
 
       return [column, op, fixedValue].join(' ')
     }
 
     const string = where.restrictions
-      .map(restriction => this.#whereString(restriction))
+      .map((restriction) => this.#whereString(restriction))
       .join(` ${where.operator} `)
     const not = where.negated ? 'not ' : ''
 
@@ -237,30 +240,22 @@ export default class QueryBuilder {
   /**
    * Generate the query string.
    */
-  toString () {
+  toString() {
     const parts = [
-      'select ' + ((this.#select.length > 0) ? this.#select.join(', ') : '*'),
-      (this.#where.restrictions.length > 0)
+      'select ' + (this.#select.length > 0 ? this.#select.join(', ') : '*'),
+      this.#where.restrictions.length > 0
         ? 'where ' + this.#whereString(this.#where)
         : '',
-      (this.#groupBy.length > 0)
-        ? 'group by ' + this.#groupBy.join(', ')
-        : '',
-      (this.#orderBy.length > 0)
+      this.#groupBy.length > 0 ? 'group by ' + this.#groupBy.join(', ') : '',
+      this.#orderBy.length > 0
         ? 'order by ' +
-          (
-            this.#orderBy
-              .map(([column, sort]) => `${column} ${sort}`)
-              .join(', ')
-          )
+          this.#orderBy.map(([column, sort]) => `${column} ${sort}`).join(', ')
         : '',
-      (this.#limit !== null) ? 'limit ' + this.#limit : '',
-      (this.#offset !== null) ? 'offset ' + this.#offset : ''
+      this.#limit !== null ? 'limit ' + this.#limit : '',
+      this.#offset !== null ? 'offset ' + this.#offset : ''
     ]
 
-    return parts
-      .filter(part => part.length > 0)
-      .join('\n')
+    return parts.filter((part) => part.length > 0).join('\n')
   }
 
   /**
@@ -268,7 +263,7 @@ export default class QueryBuilder {
    *
    * @returns {Query} The built query
    */
-  build () {
+  build() {
     return new Query(this.#sheetUrl, {
       builderObj: this.toObject(),
       queryString: this.toString()

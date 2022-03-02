@@ -1,6 +1,6 @@
 import { computed, onUnmounted, readonly, ref, watch } from 'vue'
 
-export default function useImageLazyLoader (imageUrl, elRef) {
+export default function useImageLazyLoader(imageUrl, elRef) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
   const intersected = ref(false)
@@ -25,7 +25,7 @@ export default function useImageLazyLoader (imageUrl, elRef) {
     imageLoading.value = false
   }
 
-  function loadImage () {
+  function loadImage() {
     if (imageUrl.value && imageUrl.value.length > 0) {
       image.src = imageUrl.value
     } else {
@@ -34,8 +34,8 @@ export default function useImageLazyLoader (imageUrl, elRef) {
     }
   }
 
-  function setupObserver () {
-    observer.value = new IntersectionObserver(entries => {
+  function setupObserver() {
+    observer.value = new IntersectionObserver((entries) => {
       const el = entries[0]
       if (el.isIntersecting) {
         intersected.value = true
@@ -46,7 +46,7 @@ export default function useImageLazyLoader (imageUrl, elRef) {
     observer.value.observe(elRef.value.$el || elRef.value)
   }
 
-  function disconnectObserver () {
+  function disconnectObserver() {
     observer.value.disconnect()
   }
 
@@ -56,7 +56,7 @@ export default function useImageLazyLoader (imageUrl, elRef) {
     }
   })
 
-  watch(intersected, newValue => {
+  watch(intersected, (newValue) => {
     if (newValue) {
       loadImage()
     }

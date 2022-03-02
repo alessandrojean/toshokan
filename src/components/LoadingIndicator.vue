@@ -1,12 +1,31 @@
+<script setup>
+import FadeTransition from './transitions/FadeTransition.vue'
+import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+
+defineProps({
+  animation: {
+    type: String,
+    default: 'spin'
+  },
+  blur: {
+    type: Boolean,
+    default: true
+  },
+  loading: Boolean,
+  position: {
+    type: String,
+    default: 'absolute'
+  },
+  small: Boolean,
+  zIndex: {
+    type: String,
+    default: ''
+  }
+})
+</script>
+
 <template>
-  <transition
-    leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="opacity-0"
-    enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-    enter-from-class="opacity-0"
-    enter-to-class="opacity-100"
-  >
+  <FadeTransition>
     <div
       aria-hidden="true"
       :class="[
@@ -25,36 +44,5 @@
         ]"
       />
     </div>
-  </transition>
+  </FadeTransition>
 </template>
-
-<script>
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-
-export default {
-  components: {
-    LoadingSpinIcon
-  },
-
-  props: {
-    animation: {
-      type: String,
-      default: 'spin'
-    },
-    blur: {
-      type: Boolean,
-      default: true
-    },
-    loading: Boolean,
-    position: {
-      type: String,
-      default: 'absolute'
-    },
-    small: Boolean,
-    zIndex: {
-      type: String,
-      default: ''
-    }
-  }
-}
-</script>

@@ -1,7 +1,7 @@
 import { getFlagUrl } from '.'
 import { isbn as validateIsbn } from './validators'
 
-export function convertIsbn13ToIsbn10 (isbn13) {
+export function convertIsbn13ToIsbn10(isbn13) {
   isbn13 = isbn13?.replace(/-/g, '') || ''
 
   if (!validateIsbn(isbn13)) {
@@ -13,7 +13,8 @@ export function convertIsbn13ToIsbn10 (isbn13) {
   }
 
   const equalPart = isbn13.slice(3, -1)
-  const sum = equalPart.split('')
+  const sum = equalPart
+    .split('')
     .map((d, i) => parseInt(d, 10) * (i + 1))
     .reduce((acm, crr) => acm + crr, 0)
   const lastDigit = sum % 11
@@ -55,24 +56,22 @@ const REGISTRATION_GROUPS = {
   99974: ['BO', 'es']
 }
 
-export function getIsbnCountry (isbn) {
+export function getIsbnCountry(isbn) {
   if (!validateIsbn(isbn)) {
     return null
   }
 
-  isbn = isbn.replace(/-/g, '')
-    .replace(/^97[8|9]/, '')
+  isbn = isbn.replace(/-/g, '').replace(/^97[8|9]/, '')
 
   const registrationGroups = Object.fromEntries(
-    Object.entries(REGISTRATION_GROUPS)
-      .map(([code, info]) => [
-        code,
-        {
-          countryCode: info[0],
-          locale: info[1],
-          flagUrl: getFlagUrl(info[0])
-        }
-      ])
+    Object.entries(REGISTRATION_GROUPS).map(([code, info]) => [
+      code,
+      {
+        countryCode: info[0],
+        locale: info[1],
+        flagUrl: getFlagUrl(info[0])
+      }
+    ])
   )
 
   for (let i = 1; i <= 5; i++) {

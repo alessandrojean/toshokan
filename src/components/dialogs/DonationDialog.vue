@@ -1,8 +1,43 @@
+<script setup>
+import { inject, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import {
+  Dialog,
+  DialogOverlay,
+  DialogTitle,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue'
+import { XIcon } from '@heroicons/vue/solid'
+
+import PicPayIcon from '@/components/icons/PicPayIcon.vue'
+
+const props = defineProps({ modelValue: Boolean })
+
+const emit = defineEmits(['update:modelValue'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+function closeDialog() {
+  emit('update:modelValue', false)
+}
+
+const { modelValue: open } = toRefs(props)
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+watch(open, (newOpen) => {
+  newOpen ? disableSearchShortcut() : enableSearchShortcut()
+})
+</script>
+
 <template>
   <TransitionRoot appear :show="modelValue" as="template">
     <Dialog
       as="div"
-      class="fixed z-20 inset-0 flex flex-col items-center justify-end md:justify-center px-6 sm:py-6 md:px-0 md:py-12 lg:py-16"
+      class="fixed z-30 inset-0 flex flex-col items-center justify-end md:justify-center px-6 sm:py-6 md:px-0 md:py-12 lg:py-16"
       @close="closeDialog"
     >
       <TransitionChild
@@ -55,8 +90,13 @@
           </p>
 
           <div class="flex items-center justify-center p-6">
-            <div class="w-48 h-48 relative rounded overflow-hidden border border-gray-300 dark:border-0 bg-white p-1 dark:opacity-90">
-              <img src="@/assets/donations/qrcode-picpay.svg" class="w-full h-full">
+            <div
+              class="w-48 h-48 relative rounded overflow-hidden border border-gray-300 dark:border-0 bg-white p-1 dark:opacity-90"
+            >
+              <img
+                src="@/assets/donations/qrcode-picpay.svg"
+                class="w-full h-full"
+              />
 
               <div
                 aria-hidden="true"
@@ -71,59 +111,3 @@
     </Dialog>
   </TransitionRoot>
 </template>
-
-<script>
-import { inject, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  Dialog,
-  DialogOverlay,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/solid'
-
-import PicPayIcon from '@/components/icons/PicPayIcon.vue'
-
-export default {
-  components: {
-    Dialog,
-    DialogOverlay,
-    DialogTitle,
-    PicPayIcon,
-    TransitionChild,
-    TransitionRoot,
-    XIcon
-  },
-
-  props: {
-    modelValue: Boolean
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props, context) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    function closeDialog () {
-      context.emit('update:modelValue', false)
-    }
-
-    const { modelValue: open } = toRefs(props)
-
-    const disableSearchShortcut = inject('disableSearchShortcut')
-    const enableSearchShortcut = inject('enableSearchShortcut')
-
-    watch(open, newOpen => {
-      newOpen ? disableSearchShortcut() : enableSearchShortcut()
-    })
-
-    return {
-      t,
-      closeDialog
-    }
-  }
-}
-</script>

@@ -11,19 +11,19 @@ export default class DataTable {
    *
    * @param {google.visualization.DataTable} dataTable The original instance
    */
-  constructor (dataTable) {
+  constructor(dataTable) {
     this.#dataTable = dataTable
   }
 
-  get rows () {
+  get rows() {
     return this.#dataTable.getNumberOfRows()
   }
 
-  get columns () {
+  get columns() {
     return this.#dataTable.getNumberOfColumns()
   }
 
-  get length () {
+  get length() {
     return this.rows
   }
 
@@ -32,11 +32,11 @@ export default class DataTable {
    *
    * @type {any[][]}
    */
-  get asArray () {
+  get asArray() {
     return Array.from(this)
   }
 
-  getRow (rowIdx) {
+  getRow(rowIdx) {
     const rowData = []
 
     for (let j = 0; j < this.columns; j++) {
@@ -46,12 +46,12 @@ export default class DataTable {
     return rowData
   }
 
-  getValue (rowIndex, columnIndex) {
+  getValue(rowIndex, columnIndex) {
     return this.#dataTable.getValue(rowIndex, columnIndex)
   }
 
   /** @type {Iterable<any[]>} */
-  [Symbol.iterator] () {
+  [Symbol.iterator]() {
     let row = 0
 
     return {

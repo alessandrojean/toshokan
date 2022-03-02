@@ -1,14 +1,216 @@
+<script setup>
+import { computed, inject, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useMarkdown from '@/composables/useMarkdown'
+import Book from '@/model/Book'
+import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+
+import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
+import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
+
+import BookCard from '@/components/book/BookCard.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+const props = defineProps({
+  book: Book,
+  collection: Array,
+  loading: Boolean
+})
+
+const { t, d, n, locale } = useI18n({ useScope: 'global' })
+const sheetStore = useSheetStore()
+const { book, loading, collection } = toRefs(props)
+
+const showBookInfo = computed(() => {
+  return !loading.value && book.value
+})
+
+const { renderMarkdown } = useMarkdown({ youtube: true })
+
+const notesRendered = computed(() => {
+  if (!showBookInfo.value) {
+    return ''
+  }
+
+  return renderMarkdown(book.value.notes)
+})
+
+const filteredCollection = computed(() => {
+  if (
+    !showBookInfo.value ||
+    !collection.value ||
+    collection.value.length === 0
+  ) {
+    return []
+  }
+
+  return collection.value
+})
+
+const tabs = computed(() => {
+  const items = [{ title: t('dashboard.details.tabs.metadata') }]
+
+  if (showBookInfo.value) {
+    if (book.value.notes.length > 0) {
+      items.push({ title: t('dashboard.details.tabs.notes') })
+    }
+
+    if (filteredCollection.value.length > 0) {
+      items.push({
+        title: t('dashboard.details.tabs.collection'),
+        count: filteredCollection.value.length
+      })
+    }
+  }
+
+  return items
+})
+
+function formatPrice(price) {
+  if (!price) {
+    return null
+  }
+
+  const { value, currency } = price
+
+  return n(value, 'currency', { currency })
+}
+
+const { data: timeZone } = useTimeZoneQuery({
+  enabled: computed(() => sheetStore.sheetId !== null)
+})
+
+function formatDate(date, format = 'short') {
+  if (typeof date === 'string' && date.length > 0) {
+    return d(
+      new Date(`${date}T00:00:00.000${timeZone.value.offsetStr}`),
+      format,
+      { timeZone: timeZone.value.name }
+    )
+  }
+
+  if (date instanceof Date) {
+    return d(date, format, { timeZone: timeZone.value.name })
+  }
+
+  return t('dashboard.details.info.dateUnknown')
+}
+
+const country = computed(() => book.value?.isbnData)
+
+const language = computed(() => {
+  if (!country.value) {
+    return null
+  }
+
+  const languageNames = new Intl.DisplayNames([locale.value], {
+    type: 'language'
+  })
+  const localizedName = languageNames.of(country.value.locale)
+
+  return (
+    localizedName.charAt(0).toLocaleUpperCase(locale.value) +
+    localizedName.slice(1)
+  )
+})
+
+const metadata = computed(() => {
+  const sameCurrency =
+    book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
+
+  return [
+    {
+      title: t('book.properties.id'),
+      value: book.value?.id,
+      class: 'font-mono'
+    },
+    {
+      title: t('book.properties.language'),
+      value: country.value ? language.value : null,
+      flagUrl: country.value?.flagUrl
+    },
+    {
+      title: t('book.properties.publisher'),
+      key: 'publisher',
+      value: book.value?.publisher,
+      searchable: true
+    },
+    {
+      title: t('book.properties.group'),
+      key: 'group',
+      value: book.value?.group,
+      searchable: true
+    },
+    {
+      title: t('book.properties.dimensions'),
+      value: book.value?.dimensions
+        ? n(book.value.dimensions.width, 'dimensions') +
+          ' × ' +
+          n(book.value.dimensions.height, 'dimensions') +
+          ' cm'
+        : null
+    },
+    {
+      title: t('book.properties.labelPrice'),
+      value: formatPrice(book.value?.labelPrice)
+    },
+    {
+      title: t('book.properties.paidPrice'),
+      value: formatPrice(book.value?.paidPrice),
+      badge: sameCurrency
+        ? book.value?.paidPrice?.value > book.value?.labelPrice?.value
+          ? book.value?.paidPrice?.value / book.value?.labelPrice.value
+          : 1 - book.value?.paidPrice?.value / book.value?.labelPrice.value
+        : null,
+      samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
+    },
+    {
+      title: t('book.properties.store'),
+      key: 'store',
+      value: book.value?.store,
+      searchable: true
+    },
+    {
+      title: t('book.properties.boughtAt'),
+      value: book.value?.boughtAt,
+      time: true
+    },
+    {
+      title: t('book.properties.readAt'),
+      value: book.value?.readAt,
+      time: true
+    },
+    {
+      title: t('book.properties.tags'),
+      value: (book.value?.tags || []).length > 0 ? book.value?.tags : null,
+      tags: true
+    }
+  ]
+})
+
+const showSearchDialog = inject('showSearchDialog')
+
+function searchBy(key, value, event) {
+  event.preventDefault()
+
+  const queryKeyword = t('dashboard.search.keywords.' + key)
+  const queryString = `${queryKeyword}:"${value}"`
+  showSearchDialog(queryString)
+}
+
+function searchByTag(tag, event) {
+  searchBy('tags', tag.toLowerCase(), event)
+}
+</script>
+
 <template>
-  <transition
-    leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="opacity-0"
-    enter-active-class="transition motion-reduce:transition-none duration-300 ease-out"
-    enter-from-class="opacity-0"
-    enter-to-class="opacity-100"
-  >
+  <FadeTransition>
     <TabGroup as="div" v-if="!loading">
-      <TabList class="flex flex-nowrap md:justify-center px-6 max-w-full overflow-x-auto md:overflow-x-visible overflow-y-hidden md:overflow-y-visible border-b border-gray-300 dark:border-gray-600 space-x-8 text-gray-500 dark:text-gray-400 text-sm md:text-base">
+      <TabList
+        class="flex flex-nowrap md:justify-center px-6 max-w-full overflow-x-auto md:overflow-x-visible overflow-y-hidden md:overflow-y-visible border-b border-gray-300 dark:border-gray-600 space-x-8 text-gray-500 dark:text-gray-400 text-sm md:text-base"
+      >
         <Tab
           v-for="(tab, i) in tabs"
           :key="i"
@@ -30,7 +232,9 @@
               v-if="tab.count !== undefined"
               :class="[
                 'ml-2 text-xs px-2.5 py-0.5 rounded-xl font-semibold',
-                selected ? 'bg-primary-100 dark:bg-primary-500 dark:bg-opacity-50 dark:text-primary-50' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                selected
+                  ? 'bg-primary-100 dark:bg-primary-500 dark:bg-opacity-50 dark:text-primary-50'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
               ]"
             >
               {{ n(tab.count, 'integer') }}
@@ -40,12 +244,11 @@
       </TabList>
       <TabPanels class="dark:text-gray-300 py-4 md:py-8 px-6 md:px-0">
         <!-- Book metadata -->
-        <TabPanel class="max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow">
+        <TabPanel
+          class="max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
+        >
           <dl class="md:divide-y md:divide-gray-200 md:dark:divide-gray-700">
-            <template
-              v-for="(mt, i) in metadata"
-              :key="i"
-            >
+            <template v-for="(mt, i) in metadata" :key="i">
               <div
                 v-if="mt.value || !showBookInfo"
                 class="px-0 md:px-6 py-2 md:py-3.5 md:grid md:grid-cols-3 md:gap-4"
@@ -56,7 +259,10 @@
                 >
                   {{ mt.title }}
                 </dt>
-                <div v-else class="mt-1 md:mt-0 motion-safe:animate-pulse w-32 h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
+                <div
+                  v-else
+                  class="mt-1 md:mt-0 motion-safe:animate-pulse w-32 h-5 bg-gray-400 dark:bg-gray-600 rounded"
+                ></div>
 
                 <dd
                   v-if="showBookInfo"
@@ -71,12 +277,9 @@
                     alt=""
                     aria-hidden="true"
                     class="inline-block w-5 h-5 mr-2.5"
-                  >
+                  />
 
-                  <time
-                    v-if="mt.time"
-                    :datetime="mt.value.toISOString()"
-                  >
+                  <time v-if="mt.time" :datetime="mt.value.toISOString()">
                     {{ formatDate(mt.value) }}
                   </time>
                   <ul v-else-if="mt.tags" class="tag-list">
@@ -105,7 +308,9 @@
                   <div
                     v-if="mt.badge && !mt.samePrice"
                     :class="[
-                      mt.badge <= 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-800',
+                      mt.badge <= 1
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-red-100 text-red-800',
                       'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
                     ]"
                   >
@@ -116,7 +321,10 @@
                     <span>{{ n(mt.badge, 'percent') }}</span>
                   </div>
                 </dd>
-                <div v-else class="mt-1 md:mt-0 motion-safe:animate-pulse w-44 h-5 bg-gray-400 dark:bg-gray-600 rounded"></div>
+                <div
+                  v-else
+                  class="mt-1 md:mt-0 motion-safe:animate-pulse w-44 h-5 bg-gray-400 dark:bg-gray-600 rounded"
+                ></div>
               </div>
             </template>
           </dl>
@@ -144,235 +352,8 @@
         </TabPanel>
       </TabPanels>
     </TabGroup>
-  </transition>
+  </FadeTransition>
 </template>
-
-<script>
-import { computed, inject, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useMarkdown from '@/composables/useMarkdown'
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
-
-import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
-import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
-
-import BookCard from '@/components/book/BookCard.vue'
-
-export default {
-  components: {
-    BookCard,
-    Tab,
-    TabGroup,
-    TabList,
-    TabPanels,
-    TabPanel,
-    TrendingDownIcon,
-    TrendingUpIcon
-  },
-
-  props: {
-    book: Object,
-    collection: Array,
-    loading: Boolean
-  },
-
-  setup (props) {
-    const { t, d, n, locale } = useI18n({ useScope: 'global' })
-    const sheetStore = useSheetStore()
-    const { book, loading, collection } = toRefs(props)
-
-    const showBookInfo = computed(() => {
-      return !loading.value && book.value
-    })
-
-    const { renderMarkdown } = useMarkdown({ youtube: true })
-
-    const notesRendered = computed(() => {
-      if (!showBookInfo.value) {
-        return ''
-      }
-
-      return renderMarkdown(book.value.notes)
-    })
-
-    const filteredCollection = computed(() => {
-      if (!showBookInfo.value || !collection.value || collection.value.length === 0) {
-        return []
-      }
-
-      return collection.value
-    })
-
-    const tabs = computed(() => {
-      const items = [{ title: t('dashboard.details.tabs.metadata') }]
-
-      if (showBookInfo.value) {
-        if (book.value.notes.length > 0) {
-          items.push({ title: t('dashboard.details.tabs.notes') })
-        }
-
-        if (filteredCollection.value.length > 0) {
-          items.push({
-            title: t('dashboard.details.tabs.collection'),
-            count: filteredCollection.value.length
-          })
-        }
-      }
-
-      return items
-    })
-
-    function formatPrice (price) {
-      if (!price) {
-        return null
-      }
-
-      const { value, currency } = price
-
-      return n(value, 'currency', { currency })
-    }
-
-    const { data: timeZone } = useTimeZoneQuery({
-      enabled: computed(() => sheetStore.sheetId !== null)
-    })
-
-    function formatDate (date, format = 'short') {
-      if (typeof date === 'string' && date.length > 0) {
-        return d(
-          new Date(`${date}T00:00:00.000${timeZone.value.offsetStr}`),
-          format,
-          { timeZone: timeZone.value.name }
-        )
-      }
-
-      if (date instanceof Date) {
-        return d(date, format, { timeZone: timeZone.value.name })
-      }
-
-      return t('dashboard.details.info.dateUnknown')
-    }
-
-    const country = computed(() => book.value?.isbnData)
-
-    const language = computed(() => {
-      if (!country.value) {
-        return null
-      }
-
-      const languageNames = new Intl.DisplayNames([locale.value], { type: 'language' })
-      const localizedName = languageNames.of(country.value.locale)
-
-      return localizedName.charAt(0).toLocaleUpperCase(locale.value) +
-        localizedName.slice(1)
-    })
-
-    const metadata = computed(() => {
-      const sameCurrency = book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
-
-      return [
-        {
-          title: t('book.properties.id'),
-          value: book.value?.id,
-          class: 'font-mono'
-        },
-        {
-          title: t('book.properties.language'),
-          value: country.value
-            ? language.value
-            : null,
-          flagUrl: country.value?.flagUrl
-        },
-        {
-          title: t('book.properties.publisher'),
-          key: 'publisher',
-          value: book.value?.publisher,
-          searchable: true
-        },
-        {
-          title: t('book.properties.group'),
-          key: 'group',
-          value: book.value?.group,
-          searchable: true
-        },
-        {
-          title: t('book.properties.dimensions'),
-          value: book.value?.dimensions
-            ? n(book.value.dimensions.width, 'dimensions') +
-                ' × ' + n(book.value.dimensions.height, 'dimensions') + ' cm'
-            : null
-        },
-        {
-          title: t('book.properties.labelPrice'),
-          value: formatPrice(book.value?.labelPrice)
-        },
-        {
-          title: t('book.properties.paidPrice'),
-          value: formatPrice(book.value?.paidPrice),
-          badge: sameCurrency
-            ? (book.value?.paidPrice?.value > book.value?.labelPrice?.value
-                ? book.value?.paidPrice?.value / book.value?.labelPrice.value
-                : 1 - book.value?.paidPrice?.value / book.value?.labelPrice.value)
-            : null,
-          samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
-        },
-        {
-          title: t('book.properties.store'),
-          key: 'store',
-          value: book.value?.store,
-          searchable: true
-        },
-        {
-          title: t('book.properties.boughtAt'),
-          value: book.value?.boughtAt,
-          time: true
-        },
-        {
-          title: t('book.properties.readAt'),
-          value: book.value?.readAt,
-          time: true
-        },
-        {
-          title: t('book.properties.tags'),
-          value: (book.value?.tags || []).length > 0
-            ? book.value?.tags
-            : null,
-          tags: true
-        }
-      ]
-    })
-
-    const showSearchDialog = inject('showSearchDialog')
-
-    function searchBy (key, value, event) {
-      event.preventDefault()
-
-      const queryKeyword = t('dashboard.search.keywords.' + key)
-      const queryString = `${queryKeyword}:"${value}"`
-      showSearchDialog(queryString)
-    }
-
-    function searchByTag (tag, event) {
-      searchBy('tags', tag.toLowerCase(), event)
-    }
-
-    return {
-      showBookInfo,
-      notesRendered,
-      tabs,
-      formatPrice,
-      formatDate,
-      metadata,
-      filteredCollection,
-      searchBy,
-      searchByTag,
-      t,
-      n
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .tag-list {

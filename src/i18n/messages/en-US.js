@@ -34,8 +34,10 @@ export default {
     pageChanged: 'Navigated to {pageTitle}.'
   },
   errors: {
-    cookiesDisabled: 'The cookies are disabled. Enable them and refresh the page.',
-    authStartedFailed: 'It was not possible to start the authentication system.',
+    cookiesDisabled:
+      'The cookies are disabled. Enable them and refresh the page.',
+    authStartedFailed:
+      'It was not possible to start the authentication system.',
     missingScopes: 'Some permissions were not granted to the app.',
     badQuery: 'There is a error in the query: {error}',
     refresh: 'Refresh the page',
@@ -93,14 +95,15 @@ export default {
         title: 'No covers found',
         description: 'You can add a custom one below.'
       },
-      about: 'The images are obtained from Amazon and the publishers\' websites.',
+      about:
+        "The images are obtained from Amazon and the publishers' websites.",
       custom: {
         title: 'Custom image',
         description: 'You can also add a new image to the options.',
         label: 'Image URL',
         placeholder: 'Insert a custom URL',
         add: 'Add',
-        error: 'There\'s an error in the custom image formulary'
+        error: "There's an error in the custom image formulary"
       }
     },
     form: {
@@ -129,7 +132,8 @@ export default {
         labelPrice: '19.95',
         paidPrice: '15.95',
         store: 'Amazon',
-        synopsis: 'A secret U.S. chemical weapon called "MW" accidentally leaks…',
+        synopsis:
+          'A secret U.S. chemical weapon called "MW" accidentally leaks…',
         notes: 'The manga have a Tezuka autograph in the first page.',
         boughtAt: '02/18/2021'
       },
@@ -142,9 +146,10 @@ export default {
     },
     deleteModal: {
       title: 'Delete the book | Delete the books',
-      message1: 'Are you sure you want to delete this book? | ' +
+      message1:
+        'Are you sure you want to delete this book? | ' +
         'Are you sure you want to delete this books?',
-      message2: 'This action can\'t be undone.',
+      message2: "This action can't be undone.",
       delete: 'Delete',
       cancel: 'Cancel'
     },
@@ -235,7 +240,7 @@ export default {
   },
   pageNotFound: {
     title: 'Page not found',
-    description: 'The content you\'re looking for coudn\'t be found.',
+    description: "The content you're looking for coudn't be found.",
     goBack: 'Go back to home',
     goBackDashboard: 'Go back to dashboard'
   },
@@ -403,7 +408,7 @@ export default {
           readToday: 'I finished the reading today',
           readOtherDate: 'I finished the reading at other date'
         },
-        fieldHelp: 'Leave it blank if you don\'t remember.',
+        fieldHelp: "Leave it blank if you don't remember.",
         actionClear: 'Clear'
       },
       organizationForm: {
@@ -441,7 +446,7 @@ export default {
       nextReads: 'Next reads',
       groups: 'Groups',
       empty: {
-        title: 'You don\'t have any books yet',
+        title: "You don't have any books yet",
         description: `
           Create at least one book to allow the information to
           be calculated and displayed at this page.
@@ -457,7 +462,8 @@ export default {
       filter: 'Filter',
       newBook: 'New book',
       items: {
-        current: 'Items from all groups | Items from the group {count} | Items from {count} groups',
+        current:
+          'Items from all groups | Items from the group {count} | Items from {count} groups',
         tableColumns: {
           actions: 'Actions',
           deleteSelection: 'Delete'
@@ -492,12 +498,12 @@ export default {
         sortBy: 'Sort by',
         favorites: {
           label: 'Favorites',
-          indiferent: 'Doesn\'t matter',
+          indiferent: "Doesn't matter",
           only: 'Only'
         },
         futureItems: {
           label: 'Future itens',
-          indiferent: 'Doesn\'t matter',
+          indiferent: "Doesn't matter",
           only: 'Only',
           hide: 'Hide'
         }
@@ -519,7 +525,8 @@ export default {
     },
     newBook: {
       title: 'New book',
-      description: 'Fill out the information below to create the book in the spreadsheet.',
+      description:
+        'Fill out the information below to create the book in the spreadsheet.',
       step: 'Step {0} of {1}',
       goBack: 'Previous step',
       autoFill: {
@@ -558,11 +565,12 @@ export default {
             *[ISBN]: International Standard Book Number
           `,
           additionalInfo: 'Additional information',
-          wikipediaLink: 'https://en.wikipedia.org/wiki/International_Standard_Book_Number'
+          wikipediaLink:
+            'https://en.wikipedia.org/wiki/International_Standard_Book_Number'
         },
         existAlert: {
           title: 'A book with this ISBN already exists',
-          body: 'You can make a copy if it\'s your need.',
+          body: "You can make a copy if it's your need.",
           actionView: 'View',
           actionMakeCopy: 'Make a copy'
         }
@@ -710,7 +718,7 @@ export default {
       title: 'Statistics',
       moreSoon: 'More statistics soon.',
       empty: {
-        title: 'You don\'t have any books yet',
+        title: "You don't have any books yet",
         description: `
           Create at least one book so we can start to do the calculation
           of your library statistics.
@@ -718,7 +726,7 @@ export default {
         action: 'New book'
       },
       tooEarly: {
-        title: 'It\'s too early to display the statistics',
+        title: "It's too early to display the statistics",
         description: `
           The statistics will be shown after books within the
           period of at least two months are created.

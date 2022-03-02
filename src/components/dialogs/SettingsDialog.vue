@@ -1,11 +1,191 @@
+<script setup>
+import { computed, inject, reactive, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useQueryClient } from 'vue-query'
+
+import { useAuthStore } from '@/stores/auth'
+import { useSettingsStore } from '@/stores/settings'
+import { useSheetStore } from '@/stores/sheet'
+
+import {
+  Dialog,
+  DialogOverlay,
+  DialogTitle,
+  Switch,
+  SwitchLabel,
+  SwitchGroup,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue'
+
+import { CheckIcon, ExclamationIcon, XIcon } from '@heroicons/vue/solid'
+
+import LocaleSelector from '@/components/LocaleSelector.vue'
+
+const props = defineProps({ isOpen: Boolean })
+
+const emit = defineEmits(['close'])
+
+const { t, locale } = useI18n({ useScope: 'global' })
+
+function closeDialog() {
+  emit('close')
+}
+
+const { isOpen } = toRefs(props)
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+const isDev = ref(import.meta.env.DEV)
+
+const tabs = computed(() => {
+  const buttons = [
+    {
+      key: 'appearence',
+      title: t('dashboard.settings.appearence.title')
+    },
+    {
+      key: 'privacy',
+      title: t('dashboard.settings.privacy.title')
+    }
+  ]
+
+  if (isDev.value) {
+    buttons.push({
+      key: 'development',
+      title: t('dashboard.settings.development.title')
+    })
+  }
+
+  return buttons
+})
+
+const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
+const sheetStore = useSheetStore()
+const queryClient = useQueryClient()
+
+const settings = reactive({
+  appearence: {
+    locale: locale.value,
+    theme: settingsStore.theme,
+    viewMode: settingsStore.viewMode,
+    gridMode: settingsStore.gridMode,
+    spoilerMode: { ...settingsStore.spoilerMode },
+    blurNsfw: settingsStore.blurNsfw
+  },
+  development: {
+    showVueQueryDevTools: settingsStore.showVueQueryDevTools,
+    useDevSheet: settingsStore.useDevSheet
+  }
+})
+
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) {
+    Object.assign(settings, {
+      appearence: {
+        locale: locale.value,
+        theme: settingsStore.theme,
+        viewMode: settingsStore.viewMode,
+        gridMode: settingsStore.gridMode,
+        spoilerMode: { ...settingsStore.spoilerMode },
+        blurNsfw: settingsStore.blurNsfw
+      },
+      development: {
+        showVueQueryDevTools: settingsStore.showVueQueryDevTools,
+        useDevSheet: settingsStore.useDevSheet
+      }
+    })
+
+    disableSearchShortcut()
+  } else {
+    enableSearchShortcut()
+  }
+})
+
+const theme = computed(() => settingsStore.theme)
+
+watch(theme, (newTheme) => {
+  if (settings.appearence.theme !== newTheme) {
+    settings.appearence.theme = newTheme
+  }
+})
+
+function updateSetting(key, newValue) {
+  const path = key.split('.')
+
+  if (path[2]) {
+    settings[path[0]][path[1]][path[2]] = newValue
+  } else {
+    settings[path[0]][path[1]] = newValue
+  }
+
+  if (key === 'appearence.locale') {
+    saveLocale()
+  } else if (key === 'appearence.theme') {
+    settingsStore.updateTheme(settings.appearence.theme)
+  }
+}
+
+function saveLocale() {
+  const { appearence } = settings
+
+  if (locale.value !== appearence.locale) {
+    locale.value = appearence.locale
+    queryClient.invalidateQueries('statistics')
+    queryClient.invalidateQueries('last-added')
+    queryClient.invalidateQueries('latest-readings')
+    queryClient.invalidateQueries('books')
+    queryClient.invalidateQueries('book')
+  }
+}
+
+function saveAppearenceSettings() {
+  const { appearence } = settings
+
+  saveLocale()
+  settingsStore.updateTheme(appearence.theme)
+  settingsStore.updateBlurNsfw(appearence.blurNsfw)
+  settingsStore.updateGridMode(appearence.gridMode)
+  settingsStore.updateSpoilerMode(appearence.spoilerMode)
+  settingsStore.updateViewMode(appearence.viewMode)
+}
+
+async function saveDevelopmentSettings() {
+  const { development } = settings
+
+  settingsStore.updateShowVueQueryDevTools(development.showVueQueryDevTools)
+
+  if (development.useDevSheet !== settingsStore.useDevSheet) {
+    settingsStore.updateUseDevSheet(development.useDevSheet)
+
+    await sheetStore.findSheetId()
+    queryClient.resetQueries()
+    queryClient.refetchQueries()
+  }
+}
+
+async function handleSave() {
+  saveAppearenceSettings()
+  await saveDevelopmentSettings()
+  closeDialog()
+}
+
+function handleDisconnect() {
+  closeDialog()
+  authStore.disconnect()
+}
+</script>
+
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog
-      static
-      as="template"
-      :open="isOpen"
-      @close="closeDialog"
-    >
+    <Dialog static as="template" :open="isOpen" @close="closeDialog">
       <div class="dialog">
         <TransitionChild
           as="template"
@@ -36,18 +216,24 @@
               </DialogTitle>
             </div>
 
-            <button
-              class="close-button has-ring-focus"
-              @click="closeDialog"
-            >
+            <button class="close-button has-ring-focus" @click="closeDialog">
               <span aria-hidden="true">
                 <XIcon class="w-5 h-5" />
               </span>
             </button>
 
             <span aria-hidden="true" class="absolute left-2">
-              <svg class="text-white opacity-30 block h-48 w-48" viewBox="0 0 184 184" xmlns="http://www.w3.org/2000/svg">
-                <path d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z" fill="currentColor" fill-rule="evenodd" opacity="0.503"></path>
+              <svg
+                class="text-white opacity-30 block h-48 w-48"
+                viewBox="0 0 184 184"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  opacity="0.503"
+                ></path>
               </svg>
             </span>
           </div>
@@ -68,7 +254,9 @@
 
             <TabPanels as="template">
               <div class="tab-panels" ref="main">
-                <TabPanel class="has-ring-focus rounded-md focus-visible:ring-inset">
+                <TabPanel
+                  class="has-ring-focus rounded-md focus-visible:ring-inset"
+                >
                   <div class="divide-y dark:divide-gray-700">
                     <div class="preference">
                       <div class="preference-description">
@@ -76,12 +264,18 @@
                           {{ t('dashboard.settings.appearence.locale.label') }}
                         </label>
                         <p>
-                          {{ t('dashboard.settings.appearence.locale.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.locale.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <LocaleSelector
                         :model-value="settings.appearence.locale"
-                        @update:model-value="updateSetting('appearence.locale', $event)"
+                        @update:model-value="
+                          updateSetting('appearence.locale', $event)
+                        "
                       />
                     </div>
                     <div class="preference">
@@ -90,21 +284,34 @@
                           {{ t('dashboard.settings.appearence.theme.label') }}
                         </label>
                         <p>
-                          {{ t('dashboard.settings.appearence.theme.description') }}
+                          {{
+                            t('dashboard.settings.appearence.theme.description')
+                          }}
                         </p>
                       </div>
                       <select
                         class="select w-44 h-auto"
                         id="theme"
-                        @change="updateSetting('appearence.theme', $event.target.value)"
+                        @change="
+                          updateSetting('appearence.theme', $event.target.value)
+                        "
                       >
-                        <option value="system" :selected="'system' === settings.appearence.theme">
+                        <option
+                          value="system"
+                          :selected="'system' === settings.appearence.theme"
+                        >
                           {{ t('dashboard.settings.appearence.theme.system') }}
                         </option>
-                        <option value="light" :selected="'light' === settings.appearence.theme">
+                        <option
+                          value="light"
+                          :selected="'light' === settings.appearence.theme"
+                        >
                           {{ t('dashboard.settings.appearence.theme.light') }}
                         </option>
-                        <option value="dark" :selected="'dark' === settings.appearence.theme">
+                        <option
+                          value="dark"
+                          :selected="'dark' === settings.appearence.theme"
+                        >
                           {{ t('dashboard.settings.appearence.theme.dark') }}
                         </option>
                       </select>
@@ -112,21 +319,38 @@
                     <div class="preference">
                       <div class="preference-description">
                         <label for="view-mode">
-                          {{ t('dashboard.settings.appearence.viewMode.label') }}
+                          {{
+                            t('dashboard.settings.appearence.viewMode.label')
+                          }}
                         </label>
                         <p>
-                          {{ t('dashboard.settings.appearence.viewMode.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.viewMode.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <select
                         class="select w-36 h-auto"
                         id="view-mode"
-                        @change="updateSetting('appearence.viewMode', $event.target.value)"
+                        @change="
+                          updateSetting(
+                            'appearence.viewMode',
+                            $event.target.value
+                          )
+                        "
                       >
-                        <option value="grid" :selected="'grid' === settings.appearence.viewMode">
+                        <option
+                          value="grid"
+                          :selected="'grid' === settings.appearence.viewMode"
+                        >
                           {{ t('dashboard.library.filters.viewMode.grid') }}
                         </option>
-                        <option value="table" :selected="'table' === settings.appearence.viewMode">
+                        <option
+                          value="table"
+                          :selected="'table' === settings.appearence.viewMode"
+                        >
                           {{ t('dashboard.library.filters.viewMode.table') }}
                         </option>
                       </select>
@@ -134,44 +358,86 @@
                     <div class="preference">
                       <div class="preference-description">
                         <label for="grid-mode">
-                          {{ t('dashboard.settings.appearence.gridMode.label') }}
+                          {{
+                            t('dashboard.settings.appearence.gridMode.label')
+                          }}
                         </label>
                         <p>
-                          {{ t('dashboard.settings.appearence.gridMode.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.gridMode.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <select
                         class="select w-36 h-auto"
                         id="grid-mode"
                         :disabled="settings.appearence.viewMode !== 'grid'"
-                        @change="updateSetting('appearence.gridMode', $event.target.value)"
+                        @change="
+                          updateSetting(
+                            'appearence.gridMode',
+                            $event.target.value
+                          )
+                        "
                       >
-                        <option value="compact" :selected="'compact' === settings.appearence.gridMode">
+                        <option
+                          value="compact"
+                          :selected="'compact' === settings.appearence.gridMode"
+                        >
                           {{ t('dashboard.library.filters.gridMode.compact') }}
                         </option>
-                        <option value="comfortable" :selected="'comfortable' === settings.appearence.gridMode">
-                          {{ t('dashboard.library.filters.gridMode.comfortable') }}
+                        <option
+                          value="comfortable"
+                          :selected="
+                            'comfortable' === settings.appearence.gridMode
+                          "
+                        >
+                          {{
+                            t('dashboard.library.filters.gridMode.comfortable')
+                          }}
                         </option>
                       </select>
                     </div>
                     <SwitchGroup as="div" class="preference">
                       <div class="preference-description">
                         <SwitchLabel>
-                          {{ t('dashboard.settings.appearence.spoilerModeSynopsis.label') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.spoilerModeSynopsis.label'
+                            )
+                          }}
                         </SwitchLabel>
                         <p>
-                          {{ t('dashboard.settings.appearence.spoilerModeSynopsis.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.spoilerModeSynopsis.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <Switch
                         :model-value="settings.appearence.spoilerMode.synopsis"
-                        @update:model-value="updateSetting('appearence.spoilerMode.synopsis', $event)"
-                        :class="settings.appearence.spoilerMode.synopsis ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                        @update:model-value="
+                          updateSetting(
+                            'appearence.spoilerMode.synopsis',
+                            $event
+                          )
+                        "
+                        :class="
+                          settings.appearence.spoilerMode.synopsis
+                            ? 'bg-primary-600 dark:bg-primary-500'
+                            : 'bg-gray-200 dark:bg-gray-600'
+                        "
                         class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                       >
                         <span
                           aria-hidden="true"
-                          :class="settings.appearence.spoilerMode.synopsis ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                          :class="
+                            settings.appearence.spoilerMode.synopsis
+                              ? 'translate-x-6 dark:bg-white'
+                              : 'translate-x-1 dark:bg-gray-100'
+                          "
                           class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                         />
                       </Switch>
@@ -179,21 +445,39 @@
                     <SwitchGroup as="div" class="preference">
                       <div class="preference-description">
                         <SwitchLabel>
-                          {{ t('dashboard.settings.appearence.spoilerModeCover.label') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.spoilerModeCover.label'
+                            )
+                          }}
                         </SwitchLabel>
                         <p>
-                          {{ t('dashboard.settings.appearence.spoilerModeCover.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.spoilerModeCover.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <Switch
                         :model-value="settings.appearence.spoilerMode.cover"
-                        @update:model-value="updateSetting('appearence.spoilerMode.cover', $event)"
-                        :class="settings.appearence.spoilerMode.cover ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                        @update:model-value="
+                          updateSetting('appearence.spoilerMode.cover', $event)
+                        "
+                        :class="
+                          settings.appearence.spoilerMode.cover
+                            ? 'bg-primary-600 dark:bg-primary-500'
+                            : 'bg-gray-200 dark:bg-gray-600'
+                        "
                         class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                       >
                         <span
                           aria-hidden="true"
-                          :class="settings.appearence.spoilerMode.cover ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                          :class="
+                            settings.appearence.spoilerMode.cover
+                              ? 'translate-x-6 dark:bg-white'
+                              : 'translate-x-1 dark:bg-gray-100'
+                          "
                           class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                         />
                       </Switch>
@@ -201,36 +485,60 @@
                     <SwitchGroup as="div" class="preference">
                       <div class="preference-description">
                         <SwitchLabel>
-                          {{ t('dashboard.settings.appearence.blurNsfwCover.label') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.blurNsfwCover.label'
+                            )
+                          }}
                         </SwitchLabel>
                         <p>
-                          {{ t('dashboard.settings.appearence.blurNsfwCover.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.appearence.blurNsfwCover.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <Switch
                         :model-value="settings.appearence.blurNsfw"
-                        @update:model-value="updateSetting('appearence.blurNsfw', $event)"
+                        @update:model-value="
+                          updateSetting('appearence.blurNsfw', $event)
+                        "
                         v-model="settings.appearence.blurNsfw"
-                        :class="settings.appearence.blurNsfw ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                        :class="
+                          settings.appearence.blurNsfw
+                            ? 'bg-primary-600 dark:bg-primary-500'
+                            : 'bg-gray-200 dark:bg-gray-600'
+                        "
                         class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                       >
                         <span
                           aria-hidden="true"
-                          :class="settings.appearence.blurNsfw ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                          :class="
+                            settings.appearence.blurNsfw
+                              ? 'translate-x-6 dark:bg-white'
+                              : 'translate-x-1 dark:bg-gray-100'
+                          "
                           class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                         />
                       </Switch>
                     </SwitchGroup>
                   </div>
                 </TabPanel>
-                <TabPanel class="has-ring-focus rounded-md focus-visible:ring-inset">
+                <TabPanel
+                  class="has-ring-focus rounded-md focus-visible:ring-inset"
+                >
                   <div class="preference">
                     <div class="preference-description">
                       <label>
                         {{ t('dashboard.settings.privacy.removeAccess.label') }}
                       </label>
                       <p>
-                        {{ t('dashboard.settings.privacy.removeAccess.description') }}
+                        {{
+                          t(
+                            'dashboard.settings.privacy.removeAccess.description'
+                          )
+                        }}
                       </p>
                     </div>
                     <div>
@@ -243,37 +551,62 @@
                           <ExclamationIcon />
                         </span>
                         <span>
-                          {{ t('dashboard.settings.privacy.removeAccess.remove') }}
+                          {{
+                            t('dashboard.settings.privacy.removeAccess.remove')
+                          }}
                         </span>
                       </button>
                     </div>
                   </div>
                 </TabPanel>
-                <TabPanel v-if="isDev" class="has-ring-focus rounded-md focus-visible:ring-inset">
+                <TabPanel
+                  v-if="isDev"
+                  class="has-ring-focus rounded-md focus-visible:ring-inset"
+                >
                   <div class="divide-y dark:divide-gray-700">
                     <SwitchGroup as="div" class="preference">
                       <div class="preference-description">
                         <SwitchLabel>
                           <span aria-hidden="true">
-                            <ExclamationIcon class="w-5 h-5 mr-1 text-red-600 dark:text-red-400" />
+                            <ExclamationIcon
+                              class="w-5 h-5 mr-1 text-red-600 dark:text-red-400"
+                            />
                           </span>
                           <span>
-                            {{ t('dashboard.settings.development.useDevSheet.label') }}
+                            {{
+                              t(
+                                'dashboard.settings.development.useDevSheet.label'
+                              )
+                            }}
                           </span>
                         </SwitchLabel>
                         <p>
-                          {{ t('dashboard.settings.development.useDevSheet.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.development.useDevSheet.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <Switch
                         :model-value="settings.development.useDevSheet"
-                        @update:model-value="updateSetting('development.useDevSheet', $event)"
-                        :class="settings.development.useDevSheet ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                        @update:model-value="
+                          updateSetting('development.useDevSheet', $event)
+                        "
+                        :class="
+                          settings.development.useDevSheet
+                            ? 'bg-primary-600 dark:bg-primary-500'
+                            : 'bg-gray-200 dark:bg-gray-600'
+                        "
                         class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                       >
                         <span
                           aria-hidden="true"
-                          :class="settings.development.useDevSheet ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                          :class="
+                            settings.development.useDevSheet
+                              ? 'translate-x-6 dark:bg-white'
+                              : 'translate-x-1 dark:bg-gray-100'
+                          "
                           class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                         />
                       </Switch>
@@ -281,21 +614,42 @@
                     <SwitchGroup as="div" class="preference">
                       <div class="preference-description">
                         <SwitchLabel>
-                          {{ t('dashboard.settings.development.showVueQueryDevTools.label') }}
+                          {{
+                            t(
+                              'dashboard.settings.development.showVueQueryDevTools.label'
+                            )
+                          }}
                         </SwitchLabel>
                         <p>
-                          {{ t('dashboard.settings.development.showVueQueryDevTools.description') }}
+                          {{
+                            t(
+                              'dashboard.settings.development.showVueQueryDevTools.description'
+                            )
+                          }}
                         </p>
                       </div>
                       <Switch
                         :model-value="settings.development.showVueQueryDevTools"
-                        @update:model-value="updateSetting('development.showVueQueryDevTools', $event)"
-                        :class="settings.development.showVueQueryDevTools ? 'bg-primary-600 dark:bg-primary-500' : 'bg-gray-200 dark:bg-gray-600'"
+                        @update:model-value="
+                          updateSetting(
+                            'development.showVueQueryDevTools',
+                            $event
+                          )
+                        "
+                        :class="
+                          settings.development.showVueQueryDevTools
+                            ? 'bg-primary-600 dark:bg-primary-500'
+                            : 'bg-gray-200 dark:bg-gray-600'
+                        "
                         class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                       >
                         <span
                           aria-hidden="true"
-                          :class="settings.development.showVueQueryDevTools ? 'translate-x-6 dark:bg-white' : 'translate-x-1 dark:bg-gray-100'"
+                          :class="
+                            settings.development.showVueQueryDevTools
+                              ? 'translate-x-6 dark:bg-white'
+                              : 'translate-x-1 dark:bg-gray-100'
+                          "
                           class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
                         />
                       </Switch>
@@ -330,231 +684,9 @@
   </TransitionRoot>
 </template>
 
-<script>
-import { computed, inject, reactive, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQueryClient } from 'vue-query'
-
-import { useAuthStore } from '@/stores/auth'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-
-import {
-  Dialog,
-  DialogOverlay,
-  DialogTitle,
-  Switch,
-  SwitchLabel,
-  SwitchGroup,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
-import { CheckIcon, ExclamationIcon, XIcon } from '@heroicons/vue/solid'
-
-import LocaleSelector from '@/components/LocaleSelector.vue'
-
-export default {
-  components: {
-    CheckIcon,
-    Dialog,
-    DialogOverlay,
-    DialogTitle,
-    ExclamationIcon,
-    LocaleSelector,
-    Switch,
-    SwitchLabel,
-    SwitchGroup,
-    Tab,
-    TabGroup,
-    TabList,
-    TabPanel,
-    TabPanels,
-    TransitionChild,
-    TransitionRoot,
-    XIcon
-  },
-
-  props: {
-    isOpen: Boolean
-  },
-
-  emits: ['close'],
-
-  setup (props, context) {
-    const { t, locale } = useI18n({ useScope: 'global' })
-
-    function closeDialog () {
-      context.emit('close')
-    }
-
-    const { isOpen } = toRefs(props)
-
-    const disableSearchShortcut = inject('disableSearchShortcut')
-    const enableSearchShortcut = inject('enableSearchShortcut')
-
-    const isDev = ref(import.meta.env.DEV)
-
-    const tabs = computed(() => {
-      const buttons = [
-        {
-          key: 'appearence',
-          title: t('dashboard.settings.appearence.title')
-        },
-        {
-          key: 'privacy',
-          title: t('dashboard.settings.privacy.title')
-        }
-      ]
-
-      if (isDev.value) {
-        buttons.push({
-          key: 'development',
-          title: t('dashboard.settings.development.title')
-        })
-      }
-
-      return buttons
-    })
-
-    const authStore = useAuthStore()
-    const settingsStore = useSettingsStore()
-    const sheetStore = useSheetStore()
-    const queryClient = useQueryClient()
-
-    const settings = reactive({
-      appearence: {
-        locale: locale.value,
-        theme: settingsStore.theme,
-        viewMode: settingsStore.viewMode,
-        gridMode: settingsStore.gridMode,
-        spoilerMode: { ...settingsStore.spoilerMode },
-        blurNsfw: settingsStore.blurNsfw
-      },
-      development: {
-        showVueQueryDevTools: settingsStore.showVueQueryDevTools,
-        useDevSheet: settingsStore.useDevSheet
-      }
-    })
-
-    watch(isOpen, newIsOpen => {
-      if (newIsOpen) {
-        Object.assign(settings, {
-          appearence: {
-            locale: locale.value,
-            theme: settingsStore.theme,
-            viewMode: settingsStore.viewMode,
-            gridMode: settingsStore.gridMode,
-            spoilerMode: { ...settingsStore.spoilerMode },
-            blurNsfw: settingsStore.blurNsfw
-          },
-          development: {
-            showVueQueryDevTools: settingsStore.showVueQueryDevTools,
-            useDevSheet: settingsStore.useDevSheet
-          }
-        })
-
-        disableSearchShortcut()
-      } else {
-        enableSearchShortcut()
-      }
-    })
-
-    const theme = computed(() => settingsStore.theme)
-
-    watch(theme, newTheme => {
-      if (settings.appearence.theme !== newTheme) {
-        settings.appearence.theme = newTheme
-      }
-    })
-
-    function updateSetting (key, newValue) {
-      const path = key.split('.')
-
-      if (path[2]) {
-        settings[path[0]][path[1]][path[2]] = newValue
-      } else {
-        settings[path[0]][path[1]] = newValue
-      }
-
-      if (key === 'appearence.locale') {
-        saveLocale()
-      } else if (key === 'appearence.theme') {
-        settingsStore.updateTheme(settings.appearence.theme)
-      }
-    }
-
-    function saveLocale () {
-      const { appearence } = settings
-
-      if (locale.value !== appearence.locale) {
-        locale.value = appearence.locale
-        queryClient.invalidateQueries('statistics')
-        queryClient.invalidateQueries('last-added')
-        queryClient.invalidateQueries('latest-readings')
-        queryClient.invalidateQueries('books')
-        queryClient.invalidateQueries('book')
-      }
-    }
-
-    function saveAppearenceSettings () {
-      const { appearence } = settings
-
-      saveLocale()
-      settingsStore.updateTheme(appearence.theme)
-      settingsStore.updateBlurNsfw(appearence.blurNsfw)
-      settingsStore.updateGridMode(appearence.gridMode)
-      settingsStore.updateSpoilerMode(appearence.spoilerMode)
-      settingsStore.updateViewMode(appearence.viewMode)
-    }
-
-    async function saveDevelopmentSettings () {
-      const { development } = settings
-
-      settingsStore.updateShowVueQueryDevTools(development.showVueQueryDevTools)
-
-      if (development.useDevSheet !== settingsStore.useDevSheet) {
-        settingsStore.updateUseDevSheet(development.useDevSheet)
-
-        await sheetStore.findSheetId()
-        queryClient.resetQueries()
-        queryClient.refetchQueries()
-      }
-    }
-
-    async function handleSave () {
-      saveAppearenceSettings()
-      await saveDevelopmentSettings()
-      closeDialog()
-    }
-
-    function handleDisconnect () {
-      closeDialog()
-      authStore.disconnect()
-    }
-
-    return {
-      t,
-      isDev,
-      closeDialog,
-      tabs,
-      settings,
-      handleSave,
-      updateSetting,
-      handleDisconnect
-    }
-  }
-}
-</script>
-
 <style lang="postcss" scoped>
 .dialog {
-  @apply fixed z-20 inset-0 flex flex-col items-center
+  @apply fixed z-30 inset-0 flex flex-col items-center
     sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16;
 }
 
@@ -618,12 +750,12 @@ export default {
     text-gray-800 dark:text-gray-300;
 }
 
-.tab-button[aria-selected="true"] {
+.tab-button[aria-selected='true'] {
   @apply text-primary-600 dark:text-gray-100
-     border-primary-600 dark:border-primary-400
+     border-primary-600 dark:border-primary-400;
 }
 
-.tab-button[aria-selected="true"]:hover {
+.tab-button[aria-selected='true']:hover {
   @apply text-primary-600 dark:text-gray-100
     border-primary-600 dark:border-primary-400;
 }

@@ -12,7 +12,7 @@ import QueryBuilder from '@/data/QueryBuilder'
  * @param {number?} options.limit The limit
  * @returns {Promise<Book[]}>} The books found
  */
-export default async function getLatestReadings (sheetId, options = {}) {
+export default async function getLatestReadings(sheetId, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { STATUS, READ_AT, UPDATED_AT } = CollectionColumns

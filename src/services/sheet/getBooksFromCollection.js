@@ -10,7 +10,7 @@ import Book, { CollectionColumns } from '@/model/Book'
  * @param {Book} book The book to find
  * @returns {Promise<Book[]>} The books found
  */
-export default async function getBooksFromCollection (sheetId, book) {
+export default async function getBooksFromCollection(sheetId, book) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { TITLE, PUBLISHER, GROUP } = CollectionColumns

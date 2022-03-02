@@ -1,3 +1,77 @@
+<script setup>
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useImageLazyLoader from '@/composables/useImageLazyLoader'
+import Book from '@/model/Book'
+import { useSettingsStore } from '@/stores/settings'
+
+import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
+import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+const props = defineProps({
+  book: Book,
+  current: Boolean,
+  imageOnly: Boolean,
+  loading: {
+    type: Boolean,
+    required: true
+  },
+  tabindex: String
+})
+
+const { book, loading } = toRefs(props)
+const { t } = useI18n({ useScope: 'global' })
+
+const thumbnailUrl = computed(() => {
+  return book.value ? book.value.coverUrl.replace('_SL700_', '_SL300_') : ''
+})
+
+const loadedCard = ref(null)
+
+const { imageHasError, imageLoading, setupObserver, observerCreated } =
+  useImageLazyLoader(thumbnailUrl, loadedCard)
+
+const volume = computed(() => {
+  if (!book.value) {
+    return ''
+  }
+
+  const isSingle = book.value.titleParts.number === null
+
+  return t(
+    isSingle ? 'book.single' : 'book.volume',
+    isSingle ? undefined : { number: book.value.titleParts.number }
+  )
+})
+
+onMounted(() => {
+  if (!loading.value && book.value) {
+    setupObserver()
+  }
+})
+
+watch(loading, (newValue) => {
+  if (!newValue && !observerCreated.value) {
+    setupObserver()
+  }
+})
+
+const settingsStore = useSettingsStore()
+const mode = computed(() => settingsStore.gridMode)
+const spoilerMode = computed(() => settingsStore.spoilerMode)
+const blurNsfw = computed(() => settingsStore.blurNsfw)
+
+const blurCover = computed(() => {
+  return (
+    (spoilerMode.value.cover && !book.value.isRead) ||
+    (blurNsfw.value && book.value.isNsfw)
+  )
+})
+</script>
+
 <template>
   <div v-if="loading">
     <div class="skeleton shadow rounded-md aspect-w-2 aspect-h-3">
@@ -23,7 +97,11 @@
   <component
     v-else
     :is="imageOnly ? 'div' : 'RouterLink'"
-    :to="!imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
+    :to="
+      !imageOnly
+        ? { name: 'BookDetails', params: { bookId: book.id } }
+        : undefined
+    "
     class="book-link group focus:outline-none relative"
     ref="loadedCard"
     :title="!imageOnly ? book.title : undefined"
@@ -33,21 +111,17 @@
     <component
       :is="imageOnly ? 'RouterLink' : 'div'"
       :class="blurCover ? 'blurred' : ''"
-      :to="imageOnly ? { name: 'BookDetails', params: { bookId: book.id } } : undefined"
+      :to="
+        imageOnly
+          ? { name: 'BookDetails', params: { bookId: book.id } }
+          : undefined
+      "
       class="book-card !outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
       :aria-current="current && imageOnly ? 'page' : undefined"
       :tabindex="imageOnly ? tabindex : undefined"
       :title="imageOnly ? book.title : undefined"
     >
-      <transition
-        mode="out-in"
-        leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-        enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-      >
+      <FadeTransition>
         <div
           v-if="imageLoading || imageHasError"
           class="w-full h-full flex justify-center items-center"
@@ -63,12 +137,9 @@
         </div>
         <div v-else class="book-cover-wrapper" aria-hidden="true">
           <img
-            :class="[
-              'book-cover',
-              blurCover ? 'is-spoiler' : ''
-            ]"
+            :class="['book-cover', blurCover ? 'is-spoiler' : '']"
             :src="thumbnailUrl"
-          >
+          />
 
           <div
             v-if="blurCover"
@@ -77,7 +148,7 @@
             <EyeOffIcon class="w-8 h-8 text-gray-800 opacity-60" />
           </div>
         </div>
-      </transition>
+      </FadeTransition>
 
       <div
         v-if="(book.isRead || current || book.isFuture) && !imageOnly"
@@ -86,9 +157,13 @@
         <span v-if="current" class="current-volume">
           {{ t('book.currentVolume') }}
         </span>
-        <template v-if="!book.isFuture && book.isRead && mode === 'comfortable'">
+        <template
+          v-if="!book.isFuture && book.isRead && mode === 'comfortable'"
+        >
           <span class="sr-only">{{ t('book.read') }}</span>
-          <div class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 self-end ml-auto">
+          <div
+            class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 self-end ml-auto"
+          >
             <BookmarkIcon class="w-5 h-5 text-primary-500" />
           </div>
         </template>
@@ -109,14 +184,19 @@
         >
           <div class="inline-flex text-white w-full items-center">
             <div class="inline-flex flex-col grow min-w-0">
-              <span class="font-semibold font-display text-[0.8rem] sm:text-sm truncate max-w-full">
+              <span
+                class="font-semibold font-display text-[0.8rem] sm:text-sm truncate max-w-full"
+              >
                 {{ book.titleParts.title }}
               </span>
               <span class="font-medium text-xxs sm:text-xs">
                 {{ volume }}
               </span>
             </div>
-            <div v-if="!book.isFuture && book.isRead" class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-1 sm:ml-2">
+            <div
+              v-if="!book.isFuture && book.isRead"
+              class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-1 sm:ml-2"
+            >
               <BookmarkIcon class="w-4 sm:w-5 h-4 sm:h-5 text-primary-500" />
             </div>
           </div>
@@ -132,122 +212,19 @@
     </div>
 
     <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3">
-      <p class="text-[0.8rem] sm:text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200">
+      <p
+        class="text-[0.8rem] sm:text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200"
+      >
         {{ book.titleParts.title }}
       </p>
-      <p class="text-xxs sm:text-xs font-medium truncate text-gray-600 dark:text-gray-400">
+      <p
+        class="text-xxs sm:text-xs font-medium truncate text-gray-600 dark:text-gray-400"
+      >
         {{ volume }}
       </p>
     </div>
   </component>
 </template>
-
-<script>
-import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useImageLazyLoader from '@/composables/useImageLazyLoader'
-import { useSettingsStore } from '@/stores/settings'
-
-import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
-import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-
-import Book from '@/model/Book'
-
-export default {
-  name: 'BookCard',
-
-  components: {
-    BookOpenIcon,
-    BookmarkIcon,
-    ClockIcon,
-    EyeOffIcon,
-    FadeTransition
-  },
-
-  props: {
-    book: {
-      type: Book
-    },
-    current: Boolean,
-    imageOnly: Boolean,
-    loading: {
-      type: Boolean,
-      required: true
-    },
-    tabindex: String
-  },
-
-  setup (props) {
-    const { book, loading } = toRefs(props)
-    const { t } = useI18n({ useScope: 'global' })
-
-    const thumbnailUrl = computed(() => {
-      return book.value
-        ? book.value.coverUrl.replace('_SL700_', '_SL300_')
-        : ''
-    })
-
-    const loadedCard = ref(null)
-
-    const {
-      imageHasError,
-      imageLoading,
-      setupObserver,
-      observerCreated
-    } = useImageLazyLoader(thumbnailUrl, loadedCard)
-
-    const volume = computed(() => {
-      if (!book.value) {
-        return ''
-      }
-
-      const isSingle = book.value.titleParts.number === null
-
-      return t(
-        isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: book.value.titleParts.number }
-      )
-    })
-
-    onMounted(() => {
-      if (!loading.value && book.value) {
-        setupObserver()
-      }
-    })
-
-    watch(loading, newValue => {
-      if (!newValue && !observerCreated.value) {
-        setupObserver()
-      }
-    })
-
-    const settingsStore = useSettingsStore()
-    const mode = computed(() => settingsStore.gridMode)
-    const spoilerMode = computed(() => settingsStore.spoilerMode)
-    const blurNsfw = computed(() => settingsStore.blurNsfw)
-
-    const blurCover = computed(() => {
-      return (spoilerMode.value.cover && !book.value.isRead) ||
-        (blurNsfw.value && book.value.isNsfw)
-    })
-
-    return {
-      loadedCard,
-      imageHasError,
-      imageLoading,
-      thumbnailUrl,
-      volume,
-      mode,
-      spoilerMode,
-      blurCover,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .book-card {
@@ -267,7 +244,11 @@ export default {
 }
 
 .book-gradient {
-  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+  background-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    transparent 60%
+  );
 }
 
 .book-cover-wrapper {
@@ -296,7 +277,7 @@ export default {
 .badge-wrapper {
   @apply p-2 absolute inset-0 flex justify-start items-start
     bg-gray-900 dark:bg-gray-800
-    bg-opacity-20 dark:bg-opacity-60
+    bg-opacity-20 dark:bg-opacity-60;
 }
 
 .book-card.blurred :where(.book-cover, .cover-eye) {

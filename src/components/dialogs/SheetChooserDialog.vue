@@ -1,3 +1,77 @@
+<script setup>
+import { computed, inject, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useQueryClient } from 'vue-query'
+
+import { useSheetStore } from '@/stores/sheet'
+
+import {
+  Dialog,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+  RadioGroup,
+  RadioGroupDescription,
+  RadioGroupLabel,
+  RadioGroupOption,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue'
+
+import {
+  LockClosedIcon,
+  LockOpenIcon,
+  StarIcon,
+  UserGroupIcon
+} from '@heroicons/vue/outline'
+import { XIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({ isOpen: Boolean })
+
+const emit = defineEmits(['close'])
+
+const { t, d } = useI18n({ useScope: 'global' })
+
+const sheetStore = useSheetStore()
+const queryClient = useQueryClient()
+
+function closeDialog() {
+  emit('close')
+}
+
+const selected = ref(sheetStore.sheetId)
+const options = computed(() => sheetStore.options)
+
+const selectedSheet = computed(() => {
+  return options.value.find((file) => file.id === selected.value)
+})
+
+function selectCurrent() {
+  closeDialog()
+
+  if (selected.value !== sheetStore.sheetId) {
+    sheetStore.updateSheetId(selected.value)
+    sheetStore.updateSelected(selectedSheet.value)
+
+    queryClient.resetQueries()
+    queryClient.refetchQueries()
+  }
+}
+
+const { isOpen } = toRefs(props)
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) {
+    selected.value = sheetStore.sheetId
+  }
+
+  newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
+})
+</script>
+
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="template" @close="closeDialog">
@@ -34,18 +108,24 @@
               </DialogDescription>
             </div>
 
-            <button
-              class="close-button has-ring-focus"
-              @click="closeDialog"
-            >
+            <button class="close-button has-ring-focus" @click="closeDialog">
               <span aria-hidden="true">
                 <XIcon class="w-5 h-5" />
               </span>
             </button>
 
             <span aria-hidden="true" class="absolute left-2">
-              <svg class="text-white opacity-30 block h-48 w-48" viewBox="0 0 184 184" xmlns="http://www.w3.org/2000/svg">
-                <path d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z" fill="currentColor" fill-rule="evenodd" opacity="0.503"></path>
+              <svg
+                class="text-white opacity-30 block h-48 w-48"
+                viewBox="0 0 184 184"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  opacity="0.503"
+                ></path>
               </svg>
             </span>
           </div>
@@ -84,15 +164,12 @@
                         class="owner-picture"
                         :alt="option.owners[0].displayName"
                         :src="option.owners[0].photoLink"
-                      >
+                      />
                       <div class="owner-info">
                         <p class="owner-name">
                           {{ option.owners[0].displayName }}
 
-                          <span
-                            v-if="option.ownedByMe"
-                            class="owner-self"
-                          >
+                          <span v-if="option.ownedByMe" class="owner-self">
                             {{ t('dashboard.sheetChooser.you') }}
                           </span>
                         </p>
@@ -179,116 +256,9 @@
   </TransitionRoot>
 </template>
 
-<script>
-import { computed, inject, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQueryClient } from 'vue-query'
-
-import { useSheetStore } from '@/stores/sheet'
-
-import {
-  Dialog,
-  DialogDescription,
-  DialogOverlay,
-  DialogTitle,
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
-import {
-  LockClosedIcon,
-  LockOpenIcon,
-  StarIcon,
-  UserGroupIcon
-} from '@heroicons/vue/outline'
-import { XIcon } from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    Dialog,
-    DialogDescription,
-    DialogOverlay,
-    DialogTitle,
-    LockClosedIcon,
-    LockOpenIcon,
-    RadioGroup,
-    RadioGroupDescription,
-    RadioGroupLabel,
-    RadioGroupOption,
-    StarIcon,
-    TransitionChild,
-    TransitionRoot,
-    UserGroupIcon,
-    XIcon
-  },
-
-  props: {
-    isOpen: Boolean
-  },
-
-  emits: ['close'],
-
-  setup (props, context) {
-    const { t, d } = useI18n({ useScope: 'global' })
-
-    const sheetStore = useSheetStore()
-    const queryClient = useQueryClient()
-
-    function closeDialog () {
-      context.emit('close')
-    }
-
-    const selected = ref(sheetStore.sheetId)
-    const options = computed(() => sheetStore.options)
-
-    const selectedSheet = computed(() => {
-      return options.value.find(file => file.id === selected.value)
-    })
-
-    function selectCurrent () {
-      closeDialog()
-
-      if (selected.value !== sheetStore.sheetId) {
-        sheetStore.updateSheetId(selected.value)
-        sheetStore.updateSelected(selectedSheet.value)
-
-        queryClient.resetQueries()
-        queryClient.refetchQueries()
-      }
-    }
-
-    const { isOpen } = toRefs(props)
-
-    const disableSearchShortcut = inject('disableSearchShortcut')
-    const enableSearchShortcut = inject('enableSearchShortcut')
-
-    watch(isOpen, newIsOpen => {
-      if (newIsOpen) {
-        selected.value = sheetStore.sheetId
-      }
-
-      newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
-    })
-
-    return {
-      t,
-      d,
-      closeDialog,
-      selected,
-      options,
-      selectCurrent
-    }
-  }
-}
-</script>
-
 <style lang="postcss" scoped>
 .dialog {
-  @apply fixed z-20 inset-0 flex flex-col items-center
+  @apply fixed z-30 inset-0 flex flex-col items-center
     sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16;
 }
 

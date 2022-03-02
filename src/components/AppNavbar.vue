@@ -1,3 +1,105 @@
+<script setup>
+import { computed, inject, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
+
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+
+import {
+  CogIcon,
+  ChevronDownIcon,
+  LibraryIcon,
+  LogoutIcon,
+  SearchIcon
+} from '@heroicons/vue/solid'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+
+const props = defineProps({ transparent: Boolean })
+
+const authStore = useAuthStore()
+const sheetStore = useSheetStore()
+
+const { t } = useI18n({ useScope: 'global' })
+
+const open = ref(false)
+const { transparent } = toRefs(props)
+
+const shared = computed(() => sheetStore.shared)
+const loading = computed(() => sheetStore.loading)
+
+const navigation = computed(() => [
+  {
+    name: 'DashboardHome',
+    title: t('dashboard.header.links.dashboard'),
+    exact: true
+  },
+  {
+    name: 'DashboardLibrary',
+    title: t('dashboard.header.links.library')
+  },
+  {
+    name: 'DashboardStats',
+    title: t('dashboard.header.links.statistics'),
+    hidden: shared.value || loading.value
+  }
+])
+const searchQuery = ref('')
+const searchNavbar = ref(null)
+
+const desktopNavigation = computed(() => {
+  return navigation.value.filter((navItem) => !navItem.mobileOnly)
+})
+
+const profileEmail = computed(() => authStore.profileEmail)
+const profileImageUrl = computed(() => authStore.profileImageUrl)
+const profileName = computed(() => authStore.profileName)
+
+async function signOut() {
+  await authStore.signOut()
+}
+
+const isMac = ref(
+  navigator.userAgentData
+    ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+    : navigator.platform.toLowerCase().indexOf('mac') > -1
+)
+
+const showSearchDialog = inject('showSearchDialog')
+
+const currentScrollPosition = ref(0)
+const lastScrollPosition = ref(0)
+const show = ref(true)
+
+function handleScroll() {
+  currentScrollPosition.value = document.documentElement.scrollTop
+
+  if (currentScrollPosition.value < 0) {
+    return
+  }
+
+  if (Math.abs(currentScrollPosition.value - lastScrollPosition.value) < 60) {
+    return
+  }
+
+  show.value = currentScrollPosition.value < lastScrollPosition.value
+  lastScrollPosition.value = currentScrollPosition.value
+}
+
+const isOnTop = computed(() => {
+  return transparent.value && currentScrollPosition.value <= 30
+})
+
+onMounted(() => window.addEventListener('scroll', handleScroll))
+onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+
+const showSettingsDialog = inject('showSettingsDialog')
+</script>
+
 <template>
   <nav
     :class="[
@@ -26,15 +128,25 @@
               />
             </span>
             <span class="sr-only">{{ t('dashboard.header.links.start') }}</span>
-            <span class="text-gray-200 group-hover:text-gray-100 group-focus-visible:text-gray-100 font-display font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block" aria-hidden="true">
+            <span
+              class="text-gray-200 group-hover:text-gray-100 group-focus-visible:text-gray-100 font-display font-semibold text-xl ml-3 sm:ml-0 md:ml-3 md:hidden lg:block"
+              aria-hidden="true"
+            >
               {{ t('app.name') }}
             </span>
-            <sup class="text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 font-semibold text-[0.6rem] align-super ml-0.5">
+            <sup
+              class="text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 font-semibold text-[0.6rem] align-super ml-0.5"
+            >
               BETA
             </sup>
           </router-link>
 
-          <div class="hidden md:block md:ml-2 h-fit" role="navigation" aria-label="Menu principal" id="main-menu-desktop">
+          <div
+            class="hidden md:block md:ml-2 h-fit"
+            role="navigation"
+            aria-label="Menu principal"
+            id="main-menu-desktop"
+          >
             <ul class="flex space-x-2">
               <template v-for="item in desktopNavigation" :key="item.name">
                 <li
@@ -57,7 +169,9 @@
           </div>
         </div>
 
-        <div class="absolute inset-y-0 right-0 flex items-center sm:pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
+        <div
+          class="absolute inset-y-0 right-0 flex items-center sm:pr-2 md:static md:inset-auto md:ml-6 md:pr-0"
+        >
           <!-- Search link -->
           <button
             v-if="!loading"
@@ -83,10 +197,17 @@
               <span class="text-sm w-56 text-left">
                 {{ t('dashboard.header.search.placeholder') }}
               </span>
-              <span aria-hidden="true" class="ctrl-k text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md">
+              <span
+                aria-hidden="true"
+                class="ctrl-k text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
+              >
                 <kbd class="font-sans">
-                  <abbr title="Control" class="no-underline" v-if="!isMac">{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr>
-                  <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
+                  <abbr title="Control" class="no-underline" v-if="!isMac"
+                    >{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr
+                  >
+                  <abbr title="Command" class="no-underline" v-else
+                    >⌘&nbsp;</abbr
+                  >
                 </kbd>
                 <kbd class="font-sans">K</kbd>
               </span>
@@ -96,10 +217,18 @@
           <ThemeToggle class="ml-1" />
 
           <!-- Profile dropdown -->
-          <Menu as="div" class="ml-3 md:relative hidden sm:inline-block" v-slot="{ open }">
+          <Menu
+            as="div"
+            class="ml-3 md:relative hidden sm:inline-block"
+            v-slot="{ open }"
+          >
             <div>
-              <MenuButton class="max-w-xs flex items-center text-sm focus:outline-none group">
-                <span class="sr-only">{{ t('dashboard.header.menu.open') }}</span>
+              <MenuButton
+                class="max-w-xs flex items-center text-sm focus:outline-none group"
+              >
+                <span class="sr-only">{{
+                  t('dashboard.header.menu.open')
+                }}</span>
                 <div
                   class="w-8 h-8 rounded-full bg-cover shadow-avatar transition-shadow motion-reduce:transition-none group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-gray-700"
                   :style="{ backgroundImage: `url('${profileImageUrl}')` }"
@@ -115,19 +244,26 @@
               </MenuButton>
             </div>
             <ScaleTransition>
-              <MenuItems as="ul" class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <MenuItems
+                as="ul"
+                class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              >
                 <div class="pb-1">
                   <MenuItem v-slot="{ active }">
                     <button
                       type="button"
                       :class="[
-                        active ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50' : '',
+                        active
+                          ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
+                          : '',
                         'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
                       ]"
                       @click="showSettingsDialog"
                     >
                       <span aria-hidden="true">
-                        <CogIcon class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                        <CogIcon
+                          class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300"
+                        />
                       </span>
                       {{ t('dashboard.header.menu.settings') }}
                     </button>
@@ -144,7 +280,9 @@
                       @click.stop="signOut"
                     >
                       <span aria-hidden="true">
-                        <LogoutIcon class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500" />
+                        <LogoutIcon
+                          class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
+                        />
                       </span>
                       {{ t('dashboard.header.menu.signOut') }}
                     </button>
@@ -158,155 +296,6 @@
     </div>
   </nav>
 </template>
-
-<script>
-import { computed, inject, onMounted, onUnmounted, ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-import { useSheetStore } from '@/stores/sheet'
-
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems
-} from '@headlessui/vue'
-
-import {
-  CogIcon,
-  ChevronDownIcon,
-  LibraryIcon,
-  LogoutIcon,
-  SearchIcon
-} from '@heroicons/vue/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
-
-export default {
-  name: 'AppNavbar',
-
-  components: {
-    CogIcon,
-    ChevronDownIcon,
-    FadeTransition,
-    LibraryIcon,
-    LogoutIcon,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    ScaleTransition,
-    SearchIcon,
-    ThemeToggle
-  },
-
-  props: {
-    transparent: Boolean
-  },
-
-  setup (props) {
-    const authStore = useAuthStore()
-    const sheetStore = useSheetStore()
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    const open = ref(false)
-    const { transparent } = toRefs(props)
-
-    const shared = computed(() => sheetStore.shared)
-    const loading = computed(() => sheetStore.loading)
-
-    const navigation = computed(() => [
-      {
-        name: 'DashboardHome',
-        title: t('dashboard.header.links.dashboard'),
-        exact: true
-      },
-      {
-        name: 'DashboardLibrary',
-        title: t('dashboard.header.links.library')
-      },
-      {
-        name: 'DashboardStats',
-        title: t('dashboard.header.links.statistics'),
-        hidden: shared.value || loading.value
-      }
-    ])
-    const searchQuery = ref('')
-    const searchNavbar = ref(null)
-
-    const desktopNavigation = computed(() => {
-      return navigation.value.filter(navItem => !navItem.mobileOnly)
-    })
-
-    const profileEmail = computed(() => authStore.profileEmail)
-    const profileImageUrl = computed(() => authStore.profileImageUrl)
-    const profileName = computed(() => authStore.profileName)
-
-    async function signOut () {
-      await authStore.signOut()
-    }
-
-    const isMac = ref(
-      navigator.userAgentData
-        ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
-        : navigator.platform.toLowerCase().indexOf('mac') > -1
-    )
-
-    const showSearchDialog = inject('showSearchDialog')
-
-    const currentScrollPosition = ref(0)
-    const lastScrollPosition = ref(0)
-    const show = ref(true)
-
-    function handleScroll () {
-      currentScrollPosition.value = document.documentElement.scrollTop
-
-      if (currentScrollPosition.value < 0) {
-        return
-      }
-
-      if (Math.abs(currentScrollPosition.value - lastScrollPosition.value) < 60) {
-        return
-      }
-
-      show.value = currentScrollPosition.value < lastScrollPosition.value
-      lastScrollPosition.value = currentScrollPosition.value
-    }
-
-    const isOnTop = computed(() => {
-      return transparent.value && currentScrollPosition.value <= 30
-    })
-
-    onMounted(() => window.addEventListener('scroll', handleScroll))
-    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
-
-    const showSettingsDialog = inject('showSettingsDialog')
-
-    return {
-      open,
-      navigation,
-      desktopNavigation,
-      profileEmail,
-      profileImageUrl,
-      profileName,
-      isMac,
-      searchNavbar,
-      searchQuery,
-      loading,
-      signOut,
-      showSearchDialog,
-      isOnTop,
-      show,
-      showSettingsDialog,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .app-navbar {

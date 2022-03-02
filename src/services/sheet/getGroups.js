@@ -9,7 +9,7 @@ import QueryBuilder from '@/data/QueryBuilder'
  * @param {string} sheetId The sheet to perform the operation
  * @returns {Promise<{ name: string, count: number, futureCount: number, totalCount: number }[]}>} The groups found
  */
-export default async function getGroups (sheetId) {
+export default async function getGroups(sheetId) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { GROUP, STATUS } = CollectionColumns
@@ -22,7 +22,7 @@ export default async function getGroups (sheetId) {
   const dataTable = await query.send()
   const groupMap = new Map()
 
-  dataTable.asArray.forEach(rowData => {
+  dataTable.asArray.forEach((rowData) => {
     const [group, status, count] = rowData
 
     if (!groupMap.has(group)) {
@@ -45,6 +45,5 @@ export default async function getGroups (sheetId) {
     groupObj.totalCount += count
   })
 
-  return Array.from(groupMap.values())
-    .sort((a, b) => b.count - a.count)
+  return Array.from(groupMap.values()).sort((a, b) => b.count - a.count)
 }

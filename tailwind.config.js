@@ -1,13 +1,11 @@
 const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
-const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
+const {
+  default: flattenColorPalette
+} = require('tailwindcss/lib/util/flattenColorPalette')
 
 module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.vue',
-    './src/**/*.js'
-  ],
+  content: ['./index.html', './src/**/*.vue', './src/**/*.js'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -40,7 +38,7 @@ module.exports = {
       spacing: {
         '2px': '2px'
       },
-      typography: theme => ({
+      typography: (theme) => ({
         DEFAULT: {
           css: {
             'h1, h2, h3, h4, h5, h6': {
@@ -105,7 +103,11 @@ module.exports = {
               marginLeft: '-1.25em',
               opacity: '0',
               paddingRight: '0.25em',
-              textDecoration: 'none'
+              textDecoration: 'none',
+
+              '&:focus-visible': {
+                opacity: '1'
+              }
             },
             ':where(h1, h2, h3, h4, h5, h6):hover .header-anchor': {
               opacity: '1'
@@ -177,7 +179,7 @@ module.exports = {
     },
     function ({ matchUtilities, theme }) {
       matchUtilities(
-        { skeleton: value => ({ backgroundColor: value }) },
+        { skeleton: (value) => ({ backgroundColor: value }) },
         { values: flattenColorPalette(theme('backgroundColor')), type: 'color' }
       )
     }

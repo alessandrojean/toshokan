@@ -1,3 +1,54 @@
+<script setup>
+import { computed, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import BaseField from '@/components/fields/BaseField.vue'
+
+const VALIDATOR = /^\d+((,|\.)\d{1,2})?$/
+
+const props = defineProps({
+  error: String,
+  help: String,
+  label: String,
+  modelValue: {
+    type: Object,
+    required: true
+  },
+  required: Boolean
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const { n } = useI18n({ useScope: 'global' })
+const { modelValue: dimensions } = toRefs(props)
+
+const width = ref(
+  dimensions.value?.width ? n(dimensions.value.width, 'dimensions') : ''
+)
+const height = ref(
+  dimensions.value?.height ? n(dimensions.value.height, 'dimensions') : ''
+)
+
+const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
+
+watch(dimensionsStr, () => {
+  emit('update:modelValue', {
+    width: width.value.match(VALIDATOR)
+      ? parseFloat(width.value.replace(',', '.'))
+      : NaN,
+    height: height.value.match(VALIDATOR)
+      ? parseFloat(height.value.replace(',', '.'))
+      : NaN
+  })
+})
+
+const heightInput = ref(null)
+
+function focusHeight() {
+  heightInput.value?.select()
+}
+</script>
+
 <template>
   <BaseField
     :label="label"
@@ -15,7 +66,7 @@
         placeholder="0.0"
         v-model="width"
         @keydown.x.prevent="focusHeight()"
-      >
+      />
       <span class="symbol">×</span>
       <input
         ref="heightInput"
@@ -24,70 +75,11 @@
         inputmode="decimal"
         placeholder="0.0"
         v-model="height"
-      >
+      />
       <span class="symbol cm">cm</span>
     </div>
   </BaseField>
 </template>
-
-<script>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import BaseField from '@/components/fields/BaseField.vue'
-
-const VALIDATOR = /^\d+((,|\.)\d{1,2})?$/
-
-export default {
-  components: { BaseField },
-
-  props: {
-    error: String,
-    help: String,
-    label: String,
-    modelValue: {
-      type: Object,
-      required: true
-    },
-    required: Boolean
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props, context) {
-    const { n } = useI18n({ useScope: 'global' })
-    const { modelValue: dimensions } = toRefs(props)
-
-    const width = ref(
-      dimensions.value?.width ? n(dimensions.value.width, 'dimensions') : ''
-    )
-    const height = ref(
-      dimensions.value?.height ? n(dimensions.value.height, 'dimensions') : ''
-    )
-
-    const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
-
-    watch(dimensionsStr, () => {
-      context.emit('update:modelValue', {
-        width: width.value.match(VALIDATOR)
-          ? parseFloat(width.value.replace(',', '.'))
-          : NaN,
-        height: height.value.match(VALIDATOR)
-          ? parseFloat(height.value.replace(',', '.'))
-          : NaN
-      })
-    })
-
-    const heightInput = ref(null)
-
-    function focusHeight () {
-      heightInput.value?.select()
-    }
-
-    return { width, height, heightInput, focusHeight }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .dimension-field {

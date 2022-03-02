@@ -1,11 +1,137 @@
+<script setup>
+import {
+  computed,
+  inject,
+  nextTick,
+  reactive,
+  ref,
+  toRaw,
+  toRefs,
+  watch
+} from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import cloneDeep from 'lodash.clonedeep'
+
+import Book from '@/model/Book'
+import { useSheetStore } from '@/stores/sheet'
+
+import {
+  Dialog,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
+  TransitionChild,
+  TransitionRoot
+} from '@headlessui/vue'
+
+import { CheckIcon, XIcon } from '@heroicons/vue/solid'
+
+import Avatar from '@/components/Avatar.vue'
+import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
+import BookForm from '@/components/book/BookForm.vue'
+import BookOrganization from '@/components/book/BookOrganization.vue'
+import BookReading from '@/components/book/BookReading.vue'
+
+const props = defineProps({
+  book: Book,
+  isOpen: Boolean
+})
+
+const emit = defineEmits(['close', 'edit'])
+
+const { t, n } = useI18n({ useScope: 'global' })
+
+function closeDialog() {
+  editFormInvalid.value = false
+  emit('close')
+}
+
+const { isOpen, book } = toRefs(props)
+
+const editingBook = reactive(book.value || new Book())
+const editFormInvalid = ref(false)
+
+function setEditFormInvalid(value) {
+  editFormInvalid.value = value
+}
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+/**
+ * @param {BeforeUnloadEvent} event
+ */
+function preventUnload(event) {
+  event.preventDefault()
+  event.returnValue = ''
+}
+
+watch(isOpen, (newIsOpen) => {
+  if (newIsOpen) {
+    Object.assign(editingBook, cloneDeep(book.value), {
+      labelPrice: {
+        ...book.value.labelPrice,
+        valueStr: n(book.value.labelPrice.value, 'decimal')
+      },
+      paidPrice: {
+        ...book.value.paidPrice,
+        valueStr: n(book.value.paidPrice.value, 'decimal')
+      }
+    })
+
+    window.addEventListener('beforeunload', preventUnload)
+    disableSearchShortcut()
+  } else {
+    window.removeEventListener('beforeunload', preventUnload)
+    enableSearchShortcut()
+  }
+})
+
+const editForm = ref(null)
+
+async function handleEdit() {
+  if (!editFormInvalid.value) {
+    emit('edit', cloneDeep(toRaw(editingBook)))
+    closeDialog()
+  } else {
+    nextTick(() => {
+      main.value.scroll({
+        top: main.value.scrollHeight,
+        behavior: 'smooth'
+      })
+    })
+  }
+}
+
+const main = ref(null)
+
+const tabs = computed(() => [
+  {
+    title: t('dashboard.details.editForm.title'),
+    error: editFormInvalid.value
+  },
+  { title: t('dashboard.details.coverForm.title') },
+  {
+    title: t('dashboard.details.readingForm.title'),
+    disabled: editingBook.isFuture
+  },
+  { title: t('dashboard.details.organizationForm.title') }
+])
+
+const sheetStore = useSheetStore()
+const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+const shared = computed(() => sheetStore.shared)
+</script>
+
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog
-      static
-      as="template"
-      :open="isOpen"
-      @close="closeDialog"
-    >
+    <Dialog static as="template" :open="isOpen" @close="closeDialog">
       <div class="dialog">
         <TransitionChild
           as="template"
@@ -48,18 +174,24 @@
               </DialogDescription>
             </div>
 
-            <button
-              class="close-button has-ring-focus"
-              @click="closeDialog"
-            >
+            <button class="close-button has-ring-focus" @click="closeDialog">
               <span aria-hidden="true">
                 <XIcon class="w-5 h-5" />
               </span>
             </button>
 
             <span aria-hidden="true" class="absolute left-2">
-              <svg class="text-white opacity-30 block h-48 w-48" viewBox="0 0 184 184" xmlns="http://www.w3.org/2000/svg">
-                <path d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z" fill="currentColor" fill-rule="evenodd" opacity="0.503"></path>
+              <svg
+                class="text-white opacity-30 block h-48 w-48"
+                viewBox="0 0 184 184"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  opacity="0.503"
+                ></path>
               </svg>
             </span>
           </div>
@@ -142,171 +274,9 @@
   </TransitionRoot>
 </template>
 
-<script>
-import { computed, inject, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-
-import {
-  Dialog,
-  DialogDescription,
-  DialogOverlay,
-  DialogTitle,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
-import { CheckIcon, XIcon } from '@heroicons/vue/solid'
-
-import Avatar from '@/components/Avatar.vue'
-import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
-import BookForm from '@/components/book/BookForm.vue'
-import BookOrganization from '@/components/book/BookOrganization.vue'
-import BookReading from '@/components/book/BookReading.vue'
-
-import Book from '@/model/Book'
-
-import cloneDeep from 'lodash.clonedeep'
-
-export default {
-  components: {
-    Avatar,
-    BookCoverSelector,
-    BookForm,
-    BookOrganization,
-    BookReading,
-    CheckIcon,
-    Dialog,
-    DialogDescription,
-    DialogOverlay,
-    DialogTitle,
-    Tab,
-    TabGroup,
-    TabList,
-    TabPanel,
-    TabPanels,
-    TransitionChild,
-    TransitionRoot,
-    XIcon
-  },
-
-  props: {
-    book: Book,
-    isOpen: Boolean
-  },
-
-  emits: ['close', 'edit'],
-
-  setup (props, context) {
-    const { t, n } = useI18n({ useScope: 'global' })
-
-    function closeDialog () {
-      editFormInvalid.value = false
-      context.emit('close')
-    }
-
-    const { isOpen, book } = toRefs(props)
-
-    const editingBook = reactive(book.value || new Book())
-    const editFormInvalid = ref(false)
-
-    function setEditFormInvalid (value) {
-      editFormInvalid.value = value
-    }
-
-    const disableSearchShortcut = inject('disableSearchShortcut')
-    const enableSearchShortcut = inject('enableSearchShortcut')
-
-    /**
-     * @param {BeforeUnloadEvent} event
-     */
-    function preventUnload (event) {
-      event.preventDefault()
-      event.returnValue = ''
-    }
-
-    watch(isOpen, newIsOpen => {
-      if (newIsOpen) {
-        Object.assign(editingBook, cloneDeep(book.value), {
-          labelPrice: {
-            ...book.value.labelPrice,
-            valueStr: n(book.value.labelPrice.value, 'decimal')
-          },
-          paidPrice: {
-            ...book.value.paidPrice,
-            valueStr: n(book.value.paidPrice.value, 'decimal')
-          }
-        })
-
-        window.addEventListener('beforeunload', preventUnload)
-        disableSearchShortcut()
-      } else {
-        window.removeEventListener('beforeunload', preventUnload)
-        enableSearchShortcut()
-      }
-    })
-
-    const editForm = ref(null)
-
-    async function handleEdit () {
-      if (!editFormInvalid.value) {
-        context.emit('edit', cloneDeep(toRaw(editingBook)))
-        closeDialog()
-      } else {
-        nextTick(() => {
-          main.value.scroll({
-            top: main.value.scrollHeight,
-            behavior: 'smooth'
-          })
-        })
-      }
-    }
-
-    const main = ref(null)
-
-    const tabs = computed(() => [
-      {
-        title: t('dashboard.details.editForm.title'),
-        error: editFormInvalid.value
-      },
-      { title: t('dashboard.details.coverForm.title') },
-      {
-        title: t('dashboard.details.readingForm.title'),
-        disabled: editingBook.isFuture
-      },
-      { title: t('dashboard.details.organizationForm.title') }
-    ])
-
-    const sheetStore = useSheetStore()
-    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
-    const shared = computed(() => sheetStore.shared)
-
-    return {
-      t,
-      closeDialog,
-      editForm,
-      editFormInvalid,
-      setEditFormInvalid,
-      editingBook,
-      handleEdit,
-      main,
-      tabs,
-      ownerPictureUrl,
-      shared
-    }
-  }
-}
-</script>
-
 <style lang="postcss" scoped>
 .dialog {
-  @apply fixed z-20 inset-0 flex flex-col items-center
+  @apply fixed z-30 inset-0 flex flex-col items-center
     sm:py-6 sm:px-6 md:px-0 md:py-12 lg:py-16;
 }
 
@@ -370,12 +340,12 @@ export default {
     text-gray-800 dark:text-gray-300;
 }
 
-.tab-button[aria-selected="true"] {
+.tab-button[aria-selected='true'] {
   @apply text-primary-600 dark:text-gray-100
-     border-primary-600 dark:border-primary-400
+     border-primary-600 dark:border-primary-400;
 }
 
-.tab-button[aria-selected="true"]:hover {
+.tab-button[aria-selected='true']:hover {
   @apply text-primary-600 dark:text-gray-100
     border-primary-600 dark:border-primary-400;
 }

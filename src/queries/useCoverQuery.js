@@ -3,10 +3,10 @@ import { useQuery } from 'vue-query'
 
 import { findCovers } from '@/services/cover'
 
-export default function useCoverQuery (book, { enabled } = {}) {
+export default function useCoverQuery(book, { enabled } = {}) {
   const bookCode = computed(() => book.value?.code)
 
-  async function fetcher () {
+  async function fetcher() {
     return await findCovers(book.value)
   }
 

@@ -3,10 +3,10 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
+import chunk from 'lodash.chunk'
+
 import useMarkdown from '@/composables/useMarkdown'
 import useGitHubReleaseQuery from '@/queries/useGitHubReleaseQuery'
-
-import chunk from 'lodash.chunk'
 
 import {
   Dialog,
@@ -20,7 +20,7 @@ import { SparklesIcon } from '@heroicons/vue/outline'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW()
 
-function close () {
+function close() {
   needRefresh.value = false
 }
 
@@ -35,15 +35,12 @@ const sections = computed(() => {
     return null
   }
 
-  const parts = releaseNotesMarkdown.value
-    .split(/## (.*)\r\n\r\n/)
-    .slice(1)
+  const parts = releaseNotesMarkdown.value.split(/## (.*)\r\n\r\n/).slice(1)
 
-  return chunk(parts, 2)
-    .map(([title, body]) => ({
-      title: md.renderInline(title),
-      body: renderMarkdown(body)
-    }))
+  return chunk(parts, 2).map(([title, body]) => ({
+    title: md.renderInline(title),
+    body: renderMarkdown(body)
+  }))
 })
 </script>
 
@@ -73,21 +70,41 @@ const sections = computed(() => {
           leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
           <div class="dialog-content">
-            <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 grow min-h-0 sm:flex sm:items-start">
-              <div class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-gray-700 sm:mx-0 sm:h-10 sm:w-10" aria-hidden="true">
-                <SparklesIcon class="h-6 w-6 text-primary-600 dark:text-primary-300" aria-hidden="true" />
+            <div
+              class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 grow min-h-0 sm:flex sm:items-start"
+            >
+              <div
+                class="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 dark:bg-gray-700 sm:mx-0 sm:h-10 sm:w-10"
+                aria-hidden="true"
+              >
+                <SparklesIcon
+                  class="h-6 w-6 text-primary-600 dark:text-primary-300"
+                  aria-hidden="true"
+                />
               </div>
-              <div class="mt-3 grow h-full text-center sm:mt-0 sm:ml-4 sm:text-left flex flex-col">
-                <DialogTitle as="h3" class="shrink-0 text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100">
+              <div
+                class="mt-3 grow h-full text-center sm:mt-0 sm:ml-4 sm:text-left flex flex-col"
+              >
+                <DialogTitle
+                  as="h3"
+                  class="shrink-0 text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
+                >
                   {{ t('pwa.newContent.title') }}
                 </DialogTitle>
-                <div class="shrink-0 mt-2 space-y-4 text-gray-500 dark:text-gray-400 text-sm">
+                <div
+                  class="shrink-0 mt-2 space-y-4 text-gray-500 dark:text-gray-400 text-sm"
+                >
                   <p>
                     {{ t('pwa.newContent.message') }}
                   </p>
                 </div>
-                <div class="grow min-h-0 overflow-y-auto mt-6 text-left" lang="en-US">
-                  <div class="w-full prose prose-sm dark:prose-invert prose-ul:leading-snug">
+                <div
+                  class="grow min-h-0 overflow-y-auto mt-6 text-left"
+                  lang="en-US"
+                >
+                  <div
+                    class="w-full prose prose-sm dark:prose-invert prose-ul:leading-snug"
+                  >
                     <details
                       v-for="(section, idx) in sections"
                       :key="idx"
@@ -100,7 +117,9 @@ const sections = computed(() => {
                 </div>
               </div>
             </div>
-            <div class="shrink-0 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <div
+              class="shrink-0 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+            >
               <button
                 type="button"
                 class="button is-primary sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"

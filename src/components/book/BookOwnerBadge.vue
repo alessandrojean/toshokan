@@ -1,3 +1,21 @@
+<script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { useSheetStore } from '@/stores/sheet'
+
+import { UserGroupIcon } from '@heroicons/vue/solid'
+
+import Avatar from '@/components/Avatar.vue'
+
+const { t } = useI18n({ useScope: 'global' })
+const sheetStore = useSheetStore()
+
+const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
+const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
+const shared = computed(() => sheetStore.shared)
+</script>
+
 <template>
   <div v-if="shared" class="owner-badge">
     <Avatar :picture-url="ownerPictureUrl" small />
@@ -9,10 +27,7 @@
         {{ ownerDisplayName }}
       </p>
     </div>
-    <div
-      class="user-group"
-      :title="t('dashboard.sheetChooser.sharedWithYou')"
-    >
+    <div class="user-group" :title="t('dashboard.sheetChooser.sharedWithYou')">
       <span aria-hidden="true">
         <UserGroupIcon class="w-5 h-5" />
       </span>
@@ -22,37 +37,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-
-import { UserGroupIcon } from '@heroicons/vue/solid'
-
-import Avatar from '@/components/Avatar.vue'
-
-export default {
-  components: { Avatar, UserGroupIcon },
-
-  setup () {
-    const { t } = useI18n({ useScope: 'global' })
-    const sheetStore = useSheetStore()
-
-    const ownerDisplayName = computed(() => sheetStore.ownerDisplayName)
-    const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
-    const shared = computed(() => sheetStore.shared)
-
-    return {
-      t,
-      ownerDisplayName,
-      ownerPictureUrl,
-      shared
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .owner-badge {
@@ -76,6 +60,6 @@ export default {
 }
 
 .user-group {
-  @apply shrink-0 pr-1 text-gray-400 dark:text-gray-500 ;
+  @apply shrink-0 pr-1 text-gray-400 dark:text-gray-500;
 }
 </style>

@@ -1,26 +1,36 @@
+<script setup>
+import { onMounted, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useImageLoader from '@/composables/useImageLoader'
+
+import { UserGroupIcon, UserIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({
+  dark: Boolean,
+  pictureUrl: String,
+  shared: Boolean,
+  small: Boolean
+})
+
+const { pictureUrl } = toRefs(props)
+
+const { imageLoading, imageHasError, loadImage } = useImageLoader(pictureUrl)
+
+onMounted(() => loadImage())
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
-  <div
-    :class="[
-      'avatar',
-      small ? 'is-small' : '',
-      dark ? 'is-dark' : ''
-    ]"
-  >
+  <div :class="['avatar', small ? 'is-small' : '', dark ? 'is-dark' : '']">
     <div
       v-if="!pictureUrl || imageHasError || imageLoading"
-      :class="[
-        'empty-avatar',
-        imageLoading ? 'motion-safe:animate-pulse' : ''
-      ]"
+      :class="['empty-avatar', imageLoading ? 'motion-safe:animate-pulse' : '']"
     >
       <UserIcon class="user-icon" />
     </div>
-    <img
-      v-else
-      class="avatar-img"
-      alt=""
-      :src="pictureUrl"
-    >
+    <img v-else class="avatar-img" alt="" :src="pictureUrl" />
     <div
       v-if="shared"
       class="shared-badge"
@@ -35,46 +45,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { onMounted, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { UserGroupIcon, UserIcon } from '@heroicons/vue/solid'
-
-import useImageLoader from '@/composables/useImageLoader'
-
-export default {
-  components: { UserGroupIcon, UserIcon },
-
-  props: {
-    dark: Boolean,
-    pictureUrl: String,
-    shared: Boolean,
-    small: Boolean
-  },
-
-  setup (props) {
-    const { pictureUrl } = toRefs(props)
-
-    const {
-      imageLoading,
-      imageHasError,
-      loadImage
-    } = useImageLoader(pictureUrl)
-
-    onMounted(() => loadImage())
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return {
-      imageLoading,
-      imageHasError,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .avatar {

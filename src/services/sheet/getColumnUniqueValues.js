@@ -9,7 +9,11 @@ import QueryBuilder from '@/data/QueryBuilder'
  * @param {boolean} alphabetically The default sort
  * @returns {Promise<{ name: string, count: number }[]}>} The values found
  */
-export default async function getColumnUniqueValues (sheetId, column, alphabetically) {
+export default async function getColumnUniqueValues(
+  sheetId,
+  column,
+  alphabetically
+) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const queryBuilder = new QueryBuilder(sheetUrl)

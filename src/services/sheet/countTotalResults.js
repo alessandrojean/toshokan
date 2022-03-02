@@ -8,9 +8,10 @@ import { CollectionColumns } from '@/model/Book'
  * @param {import('@/data/Query').default} query The query to be transformed
  * @returns {Promise<number>} The number of results
  */
-export default async function countTotalResults (sheetId, query) {
+export default async function countTotalResults(sheetId, query) {
   const { ID } = CollectionColumns
-  const newQuery = query.newBuilder()
+  const newQuery = query
+    .newBuilder()
     .select(`count(${ID})`)
     .orderBy()
     .groupBy()

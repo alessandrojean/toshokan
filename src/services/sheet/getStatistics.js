@@ -4,9 +4,9 @@
  * @param {string} sheetId The sheet to perform the operation
  * @returns The sheet statistics
  */
-export default async function getStatistics (sheetId) {
-  const response = await window.gapi.client.sheets.spreadsheets.values
-    .batchGet({
+export default async function getStatistics(sheetId) {
+  const response = await window.gapi.client.sheets.spreadsheets.values.batchGet(
+    {
       spreadsheetId: sheetId,
       ranges: [
         'TotalItems',
@@ -18,7 +18,8 @@ export default async function getStatistics (sheetId) {
         'PublisherRank',
         'Currency'
       ]
-    })
+    }
+  )
 
   return {
     count: parseInt(response.result.valueRanges[0].values[0][0]),
@@ -37,8 +38,8 @@ export default async function getStatistics (sheetId) {
     monthly: (response.result.valueRanges[3].values || [])
       .slice(0, 10)
       .reverse()
-      .filter(row => row[0].length > 0)
-      .map(row => ({
+      .filter((row) => row[0].length > 0)
+      .map((row) => ({
         month: new Date(`${row[0]}-02`),
         totalSpent: parseFloat(row[1]),
         count: parseInt(row[2], 10),
@@ -46,12 +47,12 @@ export default async function getStatistics (sheetId) {
       })),
     authors: (response.result.valueRanges[4].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
     series: (response.result.valueRanges[5].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
     publishers: (response.result.valueRanges[6].values || [])
       .slice(0, 10)
-      .map(row => ({ name: row[0], count: parseInt(row[1], 10) }))
+      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) }))
   }
 }

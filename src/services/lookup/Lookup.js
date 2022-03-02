@@ -9,7 +9,7 @@ export default class Lookup {
    */
   axios = null
 
-  constructor () {
+  constructor() {
     this.axios = this._createAxios()
   }
 
@@ -18,7 +18,7 @@ export default class Lookup {
    *
    * @returns {import('axios').default} the axios instance
    */
-  _createAxios () {
+  _createAxios() {
     throw new Error('Not implemented!')
   }
 
@@ -28,7 +28,7 @@ export default class Lookup {
    * @param {String} isbn The ISBN to search
    * @returns {Promise<Object[]>} An array of books found
    */
-  async search (isbn) {
+  async search(isbn) {
     throw new Error('Not implemented!')
   }
 }

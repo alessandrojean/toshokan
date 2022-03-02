@@ -1,6 +1,6 @@
 import { readonly, ref, watch } from 'vue'
 
-export default function useImageLoader (imageUrl) {
+export default function useImageLoader(imageUrl) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
   const imageWidth = ref(0)

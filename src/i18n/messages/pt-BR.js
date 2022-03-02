@@ -34,8 +34,10 @@ export default {
     pageChanged: 'Página alterada para {pageTitle}.'
   },
   errors: {
-    cookiesDisabled: 'Os cookies estão desabilitados. Habilite-os e atualize a página.',
-    authStartedFailed: 'Não foi possivel inicializar o sistema de autenticação.',
+    cookiesDisabled:
+      'Os cookies estão desabilitados. Habilite-os e atualize a página.',
+    authStartedFailed:
+      'Não foi possivel inicializar o sistema de autenticação.',
     missingScopes: 'Algumas permissões não foram concedidas para a aplicação.',
     badQuery: 'Há um erro na query: {error}',
     refresh: 'Atualizar a página',
@@ -129,7 +131,8 @@ export default {
         labelPrice: '26,90',
         paidPrice: '22,90',
         store: 'Amazon',
-        synopsis: 'No meio dos pertences de seu falecido pai, o garoto Pete encontra…',
+        synopsis:
+          'No meio dos pertences de seu falecido pai, o garoto Pete encontra…',
         notes: 'O mangá tem um autógrafo do Tezuka na primeira página.',
         boughtAt: '18/02/2021'
       },
@@ -142,7 +145,8 @@ export default {
     },
     deleteModal: {
       title: 'Deletar livro | Deletar livros',
-      message1: 'Você tem certeza de que deseja deletar este livro? | ' +
+      message1:
+        'Você tem certeza de que deseja deletar este livro? | ' +
         'Você tem certeza de que deseja deletar estes livros?',
       message2: 'Esta ação não pode ser revertida.',
       delete: 'Deletar',
@@ -375,7 +379,8 @@ export default {
       },
       editDialog: {
         title: 'Edição do livro',
-        description: 'Preencha as informações abaixo para alterar os dados do livro.'
+        description:
+          'Preencha as informações abaixo para alterar os dados do livro.'
       },
       editForm: {
         title: 'Metadados',
@@ -458,7 +463,8 @@ export default {
       filter: 'Filtrar',
       newBook: 'Novo livro',
       items: {
-        current: 'Itens de todos os grupos | Itens do grupo {count} | Itens de {count} grupos',
+        current:
+          'Itens de todos os grupos | Itens do grupo {count} | Itens de {count} grupos',
         tableColumns: {
           actions: 'Ações',
           deleteSelection: 'Deletar'
@@ -520,7 +526,8 @@ export default {
     },
     newBook: {
       title: 'Novo livro',
-      description: 'Preencha as informações abaixo para inserir o livro na planilha.',
+      description:
+        'Preencha as informações abaixo para inserir o livro na planilha.',
       step: 'Etapa {0} de {1}',
       goBack: 'Voltar uma etapa',
       autoFill: {
@@ -562,7 +569,8 @@ export default {
             *[ISBN]: International Standard Book Number
           `,
           additionalInfo: 'Informações adicionais',
-          wikipediaLink: 'https://pt.wikipedia.org/wiki/International_Standard_Book_Number'
+          wikipediaLink:
+            'https://pt.wikipedia.org/wiki/International_Standard_Book_Number'
         },
         existAlert: {
           title: 'Já existe um livro com este ISBN',
@@ -741,7 +749,8 @@ export default {
     },
     sheetChooser: {
       title: 'Escolha uma planilha',
-      description: 'Você pode visualizar e editar outras planilhas compartilhadas.',
+      description:
+        'Você pode visualizar e editar outras planilhas compartilhadas.',
       actionCancel: 'Cancelar',
       actionSelect: 'Selecionar',
       actionSelectSheet: 'Escolher planilha',

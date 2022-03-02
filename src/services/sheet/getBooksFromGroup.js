@@ -9,6 +9,11 @@ import getBooks from './getBooks'
  * @param {Record<string, any>} options The options
  * @returns The books found
  */
-export default function getBooksFromGroup (sheetId, group, page = 1, options = {}) {
+export default function getBooksFromGroup(
+  sheetId,
+  group,
+  page = 1,
+  options = {}
+) {
   return getBooks(sheetId, page, { ...options, group })
 }

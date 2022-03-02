@@ -1,20 +1,154 @@
+<script setup>
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+import cloneDeep from 'lodash.clonedeep'
+
+import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
+import useEditBookMutation from '@/mutations/useEditBookMutation'
+import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import { useSheetStore } from '@/stores/sheet'
+import useBookQuery from '@/queries/useBookQuery'
+import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
+
+import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
+import BookCover from '@/components/book/BookCover.vue'
+import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
+import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
+import BookInformation from '@/components/book/BookInformation.vue'
+import BookTabs from '@/components/book/BookTabs.vue'
+
+const { t } = useI18n({ useScope: 'global' })
+const router = useRouter()
+const route = useRoute()
+const sheetStore = useSheetStore()
+
+const bookId = computed(() => route.params.bookId)
+const loading = computed(() => sheetStore.loading)
+
+const enabled = computed(() => {
+  return !loading.value && !!bookId.value
+})
+
+const { isLoading, data: book } = useBookQuery(bookId, { enabled })
+
+const { data: collection } = useBookCollectionQuery(book, {
+  enabled: computed(() => {
+    return (
+      enabled.value &&
+      book.value?.titleParts !== undefined &&
+      book.value.titleParts.number !== null
+    )
+  })
+})
+
+const redirectToHome = () => {
+  router.replace({ name: 'DashboardLibrary' })
+}
+
+watch(book, (newBook) => {
+  if (newBook === null) {
+    redirectToHome()
+    return
+  }
+
+  if (newBook !== undefined) {
+    document.title = newBook.title + ' | ' + t('app.name')
+  }
+})
+
+const showBookInfo = computed(() => {
+  return !loading.value && !isLoading.value && book.value
+})
+
+const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
+
+const editDialogOpen = ref(false)
+const bookToEdit = ref(null)
+
+function openEditDialog() {
+  bookToEdit.value = cloneDeep(book.value)
+  editDialogOpen.value = true
+}
+
+function closeEditDialog() {
+  editDialogOpen.value = false
+}
+
+function handleEdit(editedBook) {
+  updateBook(editedBook)
+}
+
+function toDateInputValue(date) {
+  const local = new Date(date)
+  local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+
+  return local
+}
+
+function toggleStatus() {
+  if (book.value.isFuture) {
+    return
+  }
+
+  /** @type {Book} */
+  const updatedBook = cloneDeep(book.value)
+  updatedBook.status = updatedBook.isRead ? STATUS_UNREAD : STATUS_READ
+  updatedBook.readAt = updatedBook.isRead ? toDateInputValue(new Date()) : null
+
+  updateBook(updatedBook)
+}
+
+function toggleFavorite() {
+  /** @type {Book} */
+  const updatedBook = cloneDeep(book.value)
+  updatedBook.favorite = !updatedBook.favorite
+
+  updateBook(updatedBook)
+}
+
+const deleteModalOpen = ref(false)
+const { mutate: deleteBook, isLoading: deleting } = useDeleteBookMutation()
+
+function handleDelete() {
+  deleteBook(book.value)
+}
+
+function openDeleteModal() {
+  setTimeout(() => {
+    deleteModalOpen.value = true
+  })
+}
+
+const writing = computed(() => editing.value || deleting.value)
+
+const setNavbarTransparent = inject('setNavbarTransparent')
+
+onMounted(() => setNavbarTransparent(true))
+onUnmounted(() => setNavbarTransparent(false))
+</script>
+
 <template>
-  <div class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out">
-    <div class="border-b dark:border-b-0 border-gray-300 hidden md:block bg-white dark:bg-transparent">
+  <div
+    class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out"
+  >
+    <div
+      class="border-b dark:border-b-0 border-gray-300 hidden md:block bg-white dark:bg-transparent"
+    >
       <div class="max-w-7xl mx-auto md:px-6 lg:px-8 dark:mt-6">
         <!-- Breadcrumb -->
         <div class="py-2.5 dark:py-0">
-          <BookBreadcrumb
-            :loading="!showBookInfo"
-            :book="book"
-          />
+          <BookBreadcrumb :loading="!showBookInfo" :book="book" />
         </div>
       </div>
     </div>
     <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-6">
       <!-- Main section -->
       <div class="md:space-y-8 bg-white dark:bg-transparent">
-        <section class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8 -mt-16 md:mt-0">
+        <section
+          class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8 -mt-16 md:mt-0"
+        >
           <!-- Book cover -->
           <div class="lg:col-span-3">
             <BookCover
@@ -25,7 +159,9 @@
           </div>
 
           <!-- Book information -->
-          <div class="bg-white dark:bg-gray-800 md:dark:bg-transparent relative -mt-5 md:mt-0 p-6 md:p-0 shadow-inner md:shadow-none rounded-t-3xl md:rounded-none lg:col-span-4">
+          <div
+            class="bg-white dark:bg-gray-800 md:dark:bg-transparent relative -mt-5 md:mt-0 p-6 md:p-0 shadow-inner md:shadow-none rounded-t-3xl md:rounded-none lg:col-span-4"
+          >
             <BookInformation
               :loading="!showBookInfo"
               :book="book"
@@ -62,169 +198,3 @@
     />
   </div>
 </template>
-
-<script>
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
-import cloneDeep from 'lodash.clonedeep'
-
-import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
-import useEditBookMutation from '@/mutations/useEditBookMutation'
-import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
-import { useSheetStore } from '@/stores/sheet'
-import useBookQuery from '@/queries/useBookQuery'
-import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
-
-import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
-import BookCover from '@/components/book/BookCover.vue'
-import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
-import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
-import BookInformation from '@/components/book/BookInformation.vue'
-import BookTabs from '@/components/book/BookTabs.vue'
-
-export default {
-  components: {
-    BookBreadcrumb,
-    BookCover,
-    BookDeleteDialog,
-    BookEditDialog,
-    BookInformation,
-    BookTabs
-  },
-
-  setup () {
-    const { t } = useI18n({ useScope: 'global' })
-    const router = useRouter()
-    const route = useRoute()
-    const sheetStore = useSheetStore()
-
-    const bookId = computed(() => route.params.bookId)
-    const loading = computed(() => sheetStore.loading)
-
-    const enabled = computed(() => {
-      return !loading.value && !!bookId.value
-    })
-
-    const { isLoading, data: book } = useBookQuery(bookId, { enabled })
-
-    const { data: collection } = useBookCollectionQuery(book, {
-      enabled: computed(() => {
-        return enabled.value &&
-          book.value?.titleParts !== undefined &&
-          book.value.titleParts.number !== null
-      })
-    })
-
-    const redirectToHome = () => {
-      router.replace({ name: 'DashboardLibrary' })
-    }
-
-    watch(book, newBook => {
-      if (newBook === null) {
-        redirectToHome()
-        return
-      }
-
-      if (newBook !== undefined) {
-        document.title = newBook.title + ' | ' + t('app.name')
-      }
-    })
-
-    const showBookInfo = computed(() => {
-      return !loading.value && !isLoading.value && book.value
-    })
-
-    const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
-
-    const editDialogOpen = ref(false)
-    const bookToEdit = ref(null)
-
-    function openEditDialog () {
-      bookToEdit.value = cloneDeep(book.value)
-      editDialogOpen.value = true
-    }
-
-    function closeEditDialog () {
-      editDialogOpen.value = false
-    }
-
-    function handleEdit (editedBook) {
-      updateBook(editedBook)
-    }
-
-    function toDateInputValue (date) {
-      const local = new Date(date)
-      local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-
-      return local
-    }
-
-    function toggleStatus () {
-      if (book.value.isFuture) {
-        return
-      }
-
-      /** @type {Book} */
-      const updatedBook = cloneDeep(book.value)
-      updatedBook.status = updatedBook.isRead
-        ? STATUS_UNREAD
-        : STATUS_READ
-      updatedBook.readAt = updatedBook.isRead
-        ? toDateInputValue(new Date())
-        : null
-
-      updateBook(updatedBook)
-    }
-
-    function toggleFavorite () {
-      /** @type {Book} */
-      const updatedBook = cloneDeep(book.value)
-      updatedBook.favorite = !updatedBook.favorite
-
-      updateBook(updatedBook)
-    }
-
-    const deleteModalOpen = ref(false)
-    const { mutate: deleteBook, isLoading: deleting } = useDeleteBookMutation()
-
-    function handleDelete () {
-      deleteBook(book.value)
-    }
-
-    function openDeleteModal () {
-      setTimeout(() => {
-        deleteModalOpen.value = true
-      })
-    }
-
-    const writing = computed(() => editing.value || deleting.value)
-
-    const setNavbarTransparent = inject('setNavbarTransparent')
-
-    onMounted(() => setNavbarTransparent(true))
-    onUnmounted(() => setNavbarTransparent(false))
-
-    return {
-      t,
-      bookId,
-      loading,
-      book,
-      collection,
-      showBookInfo,
-      writing,
-      bookToEdit,
-      handleEdit,
-      editDialogOpen,
-      openEditDialog,
-      closeEditDialog,
-      toggleStatus,
-      toggleFavorite,
-      deleteModalOpen,
-      openDeleteModal,
-      handleDelete
-    }
-  }
-}
-</script>

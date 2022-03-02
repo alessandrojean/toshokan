@@ -1,3 +1,55 @@
+<script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import {
+  useSettingsStore,
+  THEME_SYSTEM,
+  THEME_DARK,
+  THEME_LIGHT
+} from '@/stores/settings'
+
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
+  ListboxOption
+} from '@headlessui/vue'
+
+import { MoonIcon, SunIcon } from '@heroicons/vue/outline'
+
+import {
+  DeviceMobileIcon as DeviceMobileIconSolid,
+  DesktopComputerIcon as DesktopComputerIconSolid,
+  MoonIcon as MoonIconSolid,
+  SunIcon as SunIconSolid
+} from '@heroicons/vue/solid'
+
+defineProps({ light: Boolean })
+
+const { t } = useI18n({ useScope: 'global' })
+const settingsStore = useSettingsStore()
+
+const theme = computed({
+  get: () => settingsStore.theme,
+  set: (newTheme) => settingsStore.updateTheme(newTheme)
+})
+
+const options = computed(() => [
+  { key: THEME_LIGHT, icon: SunIcon, menuIcon: SunIconSolid },
+  { key: THEME_DARK, icon: MoonIcon, menuIcon: MoonIconSolid },
+  {
+    key: THEME_SYSTEM,
+    responsive: true,
+    menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
+  }
+])
+
+const currentOption = computed(() => {
+  return options.value.find((o) => o.key === theme.value)
+})
+</script>
+
 <template>
   <Listbox
     v-model="theme"
@@ -11,6 +63,7 @@
     >
       <span aria-hidden="true">
         <template v-if="theme === 'system'">
+          <!-- eslint-disable-next-line prettier/prettier -->
           <component
             :is="options[0].icon"
             class="w-6 h-6 dark:hidden system"
@@ -20,11 +73,7 @@
             class="w-6 h-6 hidden dark:block system"
           />
         </template>
-        <component
-          v-else
-          :is="currentOption.icon"
-          class="w-6 h-6 not-system"
-        />
+        <component v-else :is="currentOption.icon" class="w-6 h-6 not-system" />
       </span>
       <span class="sr-only">
         {{ t('dashboard.settings.appearence.theme.label') }}
@@ -46,10 +95,7 @@
           v-slot="{ active }"
           as="template"
         >
-          <li
-            :class="active ? 'active' : ''"
-            class="theme"
-          >
+          <li :class="active ? 'active' : ''" class="theme">
             <span aria-hidden="true">
               <component
                 v-if="!option.responsive"
@@ -78,79 +124,6 @@
     </transition>
   </Listbox>
 </template>
-
-<script>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  useSettingsStore,
-  THEME_SYSTEM,
-  THEME_DARK,
-  THEME_LIGHT
-} from '@/stores/settings'
-
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption
-} from '@headlessui/vue'
-
-import { MoonIcon, SunIcon } from '@heroicons/vue/outline'
-
-import {
-  DeviceMobileIcon as DeviceMobileIconSolid,
-  DesktopComputerIcon as DesktopComputerIconSolid,
-  MoonIcon as MoonIconSolid,
-  SunIcon as SunIconSolid
-} from '@heroicons/vue/solid'
-
-export default {
-  components: {
-    Listbox,
-    ListboxButton,
-    ListboxOptions,
-    ListboxOption,
-    DesktopComputerIconSolid,
-    DeviceMobileIconSolid,
-    MoonIcon,
-    MoonIconSolid,
-    SunIcon,
-    SunIconSolid
-  },
-
-  props: {
-    light: Boolean
-  },
-
-  setup () {
-    const { t } = useI18n({ useScope: 'global' })
-    const settingsStore = useSettingsStore()
-
-    const theme = computed({
-      get: () => settingsStore.theme,
-      set: newTheme => settingsStore.updateTheme(newTheme)
-    })
-
-    const options = computed(() => [
-      { key: THEME_LIGHT, icon: SunIcon, menuIcon: SunIconSolid },
-      { key: THEME_DARK, icon: MoonIcon, menuIcon: MoonIconSolid },
-      {
-        key: THEME_SYSTEM,
-        responsive: true,
-        menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
-      }
-    ])
-
-    const currentOption = computed(() => {
-      return options.value.find(o => o.key === theme.value)
-    })
-
-    return { theme, options, currentOption, t }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .theme-chooser {
@@ -222,11 +195,11 @@ export default {
   @apply text-gray-600 dark:text-gray-300;
 }
 
-.theme[aria-selected="true"] {
+.theme[aria-selected='true'] {
   @apply text-blue-500 dark:text-blue-300 font-semibold;
 }
 
-.theme[aria-selected="true"] svg {
+.theme[aria-selected='true'] svg {
   @apply text-blue-500 dark:text-blue-300;
 }
 </style>

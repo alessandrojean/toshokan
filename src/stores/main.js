@@ -5,16 +5,16 @@ export const useStore = defineStore('main', {
     criticalError: null
   }),
   getters: {
-    hasCriticalError () {
+    hasCriticalError() {
       return this.criticalError !== null
     }
   },
   actions: {
-    clearCriticalError () {
+    clearCriticalError() {
       this.updateCriticalError(null)
     },
 
-    updateCriticalError (error) {
+    updateCriticalError(error) {
       this.criticalError = error
     }
   }

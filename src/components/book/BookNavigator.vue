@@ -1,6 +1,52 @@
+<script setup>
+import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import Book from '@/model/Book'
+
+import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({
+  book: Book,
+  collection: Array
+})
+
+const { book, collection } = toRefs(props)
+
+const bookIdx = computed(() => {
+  return (collection.value || []).findIndex(
+    (colItem) => colItem.id === book.value.id
+  )
+})
+
+const previous = computed(() => {
+  if (bookIdx.value === -1) {
+    return null
+  }
+
+  const previousIdx = bookIdx.value - 1
+
+  return previousIdx >= 0 ? collection.value[previousIdx] : null
+})
+
+const next = computed(() => {
+  if (bookIdx.value === -1) {
+    return null
+  }
+
+  const nextIdx = bookIdx.value + 1
+
+  return nextIdx < collection.value.length ? collection.value[nextIdx] : null
+})
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <nav class="">
-    <ul class="font-medium text-sm flex divide-x dark:divide-gray-700 dark:text-gray-300">
+    <ul
+      class="font-medium text-sm flex divide-x dark:divide-gray-700 dark:text-gray-300"
+    >
       <li v-if="previous">
         <router-link
           :class="[
@@ -32,59 +78,6 @@
     </ul>
   </nav>
 </template>
-
-<script>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/vue/solid'
-
-export default {
-  components: { ArrowSmLeftIcon, ArrowSmRightIcon },
-
-  props: {
-    book: Object,
-    collection: Array
-  },
-
-  setup (props) {
-    const { book, collection } = toRefs(props)
-
-    const bookIdx = computed(() => {
-      return (collection.value || [])
-        .findIndex(colItem => colItem.id === book.value.id)
-    })
-
-    const previous = computed(() => {
-      if (bookIdx.value === -1) {
-        return null
-      }
-
-      const previousIdx = bookIdx.value - 1
-
-      return previousIdx >= 0
-        ? collection.value[previousIdx]
-        : null
-    })
-
-    const next = computed(() => {
-      if (bookIdx.value === -1) {
-        return null
-      }
-
-      const nextIdx = bookIdx.value + 1
-
-      return nextIdx < collection.value.length
-        ? collection.value[nextIdx]
-        : null
-    })
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return { previous, next, t }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .navigation-link:where(:hover, :focus-visible) {

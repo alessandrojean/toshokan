@@ -7,8 +7,10 @@ const COLLECTION_SHEET = 'Collection'
  * @param {string} sheetId The sheet to create the URL
  * @returns {string} The sheet query URL
  */
-export default function buildSheetUrl (sheetId) {
-  const sheetUrl = new URL(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`)
+export default function buildSheetUrl(sheetId) {
+  const sheetUrl = new URL(
+    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`
+  )
   const accessToken = window.gapi?.auth?.getToken?.()?.access_token
 
   sheetUrl.searchParams.append('range', COLLECTION_RANGE)

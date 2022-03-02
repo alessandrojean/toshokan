@@ -1,3 +1,36 @@
+<script setup>
+import { computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+import { useAuthStore } from '@/stores/auth'
+
+import GoogleIcon from '@/components/icons/GoogleIcon.vue'
+
+defineProps({ collapse: Boolean })
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const started = computed(() => authStore.started)
+const signedIn = computed(() => authStore.signedIn)
+
+const redirectToDashboard = () => {
+  if (signedIn.value) {
+    router.replace('/dashboard')
+  }
+}
+
+const handleSignIn = async () => {
+  await authStore.signIn()
+  redirectToDashboard()
+}
+
+watch(signedIn, redirectToDashboard)
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <button
     type="button"
@@ -11,59 +44,12 @@
         <GoogleIcon />
       </span>
     </div>
-    <span>{{ t('auth.google.signIn') }}</span><span :class="collapse ? 'hidden md:block' : ''">&nbsp;{{ t('auth.google.withGoogle') }}</span>
+    <span>{{ t('auth.google.signIn') }}</span
+    ><span :class="collapse ? 'hidden md:block' : ''"
+      >&nbsp;{{ t('auth.google.withGoogle') }}</span
+    >
   </button>
 </template>
-
-<script>
-import { computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-
-import GoogleIcon from '@/components/icons/GoogleIcon.vue'
-
-export default {
-  components: {
-    GoogleIcon
-  },
-
-  props: {
-    collapse: Boolean
-  },
-
-  setup () {
-    const authStore = useAuthStore()
-    const router = useRouter()
-
-    const started = computed(() => authStore.started)
-    const signedIn = computed(() => authStore.signedIn)
-
-    const redirectToDashboard = () => {
-      if (signedIn.value) {
-        router.replace('/dashboard')
-      }
-    }
-
-    const handleSignIn = async () => {
-      await authStore.signIn()
-      redirectToDashboard()
-    }
-
-    watch(signedIn, redirectToDashboard)
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return {
-      signedIn,
-      started,
-      handleSignIn,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .button.is-google-sign-in {

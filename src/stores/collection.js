@@ -20,13 +20,13 @@ export const useCollectionStore = defineStore('collection', {
     sortDirection: 'desc'
   }),
   actions: {
-    buildPaginationInfo ({ perPage, links, totalResults, page }) {
+    buildPaginationInfo({ perPage, links, totalResults, page }) {
       const paginator = new Paginator(perPage, links)
 
       return paginator.build(totalResults, page)
     },
 
-    updateCurrentPage ({ page, totalResults }) {
+    updateCurrentPage({ page, totalResults }) {
       this.currentPage = page
 
       this.paginationInfo = {
@@ -40,21 +40,21 @@ export const useCollectionStore = defineStore('collection', {
       }
     },
 
-    updateFavorites (favorites) {
+    updateFavorites(favorites) {
       this.favorites = favorites
     },
 
-    updateFutureItems (futureItems) {
+    updateFutureItems(futureItems) {
       this.futureItems = futureItems
     },
 
-    updateGroups (groups) {
+    updateGroups(groups) {
       this.filters.groups = groups || []
 
       localStorage.setItem('collection_groups', JSON.stringify(groups || []))
     },
 
-    updateSort ({ sortBy, sortDirection }) {
+    updateSort({ sortBy, sortDirection }) {
       this.sortBy = sortBy || this.sortBy
       this.sortDirection = sortDirection || this.sortDirection
     }

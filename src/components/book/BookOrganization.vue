@@ -1,3 +1,35 @@
+<script setup>
+import { toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import cloneDeep from 'lodash.clonedeep'
+
+import Book from '@/model/Book'
+
+import { TagIcon } from '@heroicons/vue/solid'
+import TagField from '@/components/fields/TagField.vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Book,
+    required: true
+  }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+const { modelValue: book } = toRefs(props)
+
+function handleChange(newTags) {
+  const newBook = cloneDeep(book.value)
+  newBook.tags = newTags
+
+  emit('update:modelValue', newBook)
+}
+</script>
+
 <template>
   <div>
     <TagField
@@ -17,43 +49,3 @@
     </TagField>
   </div>
 </template>
-
-<script>
-import { toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import cloneDeep from 'lodash.clonedeep'
-
-import { TagIcon } from '@heroicons/vue/solid'
-import TagField from '@/components/fields/TagField.vue'
-
-import Book from '@/model/Book'
-
-export default {
-  components: { TagField, TagIcon },
-
-  props: {
-    modelValue: {
-      type: Book,
-      required: true
-    }
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props, context) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const { modelValue: book } = toRefs(props)
-
-    function handleChange (newTags) {
-      const newBook = cloneDeep(book.value)
-      newBook.tags = newTags
-
-      context.emit('update:modelValue', newBook)
-    }
-
-    return { t, handleChange }
-  }
-}
-</script>

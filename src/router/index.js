@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import i18n from '../i18n'
+import i18n from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 
@@ -128,7 +128,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior () {
+  scrollBehavior() {
     return {
       top: 0,
       behavior: 'smooth'
@@ -140,20 +140,19 @@ const router = createRouter({
 /**
  * Replace page title.
  */
-router.afterEach(to => {
+router.afterEach((to) => {
   document.title = to.meta.title() + ' | ' + t('app.name')
 })
 
 /**
  * Check if user is signed in in dashboard routes.
  */
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
   const mainStore = useStore()
 
   if (to.fullPath.includes('/dashboard')) {
     if (authStore.isStarted && authStore.isSignedIn) {
-      next()
       return
     }
 
@@ -162,35 +161,30 @@ router.beforeEach(async (to, _, next) => {
 
       try {
         isSignedIn = await authStore.initApp()
-        isSignedIn ? next() : next('/sign-in')
+
+        return !isSignedIn ? '/sign-in' : undefined
       } catch (e) {
         isSignedIn = false
         console.error(e)
         mainStore.updateCriticalError(e)
-        next('/error')
+        return '/error'
       }
-
-      return
     }
 
-    next('/')
-    return
+    return '/'
   }
 
   if (!authStore.isStarted && !mainStore.hasCriticalError) {
     try {
       const isSignedIn = await authStore.initApp()
-      isSignedIn && to.path === '/sign-in' ? next('/dashboard') : next()
+
+      return isSignedIn && to.path === '/sign-in' ? '/dashboard' : undefined
     } catch (e) {
       console.error(e)
       mainStore.updateCriticalError(e)
-      next('/error')
+      return '/error'
     }
-
-    return
   }
-
-  next()
 })
 
 export default router

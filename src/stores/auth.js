@@ -28,31 +28,33 @@ export const useAuthStore = defineStore('auth', {
     profileImageUrl: null
   }),
   getters: {
-    isSignedIn: state => state.signedIn,
-    isStarted: state => state.started
+    isSignedIn: (state) => state.signedIn,
+    isStarted: (state) => state.started
   },
   actions: {
     /**
      * Attempt to disconnect the user.
      */
-    disconnect () {
+    disconnect() {
       this.googleAuth?.disconnect()
     },
 
     /**
      * Try to grant the missing permissions.
      */
-    async grantPermissions () {
+    async grantPermissions() {
       const GoogleUser = this.googleAuth?.currentUser?.get()
-      const missingScopes = SCOPES.filter(scope => {
+      const missingScopes = SCOPES.filter((scope) => {
         return !GoogleUser.hasGrantedScopes(scope)
       })
 
       if (missingScopes.length) {
-        await this.googleAuth?.currentUser?.get()
+        await this.googleAuth?.currentUser
+          ?.get()
           ?.grant({ scope: missingScopes.join(' ') })
 
-        this.hasGrantedScopes = this.googleAuth?.currentUser?.get()
+        this.hasGrantedScopes = this.googleAuth?.currentUser
+          ?.get()
           ?.hasGrantedScopes(SCOPES.join(' '))
       }
     },
@@ -62,7 +64,7 @@ export const useAuthStore = defineStore('auth', {
      *
      * @returns {Promise<boolean>} the signedIn status
      */
-    async initApp () {
+    async initApp() {
       return new Promise((resolve, reject) => {
         window.gapi.load('client:auth2', () => {
           window.gapi.client
@@ -71,31 +73,36 @@ export const useAuthStore = defineStore('auth', {
               clientId: import.meta.env.VITE_APP_CLIENT_ID,
               scope: SCOPES.join(' ')
             })
-            .then(() => {
-              this.googleAuth = window.gapi.auth2.getAuthInstance()
+            .then(
+              () => {
+                this.googleAuth = window.gapi.auth2.getAuthInstance()
 
-              this.googleAuth.isSignedIn.listen(signedIn => {
+                this.googleAuth.isSignedIn.listen((signedIn) => {
+                  this.updateSignedIn(signedIn)
+                })
+
+                const signedIn = this.googleAuth.isSignedIn.get()
+                const hasGrantedScopes = this.hasGrantedScopes
+
+                this.started = true
                 this.updateSignedIn(signedIn)
-              })
+                this.hasGrantedScopes = hasGrantedScopes
 
-              const signedIn = this.googleAuth.isSignedIn.get()
-              const hasGrantedScopes = this.hasGrantedScopes
+                resolve(signedIn)
+              },
+              (error) => {
+                const errorMessage =
+                  error.details === GoogleApiErrors.COOKIES_DISABLED
+                    ? t('errors.cookiesDisabled')
+                    : t('errors.authStartedFailed')
 
-              this.started = true
-              this.updateSignedIn(signedIn)
-              this.hasGrantedScopes = hasGrantedScopes
-
-              resolve(signedIn)
-            }, (error) => {
-              const errorMessage =
-                error.details === GoogleApiErrors.COOKIES_DISABLED
-                  ? t('errors.cookiesDisabled')
-                  : t('errors.authStartedFailed')
-
-              reject(new Error(errorMessage, {
-                cause: { ...error, refresh: true }
-              }))
-            })
+                reject(
+                  new Error(errorMessage, {
+                    cause: { ...error, refresh: true }
+                  })
+                )
+              }
+            )
         })
       })
     },
@@ -103,7 +110,7 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Attempt to sign in the user.
      */
-    async signIn () {
+    async signIn() {
       try {
         await this.googleAuth?.signIn()
       } catch (e) {
@@ -114,7 +121,7 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Attempt to sign out the user.
      */
-    async signOut () {
+    async signOut() {
       await this.googleAuth?.signOut()
     },
 
@@ -123,7 +130,7 @@ export const useAuthStore = defineStore('auth', {
      *
      * @param {boolean} signedIn the signedIn status
      */
-    updateSignedIn (signedIn) {
+    updateSignedIn(signedIn) {
       this.signedIn = signedIn
 
       if (signedIn) {

@@ -10,12 +10,11 @@ const numberModules = !isTest && import.meta.globEager('./number/*.js')
 
 const replacingRegex = /^\.\/(.*)\/(.*)\.js$/
 
-function mapToLocale (collection) {
-  const fixedEntries = Object.entries(collection)
-    .map(([path, value]) => [
-      path.replace(replacingRegex, '$2'),
-      value.default
-    ])
+function mapToLocale(collection) {
+  const fixedEntries = Object.entries(collection).map(([path, value]) => [
+    path.replace(replacingRegex, '$2'),
+    value.default
+  ])
 
   return Object.fromEntries(fixedEntries)
 }
@@ -32,7 +31,7 @@ const numberFormats = isTest
 
 const navigatorLanguage = navigator.language || navigator.userLanguage
 const userLocale = !isTest
-  ? (localStorage.getItem('locale') || navigatorLanguage)
+  ? localStorage.getItem('locale') || navigatorLanguage
   : 'en-US'
 
 const locale = messages[userLocale] ? userLocale : 'en-US'

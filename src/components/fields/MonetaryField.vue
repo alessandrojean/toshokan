@@ -1,3 +1,100 @@
+<script setup>
+import { computed, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { decimalComma } from '@/util/validators'
+
+import BaseField from '@/components/fields/BaseField.vue'
+
+const props = defineProps({
+  base: Number,
+  error: String,
+  help: String,
+  label: String,
+  modelValue: {
+    type: Object,
+    required: true
+  },
+  placeholder: String,
+  required: Boolean
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const { t, n, locale } = useI18n({ useScope: 'global' })
+const { base, modelValue: monetaryValue } = toRefs(props)
+
+const DEFAULT_CURRENCIES = ['BRL', 'EUR', 'JPY', 'USD']
+
+const currencies = computed(() => {
+  const options = DEFAULT_CURRENCIES.slice()
+
+  if (currency.value.length === 3 && !options.includes(currency.value)) {
+    options.push(currency.value)
+  }
+
+  return options.sort((a, b) => a.localeCompare(b, locale.value))
+})
+
+const currency = ref(monetaryValue.value?.currency || 'BRL')
+const value = ref(
+  monetaryValue.value?.value ? n(monetaryValue.value.value, 'decimal') : ''
+)
+
+const validator = decimalComma(2)
+
+function emitValues() {
+  emit('update:modelValue', {
+    currency: currency.value,
+    value: validator(value.value)
+      ? parseFloat(value.value.replace(',', '.'))
+      : null,
+    valueStr: value.value
+  })
+}
+
+watch(currency, () => emitValues())
+watch(value, () => emitValues())
+
+function currencyName(currencyCode) {
+  const displayNames = new Intl.DisplayNames([locale.value], {
+    type: 'currency'
+  })
+
+  return displayNames.of(currencyCode)
+}
+
+const currencySymbol = computed(() => {
+  if (currency.value.length < 3) {
+    return ''
+  }
+
+  const formatter = new Intl.NumberFormat(locale.value, {
+    style: 'currency',
+    currency: currency.value
+  })
+
+  const parts = formatter.formatToParts(0)
+
+  return parts[0].value
+})
+
+function handlePercent() {
+  if (!base.value || isNaN(base.value) || !validator(value.value)) {
+    return
+  }
+
+  const percent = parseFloat(value.value.replace(',', '.'))
+  value.value = n(base.value - (base.value * percent) / 100.0, 'decimal')
+}
+
+const currencyInput = ref(null)
+
+function focusCurrency() {
+  currencyInput.value?.focus()
+}
+</script>
+
 <template>
   <BaseField
     :label="label"
@@ -20,12 +117,8 @@
         placeholder="BRL"
         :list="inputId + '-datalist'"
         ref="currencyInput"
-      >
-      <span
-        aria-hidden="true"
-        class="currency-symbol"
-        @click="focusCurrency"
-      >
+      />
+      <span aria-hidden="true" class="currency-symbol" @click="focusCurrency">
         {{ currencySymbol }}
       </span>
       <datalist :id="inputId + '-datalist'">
@@ -44,125 +137,10 @@
         :placeholder="placeholder"
         v-model="value"
         @keydown.%.prevent="handlePercent"
-      >
+      />
     </div>
   </BaseField>
 </template>
-
-<script>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import BaseField from '@/components/fields/BaseField.vue'
-
-import { decimalComma } from '@/util/validators'
-
-export default {
-  components: { BaseField },
-
-  props: {
-    base: Number,
-    error: String,
-    help: String,
-    label: String,
-    modelValue: {
-      type: Object,
-      required: true
-    },
-    placeholder: String,
-    required: Boolean
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props, context) {
-    const { t, n, locale } = useI18n({ useScope: 'global' })
-    const { base, modelValue: monetaryValue } = toRefs(props)
-
-    const DEFAULT_CURRENCIES = ['BRL', 'EUR', 'JPY', 'USD']
-
-    const currencies = computed(() => {
-      const options = DEFAULT_CURRENCIES.slice()
-
-      if (currency.value.length === 3 && !options.includes(currency.value)) {
-        options.push(currency.value)
-      }
-
-      return options.sort((a, b) => a.localeCompare(b, locale.value))
-    })
-
-    const currency = ref(monetaryValue.value?.currency || 'BRL')
-    const value = ref(
-      monetaryValue.value?.value ? n(monetaryValue.value.value, 'decimal') : ''
-    )
-
-    const validator = decimalComma(2)
-
-    function emitValues () {
-      context.emit('update:modelValue', {
-        currency: currency.value,
-        value: validator(value.value)
-          ? parseFloat(value.value.replace(',', '.'))
-          : null,
-        valueStr: value.value
-      })
-    }
-
-    watch(currency, () => emitValues())
-    watch(value, () => emitValues())
-
-    function currencyName (currencyCode) {
-      const displayNames = new Intl.DisplayNames([locale.value], {
-        type: 'currency'
-      })
-
-      return displayNames.of(currencyCode)
-    }
-
-    const currencySymbol = computed(() => {
-      if (currency.value.length < 3) {
-        return ''
-      }
-
-      const formatter = new Intl.NumberFormat(locale.value, {
-        style: 'currency',
-        currency: currency.value
-      })
-
-      const parts = formatter.formatToParts(0)
-
-      return parts[0].value
-    })
-
-    function handlePercent () {
-      if (!base.value || isNaN(base.value) || !validator(value.value)) {
-        return
-      }
-
-      const percent = parseFloat(value.value.replace(',', '.'))
-      value.value = n(base.value - base.value * percent / 100.0, 'decimal')
-    }
-
-    const currencyInput = ref(null)
-
-    function focusCurrency () {
-      currencyInput.value?.focus()
-    }
-
-    return {
-      currencies,
-      currency,
-      value,
-      currencyName,
-      currencySymbol,
-      t,
-      handlePercent,
-      currencyInput,
-      focusCurrency
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .monetary-field {

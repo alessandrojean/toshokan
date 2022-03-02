@@ -1,7 +1,496 @@
+<script setup>
+import { computed, nextTick, ref, toRefs, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+import { STATUS_FUTURE, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import { useSheetStore } from '@/stores/sheet'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+
+import {
+  ArrowSmDownIcon,
+  ArrowSmUpIcon,
+  PhotographIcon
+} from '@heroicons/vue/outline'
+import { DotsHorizontalIcon, StarIcon } from '@heroicons/vue/solid'
+
+const props = defineProps({
+  currentPage: Number,
+  items: Array,
+  loading: Boolean,
+  selectable: Boolean,
+  skeleton: Boolean,
+  sortProperty: String,
+  sortDirection: String
+})
+
+const emit = defineEmits([
+  'click:deleteSelection',
+  'click:markAs',
+  'click:toggleFavorite',
+  'select',
+  'sort'
+])
+
+const { t, d, n, locale, getNumberFormat } = useI18n({ useScope: 'global' })
+const sheetStore = useSheetStore()
+const router = useRouter()
+
+const { data: timeZone } = useTimeZoneQuery({
+  enabled: computed(() => sheetStore.sheetId !== null)
+})
+
+function formatDate(date) {
+  return d(date, 'long', { timeZone: timeZone.value.name })
+}
+
+function formatPrice(currency, value) {
+  const formatter = new Intl.NumberFormat(locale.value, {
+    ...getNumberFormat(locale.value).currency,
+    currency: currency
+  })
+
+  return formatter.formatToParts(value !== undefined ? value : 0)
+}
+
+function currency(currency) {
+  const part = formatPrice(currency).find((p) => p.type === 'currency')
+
+  return part?.value || '$'
+}
+
+function value(currencyValue, value) {
+  const currencySymbol = currency(currencyValue)
+
+  return n(value, 'currency', { currency: currencyValue })
+    .replace(currencySymbol, '')
+    .trim()
+}
+
+function volumeText(item) {
+  const isSingle = item.titleParts.number === null
+
+  return t(
+    isSingle ? 'book.single' : 'book.volume',
+    isSingle ? undefined : { number: item.titleParts.number }
+  )
+}
+
+const { skeleton, loading } = toRefs(props)
+
+const columns = computed(() => [
+  {
+    key: 'status',
+    label: t('book.properties.status'),
+    class:
+      'hidden md:table-cell w-[12ch] ' + (skeleton.value ? '!text-right' : ''),
+    buttonClass: '!text-right',
+    skeletonClass: 'ml-3'
+  },
+  {
+    key: 'paidPrice.value',
+    label: t('book.properties.paidPrice'),
+    class: 'hidden lg:table-cell w-[15ch]',
+    buttonClass: '!pl-8',
+    skeletonClass: 'ml-6'
+  },
+  {
+    key: 'createdAt',
+    label: t('book.properties.createdAt'),
+    class: 'hidden md:table-cell w-[20ch]'
+  },
+  {
+    key: 'actions',
+    label: t('dashboard.library.items.tableColumns.actions'),
+    hidden: true,
+    class: 'w-16'
+  }
+])
+
+const { items, selectable } = toRefs(props)
+
+const selection = ref([])
+const current = ref(0)
+const topCheckbox = ref(null)
+const tableBody = ref(null)
+
+const isMac = ref(
+  navigator.userAgentData
+    ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+    : navigator.platform.toLowerCase().indexOf('mac') > -1
+)
+
+function handleTopCheckbox(checked) {
+  if (!selectable.value || !hasMinimumBreakpoint()) {
+    return
+  }
+
+  selection.value = checked ? Array.from(Array(items.value.length).keys()) : []
+
+  if (topCheckbox.value) {
+    topCheckbox.value.indeterminate =
+      selection.value.length > 0 && selection.value.length < items.value.length
+  }
+
+  current.value = 0
+
+  emit('select', selection.value)
+}
+
+function rangeArray(startIdx, endIdx) {
+  if (startIdx === endIdx) {
+    return [startIdx]
+  }
+
+  return Array.from(
+    { length: endIdx - startIdx + 1 },
+    (_, i) => i + startIdx
+  ).sort((a, b) => a - b)
+}
+
+function hasMinimumBreakpoint() {
+  return window.matchMedia('(min-width: 768px)').matches
+}
+
+/**
+ * Try to mimic the Windows behavior on selecting items
+ * using the mouse + Shift + Ctrl + Command + checkboxes.
+ *
+ * @param {boolean} checked
+ * @param {number} idx
+ * @param {MouseEvent} event
+ */
+function handleCheckbox(checked, idx, event) {
+  if (event.target.tagName === 'A') {
+    return
+  }
+
+  if (!hasMinimumBreakpoint()) {
+    router.push({
+      name: 'BookDetails',
+      params: { bookId: items.value[idx].id }
+    })
+    return
+  }
+
+  if (!selectable.value) {
+    return
+  }
+
+  const controlKey = isMac.value ? event.metaKey : event.ctrlKey
+
+  const individual = controlKey || event.target.tagName === 'INPUT'
+
+  if (event.target.tagName === 'LABEL') {
+    event.preventDefault()
+  }
+
+  if (event.shiftKey && selection.value.length === 0) {
+    selection.value.push(idx)
+  } else if (event.shiftKey && !controlKey) {
+    const startIdx = Math.min(selection.value[0], idx)
+    const endIdx = Math.max(selection.value[0], idx)
+    selection.value = rangeArray(startIdx, endIdx)
+  } else if (individual && selection.value.includes(idx) && !checked) {
+    selection.value.splice(selection.value.indexOf(idx), 1)
+  } else if (individual) {
+    selection.value.push(idx)
+  } else if (selection.value.length > 1) {
+    selection.value = [idx]
+  } else {
+    selection.value = selection.value.includes(idx) ? [] : [idx]
+  }
+
+  selection.value = Array.from(new Set(selection.value)).sort((a, b) => a - b)
+
+  if (topCheckbox.value) {
+    topCheckbox.value.indeterminate =
+      selection.value.length > 0 && selection.value.length < items.value.length
+  }
+
+  current.value = idx
+
+  emit('select', selection.value)
+}
+
+/**
+ * @param {KeyboardEvent} event
+ * @param {number} idx
+ */
+function handleKeyboard(event, idx) {
+  const allowedKeys = [
+    'ArrowDown',
+    'ArrowUp',
+    'Home',
+    'End',
+    'Delete',
+    'Enter',
+    'a',
+    ' '
+  ]
+  const { key, shiftKey, ctrlKey, metaKey } = event
+
+  const controlKey = isMac.value ? metaKey : ctrlKey
+
+  const totalItems = items.value.length
+  const selectionTotalItems = selection.value.length
+
+  if (!allowedKeys.includes(key) || !hasMinimumBreakpoint()) {
+    return
+  }
+
+  if (key === 'Enter') {
+    router.push({
+      name: 'BookDetails',
+      params: { bookId: items.value[idx].id }
+    })
+
+    return
+  }
+
+  if (!selectable.value) {
+    if (key === 'ArrowDown') {
+      current.value = Math.min(idx + 1, totalItems - 1)
+    } else if (key === 'ArrowUp') {
+      current.value = Math.max(idx - 1, 0)
+    }
+
+    nextTick(() => tableBody.value?.children[current.value].focus())
+
+    return
+  }
+
+  if ((key === 'ArrowUp' || key === 'Home') && current.value === 0) {
+    return
+  }
+
+  if (
+    (key === 'ArrowDown' || key === 'End') &&
+    current.value === totalItems - 1
+  ) {
+    return
+  }
+
+  event.preventDefault()
+
+  if (key === 'Delete' && selection.value.length > 0) {
+    emit('click:deleteSelection')
+  } else if (
+    key === 'a' &&
+    controlKey &&
+    !shiftKey &&
+    selection.value.length < totalItems
+  ) {
+    selection.value = rangeArray(0, totalItems - 1)
+  } else if (key === 'a' && controlKey && !shiftKey) {
+    selection.value = []
+  } else if (key === ' ' && !controlKey && selectionTotalItems === 0) {
+    selection.value = [idx]
+    current.value = idx
+  } else if (
+    selectionTotalItems === 0 &&
+    (key === 'ArrowDown' || key === 'ArrowUp') &&
+    !controlKey
+  ) {
+    selection.value = [idx]
+    current.value = idx
+  } else if (shiftKey) {
+    if (key === 'End') {
+      const startIdx = selection.value[0] || 0
+      const endIdx = totalItems - 1
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = endIdx
+    } else if (key === 'Home') {
+      const startIdx = 0
+      const endIdx =
+        selection.value.length > 0
+          ? selection.value[selection.value.length - 1]
+          : 0
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = startIdx
+    } else if (
+      key === 'ArrowDown' &&
+      !selection.value.includes(current.value + 1)
+    ) {
+      const startIdx = selection.value[0]
+      const endIdx = Math.min(current.value + 1, totalItems - 1)
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = endIdx
+    } else if (key === 'ArrowDown') {
+      const startIdx = Math.min(current.value + 1, totalItems - 1)
+      const endIdx = selection.value[selection.value.length - 1]
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = startIdx
+    } else if (
+      key === 'ArrowUp' &&
+      !selection.value.includes(current.value - 1)
+    ) {
+      const startIdx = Math.max(current.value - 1, 0)
+      const endIdx = selection.value[selection.value.length - 1]
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = startIdx
+    } else if (key === 'ArrowUp') {
+      const startIdx = selection.value[0]
+      const endIdx = Math.max(current.value - 1, 0)
+      selection.value = rangeArray(startIdx, endIdx)
+      current.value = endIdx
+    }
+  } else if (controlKey) {
+    if (key === 'Home') {
+      current.value = 0
+    } else if (key === 'End') {
+      current.value = totalItems - 1
+    } else if (key === 'ArrowDown') {
+      current.value = Math.min(idx + 1, totalItems - 1)
+    } else if (key === 'ArrowUp') {
+      current.value = Math.max(idx - 1, 0)
+    } else if (key === ' ' && selection.value.includes(current.value)) {
+      selection.value.splice(selection.value.indexOf(current.value), 1)
+    } else if (key === ' ') {
+      selection.value.push(current.value)
+    }
+  } else if (key === 'ArrowDown' && current.value + 1 < totalItems) {
+    selection.value = [++current.value]
+  } else if (key === 'ArrowUp' && current.value - 1 >= 0) {
+    selection.value = [--current.value]
+  } else if (key === 'Home') {
+    selection.value = [0]
+    current.value = selection.value[0]
+  } else if (key === 'End') {
+    selection.value = [totalItems - 1]
+    current.value = selection.value[0]
+  }
+
+  selection.value = Array.from(new Set(selection.value)).sort((a, b) => a - b)
+
+  if (topCheckbox.value) {
+    topCheckbox.value.indeterminate =
+      selection.value.length > 0 && selection.value.length < items.value.length
+  }
+
+  nextTick(() => focus())
+
+  emit('select', selection.value)
+}
+
+function clearSelection() {
+  selection.value = []
+  current.value = 0
+
+  if (topCheckbox.value) {
+    topCheckbox.value.indeterminate = false
+  }
+
+  emit('select', selection.value)
+}
+
+const { currentPage, sortProperty, sortDirection } = toRefs(props)
+
+watch(() => loading.value || skeleton.value, clearSelection)
+watch([currentPage, sortProperty, sortDirection], clearSelection)
+
+function handleDeleteSelection() {
+  const booksToDelete = selection.value.map((idx) => items.value[idx])
+  emit('click:deleteSelection', booksToDelete)
+}
+
+function ariaSorted(property) {
+  if (sortProperty.value !== property) {
+    return 'none'
+  }
+
+  return sortDirection.value === 'asc' ? 'ascending' : 'descending'
+}
+
+function handleSort(property) {
+  if (property !== sortProperty.value) {
+    emit('sort', {
+      property,
+      direction: sortDirection.value
+    })
+  } else {
+    emit('sort', {
+      property,
+      direction: sortDirection.value === 'asc' ? 'desc' : 'asc'
+    })
+  }
+}
+
+/**
+ * @param {number[]} array
+ * @param {string} key
+ */
+function countBy(array, key) {
+  const counting = array
+    .map((idx) => items.value[idx])
+    .reduce((acm, crr) => {
+      if (acm[crr[key]] !== undefined) {
+        acm[crr[key]]++
+      } else {
+        acm[crr[key]] = 1
+      }
+
+      return acm
+    }, {})
+
+  return Object.entries(counting)
+    .sort((a, b) => b[1] - a[1])
+    .map((entry) => ({ [key]: entry[0], count: entry[1] }))
+}
+
+const statusCount = computed(() => countBy(selection.value, 'status'))
+
+const predominantStatus = computed(() => statusCount.value[0]?.status)
+
+const inverseStatus = computed(() => {
+  return predominantStatus.value === STATUS_READ ? STATUS_UNREAD : STATUS_READ
+})
+
+const inverseStatusText = computed(() => {
+  const statusKey = inverseStatus.value.toLowerCase()
+  return t(`book.${statusKey}`)
+})
+
+const hasFutureSelected = computed(() => {
+  return statusCount.value.find(({ status }) => status === STATUS_FUTURE)
+})
+
+function handleMarkAsClick() {
+  const booksToEdit = selection.value.map((idx) => items.value[idx])
+  emit('click:markAs', { booksToEdit, newStatus: inverseStatus.value })
+}
+
+const favoritesCount = computed(() => countBy(selection.value, 'favorite'))
+
+const inverseFavorite = computed(() => {
+  return favoritesCount.value?.[0]?.favorite === 'false'
+})
+
+function handleToggleFavorite() {
+  const booksToEdit = selection.value.map((idx) => items.value[idx])
+  emit('click:toggleFavorite', {
+    booksToEdit,
+    newFavorite: inverseFavorite.value
+  })
+}
+
+function focus() {
+  tableBody.value?.children[current.value].focus()
+}
+
+function focusOnActiveHeader() {
+  document.querySelector('th[aria-sort]:not([aria-sort=none]) button')?.focus()
+}
+</script>
+
 <template>
-  <div class="relative -mx-4 sm:-mx-6 md:mx-0 md:rounded-lg shadow overflow-hidden">
+  <div
+    class="relative -mx-4 sm:-mx-6 md:mx-0 md:rounded-lg shadow overflow-hidden"
+  >
     <div class="align-middle inline-block min-w-full" :aria-hidden="skeleton">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 select-none">
+      <table
+        class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 select-none"
+      >
         <thead class="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th
@@ -44,8 +533,16 @@
                   {{ t('book.book') }}
                 </span>
                 <template v-if="sortProperty === 'title'">
-                  <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1" aria-hidden="true" />
-                  <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1" aria-hidden="true" />
+                  <ArrowSmUpIcon
+                    v-if="sortDirection === 'asc'"
+                    class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
+                    aria-hidden="true"
+                  />
+                  <ArrowSmDownIcon
+                    v-else
+                    class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
+                    aria-hidden="true"
+                  />
                 </template>
               </button>
               <div v-else-if="!skeleton" class="space-x-2 ml-3">
@@ -56,10 +553,9 @@
                   @click="handleMarkAsClick"
                 >
                   {{
-                    t(
-                      'dashboard.details.header.options.markAs',
-                      { status: inverseStatusText.toLocaleLowerCase(locale) }
-                    )
+                    t('dashboard.details.header.options.markAs', {
+                      status: inverseStatusText.toLocaleLowerCase(locale)
+                    })
                   }}
                 </button>
                 <button
@@ -80,7 +576,9 @@
                   class="button is-small"
                   @click="handleDeleteSelection"
                 >
-                  {{ t('dashboard.library.items.tableColumns.deleteSelection') }}
+                  {{
+                    t('dashboard.library.items.tableColumns.deleteSelection')
+                  }}
                 </button>
               </div>
               <div
@@ -120,8 +618,16 @@
                   {{ column.label }}
                 </span>
                 <template v-if="sortProperty === column.key && !column.hidden">
-                  <ArrowSmUpIcon v-if="sortDirection === 'asc'" class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1" aria-hidden="true" />
-                  <ArrowSmDownIcon v-else class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1" aria-hidden="true" />
+                  <ArrowSmUpIcon
+                    v-if="sortDirection === 'asc'"
+                    class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
+                    aria-hidden="true"
+                  />
+                  <ArrowSmDownIcon
+                    v-else
+                    class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
+                    aria-hidden="true"
+                  />
                 </template>
               </button>
               <span
@@ -161,13 +667,12 @@
               ]"
               :tabindex="bookIdx === current ? '0' : null"
               :aria-labelledby="'book-label-' + book.id"
-              @click="handleCheckbox(!selection.includes(bookIdx), bookIdx, $event)"
+              @click="
+                handleCheckbox(!selection.includes(bookIdx), bookIdx, $event)
+              "
               @keydown="handleKeyboard($event, bookIdx)"
             >
-              <td
-                v-if="selectable"
-                class="hidden pl-5 md:table-cell relative"
-              >
+              <td v-if="selectable" class="hidden pl-5 md:table-cell relative">
                 <div
                   :class="[
                     'absolute w-[3px] h-full left-0 inset-y-0',
@@ -259,12 +764,16 @@
                   />
                 </div>
               </td>
-              <td class="pr-3 py-4 md:whitespace-nowrap hidden md:table-cell text-right">
+              <td
+                class="pr-3 py-4 md:whitespace-nowrap hidden md:table-cell text-right"
+              >
                 <span :class="'is-' + book.status.toLowerCase()" class="badge">
                   {{ t(`book.${book.status.toLowerCase()}`) }}
                 </span>
               </td>
-              <td class="py-4 lg:whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 hidden lg:table-cell">
+              <td
+                class="py-4 lg:whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 hidden lg:table-cell"
+              >
                 <div class="tabular-nums px-8">
                   <span>
                     {{ currency(book.paidPrice.currency) }}
@@ -274,12 +783,16 @@
                   </span>
                 </div>
               </td>
-              <td class="w-[20ch] px-3 py-4 md:whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 hidden md:table-cell">
+              <td
+                class="w-[20ch] px-3 py-4 md:whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 hidden md:table-cell"
+              >
                 <span class="tabular-nums">
                   {{ formatDate(book.createdAt) }}
                 </span>
               </td>
-              <td class="pr-6 py-4 w-16 md:whitespace-nowrap text-right text-sm font-medium">
+              <td
+                class="pr-6 py-4 w-16 md:whitespace-nowrap text-right text-sm font-medium"
+              >
                 <router-link
                   :to="{ name: 'BookDetails', params: { bookId: book.id } }"
                   class="button justify-center w-10 h-10 p-2 -mr-2 is-ghost is-icon-only bg-transparent"
@@ -298,7 +811,12 @@
           <template v-else>
             <tr v-for="idx in 18" :key="idx">
               <td v-if="selectable" class="hidden px-5 md:table-cell">
-                <input aria-hidden="true" type="checkbox" disabled class="checkbox">
+                <input
+                  aria-hidden="true"
+                  type="checkbox"
+                  disabled
+                  class="checkbox"
+                />
               </td>
               <td
                 :class="[
@@ -307,8 +825,12 @@
                 ]"
               >
                 <div class="flex items-center">
-                  <div class="shrink-0 skeleton h-10 w-10 inline-flex items-center justify-center">
-                    <PhotographIcon class="h-6 w-6 text-white dark:text-gray-500"/>
+                  <div
+                    class="shrink-0 skeleton h-10 w-10 inline-flex items-center justify-center"
+                  >
+                    <PhotographIcon
+                      class="h-6 w-6 text-white dark:text-gray-500"
+                    />
                   </div>
                   <div class="ml-4">
                     <div class="skeleton w-36 h-4" />
@@ -335,512 +857,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
-
-import {
-  ArrowSmDownIcon,
-  ArrowSmUpIcon,
-  PhotographIcon
-} from '@heroicons/vue/outline'
-import { DotsHorizontalIcon, StarIcon } from '@heroicons/vue/solid'
-
-import { STATUS_FUTURE, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
-
-export default {
-  components: {
-    ArrowSmDownIcon,
-    ArrowSmUpIcon,
-    DotsHorizontalIcon,
-    PhotographIcon,
-    StarIcon
-  },
-
-  props: {
-    currentPage: Number,
-    items: Array,
-    loading: Boolean,
-    selectable: Boolean,
-    skeleton: Boolean,
-    sortProperty: String,
-    sortDirection: String
-  },
-
-  emits: [
-    'click:deleteSelection', 'click:markAs', 'click:toggleFavorite',
-    'select', 'sort'
-  ],
-
-  setup (props, { emit }) {
-    const { t, d, n, locale, getNumberFormat } = useI18n({ useScope: 'global' })
-    const sheetStore = useSheetStore()
-    const router = useRouter()
-
-    const { data: timeZone } = useTimeZoneQuery({
-      enabled: computed(() => sheetStore.sheetId !== null)
-    })
-
-    function formatDate (date) {
-      return d(date, 'long', { timeZone: timeZone.value.name })
-    }
-
-    function formatPrice (currency, value) {
-      const formatter = new Intl.NumberFormat(locale.value, {
-        ...getNumberFormat(locale.value).currency,
-        currency: currency
-      })
-
-      return formatter.formatToParts(value !== undefined ? value : 0)
-    }
-
-    function currency (currency) {
-      const part = formatPrice(currency).find(p => p.type === 'currency')
-
-      return part?.value || '$'
-    }
-
-    function value (currencyValue, value) {
-      const currencySymbol = currency(currencyValue)
-
-      return n(value, 'currency', { currency: currencyValue })
-        .replace(currencySymbol, '')
-        .trim()
-    }
-
-    function volumeText (item) {
-      const isSingle = item.titleParts.number === null
-
-      return t(
-        isSingle ? 'book.single' : 'book.volume',
-        isSingle ? undefined : { number: item.titleParts.number }
-      )
-    }
-
-    const { skeleton, loading } = toRefs(props)
-
-    const columns = computed(() => [
-      {
-        key: 'status',
-        label: t('book.properties.status'),
-        class: 'hidden md:table-cell w-[12ch] ' +
-          (skeleton.value ? '!text-right' : ''),
-        buttonClass: '!text-right',
-        skeletonClass: 'ml-3'
-      },
-      {
-        key: 'paidPrice.value',
-        label: t('book.properties.paidPrice'),
-        class: 'hidden lg:table-cell w-[15ch]',
-        buttonClass: '!pl-8',
-        skeletonClass: 'ml-6'
-      },
-      {
-        key: 'createdAt',
-        label: t('book.properties.createdAt'),
-        class: 'hidden md:table-cell w-[20ch]'
-      },
-      {
-        key: 'actions',
-        label: t('dashboard.library.items.tableColumns.actions'),
-        hidden: true,
-        class: 'w-16'
-      }
-    ])
-
-    const { items, selectable } = toRefs(props)
-
-    const selection = ref([])
-    const current = ref(0)
-    const topCheckbox = ref(null)
-    const tableBody = ref(null)
-
-    const isMac = ref(
-      navigator.userAgentData
-        ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
-        : navigator.platform.toLowerCase().indexOf('mac') > -1
-    )
-
-    function handleTopCheckbox (checked) {
-      if (!selectable.value || !hasMinimumBreakpoint()) {
-        return
-      }
-
-      selection.value = checked
-        ? Array.from(Array(items.value.length).keys())
-        : []
-
-      if (topCheckbox.value) {
-        topCheckbox.value.indeterminate = selection.value.length > 0 &&
-          selection.value.length < items.value.length
-      }
-
-      current.value = 0
-
-      emit('select', selection.value)
-    }
-
-    function rangeArray (startIdx, endIdx) {
-      if (startIdx === endIdx) {
-        return [startIdx]
-      }
-
-      return Array
-        .from(
-          { length: endIdx - startIdx + 1 },
-          (_, i) => i + startIdx
-        )
-        .sort((a, b) => a - b)
-    }
-
-    function hasMinimumBreakpoint () {
-      return window.matchMedia('(min-width: 768px)').matches
-    }
-
-    /**
-     * Try to mimic the Windows behavior on selecting items
-     * using the mouse + Shift + Ctrl + Command + checkboxes.
-     *
-     * @param {boolean} checked
-     * @param {number} idx
-     * @param {MouseEvent} event
-     */
-    function handleCheckbox (checked, idx, event) {
-      if (event.target.tagName === 'A') {
-        return
-      }
-
-      if (!hasMinimumBreakpoint()) {
-        router.push({
-          name: 'BookDetails',
-          params: { bookId: items.value[idx].id }
-        })
-        return
-      }
-
-      if (!selectable.value) {
-        return
-      }
-
-      const controlKey = isMac.value ? event.metaKey : event.ctrlKey
-
-      const individual = controlKey || event.target.tagName === 'INPUT'
-
-      if (event.target.tagName === 'LABEL') {
-        event.preventDefault()
-      }
-
-      if (event.shiftKey && selection.value.length === 0) {
-        selection.value.push(idx)
-      } else if (event.shiftKey && !controlKey) {
-        const startIdx = Math.min(selection.value[0], idx)
-        const endIdx = Math.max(selection.value[0], idx)
-        selection.value = rangeArray(startIdx, endIdx)
-      } else if (individual && selection.value.includes(idx) && !checked) {
-        selection.value.splice(selection.value.indexOf(idx), 1)
-      } else if (individual) {
-        selection.value.push(idx)
-      } else if (selection.value.length > 1) {
-        selection.value = [idx]
-      } else {
-        selection.value = selection.value.includes(idx) ? [] : [idx]
-      }
-
-      selection.value = Array
-        .from(new Set(selection.value))
-        .sort((a, b) => a - b)
-
-      if (topCheckbox.value) {
-        topCheckbox.value.indeterminate = selection.value.length > 0 &&
-          selection.value.length < items.value.length
-      }
-
-      current.value = idx
-
-      emit('select', selection.value)
-    }
-
-    /**
-     * @param {KeyboardEvent} event
-     * @param {number} idx
-     */
-    function handleKeyboard (event, idx) {
-      const allowedKeys = [
-        'ArrowDown', 'ArrowUp', 'Home', 'End',
-        'Delete', 'Enter', 'a', ' '
-      ]
-      const { key, shiftKey, ctrlKey, metaKey } = event
-
-      const controlKey = isMac.value ? metaKey : ctrlKey
-
-      const totalItems = items.value.length
-      const selectionTotalItems = selection.value.length
-
-      if (!allowedKeys.includes(key) || !hasMinimumBreakpoint()) {
-        return
-      }
-
-      if (key === 'Enter') {
-        router.push({
-          name: 'BookDetails',
-          params: { bookId: items.value[idx].id }
-        })
-
-        return
-      }
-
-      if (!selectable.value) {
-        if (key === 'ArrowDown') {
-          current.value = Math.min(idx + 1, totalItems - 1)
-        } else if (key === 'ArrowUp') {
-          current.value = Math.max(idx - 1, 0)
-        }
-
-        nextTick(() => tableBody.value?.children[current.value].focus())
-
-        return
-      }
-
-      if ((key === 'ArrowUp' || key === 'Home') && current.value === 0) {
-        return
-      }
-
-      if ((key === 'ArrowDown' || key === 'End') && current.value === totalItems - 1) {
-        return
-      }
-
-      event.preventDefault()
-
-      if (key === 'Delete' && selection.value.length > 0) {
-        emit('click:deleteSelection')
-      } else if (key === 'a' && controlKey && !shiftKey && selection.value.length < totalItems) {
-        selection.value = rangeArray(0, totalItems - 1)
-      } else if (key === 'a' && controlKey && !shiftKey) {
-        selection.value = []
-      } else if (key === ' ' && !controlKey && selectionTotalItems === 0) {
-        selection.value = [idx]
-        current.value = idx
-      } else if (selectionTotalItems === 0 && (key === 'ArrowDown' || key === 'ArrowUp') && !controlKey) {
-        selection.value = [idx]
-        current.value = idx
-      } else if (shiftKey) {
-        if (key === 'End') {
-          const startIdx = selection.value[0] || 0
-          const endIdx = totalItems - 1
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = endIdx
-        } else if (key === 'Home') {
-          const startIdx = 0
-          const endIdx = selection.value.length > 0
-            ? selection.value[selection.value.length - 1]
-            : 0
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = startIdx
-        } else if (key === 'ArrowDown' && !selection.value.includes(current.value + 1)) {
-          const startIdx = selection.value[0]
-          const endIdx = Math.min(current.value + 1, totalItems - 1)
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = endIdx
-        } else if (key === 'ArrowDown') {
-          const startIdx = Math.min(current.value + 1, totalItems - 1)
-          const endIdx = selection.value[selection.value.length - 1]
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = startIdx
-        } else if (key === 'ArrowUp' && !selection.value.includes(current.value - 1)) {
-          const startIdx = Math.max(current.value - 1, 0)
-          const endIdx = selection.value[selection.value.length - 1]
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = startIdx
-        } else if (key === 'ArrowUp') {
-          const startIdx = selection.value[0]
-          const endIdx = Math.max(current.value - 1, 0)
-          selection.value = rangeArray(startIdx, endIdx)
-          current.value = endIdx
-        }
-      } else if (controlKey) {
-        if (key === 'Home') {
-          current.value = 0
-        } else if (key === 'End') {
-          current.value = totalItems - 1
-        } else if (key === 'ArrowDown') {
-          current.value = Math.min(idx + 1, totalItems - 1)
-        } else if (key === 'ArrowUp') {
-          current.value = Math.max(idx - 1, 0)
-        } else if (key === ' ' && selection.value.includes(current.value)) {
-          selection.value.splice(selection.value.indexOf(current.value), 1)
-        } else if (key === ' ') {
-          selection.value.push(current.value)
-        }
-      } else if (key === 'ArrowDown' && current.value + 1 < totalItems) {
-        selection.value = [++current.value]
-      } else if (key === 'ArrowUp' && current.value - 1 >= 0) {
-        selection.value = [--current.value]
-      } else if (key === 'Home') {
-        selection.value = [0]
-        current.value = selection.value[0]
-      } else if (key === 'End') {
-        selection.value = [totalItems - 1]
-        current.value = selection.value[0]
-      }
-
-      selection.value = Array
-        .from(new Set(selection.value))
-        .sort((a, b) => a - b)
-
-      if (topCheckbox.value) {
-        topCheckbox.value.indeterminate = selection.value.length > 0 &&
-          selection.value.length < items.value.length
-      }
-
-      nextTick(() => focus())
-
-      emit('select', selection.value)
-    }
-
-    function clearSelection () {
-      selection.value = []
-      current.value = 0
-
-      if (topCheckbox.value) {
-        topCheckbox.value.indeterminate = false
-      }
-
-      emit('select', selection.value)
-    }
-
-    const { currentPage, sortProperty, sortDirection } = toRefs(props)
-
-    watch(() => loading.value || skeleton.value, clearSelection)
-    watch([currentPage, sortProperty, sortDirection], clearSelection)
-
-    function handleDeleteSelection () {
-      const booksToDelete = selection.value.map(idx => items.value[idx])
-      emit('click:deleteSelection', booksToDelete)
-    }
-
-    function ariaSorted (property) {
-      if (sortProperty.value !== property) {
-        return 'none'
-      }
-
-      return sortDirection.value === 'asc' ? 'ascending' : 'descending'
-    }
-
-    function handleSort (property) {
-      if (property !== sortProperty.value) {
-        emit('sort', {
-          property,
-          direction: sortDirection.value
-        })
-      } else {
-        emit('sort', {
-          property,
-          direction: sortDirection.value === 'asc' ? 'desc' : 'asc'
-        })
-      }
-    }
-
-    /**
-     * @param {number[]} array
-     * @param {string} key
-     */
-    function countBy (array, key) {
-      const counting = array
-        .map(idx => items.value[idx])
-        .reduce((acm, crr) => {
-          if (acm[crr[key]] !== undefined) {
-            acm[crr[key]]++
-          } else {
-            acm[crr[key]] = 1
-          }
-
-          return acm
-        }, {})
-
-      return Object.entries(counting)
-        .sort((a, b) => b[1] - a[1])
-        .map(entry => ({ [key]: entry[0], count: entry[1] }))
-    }
-
-    const statusCount = computed(() => countBy(selection.value, 'status'))
-
-    const predominantStatus = computed(() => statusCount.value[0]?.status)
-
-    const inverseStatus = computed(() => {
-      return predominantStatus.value === STATUS_READ
-        ? STATUS_UNREAD
-        : STATUS_READ
-    })
-
-    const inverseStatusText = computed(() => {
-      const statusKey = inverseStatus.value.toLowerCase()
-      return t(`book.${statusKey}`)
-    })
-
-    const hasFutureSelected = computed(() => {
-      return statusCount.value.find(({ status }) => status === STATUS_FUTURE)
-    })
-
-    function handleMarkAsClick () {
-      const booksToEdit = selection.value.map(idx => items.value[idx])
-      emit('click:markAs', { booksToEdit, newStatus: inverseStatus.value })
-    }
-
-    const favoritesCount = computed(() => countBy(selection.value, 'favorite'))
-
-    const inverseFavorite = computed(() => {
-      return favoritesCount.value?.[0]?.favorite === 'false'
-    })
-
-    function handleToggleFavorite () {
-      const booksToEdit = selection.value.map(idx => items.value[idx])
-      emit('click:toggleFavorite', {
-        booksToEdit,
-        newFavorite: inverseFavorite.value
-      })
-    }
-
-    function focus () {
-      tableBody.value?.children[current.value].focus()
-    }
-
-    function focusOnActiveHeader () {
-      document
-        .querySelector('th[aria-sort]:not([aria-sort=none]) button')
-        ?.focus()
-    }
-
-    return {
-      formatDate,
-      currency,
-      value,
-      volumeText,
-      columns,
-      selection,
-      current,
-      topCheckbox,
-      handleTopCheckbox,
-      handleCheckbox,
-      handleKeyboard,
-      tableBody,
-      handleDeleteSelection,
-      ariaSorted,
-      handleSort,
-      inverseStatusText,
-      hasFutureSelected,
-      handleMarkAsClick,
-      inverseFavorite,
-      handleToggleFavorite,
-      focus,
-      focusOnActiveHeader,
-      t,
-      locale
-    }
-  }
-}
-</script>

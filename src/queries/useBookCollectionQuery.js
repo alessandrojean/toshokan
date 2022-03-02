@@ -4,11 +4,11 @@ import { useQuery } from 'vue-query'
 import { useSheetStore } from '@/stores/sheet'
 import getBooksFromCollection from '@/services/sheet/getBooksFromCollection'
 
-export default function useBookCollectionQuery (book, { enabled }) {
+export default function useBookCollectionQuery(book, { enabled }) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher () {
+  async function fetcher() {
     return await getBooksFromCollection(sheetId.value, book.value)
   }
 

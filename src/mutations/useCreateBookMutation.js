@@ -4,13 +4,13 @@ import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import insertBook from '@/services/sheet/insertBook'
 
-export default function useCreateBookMutation () {
+export default function useCreateBookMutation() {
   const collectionStore = useCollectionStore()
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
-  return useMutation(book => insertBook(sheetStore.sheetId, book), {
-    onSuccess (_, book) {
+  return useMutation((book) => insertBook(sheetStore.sheetId, book), {
+    onSuccess(_, book) {
       const groups = collectionStore.filters.groups
 
       if (!groups.includes(book.group) && groups.length > 0) {
@@ -21,7 +21,7 @@ export default function useCreateBookMutation () {
 
       queryClient.setQueryData(['book', book.id], book)
     },
-    onSettled () {
+    onSettled() {
       queryClient.invalidateQueries('last-added')
       queryClient.invalidateQueries('next-reads')
       queryClient.invalidateQueries('groups')

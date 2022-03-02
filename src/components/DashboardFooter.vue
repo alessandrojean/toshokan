@@ -1,6 +1,38 @@
+<script setup>
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useAppInfo from '@/composables/useAppInfo'
+
+import {
+  CurrencyDollarIcon,
+  QuestionMarkCircleIcon
+} from '@heroicons/vue/outline'
+
+import DonationDialog from '@/components/dialogs/DonationDialog.vue'
+import GitHubIcon from '@/components/icons/GitHubIcon.vue'
+
+const { t } = useI18n({ useScope: 'global' })
+
+const { appVersion } = useAppInfo()
+
+const donateDialogOpen = ref(false)
+
+const githubLink = ref('https://github.com/alessandrojean/toshokan')
+
+const releaseLink = computed(() => {
+  return githubLink.value + '/releases/tag/v' + appVersion.value
+})
+</script>
+
 <template>
-  <footer class="hidden sm:block bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 py-4" role="contentinfo">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-between">
+  <footer
+    class="hidden sm:block bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 py-4"
+    role="contentinfo"
+  >
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-between"
+    >
       <p class="text-sm text-gray-500 dark:text-gray-300">
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
@@ -59,45 +91,3 @@
     <DonationDialog v-model="donateDialogOpen" />
   </footer>
 </template>
-
-<script>
-import { useI18n } from 'vue-i18n'
-
-import { CurrencyDollarIcon, QuestionMarkCircleIcon } from '@heroicons/vue/outline'
-
-import DonationDialog from '@/components/dialogs/DonationDialog.vue'
-import GitHubIcon from '@/components/icons/GitHubIcon.vue'
-
-import useAppInfo from '@/composables/useAppInfo'
-import { computed, ref } from 'vue-demi'
-
-export default {
-  components: {
-    CurrencyDollarIcon,
-    DonationDialog,
-    GitHubIcon,
-    QuestionMarkCircleIcon
-  },
-
-  setup () {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const { appVersion } = useAppInfo()
-
-    const donateDialogOpen = ref(false)
-
-    const githubLink = ref('https://github.com/alessandrojean/toshokan')
-    const releaseLink = computed(() => {
-      return githubLink.value + '/releases/tag/v' + appVersion.value
-    })
-
-    return {
-      t,
-      appVersion,
-      donateDialogOpen,
-      githubLink,
-      releaseLink
-    }
-  }
-}
-</script>

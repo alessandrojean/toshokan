@@ -12,7 +12,7 @@ export const useSearchStore = defineStore('search', {
     sortDirection: 'desc'
   }),
   actions: {
-    clear () {
+    clear() {
       this.$patch({
         query: '',
         page: 1,
@@ -22,27 +22,27 @@ export const useSearchStore = defineStore('search', {
       })
     },
 
-    updateHistory (history) {
+    updateHistory(history) {
       this.history = history
       localStorage.setItem('search_history', JSON.stringify(history))
     },
 
-    updatePage (page) {
+    updatePage(page) {
       this.page = page
     },
 
-    updatePagination (pagination) {
+    updatePagination(pagination) {
       this.pagination = {
         ...this.pagination,
         ...pagination
       }
     },
 
-    updateQuery (query) {
+    updateQuery(query) {
       this.query = query
     },
 
-    updateSort ({ sortBy, sortDirection }) {
+    updateSort({ sortBy, sortDirection }) {
       this.sortBy = sortBy || this.sortBy
       this.sortDirection = sortDirection || this.sortDirection
     }

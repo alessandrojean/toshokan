@@ -2,7 +2,7 @@ import { computed, readonly, ref } from 'vue'
 
 import lookupSearch from '@/services/lookup'
 
-export default function useIsbnSearch (isbnRef) {
+export default function useIsbnSearch(isbnRef) {
   const errorMessage = ref('')
   const results = ref(null)
   const searching = ref(false)
@@ -10,14 +10,14 @@ export default function useIsbnSearch (isbnRef) {
 
   const failed = computed(() => errorMessage.value.length > 0)
 
-  function clear () {
+  function clear() {
     noResultsFound.value = false
     results.value = null
     searching.value = false
     errorMessage.value = false
   }
 
-  async function search () {
+  async function search() {
     if (isbnRef.value.length === 0) {
       return
     }

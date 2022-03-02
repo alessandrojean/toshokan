@@ -1,27 +1,4 @@
-<template>
-  <a
-    href="#"
-    class="history-item group has-ring-focus"
-    @click.prevent="$emit('click', search)"
-  >
-    <p class="flex-grow overflow-hidden whitespace-nowrap min-w-0 overflow-gradient" v-html="searchText" />
-    <button
-      class="remove-button has-ring-focus"
-      tabindex="-1"
-      :title="t('dashboard.search.removeFromHistory')"
-      @click.stop="$emit('click:remove', search)"
-    >
-      <span class="sr-only">
-        {{ t('dashboard.search.removeFromHistory')}}
-      </span>
-      <span aria-hidden="true">
-        <XIcon class="w-5 h-5" />
-      </span>
-    </button>
-  </a>
-</template>
-
-<script>
+<script setup>
 import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -33,63 +10,86 @@ import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 import { XIcon } from '@heroicons/vue/solid'
 
-export default {
-  components: { XIcon },
-
-  props: {
-    search: {
-      type: String,
-      required: true
-    }
-  },
-
-  emits: ['click', 'click:remove'],
-
-  setup (props) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const { search } = toRefs(props)
-    const { escapeHtml } = useMarkdown()
-
-    const keywords = computed(() => Object.keys(createSearchKeywords()))
-
-    const searchText = computed(() => {
-      const result = searchQuery.parse(search.value, { keywords: keywords.value })
-
-      if (typeof result === 'string') {
-        return escapeHtml(result)
-      }
-
-      let withTags = search.value
-
-      for (const offset of result.offsets.reverse()) {
-        if (offset.text) {
-          withTags = withTags.substring(0, offset.offsetStart) +
-            escapeHtml(search.value.substring(offset.offsetStart, offset.offsetEnd)) +
-            withTags.substring(offset.offsetEnd)
-          continue
-        }
-
-        const isExclude = withTags[offset.offsetStart - 1] === '-'
-        const startIndex = isExclude ? offset.offsetStart - 1 : offset.offsetStart
-
-        const tag = dedent`
-          <span class="bg-gray-300/40 dark:bg-gray-600/50 dark:group-hover:bg-gray-600/80 dark:group-focus-visible:bg-gray-600/80 py-px px-2 rounded inline-block">
-            ${escapeHtml(search.value.substring(startIndex, offset.offsetEnd))}
-          </span>
-        `
-
-        withTags = withTags.substring(0, startIndex) +
-          tag + withTags.substring(offset.offsetEnd)
-      }
-
-      return withTags.replace(/\n/g, '')
-    })
-
-    return { t, searchText }
+const props = defineProps({
+  search: {
+    type: String,
+    required: true
   }
-}
+})
+
+defineEmits(['click', 'click:remove'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+const { search } = toRefs(props)
+const { escapeHtml } = useMarkdown()
+
+const keywords = computed(() => Object.keys(createSearchKeywords()))
+
+const searchText = computed(() => {
+  const result = searchQuery.parse(search.value, { keywords: keywords.value })
+
+  if (typeof result === 'string') {
+    return escapeHtml(result)
+  }
+
+  let withTags = search.value
+
+  for (const offset of result.offsets.reverse()) {
+    if (offset.text) {
+      withTags =
+        withTags.substring(0, offset.offsetStart) +
+        escapeHtml(
+          search.value.substring(offset.offsetStart, offset.offsetEnd)
+        ) +
+        withTags.substring(offset.offsetEnd)
+      continue
+    }
+
+    const isExclude = withTags[offset.offsetStart - 1] === '-'
+    const startIndex = isExclude ? offset.offsetStart - 1 : offset.offsetStart
+
+    const tag = dedent`
+      <span class="bg-gray-300/40 dark:bg-gray-600/50 dark:group-hover:bg-gray-600/80 dark:group-focus-visible:bg-gray-600/80 py-px px-2 rounded inline-block">
+        ${escapeHtml(search.value.substring(startIndex, offset.offsetEnd))}
+      </span>
+    `
+
+    withTags =
+      withTags.substring(0, startIndex) +
+      tag +
+      withTags.substring(offset.offsetEnd)
+  }
+
+  return withTags.replace(/\n/g, '')
+})
 </script>
+
+<template>
+  <a
+    href="#"
+    class="history-item group has-ring-focus"
+    @click.prevent="$emit('click', search)"
+  >
+    <p
+      class="flex-grow overflow-hidden whitespace-nowrap min-w-0 overflow-gradient"
+      v-html="searchText"
+    />
+    <button
+      class="remove-button has-ring-focus"
+      tabindex="-1"
+      :title="t('dashboard.search.removeFromHistory')"
+      @click.stop="$emit('click:remove', search)"
+    >
+      <span class="sr-only">
+        {{ t('dashboard.search.removeFromHistory') }}
+      </span>
+      <span aria-hidden="true">
+        <XIcon class="w-5 h-5" />
+      </span>
+    </button>
+  </a>
+</template>
 
 <style lang="postcss" scoped>
 .history-item {

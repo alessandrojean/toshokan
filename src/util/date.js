@@ -5,7 +5,7 @@
  * @param {number} month The month
  * @returns {number} The last day of the month
  */
-export function lastDayOfMonth (year, month) {
+export function lastDayOfMonth(year, month) {
   if (year < 1000 || year > 3000 || month === 0 || month > 12) {
     return null
   }
@@ -19,8 +19,6 @@ export function lastDayOfMonth (year, month) {
   return monthLength[month - 1]
 }
 
-export function isoDate (date) {
-  return date
-    .replace(/-(\d)-/, '0$1')
-    .replace(/-(\d)$/, '0$1')
+export function isoDate(date) {
+  return date.replace(/-(\d)-/, '0$1').replace(/-(\d)$/, '0$1')
 }

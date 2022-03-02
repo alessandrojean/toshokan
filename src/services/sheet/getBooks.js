@@ -24,16 +24,15 @@ import Book, {
  * @param {boolean?} options.dontCount Define if the count should be skipped
  * @returns {Promise<{ books: Book[], totalResults: number? }>} The books found
  */
-export default async function getBooks (sheetId, page = 1, options = {}) {
+export default async function getBooks(sheetId, page = 1, options = {}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { CREATED_AT, FAVORITE, GROUP, STATUS } = CollectionColumns
-  const orderBy = (options.orderBy || [CREATED_AT])
-    .map(property => {
-      return (typeof property === 'string')
-        ? [property, options.orderDirection || 'desc']
-        : property
-    })
+  const orderBy = (options.orderBy || [CREATED_AT]).map((property) => {
+    return typeof property === 'string'
+      ? [property, options.orderDirection || 'desc']
+      : property
+  })
 
   const queryBuilder = new QueryBuilder(sheetUrl)
     .orderBy(...orderBy)
@@ -41,8 +40,7 @@ export default async function getBooks (sheetId, page = 1, options = {}) {
     .offset((page - 1) * PER_PAGE)
 
   if (options.groups && options.groups.length > 0) {
-    const groupConditions = options.groups
-      .map(group => [GROUP, '=', group])
+    const groupConditions = options.groups.map((group) => [GROUP, '=', group])
 
     queryBuilder.where(QueryBuilder.or(...groupConditions))
   }

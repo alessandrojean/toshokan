@@ -1,8 +1,22 @@
+<script setup>
+defineProps({
+  loading: Boolean,
+  subtitle: String,
+  title: {
+    type: String,
+    required: true
+  }
+})
+</script>
+
 <template>
   <header class="bg-white shadow dark:bg-gray-800">
     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
       <div v-if="loading" class="skeleton h-7 w-56"></div>
-      <h1 v-else class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100">
+      <h1
+        v-else
+        class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100"
+      >
         {{ title }}
       </h1>
       <p class="text-gray-500 dark:text-gray-400" v-if="subtitle">
@@ -11,18 +25,3 @@
     </div>
   </header>
 </template>
-
-<script>
-export default {
-  name: 'SimpleHeader',
-
-  props: {
-    loading: Boolean,
-    subtitle: String,
-    title: {
-      type: String,
-      required: true
-    }
-  }
-}
-</script>

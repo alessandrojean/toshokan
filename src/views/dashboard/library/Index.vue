@@ -1,15 +1,11 @@
+<script setup>
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+</script>
+
 <template>
   <router-view v-slot="{ Component }">
-    <transition
-      mode="out-in"
-      enter-active-class="transition motion-reduce:transition-none duration-500 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100 "
-      leave-active-class="transition motion-reduce:transition-none duration-300 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+    <FadeTransition>
       <component :is="Component" class="w-full" />
-    </transition>
+    </FadeTransition>
   </router-view>
 </template>

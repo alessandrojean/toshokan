@@ -1,3 +1,19 @@
+<script setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import LocaleSelector from '@/components/LocaleSelector.vue'
+
+const { t, locale } = useI18n({ useScope: 'global' })
+
+const links = computed(() => [
+  { route: 'Accessibility', text: t('footer.links.a11y') },
+  { route: 'Instructions', text: t('footer.links.instructions') },
+  { route: 'PrivacyPolicy', text: t('footer.links.privacyPolicy') },
+  { route: 'TermsOfUse', text: t('footer.links.termsOfUse') }
+])
+</script>
+
 <template>
   <footer class="footer">
     <div>
@@ -6,24 +22,9 @@
 
     <nav>
       <ul>
-        <li>
-          <router-link :to="{ name: 'Accessibility' }">
-            {{ t('footer.links.a11y') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: 'Instructions' }">
-            {{ t('footer.links.instructions') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: 'PrivacyPolicy' }">
-            {{ t('footer.links.privacyPolicy') }}
-          </router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: 'TermsOfUse' }">
-            {{ t('footer.links.termsOfUse' )}}
+        <li v-for="link in links" :key="link.route">
+          <router-link :to="{ name: link.route }">
+            {{ link.text }}
           </router-link>
         </li>
       </ul>
@@ -36,22 +37,6 @@
     </div>
   </footer>
 </template>
-
-<script>
-import { useI18n } from 'vue-i18n'
-
-import LocaleSelector from '@/components/LocaleSelector.vue'
-
-export default {
-  components: { LocaleSelector },
-
-  setup () {
-    const { t, locale } = useI18n({ useScope: 'global' })
-
-    return { t, locale }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .footer {

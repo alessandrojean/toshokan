@@ -1,5 +1,42 @@
+<script setup>
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import Book from '@/model/Book'
+
+import { CalendarIcon, CheckIcon } from '@heroicons/vue/outline'
+import { CheckIcon as CheckIconSolid } from '@heroicons/vue/solid'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
+import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
+
+defineProps({
+  book: Book,
+  disabled: Boolean,
+  editing: Boolean
+})
+
+defineEmits(['click:check', 'click:calendar'])
+
+const { t } = useI18n()
+
+const readAt = ref(new Date().toISOString().substring(0, 10))
+
+function handleCalendar(close) {
+  const date = new Date(readAt.value)
+  date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
+
+  emit('click:calendar', date)
+  close()
+}
+</script>
+
 <template>
-  <div class="bg-white dark:bg-gray-600 h-8 shadow-md rounded-full px-2 py-1.5 flex items-center">
+  <div
+    class="bg-white dark:bg-gray-600 h-8 shadow-md rounded-full px-2 py-1.5 flex items-center"
+  >
     <FadeTransition>
       <div v-if="!editing" class="space-x-1 flex items-center relative">
         <button
@@ -36,10 +73,7 @@
                 @submit.prevent="handleCalendar(close)"
               >
                 <div>
-                  <label
-                    :for="'read-at-' + book.id"
-                    class="sr-only"
-                  >
+                  <label :for="'read-at-' + book.id" class="sr-only">
                     {{ t('book.properties.readAt') }}
                   </label>
                   <input
@@ -71,61 +105,10 @@
         </Popover>
       </div>
       <div v-else aria-hidden="true">
-        <LoadingSpinIcon class="w-5 h-5 motion-safe:animate-spin text-primary-600 dark:text-gray-200" />
+        <LoadingSpinIcon
+          class="w-5 h-5 motion-safe:animate-spin text-primary-600 dark:text-gray-200"
+        />
       </div>
     </FadeTransition>
   </div>
 </template>
-
-<script>
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import Book from '@/model/Book'
-
-import { CalendarIcon, CheckIcon } from '@heroicons/vue/outline'
-import { CheckIcon as CheckIconSolid } from '@heroicons/vue/solid'
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
-
-export default {
-  components: {
-    CalendarIcon,
-    CheckIcon,
-    CheckIconSolid,
-    FadeTransition,
-    LoadingSpinIcon,
-    Popover,
-    PopoverButton,
-    PopoverPanel,
-    ScaleTransition
-  },
-
-  props: {
-    book: Book,
-    disabled: Boolean,
-    editing: Boolean
-  },
-
-  emits: ['click:check', 'click:calendar'],
-
-  setup (_, { emit }) {
-    const { t } = useI18n()
-
-    const readAt = ref(new Date().toISOString().substring(0, 10))
-
-    function handleCalendar (close) {
-      const date = new Date(readAt.value)
-      date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
-
-      emit('click:calendar', date)
-      close()
-    }
-
-    return { t, readAt, handleCalendar }
-  }
-}
-</script>

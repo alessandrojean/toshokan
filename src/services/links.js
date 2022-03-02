@@ -70,7 +70,7 @@ const WEBSITES = [
     url: 'https://loja.panini.com.br/panini/solucoes/busca.aspx?t={isbn}',
     country: 'BR',
     category: Categories.STORE,
-    check: book => book.publisher.includes('Panini'),
+    check: (book) => book.publisher.includes('Panini'),
     icon: PaniniIcon
   },
   {
@@ -78,7 +78,7 @@ const WEBSITES = [
     url: 'https://www.lojanewpop.com.br/buscar?q={isbn}',
     country: 'BR',
     category: Categories.STORE,
-    check: book => book.publisher.includes('NewPOP'),
+    check: (book) => book.publisher.includes('NewPOP'),
     icon: NewPopIcon
   },
   {
@@ -96,7 +96,7 @@ const WEBSITES = [
  * @param {import('@/model/Book').default} book
  * @param {string} locale
  */
-export default function getBookLinks (book, locale) {
+export default function getBookLinks(book, locale) {
   if (!book || !book.codeType.includes('ISBN')) {
     return []
   }
@@ -106,19 +106,15 @@ export default function getBookLinks (book, locale) {
 
   const country = book.isbnData?.countryCode
 
-  return WEBSITES
-    .filter(website => {
-      return website.country === country || website.country === ALL_COUNTRIES
-    })
-    .filter(website => website.check ? website.check(book) : true)
-    .map(website => ({
+  return WEBSITES.filter((website) => {
+    return website.country === country || website.country === ALL_COUNTRIES
+  })
+    .filter((website) => (website.check ? website.check(book) : true))
+    .map((website) => ({
       ...website,
-      url: website.url
-        .replace(/\{isbn\}/g, isbn)
-        .replace(/\{isbn10\}/g, isbn10)
+      url: website.url.replace(/\{isbn\}/g, isbn).replace(/\{isbn10\}/g, isbn10)
     }))
     .sort((a, b) => {
-      return (a.category - b.category) ||
-        a.title.localeCompare(b.title, locale)
+      return a.category - b.category || a.title.localeCompare(b.title, locale)
     })
 }

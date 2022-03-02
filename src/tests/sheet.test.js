@@ -1,5 +1,11 @@
 import QueryBuilder from '@/data/QueryBuilder'
-import Book, { CollectionColumns, FAVORITE_ACTIVE, PropertyToColumn, STATUS_FUTURE, STATUS_READ } from '@/model/Book'
+import Book, {
+  CollectionColumns,
+  FAVORITE_ACTIVE,
+  PropertyToColumn,
+  STATUS_FUTURE,
+  STATUS_READ
+} from '@/model/Book'
 import SheetService from '@/services/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
 
@@ -8,13 +14,14 @@ describe('Sheet service', () => {
   const queryToString = jest.spyOn(QueryBuilder.prototype, 'toString')
 
   const queryMock = jest.fn().mockReturnValue({
-    send: resultFn => resultFn({
-      getDataTable: jest.fn().mockReturnValue({
-        getNumberOfColumns: jest.fn().mockReturnValue(0),
-        getNumberOfRows: jest.fn().mockReturnValue(0)
+    send: (resultFn) =>
+      resultFn({
+        getDataTable: jest.fn().mockReturnValue({
+          getNumberOfColumns: jest.fn().mockReturnValue(0),
+          getNumberOfRows: jest.fn().mockReturnValue(0)
+        }),
+        isError: jest.fn().mockReturnValue(false)
       }),
-      isError: jest.fn().mockReturnValue(false)
-    }),
     setQuery: setQueryMock
   })
 
@@ -123,7 +130,10 @@ describe('Sheet service', () => {
     expect(queryToString.mock.instances[0].toObject()).toMatchObject({
       select: [STORE, `count(${STORE})`],
       where: { restrictions: [] },
-      orderBy: [[`count(${STORE})`, 'desc'], [STORE, 'asc']]
+      orderBy: [
+        [`count(${STORE})`, 'desc'],
+        [STORE, 'asc']
+      ]
     })
 
     queryToString.mockClear()
@@ -148,9 +158,7 @@ describe('Sheet service', () => {
     expect(queryToString.mock.instances[0].toObject()).toMatchObject({
       select: [GROUP, STATUS, `count(${GROUP})`],
       where: {
-        restrictions: [
-          [GROUP, 'is not', 'null']
-        ]
+        restrictions: [[GROUP, 'is not', 'null']]
       },
       groupBy: [GROUP, STATUS]
     })
@@ -305,10 +313,12 @@ describe('Sheet service', () => {
       expect(queryToString.mock.instances[0].toObject()).toMatchObject({
         select: [],
         where: {
-          restrictions: [{
-            operator: QueryBuilder.OR,
-            restrictions: [[GROUP, '=', 'Manga']]
-          }]
+          restrictions: [
+            {
+              operator: QueryBuilder.OR,
+              restrictions: [[GROUP, '=', 'Manga']]
+            }
+          ]
         },
         orderBy: [[CREATED_AT, 'desc']]
       })
@@ -374,7 +384,7 @@ describe('Sheet service', () => {
       expect(setQueryMock).toHaveBeenCalled()
     })
 
-    it('Should build the query correctly (with don\'t count)', async () => {
+    it("Should build the query correctly (with don't count)", async () => {
       const { CREATED_AT } = CollectionColumns
       await SheetService.getBooks('TEST_SHEET_ID', 1, { dontCount: true })
 

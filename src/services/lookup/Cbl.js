@@ -46,9 +46,10 @@ export default class Cbl extends Lookup {
     'Sinopse'
   ]
 
-  _createAxios () {
+  _createAxios() {
     return axios.create({
-      baseURL: 'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
+      baseURL:
+        'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
       headers: {
         Accept: 'application/json',
         'Api-Key': import.meta.env.VITE_APP_CBL_QUERY_KEY
@@ -56,7 +57,7 @@ export default class Cbl extends Lookup {
     })
   }
 
-  #createSearchPayload (query, dataOptions) {
+  #createSearchPayload(query, dataOptions) {
     let payload = {
       count: true,
       facets: ['Imprint,count:50', 'Authors,count:50'],
@@ -78,7 +79,7 @@ export default class Cbl extends Lookup {
     return payload
   }
 
-  async #internalSearch (query = '', options) {
+  async #internalSearch(query = '', options) {
     const { t } = i18n.global
 
     const queryKey = import.meta.env.VITE_APP_CBL_QUERY_KEY
@@ -90,7 +91,10 @@ export default class Cbl extends Lookup {
     const dataPayload = this.#createSearchPayload(query, options.dataOptions)
 
     try {
-      const response = await this.axios.post('search?api-version=2016-09-01', dataPayload)
+      const response = await this.axios.post(
+        'search?api-version=2016-09-01',
+        dataPayload
+      )
 
       return response.data.value.map(Book.fromCbl)
     } catch (e) {
@@ -98,7 +102,7 @@ export default class Cbl extends Lookup {
     }
   }
 
-  async search (isbn) {
+  async search(isbn) {
     const { t } = i18n.global
 
     if (!validateIsbn(isbn)) {

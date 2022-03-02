@@ -11,7 +11,7 @@ import { isoDate as validateDate } from '@/util/validators'
 import QueryBuilder from '@/data/QueryBuilder'
 import { isoDate, lastDayOfMonth } from '@/util/date'
 
-export function createSearchKeywords () {
+export function createSearchKeywords() {
   return {
     [i18n.global.t('dashboard.search.keywords.id')]: {
       column: CollectionColumns.ID,
@@ -142,7 +142,12 @@ export function createSearchKeywords () {
  * @param {number} options.page The page
  * @returns {Promise<{ results: Book[], total: number }>} The books found
  */
-export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1 }) {
+export default async function searchBooks({
+  sheetId,
+  searchTerm,
+  sort,
+  page = 1
+}) {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const queryBuilder = new QueryBuilder(sheetUrl)
@@ -154,12 +159,13 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
 
   if (sort) {
     const builderObj = queryBuilder.toObject()
-    const orderBy = (sort.sortBy || [builderObj.orderBy[0][0]])
-      .map(property => {
+    const orderBy = (sort.sortBy || [builderObj.orderBy[0][0]]).map(
+      (property) => {
         return !Array.isArray(property)
           ? [property, sort.sortDirection || builderObj.orderBy[0][1]]
           : property
-      })
+      }
+    )
 
     queryBuilder.orderBy(...orderBy)
   }
@@ -191,8 +197,8 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
       .orWhere(ID, searchTerm)
       .orWhere(CODE, searchTerm)
   } else {
-    const restrictions = Object.entries(searchQueryObj)
-      .flatMap(([localeKeyword, values]) => {
+    const restrictions = Object.entries(searchQueryObj).flatMap(
+      ([localeKeyword, values]) => {
         const keywordInfo = keywords[localeKeyword]
 
         if (!keywordInfo) {
@@ -203,12 +209,12 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
 
         if (keywordInfo.equals) {
           const column = `lower(${keywordInfo.column})`
-          tests = values.map(v => [column, '=', v])
+          tests = values.map((v) => [column, '=', v])
         } else if (keywordInfo.date) {
           const isEquality = keywordInfo.operation === '='
           const isUnique = values.length === 1 || isEquality
           const isValidDate = isEquality
-            ? values.every(date => validateDate(date, true))
+            ? values.every((date) => validateDate(date, true))
             : validateDate(values[0])
 
           if (isUnique && isValidDate) {
@@ -217,11 +223,11 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
               : keywordInfo.column
             const operation = keywordInfo.operation
 
-            const checks = values.map(date => {
+            const checks = values.map((date) => {
               if (isEquality) {
                 const [year, month, day] = date
                   .split('-')
-                  .map(n => parseInt(n, 10))
+                  .map((n) => parseInt(n, 10))
                 const dates = []
 
                 if (year && month && day) {
@@ -237,11 +243,9 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
                 const [start, end] = dates.map(isoDate)
 
                 return start && end
-                  ? (
-                      QueryBuilder.and(
-                        [column, '>= date', start],
-                        [column, '<= date', end]
-                      )
+                  ? QueryBuilder.and(
+                      [column, '>= date', start],
+                      [column, '<= date', end]
                     )
                   : [column, `${operation} date`, start]
               }
@@ -249,101 +253,99 @@ export default async function searchBooks ({ sheetId, searchTerm, sort, page = 1
               return [column, `${operation} date`, isoDate(date)]
             })
 
-            const dateTests = checks.length > 1
-              ? [QueryBuilder.or(...checks)]
-              : checks
+            const dateTests =
+              checks.length > 1 ? [QueryBuilder.or(...checks)] : checks
 
             tests = [QueryBuilder.and([column, 'is not', 'null'], ...dateTests)]
           }
         } else {
           const column = `lower(${keywordInfo.column})`
-          tests = values.map(v => [column, 'matches', `.*${v}.*`])
+          tests = values.map((v) => [column, 'matches', `.*${v}.*`])
         }
 
         /** @type {'and' | 'or'} */
         const joinWith = keywordInfo.joinWith || 'or'
 
-        return (values.length === 1 || keywordInfo.date)
+        return values.length === 1 || keywordInfo.date
           ? tests
           : [QueryBuilder[joinWith](...tests)]
-      })
+      }
+    )
 
-    const excludingRestrictions = Object.entries(searchQueryObj.exclude)
-      .flatMap(([localeKeyword, values]) => {
-        const keywordInfo = keywords[localeKeyword]
+    const excludingRestrictions = Object.entries(
+      searchQueryObj.exclude
+    ).flatMap(([localeKeyword, values]) => {
+      const keywordInfo = keywords[localeKeyword]
 
-        if (!keywordInfo) {
-          return []
-        }
+      if (!keywordInfo) {
+        return []
+      }
 
-        let tests = []
+      let tests = []
 
-        if (keywordInfo.equals) {
-          const column = `lower(${keywordInfo.column})`
-          tests = values.map(v => [column, '!=', v])
-        } else if (keywordInfo.date) {
-          const isDifferent = keywordInfo.inverseOperation === '!='
-          const isUnique = values.length === 1 || isDifferent
-          const isValidDate = isDifferent
-            ? values.every(date => validateDate(date, true))
-            : validateDate(values[0])
+      if (keywordInfo.equals) {
+        const column = `lower(${keywordInfo.column})`
+        tests = values.map((v) => [column, '!=', v])
+      } else if (keywordInfo.date) {
+        const isDifferent = keywordInfo.inverseOperation === '!='
+        const isUnique = values.length === 1 || isDifferent
+        const isValidDate = isDifferent
+          ? values.every((date) => validateDate(date, true))
+          : validateDate(values[0])
 
-          if (isUnique && isValidDate) {
-            const column = keywordInfo.withTime
-              ? `toDate(${keywordInfo.column})`
-              : keywordInfo.column
-            const inverseOperation = keywordInfo.inverseOperation
+        if (isUnique && isValidDate) {
+          const column = keywordInfo.withTime
+            ? `toDate(${keywordInfo.column})`
+            : keywordInfo.column
+          const inverseOperation = keywordInfo.inverseOperation
 
-            const checks = values.map(date => {
-              if (isDifferent) {
-                const [year, month, day] = date
-                  .split('-')
-                  .map(n => parseInt(n, 10))
-                const dates = []
+          const checks = values.map((date) => {
+            if (isDifferent) {
+              const [year, month, day] = date
+                .split('-')
+                .map((n) => parseInt(n, 10))
+              const dates = []
 
-                if (year && month && day) {
-                  dates.push(date)
-                } else if (year && month) {
-                  const start = date + '-01'
-                  const end = date + '-' + lastDayOfMonth(year, month)
-                  dates.push(start, end)
-                } else {
-                  dates.push(date + '-01-01', date + '-12-31')
-                }
-
-                const [start, end] = dates.map(isoDate)
-
-                return start && end
-                  ? (
-                      QueryBuilder.andNot(
-                        [column, '>= date', start],
-                        [column, '<= date', end]
-                      )
-                    )
-                  : [column, `${inverseOperation} date`, start]
+              if (year && month && day) {
+                dates.push(date)
+              } else if (year && month) {
+                const start = date + '-01'
+                const end = date + '-' + lastDayOfMonth(year, month)
+                dates.push(start, end)
+              } else {
+                dates.push(date + '-01-01', date + '-12-31')
               }
 
-              return [column, `${inverseOperation} date`, isoDate(date)]
-            })
+              const [start, end] = dates.map(isoDate)
 
-            const dateTests = checks.length > 1
-              ? [QueryBuilder.and(...checks)]
-              : checks
+              return start && end
+                ? QueryBuilder.andNot(
+                    [column, '>= date', start],
+                    [column, '<= date', end]
+                  )
+                : [column, `${inverseOperation} date`, start]
+            }
 
-            tests = [QueryBuilder.and([column, 'is not', 'null'], ...dateTests)]
-          }
-        } else {
-          const column = `not lower(${keywordInfo.column})`
-          tests = values.map(v => [column, 'matches', `.*${v}.*`])
+            return [column, `${inverseOperation} date`, isoDate(date)]
+          })
+
+          const dateTests =
+            checks.length > 1 ? [QueryBuilder.and(...checks)] : checks
+
+          tests = [QueryBuilder.and([column, 'is not', 'null'], ...dateTests)]
         }
+      } else {
+        const column = `not lower(${keywordInfo.column})`
+        tests = values.map((v) => [column, 'matches', `.*${v}.*`])
+      }
 
-        /** @type {'and' | 'or'} */
-        const excludeJoinWith = keywordInfo.excludeJoinWith || 'and'
+      /** @type {'and' | 'or'} */
+      const excludeJoinWith = keywordInfo.excludeJoinWith || 'and'
 
-        return (values.length === 1 || keywordInfo.date)
-          ? tests
-          : [QueryBuilder[excludeJoinWith](...tests)]
-      })
+      return values.length === 1 || keywordInfo.date
+        ? tests
+        : [QueryBuilder[excludeJoinWith](...tests)]
+    })
 
     restrictions.push(...excludingRestrictions)
 

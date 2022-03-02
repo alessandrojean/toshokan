@@ -1,3 +1,76 @@
+<script setup>
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useMarkdown from '@/composables/useMarkdown'
+import useBookExistsQuery from '@/queries/useBookExistsQuery'
+import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
+
+import { SearchIcon } from '@heroicons/vue/solid'
+
+import Alert from '@/components/Alert.vue'
+import BookSelector from '@/components/book/BookSelector.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+const emit = defineEmits(['search', 'select', 'click:viewExisting'])
+
+const { t } = useI18n({ useScope: 'global' })
+
+const isbnQuery = ref('')
+const searchInput = ref(null)
+
+const {
+  error: searchError,
+  isError: searchFailed,
+  data: searchResults,
+  isLoading: searching,
+  refetch: isbnSearch
+} = useIsbnSearchQuery(isbnQuery, { enabled: false })
+
+const noResultsFound = computed(() => searchResults.value?.length === 0)
+
+function handleSearchSelect(selectedBook) {
+  emit('select', selectedBook)
+}
+
+const loading = ref(false)
+
+async function search() {
+  if (isbnQuery.value.length < 10) {
+    return
+  }
+
+  emit('search', true)
+  loading.value = true
+
+  searchInput.value?.blur()
+  await searchInSheet()
+  await isbnSearch.value()
+
+  emit('search', false)
+  loading.value = false
+}
+
+const { data: existingIds, refetch: checkIfExists } = useBookExistsQuery(
+  isbnQuery,
+  { enabled: false }
+)
+
+const proceedAnyway = ref(false)
+const existInSheet = computed(() => existingIds.value?.length > 0)
+
+async function searchInSheet() {
+  await checkIfExists.value()
+  proceedAnyway.value = !existInSheet.value
+}
+
+const { renderMarkdown } = useMarkdown()
+
+function viewExisting() {
+  emit('click:viewExisting', existingIds.value[0])
+}
+</script>
+
 <template>
   <div class="relative space-y-6">
     <form
@@ -7,7 +80,7 @@
       @submit.prevent="search"
     >
       <label for="book-isbn" id="isbn-search-label" class="sr-only">
-        {{ t('dashboard.newBook.autoFill.label' )}}
+        {{ t('dashboard.newBook.autoFill.label') }}
       </label>
       <div class="group relative w-full search-field">
         <div class="search-icon" aria-hidden="true">
@@ -24,8 +97,11 @@
           aria-labelledby="isbn-search-label search-provider-info"
           ref="searchInput"
           :disabled="searching"
+        />
+        <div
+          class="key-tooltip absolute right-3 inset-y-0 justify-center items-center"
+          aria-hidden="true"
         >
-        <div class="key-tooltip absolute right-3 inset-y-0 justify-center items-center" aria-hidden="true">
           <button
             type="submit"
             class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-700"
@@ -35,22 +111,14 @@
               {{ t('dashboard.newBook.autoFill.enter') }}
             </kbd>
             <span class="sr-only">
-              {{ t('dashboard.header.search.search' )}}
+              {{ t('dashboard.header.search.search') }}
             </span>
           </button>
         </div>
       </div>
     </form>
 
-    <transition
-      mode="out-in"
-      leave-active-class="motion-safe:transition duration-100 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-      enter-active-class="motion-safe:transition duration-200 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-    >
+    <FadeTransition>
       <Alert
         v-if="!noResultsFound && !searchFailed && !searchResults"
         show
@@ -59,7 +127,9 @@
       >
         <div
           class="prose-sm"
-          v-html="renderMarkdown(t('dashboard.newBook.autoFill.isbnAlert.body'))"
+          v-html="
+            renderMarkdown(t('dashboard.newBook.autoFill.isbnAlert.body'))
+          "
         />
 
         <template v-slot:actions>
@@ -95,7 +165,9 @@
         </template>
       </Alert>
 
-      <div v-else-if="proceedAnyway && searchResults && searchResults.length > 0">
+      <div
+        v-else-if="proceedAnyway && searchResults && searchResults.length > 0"
+      >
         <h3 class="text-gray-700 dark:text-gray-200 font-medium font-display">
           {{ t('dashboard.search.results') }}
         </h3>
@@ -117,119 +189,12 @@
         <p>{{ searchError }}</p>
       </Alert>
 
-      <Alert
-        v-else-if="noResultsFound"
-        show
-        type="info"
-      >
+      <Alert v-else-if="noResultsFound" show type="info">
         <p>{{ t('dashboard.newBook.autoFill.noResults') }}</p>
       </Alert>
-
-    </transition>
+    </FadeTransition>
   </div>
 </template>
-
-<script>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { SearchIcon } from '@heroicons/vue/solid'
-
-import Alert from '@/components/Alert.vue'
-import BookSelector from '@/components/book/BookSelector.vue'
-
-import useMarkdown from '@/composables/useMarkdown'
-import useBookExistsQuery from '@/queries/useBookExistsQuery'
-import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
-
-export default {
-  components: {
-    Alert,
-    BookSelector,
-    SearchIcon
-  },
-
-  emits: ['search', 'select', 'click:viewExisting'],
-
-  setup (_, context) {
-    const { t } = useI18n({ useScope: 'global' })
-
-    const isbnQuery = ref('')
-    const searchInput = ref(null)
-
-    const {
-      error: searchError,
-      isError: searchFailed,
-      data: searchResults,
-      isLoading: searching,
-      refetch: isbnSearch
-    } = useIsbnSearchQuery(isbnQuery, { enabled: false })
-
-    const noResultsFound = computed(() => searchResults.value?.length === 0)
-
-    function handleSearchSelect (selectedBook) {
-      context.emit('select', selectedBook)
-    }
-
-    const loading = ref(false)
-
-    async function search () {
-      if (isbnQuery.value.length < 10) {
-        return
-      }
-
-      context.emit('search', true)
-      loading.value = true
-
-      searchInput.value?.blur()
-      await searchInSheet()
-      await isbnSearch.value()
-
-      context.emit('search', false)
-      loading.value = false
-    }
-
-    const {
-      data: existingIds,
-      refetch: checkIfExists
-    } = useBookExistsQuery(isbnQuery, { enabled: false })
-
-    const proceedAnyway = ref(false)
-    const existInSheet = computed(() => existingIds.value?.length > 0)
-
-    async function searchInSheet () {
-      await checkIfExists.value()
-      proceedAnyway.value = !existInSheet.value
-    }
-
-    const { renderMarkdown } = useMarkdown()
-
-    function viewExisting () {
-      context.emit('click:viewExisting', existingIds.value[0])
-    }
-
-    return {
-      t,
-      isbnQuery,
-      searchInput,
-      searchError,
-      searchFailed,
-      noResultsFound,
-      searchResults,
-      isbnSearch,
-      searching,
-      handleSearchSelect,
-      search,
-      existInSheet,
-      existingIds,
-      proceedAnyway,
-      loading,
-      renderMarkdown,
-      viewExisting
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 #search-form .key-tooltip {
@@ -240,10 +205,10 @@ export default {
   @apply md:flex;
 }
 
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
   display: none;
 }
 

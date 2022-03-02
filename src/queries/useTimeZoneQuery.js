@@ -4,11 +4,11 @@ import { useQuery } from 'vue-query'
 import { useSheetStore } from '@/stores/sheet'
 import getTimeZone from '@/services/sheet/getTimeZone'
 
-export default function useTimeZoneQuery ({ enabled }) {
+export default function useTimeZoneQuery({ enabled }) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher () {
+  async function fetcher() {
     return await getTimeZone(sheetId.value)
   }
 

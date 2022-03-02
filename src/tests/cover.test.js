@@ -18,8 +18,9 @@ it('Should replace the value in direct URL', async () => {
     property: 'code'
   })
 
-  await expect(directUrl(new Book({ code: '12345' })))
-    .resolves.toStrictEqual(['https://cool.api.dev/isbn/12345.jpg'])
+  await expect(directUrl(new Book({ code: '12345' }))).resolves.toStrictEqual([
+    'https://cool.api.dev/isbn/12345.jpg'
+  ])
 })
 
 it('Should find the cover in WordPress if available', async () => {
@@ -27,9 +28,7 @@ it('Should find the cover in WordPress if available', async () => {
     data: [
       {
         _embedded: {
-          'wp:featuredmedia': [
-            { source_url: 'COVER_URL' }
-          ]
+          'wp:featuredmedia': [{ source_url: 'COVER_URL' }]
         }
       }
     ]
@@ -41,8 +40,9 @@ it('Should find the cover in WordPress if available', async () => {
     searchWith: 'code'
   })
 
-  await expect(wordpress(new Book({ code: '12345' })))
-    .resolves.toStrictEqual(['COVER_URL'])
+  await expect(wordpress(new Book({ code: '12345' }))).resolves.toStrictEqual([
+    'COVER_URL'
+  ])
 })
 
 it('Should return no results in WordPress if not available', async () => {
@@ -54,8 +54,7 @@ it('Should return no results in WordPress if not available', async () => {
     searchWith: 'code'
   })
 
-  await expect(wordpress(new Book({ code: '12345' })))
-    .resolves.toHaveLength(0)
+  await expect(wordpress(new Book({ code: '12345' }))).resolves.toHaveLength(0)
 })
 
 it('Should check only on Amazon when forced', async () => {
@@ -63,15 +62,13 @@ it('Should check only on Amazon when forced', async () => {
 
   const book = new Book({ code: '9786589912415' })
 
-  await expect(Cover.findCovers(book, true))
-    .resolves.toStrictEqual([
-      'https://images-na.ssl-images-amazon.com/images/P/6589912416.01._SCRM_SL700_.jpg'
-    ])
+  await expect(Cover.findCovers(book, true)).resolves.toStrictEqual([
+    'https://images-na.ssl-images-amazon.com/images/P/6589912416.01._SCRM_SL700_.jpg'
+  ])
 })
 
 it('Should return no results if book does not have a ISBN', async () => {
   const book = new Book({ code: '12345' })
 
-  await expect(Cover.findCovers(book))
-    .resolves.toHaveLength(0)
+  await expect(Cover.findCovers(book)).resolves.toHaveLength(0)
 })

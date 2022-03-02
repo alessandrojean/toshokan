@@ -1,3 +1,82 @@
+<script setup>
+import { computed, onMounted, ref, toRefs, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import useImageLazyLoader from '@/composables/useImageLazyLoader'
+import Book from '@/model/Book'
+import { useSettingsStore } from '@/stores/settings'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+
+import {
+  ChevronRightIcon,
+  ClockIcon,
+  PhotographIcon
+} from '@heroicons/vue/outline'
+
+const props = defineProps({
+  result: {
+    type: Book,
+    required: true
+  }
+})
+
+const { result } = toRefs(props)
+
+const thumbnailUrl = computed(() => {
+  return result.value ? result.value.coverUrl.replace('_SL700_', '_SL300_') : ''
+})
+
+const searchItem = ref(null)
+
+const { imageHasError, imageLoading, setupObserver, observerCreated } =
+  useImageLazyLoader(thumbnailUrl, searchItem)
+
+onMounted(() => {
+  if (result.value) {
+    setupObserver()
+  }
+})
+
+watch(result, (newValue) => {
+  if (!newValue && !observerCreated.value) {
+    setupObserver()
+  }
+})
+
+const settingsStore = useSettingsStore()
+
+const spoilerMode = computed(() => settingsStore.spoilerMode)
+const blurNsfw = computed(() => settingsStore.blurNsfw)
+
+const blurCover = computed(() => {
+  return (
+    (spoilerMode.value.cover && !result.value.isRead) ||
+    (blurNsfw.value && result.value.isNsfw)
+  )
+})
+
+const { t } = useI18n({ useScope: 'global' })
+
+const authorsFormatted = computed(() => {
+  const separator = t('dashboard.details.header.authorSeparator')
+  let authors = (result.value.authors || []).join(separator)
+
+  if (result.value.authors && result.value.authors.length >= 2) {
+    const firstAuthors = (result.value.authors || [])
+      .slice(0, -1)
+      .join(separator)
+
+    authors = t('dashboard.details.header.authorListComplete', {
+      authors: firstAuthors,
+      lastAuthor: result.value.authors[result.value.authors.length - 1]
+    })
+  }
+
+  return authors
+})
+</script>
+
 <template>
   <router-link
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
@@ -20,14 +99,8 @@
             />
           </div>
         </div>
-        <div
-          v-else
-          :class="[
-            'result-cover',
-            blurCover ? 'is-hidden' : ''
-          ]"
-        >
-          <img :src="thumbnailUrl" :alt="result.title" >
+        <div v-else :class="['result-cover', blurCover ? 'is-hidden' : '']">
+          <img :src="thumbnailUrl" :alt="result.title" />
         </div>
       </FadeTransition>
     </div>
@@ -57,114 +130,6 @@
     </span>
   </router-link>
 </template>
-
-<script>
-import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-
-import useImageLazyLoader from '@/composables/useImageLazyLoader'
-import { useSettingsStore } from '@/stores/settings'
-
-import {
-  ChevronRightIcon,
-  ClockIcon,
-  PhotographIcon
-} from '@heroicons/vue/outline'
-
-import Book from '@/model/Book'
-
-export default {
-  components: {
-    ChevronRightIcon,
-    ClockIcon,
-    FadeTransition,
-    PhotographIcon
-  },
-
-  props: {
-    result: {
-      type: Book,
-      required: true
-    }
-  },
-
-  setup (props) {
-    const { result } = toRefs(props)
-
-    const thumbnailUrl = computed(() => {
-      return result.value
-        ? result.value.coverUrl.replace('_SL700_', '_SL300_')
-        : ''
-    })
-
-    const searchItem = ref(null)
-
-    const {
-      imageHasError,
-      imageLoading,
-      setupObserver,
-      observerCreated
-    } = useImageLazyLoader(thumbnailUrl, searchItem)
-
-    onMounted(() => {
-      if (result.value) {
-        setupObserver()
-      }
-    })
-
-    watch(result, newValue => {
-      if (!newValue && !observerCreated.value) {
-        setupObserver()
-      }
-    })
-
-    const settingsStore = useSettingsStore()
-
-    const spoilerMode = computed(() => settingsStore.spoilerMode)
-    const blurNsfw = computed(() => settingsStore.blurNsfw)
-
-    const blurCover = computed(() => {
-      return (spoilerMode.value.cover && !result.value.isRead) ||
-        (blurNsfw.value && result.value.isNsfw)
-    })
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    const authorsFormatted = computed(() => {
-      const separator = t('dashboard.details.header.authorSeparator')
-      let authors = (result.value.authors || []).join(separator)
-
-      if (result.value.authors && result.value.authors.length >= 2) {
-        const firstAuthors = (result.value.authors || [])
-          .slice(0, -1)
-          .join(separator)
-
-        authors = t(
-          'dashboard.details.header.authorListComplete',
-          {
-            authors: firstAuthors,
-            lastAuthor: result.value.authors[result.value.authors.length - 1]
-          }
-        )
-      }
-
-      return authors
-    })
-
-    return {
-      searchItem,
-      imageHasError,
-      imageLoading,
-      thumbnailUrl,
-      spoilerMode,
-      authorsFormatted,
-      blurCover
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .result {
@@ -201,7 +166,7 @@ export default {
 }
 
 .result-publisher {
-  @apply block text-gray-500 dark:text-gray-400
+  @apply block text-gray-500 dark:text-gray-400;
 }
 
 .result:where(:hover, :focus-visible) .result-publisher {

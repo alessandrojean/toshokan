@@ -1,3 +1,87 @@
+<script setup>
+import { computed, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { MenuIcon, PlusIcon, XIcon } from '@heroicons/vue/solid'
+
+import Draggable from 'vuedraggable'
+
+import BaseField from './BaseField.vue'
+
+const props = defineProps({
+  breakCharacter: {
+    type: String,
+    default: ','
+  },
+  error: String,
+  inputClass: String,
+  inputMode: String,
+  inputType: {
+    type: String,
+    default: 'text'
+  },
+  label: String,
+  modelValue: {
+    type: Array,
+    required: true
+  },
+  placeholder: String,
+  prefixClass: String,
+  removeAction: {
+    type: String,
+    required: true
+  },
+  required: Boolean,
+  tagClass: String
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const { breakCharacter, error, modelValue, help, list } = toRefs(props)
+
+const hasError = computed(() => error.value && error.value.length > 0)
+const hasHelp = computed(() => help.value && help.value.length > 0)
+const hasList = computed(() => list.value && list.value.length > 0)
+
+const tempTag = ref('')
+
+function addTag(onInput) {
+  const newTag = onInput === true ? tempTag.value.slice(0, -1) : tempTag.value
+
+  if (
+    newTag.length > 0 &&
+    newTag.trim().length > 0 &&
+    !modelValue.value.includes(newTag.trim())
+  ) {
+    emit('update:modelValue', modelValue.value.concat([newTag.trim()]))
+  }
+
+  tempTag.value = ''
+}
+
+function flushTag(event) {
+  const lastCharacter = event.target.value.slice(-1)
+
+  if (lastCharacter === breakCharacter.value) {
+    event.preventDefault()
+    addTag(true)
+  }
+}
+
+function removeTag(i) {
+  const newModelValue = modelValue.value.slice()
+  newModelValue.splice(i, 1)
+
+  emit('update:modelValue', newModelValue)
+}
+
+function handleDragAndDrop(newTags) {
+  emit('update:modelValue', newTags)
+}
+
+const { t } = useI18n({ useScope: 'global' })
+</script>
+
 <template>
   <BaseField
     class="tag-field"
@@ -26,7 +110,7 @@
           :aria-invalid="hasError"
           @keydown.enter.prevent="addTag"
           @input="flushTag"
-        >
+        />
       </div>
 
       <button
@@ -51,17 +135,13 @@
       drag-class="cursor-grabbing"
       handle=".handle"
       :modelValue="modelValue"
-      :item-key="tag => tag"
+      :item-key="(tag) => tag"
       :disabled="modelValue.length === 1"
       @update:modelValue="handleDragAndDrop"
     >
       <template #item="{ element: tag, index }">
         <li :class="['tag', tagClass]">
-          <span
-            v-if="modelValue.length > 1"
-            class="handle"
-            aria-hidden="true"
-          >
+          <span v-if="modelValue.length > 1" class="handle" aria-hidden="true">
             <MenuIcon class="w-3 h-3" />
           </span>
           <span>{{ tag }}</span>
@@ -83,117 +163,6 @@
     </Draggable>
   </BaseField>
 </template>
-
-<script>
-import { computed, ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { MenuIcon, PlusIcon, XIcon } from '@heroicons/vue/solid'
-
-import Draggable from 'vuedraggable'
-
-import BaseField from './BaseField.vue'
-
-export default {
-  components: {
-    BaseField,
-    Draggable,
-    MenuIcon,
-    PlusIcon,
-    XIcon
-  },
-
-  props: {
-    breakCharacter: {
-      type: String,
-      default: ','
-    },
-    error: String,
-    inputClass: String,
-    inputMode: String,
-    inputType: {
-      type: String,
-      default: 'text'
-    },
-    label: String,
-    modelValue: {
-      type: Array,
-      required: true
-    },
-    placeholder: String,
-    prefixClass: String,
-    removeAction: {
-      type: String,
-      required: true
-    },
-    required: Boolean,
-    tagClass: String
-  },
-
-  emits: ['update:modelValue'],
-
-  setup (props, context) {
-    const { breakCharacter, error, modelValue, help, list } = toRefs(props)
-
-    const hasError = computed(() => error.value && error.value.length > 0)
-    const hasHelp = computed(() => help.value && help.value.length > 0)
-    const hasList = computed(() => list.value && list.value.length > 0)
-
-    const tempTag = ref('')
-
-    function addTag (onInput) {
-      const newTag = onInput === true
-        ? tempTag.value.slice(0, -1)
-        : tempTag.value
-
-      if (newTag.length > 0 &&
-          newTag.trim().length > 0 &&
-          !modelValue.value.includes(newTag.trim())) {
-        context.emit(
-          'update:modelValue',
-          modelValue.value.concat([newTag.trim()])
-        )
-      }
-
-      tempTag.value = ''
-    }
-
-    function flushTag (event) {
-      const lastCharacter = event.target.value.slice(-1)
-
-      if (lastCharacter === breakCharacter.value) {
-        event.preventDefault()
-        addTag(true)
-      }
-    }
-
-    function removeTag (i) {
-      const newModelValue = modelValue.value.slice()
-      newModelValue.splice(i, 1)
-
-      context.emit('update:modelValue', newModelValue)
-    }
-
-    function handleDragAndDrop (newTags) {
-      context.emit('update:modelValue', newTags)
-    }
-
-    const { t } = useI18n({ useScope: 'global' })
-
-    return {
-      hasError,
-      hasHelp,
-      hasList,
-      tempTag,
-      addTag,
-      flushTag,
-      removeTag,
-      handleDragAndDrop,
-      t
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .prefix {
