@@ -143,6 +143,8 @@ function reset() {
   v$.value.$reset()
 }
 
+defineExpose({ touch, reset, forceUpdateBook })
+
 const sheetStore = useSheetStore()
 const optionsEnabled = computed(() => sheetStore.sheetId !== null)
 

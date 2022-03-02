@@ -108,6 +108,8 @@ function focus() {
     card?.focus()
   })
 }
+
+defineExpose({ focus })
 </script>
 
 <template>

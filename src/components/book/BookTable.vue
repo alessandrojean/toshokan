@@ -481,6 +481,8 @@ function focus() {
 function focusOnActiveHeader() {
   document.querySelector('th[aria-sort]:not([aria-sort=none]) button')?.focus()
 }
+
+defineExpose({ focus, focusOnActiveHeader })
 </script>
 
 <template>

@@ -129,6 +129,8 @@ function search(query) {
   searchStore.updateQuery(query)
 }
 
+defineExpose({ search })
+
 const lastFocus = ref(null)
 
 watch(isFetching, async (newIsFetching) => {
@@ -163,6 +165,8 @@ function createDebounce() {
     }, delayMs || 1000)
   }
 }
+
+const debounce = createDebounce()
 
 watch(searchQuery, async (newQuery, oldQuery) => {
   if (newQuery.length === 0 && oldQuery.length > 0) {

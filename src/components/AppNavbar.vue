@@ -48,16 +48,12 @@ const navigation = computed(() => [
     hidden: shared.value || loading.value
   }
 ])
-const searchQuery = ref('')
-const searchNavbar = ref(null)
 
 const desktopNavigation = computed(() => {
   return navigation.value.filter((navItem) => !navItem.mobileOnly)
 })
 
-const profileEmail = computed(() => authStore.profileEmail)
 const profileImageUrl = computed(() => authStore.profileImageUrl)
-const profileName = computed(() => authStore.profileName)
 
 async function signOut() {
   await authStore.signOut()
