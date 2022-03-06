@@ -3,7 +3,8 @@ import { nextTick, onMounted, watch } from 'vue'
 
 import { useAuthStore } from '@/stores/auth'
 
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import PageAside from '@/components/PageAside.vue'
+import PageContents from '@/components/PageContents.vue'
 import PageHeader from '@/components/PageHeader.vue'
 
 const authStore = useAuthStore()
@@ -29,10 +30,10 @@ async function handleHash() {
 <template>
   <div>
     <PageHeader />
-    <router-view v-slot="{ Component }">
-      <FadeTransition>
-        <component :is="Component" />
-      </FadeTransition>
-    </router-view>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 flex">
+      <PageAside class="hidden lg:block" />
+      <router-view />
+      <PageContents class="hidden lg:block" />
+    </div>
   </div>
 </template>

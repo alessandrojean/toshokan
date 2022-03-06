@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
@@ -15,7 +15,7 @@ const { renderMarkdown } = useMarkdown({
   mdOptions: { typographer: true }
 })
 
-const body = ref(
+const body = computed(() =>
   renderMarkdown(
     t('about.a11y.body', {
       headlessUiLink: 'https://headlessui.dev/vue/menu#keyboard-interaction'

@@ -768,6 +768,14 @@ export default {
   },
   about: {
     summary: 'Sumário',
+    helpCenter: 'Central de ajuda',
+    onThisPage: 'Nesta página',
+    previous: 'Anterior',
+    next: 'Próxima',
+    categories: {
+      general: 'Geral',
+      guide: 'Guias'
+    },
     a11y: {
       title: 'Acessibilidade',
       body: dedent`

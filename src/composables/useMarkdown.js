@@ -98,10 +98,10 @@ export default function useMarkdown(options = {}) {
     .use(mdDefList)
     .use(mdAnchor, {
       permalink: mdAnchor.permalink.linkInsideHeader(),
-      slugify: (s) => slugify(s, { lower: true })
+      slugify: (s) => slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g })
     })
     .use(mdToc, {
-      slugify: (s) => slugify(s, { lower: true }),
+      slugify: (s) => slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g }),
       listType: 'ol',
       containerHeaderHtml: `<h2>${t('about.summary')}</h2>`
     })

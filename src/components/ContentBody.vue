@@ -24,4 +24,12 @@
 .content-body kbd {
   @apply inline-flex rounded-md py-0.5 px-2 text-xs dark:text-white dark:bg-gray-700;
 }
+
+.content-body :where(h1, h2, h3, h4, h5, h6) {
+  @apply scroll-mt-24;
+}
+
+.content-body .table-of-contents {
+  @apply hidden;
+}
 </style>

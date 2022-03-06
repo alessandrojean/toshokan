@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
+import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -15,9 +16,11 @@ const signedIn = computed(() => authStore.signedIn)
 </script>
 
 <template>
-  <header class="h-16 select-none">
+  <header
+    class="z-50 h-16 select-none border-b border-gray-300 dark:border-gray-700 fixed top-0 inset-x-0 bg-white dark:bg-gray-900 supports-backdrop-blur:backdrop-blur-md supports-backdrop-blur:bg-opacity-90 dark:supports-backdrop-blur:bg-opacity-80"
+  >
     <div
-      class="max-w-prose mx-auto px-4 sm:px-6 lg:px-0 flex items-center justify-between h-full"
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full"
     >
       <router-link
         :to="{ name: 'Home' }"
@@ -39,15 +42,16 @@ const signedIn = computed(() => authStore.signedIn)
           BETA
         </sup>
       </router-link>
-      <div class="inline-flex shrink-0">
-        <ThemeToggle light />
+      <div class="inline-flex shrink-0 items-center">
         <router-link
           :to="{ name: 'DashboardHome' }"
-          class="button is-primary is-rounded ml-3"
+          class="button is-primary is-rounded mr-3"
           v-if="signedIn"
         >
           {{ t('home.header.dashboard') }}
         </router-link>
+        <ThemeToggle light />
+        <ProfileMenu v-if="signedIn" class="ml-3" light hide-settings />
       </div>
     </div>
   </header>

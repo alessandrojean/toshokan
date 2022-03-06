@@ -763,6 +763,14 @@ export default {
   },
   about: {
     summary: 'Summary',
+    helpCenter: 'Help center',
+    onThisPage: 'On this page',
+    previous: 'Previous',
+    next: 'Next',
+    categories: {
+      general: 'General',
+      guide: 'Guides'
+    },
     a11y: {
       title: 'Accessibility',
       body: dedent`

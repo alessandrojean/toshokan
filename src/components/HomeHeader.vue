@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
+import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
@@ -41,7 +42,6 @@ const { t } = useI18n({ useScope: 'global' })
           </router-link>
         </div>
         <div class="flex items-center">
-          <ThemeToggle light class="mr-3" />
           <router-link
             :to="{ name: 'DashboardHome' }"
             class="button is-primary is-rounded"
@@ -50,6 +50,8 @@ const { t } = useI18n({ useScope: 'global' })
             {{ t('home.header.dashboard') }}
           </router-link>
           <SignInWithGoogleButton collapse />
+          <ThemeToggle light class="ml-3" />
+          <ProfileMenu v-if="signedIn" class="ml-3" light hide-settings />
         </div>
       </div>
     </div>

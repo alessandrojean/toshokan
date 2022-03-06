@@ -11,6 +11,7 @@ module.exports = {
     fontFamily: {
       ...defaultTheme.fontFamily,
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      'sans-var': ['Inter var', ...defaultTheme.fontFamily.sans],
       display: ['Poppins', ...defaultTheme.fontFamily.sans]
     },
     extend: {
@@ -43,7 +44,11 @@ module.exports = {
           css: {
             'h1, h2, h3, h4, h5, h6': {
               fontFamily: theme('fontFamily.display').join(', '),
-              scrollMargin: theme('scrollMargin.4')
+              scrollMargin: theme('scrollMargin.4'),
+
+              '&:focus': {
+                outline: 'none'
+              }
             },
             a: {
               color: theme('colors.primary.600'),
@@ -109,9 +114,10 @@ module.exports = {
                 opacity: '1'
               }
             },
-            ':where(h1, h2, h3, h4, h5, h6):hover .header-anchor': {
-              opacity: '1'
-            }
+            ':where(h1, h2, h3, h4, h5, h6):where(:hover, :focus) .header-anchor':
+              {
+                opacity: '1'
+              }
           }
         },
         invert: {
@@ -176,6 +182,10 @@ module.exports = {
         '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))'
       )
       addVariant('hocus', ['&:hover', '&:focus-visible'])
+      addVariant(
+        'supports-var-font',
+        '@supports (font-variation-settings: normal)'
+      )
     },
     function ({ matchUtilities, theme }) {
       matchUtilities(

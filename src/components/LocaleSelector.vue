@@ -14,7 +14,8 @@ defineProps({
   modelValue: {
     type: String,
     required: true
-  }
+  },
+  top: Boolean
 })
 
 defineEmits(['update:modelValue'])
@@ -65,7 +66,7 @@ function createFlagUrl(country) {
 
     <Listbox
       as="div"
-      class="hidden md:block"
+      class="hidden md:block relative"
       :model-value="modelValue"
       @update:model-value="$emit('update:modelValue', $event)"
     >
@@ -98,7 +99,8 @@ function createFlagUrl(country) {
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-10 mt-1 w-56 bg-white dark:supports-backdrop-blur:bg-gray-700/80 dark:bg-gray-700 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm"
+          :class="top ? 'top-0 translate-y-[calc(-100%-0.25rem)]' : 'mt-1'"
+          class="absolute z-10 w-56 bg-white dark:supports-backdrop-blur:bg-gray-700/80 dark:bg-gray-700 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm"
         >
           <ListboxOption
             as="template"

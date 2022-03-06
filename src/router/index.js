@@ -43,15 +43,17 @@ const routes = [
         name: 'Accessibility',
         component: () => import('../views/about/Accessibility.vue'),
         meta: {
-          title: () => t('app.routes.about.a11y')
+          title: () => t('app.routes.about.a11y'),
+          category: 'general'
         }
       },
       {
-        path: 'instructions',
+        path: 'guides/instructions',
         name: 'Instructions',
         component: () => import('../views/about/Instructions.vue'),
         meta: {
-          title: () => t('app.routes.about.instructions')
+          title: () => t('app.routes.about.instructions'),
+          category: 'guide'
         }
       },
       {
@@ -59,7 +61,8 @@ const routes = [
         name: 'PrivacyPolicy',
         component: () => import('../views/about/PrivacyPolicy.vue'),
         meta: {
-          title: () => t('app.routes.about.privacyPolicy')
+          title: () => t('app.routes.about.privacyPolicy'),
+          category: 'general'
         }
       },
       {
@@ -67,7 +70,8 @@ const routes = [
         name: 'TermsOfUse',
         component: () => import('../views/about/TermsOfUse.vue'),
         meta: {
-          title: () => t('app.routes.about.termsOfUse')
+          title: () => t('app.routes.about.termsOfUse'),
+          category: 'general'
         }
       }
     ]
