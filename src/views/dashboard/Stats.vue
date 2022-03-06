@@ -12,6 +12,7 @@ import {
 } from '@heroicons/vue/outline'
 
 import BasicBarChart from '@/components/BasicBarChart.vue'
+import GroupedStatistics from '@/components/GroupedStatistics.vue'
 import MonthlyBoughtsChart from '@/components/MonthlyBoughtsChart.vue'
 import MonthlyExpenseChart from '@/components/MonthlyExpenseChart.vue'
 import SimpleHeader from '@/components/SimpleHeader.vue'
@@ -56,6 +57,8 @@ const { t } = useI18n({ useScope: 'global' })
         v-if="!sheetIsEmpty && !tooEarly"
         class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 lg:px-8 space-y-1 md:space-y-6"
       >
+        <GroupedStatistics class="mb-2 md:mb-0" />
+
         <div
           class="flex overflow-x-scroll md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 gap-6"
         >

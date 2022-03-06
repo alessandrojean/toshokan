@@ -2,13 +2,15 @@ import { computed } from 'vue'
 import { useQuery } from 'vue-query'
 
 import { PropertyToColumn } from '@/model/Book'
-import { useSheetStore } from '@/stores/sheet'
 import searchBooks from '@/services/sheet/searchBooks'
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBookSearchQuery(
   { query, sortBy, sortDirection, page },
   { enabled, keepPreviousData }
 ) {
+  const authStore = useAuthStore()
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
@@ -27,6 +29,16 @@ export default function useBookSearchQuery(
   return useQuery(
     ['book-search', { query, sortBy, sortDirection, page }],
     fetcher,
-    { enabled, keepPreviousData }
+    {
+      enabled,
+      keepPreviousData,
+      retry(_, error) {
+        if (error.code === 401) {
+          authStore.refreshToken()
+        }
+
+        return 2
+      }
+    }
   )
 }

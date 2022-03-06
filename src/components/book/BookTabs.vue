@@ -10,7 +10,7 @@ import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
-import BookCard from '@/components/book/BookCard.vue'
+import BookGrid from '@/components/book/BookGrid.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 const props = defineProps({
@@ -339,16 +339,10 @@ function searchByTag(tag, event) {
 
         <!-- Collection -->
         <TabPanel
-          class="grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-5 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
           v-if="showBookInfo && filteredCollection.length > 0"
+          class="has-ring-focus dark:focus-visible:ring-offset-gray-900 rounded-md"
         >
-          <BookCard
-            v-for="colItem in filteredCollection"
-            :key="colItem.id"
-            :book="colItem"
-            :loading="!showBookInfo"
-            :current="colItem.id === book.id"
-          />
+          <BookGrid :items="filteredCollection" :current="book.id" />
         </TabPanel>
       </TabPanels>
     </TabGroup>

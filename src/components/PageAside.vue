@@ -1,10 +1,13 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+import LocaleSelector from '@/components/LocaleSelector.vue'
+
 const route = useRoute()
 const aboutRoute = computed(() => route.matched[0])
+const categories = inject('categoryOrder')
 
 const groups = computed(() =>
   aboutRoute.value.children.reduce((groups, route) => {
@@ -18,24 +21,22 @@ const groups = computed(() =>
   }, {})
 )
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 </script>
 
 <template>
-  <aside class="w-56 py-8">
+  <aside class="w-56 py-12">
     <nav class="sticky top-24 text-sm">
-      <p class="font-semibold font-display text-base dark:text-gray-100 pl-1">
-        {{ t('about.helpCenter') }}
-      </p>
+      <LocaleSelector class="w-56" v-model="locale" />
       <div class="space-y-10 mt-8">
-        <div v-for="(group, name) in groups" :key="name">
+        <div v-for="group in categories" :key="group">
           <p
             class="uppercase tracking-wider font-semibold dark:font-bold text-xs pl-1"
           >
-            {{ t('about.categories.' + name) }}
+            {{ t('about.categories.' + group) }}
           </p>
           <ul class="space-y-3.5 mt-4 dark:text-gray-200 -ml-2">
-            <li v-for="route in group" :key="route.path">
+            <li v-for="route in groups[group]" :key="route.path">
               <RouterLink
                 :to="{ name: route.name }"
                 class="px-3 py-1.5 has-ring-focus rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 motion-safe:transition-colors"

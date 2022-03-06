@@ -20,8 +20,8 @@ const authStore = useAuthStore()
 
 const profileImageUrl = computed(() => authStore.profileImageUrl)
 
-async function signOut() {
-  await authStore.signOut()
+function signOut() {
+  authStore.signOut()
 }
 
 const showSettingsDialog = !props.hideSettings
@@ -65,30 +65,38 @@ const showSettingsDialog = !props.hideSettings
     <ScaleTransition>
       <MenuItems
         as="ul"
-        class="fixed md:absolute z-40 left-8 md:left-auto right-8 md:right-0 bottom-8 md:bottom-auto md:w-48 mt-2 py-1 origin-bottom md:origin-top-right bg-white dark:bg-gray-700 md:dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="absolute right-6 md:right-0 z-40 w-48 mt-2 py-1 origin-top-right bg-white dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <div class="pb-1" v-if="!hideSettings">
-          <MenuItem v-slot="{ active }">
+        <div class="pb-1">
+          <MenuItem :disabled="hideSettings" v-slot="{ active, disabled }">
             <button
               type="button"
               :class="[
                 active
                   ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
                   : '',
-                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                disabled
+                  ? 'opacity-50'
+                  : 'dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200',
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
               ]"
               @click="showSettingsDialog"
             >
               <span aria-hidden="true">
                 <CogIcon
-                  class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300"
+                  :class="[
+                    !disabled
+                      ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300'
+                      : '',
+                    'w-5 h-5 mr-3 text-gray-500 dark:text-gray-400 '
+                  ]"
                 />
               </span>
               {{ t('dashboard.header.menu.settings') }}
             </button>
           </MenuItem>
         </div>
-        <div :class="!hideSettings ? 'pt-1' : ''">
+        <div class="pt-1">
           <MenuItem v-slot="{ active }">
             <button
               type="button"

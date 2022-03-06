@@ -44,11 +44,23 @@ export default class Query {
     return new Promise((resolve, reject) => {
       this.#query.send((response) => {
         if (response.isError()) {
-          const message = i18n.global.t('errors.badQuery', {
-            error: response.getMessage()
-          })
+          const errorMessage = response.getMessage()
+          const reasons = response.getReasons()
 
-          reject(new Error(message))
+          if (reasons.includes('timeout')) {
+            reject(new Error(errorMessage), { reason: 'timeout' })
+          } else if (reasons.includes('access_denied')) {
+            reject(
+              new Error(errorMessage, { code: 401, reason: 'access_denied' })
+            )
+          } else {
+            const message = i18n.global.t('errors.badQuery', {
+              error: errorMessage
+            })
+
+            reject(new Error(message, { reason: 'invalid_query' }))
+          }
+
           return
         }
 

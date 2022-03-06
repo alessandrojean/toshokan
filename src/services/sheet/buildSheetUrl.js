@@ -11,7 +11,7 @@ export default function buildSheetUrl(sheetId) {
   const sheetUrl = new URL(
     `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`
   )
-  const accessToken = window.gapi?.auth?.getToken?.()?.access_token
+  const accessToken = window.gapi?.client?.getToken?.()?.access_token
 
   sheetUrl.searchParams.append('range', COLLECTION_RANGE)
   sheetUrl.searchParams.append('sheet', COLLECTION_SHEET)

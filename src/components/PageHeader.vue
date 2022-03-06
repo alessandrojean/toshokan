@@ -7,12 +7,14 @@ import { useAuthStore } from '@/stores/auth'
 import { LibraryIcon } from '@heroicons/vue/solid'
 
 import ProfileMenu from '@/components/ProfileMenu.vue'
+import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 
 const authStore = useAuthStore()
-const signedIn = computed(() => authStore.signedIn)
+const authenticated = computed(() => authStore.authenticated)
+const authorized = computed(() => authStore.authorized)
 </script>
 
 <template>
@@ -38,6 +40,7 @@ const signedIn = computed(() => authStore.signedIn)
         </span>
         <sup
           class="text-gray-500 dark:text-gray-400 font-semibold text-[0.6rem] align-super ml-0.5"
+          aria-hidden="true"
         >
           BETA
         </sup>
@@ -45,13 +48,14 @@ const signedIn = computed(() => authStore.signedIn)
       <div class="inline-flex shrink-0 items-center">
         <router-link
           :to="{ name: 'DashboardHome' }"
-          class="button is-primary is-rounded mr-3"
-          v-if="signedIn"
+          class="button is-primary is-rounded"
+          v-if="authenticated && authorized"
         >
           {{ t('home.header.dashboard') }}
         </router-link>
-        <ThemeToggle light />
-        <ProfileMenu v-if="signedIn" class="ml-3" light hide-settings />
+        <SignInWithGoogleButton :prompt="false" />
+        <ThemeToggle class="ml-3" light />
+        <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
       </div>
     </div>
   </header>

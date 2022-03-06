@@ -14,6 +14,23 @@
   html.dark svg[stroke-width="2"] {
     stroke-width: 1.6;
   }
+
+  body {
+    @apply bg-white dark:bg-gray-900  
+      antialiased font-sans supports-var-font:font-sans-var;
+  }
+
+  #credential_picker_container {
+    color-scheme: light;
+  }
+
+  body[data-route="Home"] #credential_picker_container {
+    @apply !absolute;
+  }
+
+  body[data-route="SignIn"] #credential_picker_container {
+    @apply inset-0 flex items-center justify-center w-full !h-full;
+  }
 }
 
 @layer components {

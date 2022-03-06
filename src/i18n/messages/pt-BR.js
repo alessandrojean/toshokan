@@ -13,8 +13,11 @@ export default {
       notFound: 'Página não encontrada',
       about: {
         a11y: 'Acessibilidade',
+        about: 'Sobre o projeto',
         instructions: 'Instruções de uso',
         privacyPolicy: 'Política de Privacidade',
+        searching: 'Pesquisando',
+        sharing: 'Compartilhando',
         termsOfUse: 'Termos de Uso'
       },
       dashboard: {
@@ -188,7 +191,7 @@ export default {
     version: 'Toshokan v{version}',
     copyright: '© {year} Alessandro Jean. Todos os direitos reservados.',
     dev: 'Ambiente de desenvolvimento',
-    lastUpdate: 'Última atualização feita em {0}.',
+    lastUpdate: 'Atualizado em {0}.',
     donate: {
       actionDonate: 'Fazer uma doação',
       actionClose: 'Fechar',
@@ -211,26 +214,9 @@ export default {
     goToPage: 'Ir para a página '
   },
   auth: {
-    google: {
-      signIn: 'Entrar',
-      withGoogle: 'com Google',
-      disconnectModal: {
-        title: 'Desconectando de sua Conta do Google',
-        message1: `
-          A permissão de acesso e modificação de sua planilha da coleção
-          será removida ao desconectar o Toshokan.
-        `,
-        message2: `
-          Sua planilha da coleção não será apagada, e você ainda
-          poderá acessar o arquivo em seu Google Drive.
-        `,
-        message3: `
-          Você pode dar acesso novamente realizando um novo login.
-        `,
-        disconnect: 'Desconectar',
-        cancel: 'Cancelar'
-      }
-    }
+    authorizing: 'Autorizando…',
+    redirecting: 'Redirecionando…',
+    currentlyBeta: 'Atualmente em Beta fechado'
   },
   signIn: {
     title: 'Autentique-se',
@@ -745,7 +731,12 @@ export default {
       authorsRankTitle: 'Rank de autores',
       seriesRankTitle: 'Rank de séries',
       bookQuantity: 'Quantidade de livros',
-      monthlyExpense: 'Gasto mensal'
+      monthlyExpense: 'Gasto mensal',
+      thisMonth: 'Gasto atual',
+      bought: 'Comprados',
+      read: 'Lidos',
+      count: 'Contagem',
+      book: 'livro | livros'
     },
     sheetChooser: {
       title: 'Escolha uma planilha',
@@ -772,401 +763,12 @@ export default {
     onThisPage: 'Nesta página',
     previous: 'Anterior',
     next: 'Próxima',
+    englishOnly: 'Infelizmente este conteúdo está disponível apenas em inglês.',
+    helpTranslate: 'Ajude a traduzir esta página',
+    editThisPage: 'Edite esta página no GitHub',
     categories: {
       general: 'Geral',
       guide: 'Guias'
-    },
-    a11y: {
-      title: 'Acessibilidade',
-      body: dedent`
-        Este site possui alguns recursos de acessibilidade.
-
-        [[toc]]
-
-        ## Pular para o conteúdo
-
-        Todas as páginas possuem um link interno para pular para
-        o conteúdo principal. Ele pode ser utilizado por usuários
-        que naveguem utilizando somente o teclado ou através de um
-        leitor de tela para ir direto para a parte principal da página.
-
-        ## Pular para a navegação
-
-        Em páginas como o Dashboard, você também encontrará um link
-        interno para pular diretamente para a navegação principal.
-
-        ## Menus
-
-        Os menus utilizados da biblioteca Headless UI seguem as recomendações
-        dos padrões da WAI-ARIA. Os comandos com teclado podem ser consultados
-        na [documentação do componente]({headlessUiLink}).
-
-
-        ## Navegação
-
-        O site possui carregamento dinâmico dos conteúdos. Quando
-        a rota é alterada, o leitor de tela é informado através de uma
-        modificação em um elemento de controle.
-
-        ## Animações
-
-        O site respeita a configuração no sistema operacional, se disponível,
-        para desabilitar animações não-essenciais. Você pode encontrar
-        esta configuração na seção de Acessibilidade de seu computador
-        e/ou dispositivo.
-
-        ## Problemas de acesso
-
-        Caso encontre algum problema com o acesso ou alguma implementação
-        feita de maneira incorreta, por favor, abra uma Issue no repositório
-        no GitHub.
-      `
-    },
-    instructions: {
-      title: 'Instruções de uso',
-      body: dedent`
-        O Toshokan é um utilitário com o objetivo de prover uma interface
-        de usuário amigável para um melhor gerenciamento de sua planilha
-        de coleção de mangás, quadrinhos, livros e impressos em geral.
-
-        A planilha, por sua vez, deve seguir um *template* bem estrito,
-        que deve ser copiado para sua conta do Google Drive para que a aplicação
-        possa ter acesso.
-
-        A aplicação somente lê e altera as informações na planilha,
-        assim você ainda tem controle total sobre seus dados da coleção e
-        poderá manipulá-los facilmente caso queira exportá-los ou utilizá-los
-        em outro serviço, por exemplo.
-
-        [[toc]]
-
-        ## Antes de começar
-
-        Na primeira utilização, você deve realizar o procedimento de criação
-        do arquivo da planilha que conterá suas informações da coleção.
-
-        - Autentique-se com sua conta no site do [Google Drive]({googleDriveLink}).
-        - Acesse [esta planilha]({templateSheetLink}) e faça uma
-          cópia em **Arquivo → Fazer uma cópia**.
-        - **Não renomeie o arquivo**, o nome deve ser mantido como **Toshokan**.
-
-        Nas próximas vezes, a planilha copiada será escolhida automaticamente.
-
-        ## Autenticando-se no Toshokan
-
-        Tendo copiado a planilha para seu Google Drive, você já pode começar
-        a gerenciar sua coleção no Toshokan, autenticando-se com sua
-        Conta do Google.
-
-        - Acesse a página inicial e clique em **Entrar com Google**.
-        - Permita o acesso do Toshokan às informações requisitadas em sua conta.
-
-        Nas próximas vezes, você não precisará conceder a permissão novamente.
-
-        ### Sobre o uso de suas informações pessoais
-
-        O Toshokan é uma aplicação de código-aberto, estática e totalmente
-        renderizada no lado do navegador, isto é, não possuímos um servidor
-        próprio para armazenar seus dados e nem nos comunicamos com
-        serviços externos para repassar seus dados.
-
-        Você pode remover a permissão de acesso
-        do utilitário a suas planilhas e arquivos do Google Drive
-        a qualquer momento em suas configurações da Conta do Google.
-
-        Você pode ler mais sobre em nossa Política de Privacidade.
-
-        ## Criando o primeiro livro
-
-        Ao entrar pela primeira vez, por conta da planilha estar vazia,
-        você será informado e convidado a criar o primeiro livro através
-        do utilitário.
-
-        Caso a pesquisa por ISBN esteja habilitada, você poderá realizar
-        a pesquisa e obter um formulário pré-preenchido com os metadados
-        do livro na próxima etapa, isso se o código é válido e um livro
-        com tal código existe no banco de dados do provedor.
-
-        ![Primeira etapa: pesquisa por ISBN.]({figure1})
-
-        O ISBN para a pesquisa pode ser digitado com ou sem os hífens,
-        e a pesquisa também funciona para livros mais antigos que utilizem
-        o ISBN de 10 dígitos. Entretanto, a pesquisa só irá retornar
-        resultados de livros publicados no território nacional, ou seja,
-        livros em que o código começa com **978-85** ou **978-65**.
-
-        Caso a pesquisa não retorne nenhum resultado ou o livro não
-        possui um ISBN brasileiro, você poderá optar por
-        **Preencher manualmente**.
-
-        ![Segunda etapa: preenchimento dos metadados do livro.]({figure2})
-
-        As informações do livro no provedor de pesquisa não necessariamente
-        estão corretas e/ou seguem um padrão, portanto na maioria das vezes
-        você precisará realizar pequenos ajustes nos metadados. Na imagem acima,
-        o mangá teve seu título e autor cadastrado com caixa alta, e precisa
-        ser arrumado.
-
-        ### Os metadados do livro
-
-        Abaixo você encontra uma explicação sucinta de cada metadado.
-
-        Identificação
-        : Geralmente o ISBN do livro, mas outros códigos únicos como
-          o ISSN ou EAN podem ser utilizados em sua ausência.
-          Em publicações independentes, o valor **N/A**
-          (não se aplica) pode ser utilizado.
-
-        Título
-        : Nome oficial do livro. Em casos de publicações seriadas, isto
-          é, com mais de um volume, pode-se utilizar o caractere
-          **#** (cerquilha) seguido do número.
-
-          **Exemplo:** Lobo Solitário #05: O Segredo do Vento Sul
-
-        Autores
-        : Pessoas envolvidas na criação do livro, tais como escritores,
-          roteiristas, desenhistas, letristas etc. Em caso de múltiplas pessoas,
-          você deve separar os nomes pelo caractere de
-          **ponto-e-vírgula**.
-
-          **Exemplo:** Kazuo Koike; Goseki Kojima
-
-        Editora
-        : Editora que lançou a edição nacional do livro. Algumas vezes
-          o valor retornado pelo provedor é incorreto e o utilitário realizará
-          a correção, mas pode ser que você ainda precise modificar manualmente.
-
-        Grupo
-        : Grupo que este livro possui em comum com outros em sua coleção.
-          Apesar de idealmente o recomendado ser utilizar o tipo de publicação
-          (tal como "livros", "quadrinhos" ou "mangás"), você também pode, se
-          desejar, utilizar o nome da obra em casos com vários volumes.
-
-          Você deve preencher esta informação manualmente sempre.
-
-        Dimensões
-        : Relação de largura e altura, em centímetros. Você deve utilizar
-          o caractere **x** para separar os valores, que
-          podem ter no máximo um dígito na casa decimal.
-
-        Preço de capa
-        : Preço cheio do livro. Você pode utilizar até dois dígitos
-          para as casas decimais.
-
-          Em caso de livros importados, você poderá trocar a moeda
-          na caixa de seleção ao lado, escolhendo pelo código equivalente
-          no [ISO 4217]({iso4217link}).
-
-        Preço pago
-        : Preço promocional pago na compra. Quando não se aplicar,
-          você deve preencher com o valor do preço de capa.
-          Você também pode trocar a moeda utilizada.
-
-        Loja
-        : Local onde a compra do livro foi realizada. Você pode preencher
-          com o valor **Desconhecido** quando não se recordar
-          ou quando não quiser preencher.
-
-        Data de entrada
-        : Data quando o item entrou na sua coleção. É utilizado para
-          gerar as estatísticas de gastos mensais. Caso você não recorde
-          ou não possua mais esta informação, você pode deixar o valor
-          do campo em branco apagando o dia, mês e ano.
-
-        ![Metadados do livro preenchidos corretamente.]({figure3})
-
-        ### Imagem de capa
-
-        Após preencher os metadados do livro, você poderá escolher uma
-        imagem de capa obtida automaticamente da Amazon ou do site da editora,
-        ou providenciar uma URL válida para uma imagem personalizada.
-
-        Caso você queira deixar o sem imagem, basta não selecionar
-        nenhuma das opções.
-
-        ![Terceira etapa: escolha da imagem de capa.]({figure4})
-
-        ### Revisão das informações
-
-        Com os metadados preenchidos e a imagem de capa escolhida,
-        você pode realizar uma última revisão das informações antes
-        de concluir o procedimento e adicionar o novo livro na planilha.
-
-        ![Quarta etapa: revisão das informações.]({figure5})
-
-        Caso todas as informações estejam corretas, você deve
-        clicar em **Concluir**.
-
-        ![Diálogo de confirmação de criação.]({figure6})
-
-        Com isso, o livro será adicionado na planilha e você poderá em
-        seguida optar por **Visualizar**, caso queira ir direto para a
-        página com as informações, ou **Novo livro** caso queira
-        adicionar um em sequência.
-
-        ![Página das informações do livro.]({figure7})
-
-        Agora o livro está salvo na planilha e você já pode continuar
-        o procedimento ao inserir novos ou explorar sua biblioteca
-        através do item **Biblioteca** na navegação principal.
-      `
-    },
-    privacyPolicy: {
-      title: 'Política de Privacidade',
-      body: dedent`
-        A política de privacidade aplica-se a todas as páginas deste site.
-
-        [[toc]]
-
-        ## Informações coletadas
-
-        O Toshokan precisa receber algumas informações pessoais de sua
-        Conta do Google para que o utilitário possa funcionar corretamente.
-
-        Todas as informações recebidas são tratadas no navegador e não
-        são armazenadas e nem retransmitidas para algum serviço externo.
-        Além disso, o site é de código-aberto, ou seja, qualquer um pode
-        inspecionar o código e apontar quaisquer problemas no repositório
-        no GitHub.
-
-        ### Informações que você fornece
-
-        Estas informações são obtidas quando você concede permissão
-        para que o Toshokan acesse a planilha da coleção.
-
-        - **Suas informações pessoais**. Utilizamos seu
-          nome, e-mail e foto de perfil de sua conta do Google para
-          personalizar a interface de usuário. O sistema de autenticação
-          do Google fornece estas informações por padrão e não é possível
-          optar por não recebê-las.
-        - **Seus arquivos do Google Drive**. Requisitamos
-          um escopo de somente-leitura de informações dos seus arquivos
-          no Google Drive para que possamos encontrar o ID da planilha
-          da coleção. Não temos acesso aos conteúdos dos arquivos, com
-          exceção da planilha em si.
-        - **Suas planilhas no Google Sheets**. Precisamos
-          de acesso de leitura e escrita em suas planilhas para poder
-          obter os dados e gravar novas informações da coleção. Somente
-          os dados desta planilha da coleção são lidos e modificados.
-
-        Você pode remover completamente a permissão de acesso do Toshokan
-        a sua Conta do Google seguindo as instruções
-        [neste artigo]({googleHelpLink}) da Central de Ajuda do Google.
-        Após remover a permissão de acesso, não teremos mais acesso a
-        seus dados.
-
-        ### Como utilizamos as informações
-
-        Não armazenamos suas informações em nenhum servidor do site.
-        O Toshokan é somente um site com conteúdo estático. As informações
-        recebidas de sua Conta do Google são armazenadas temporariamente
-        na memória durante a utilização do site. Quando você realiza
-        o logoff ou fecha o site, as informações são automaticamente
-        deletadas. Elas só serão requisitadas novamente ao sistema de
-        autenticação do Google na próxima vez que você utilizar o site
-        e de fato se autenticar.
-
-        ## Compartilhamento de dados com terceiros
-
-        Não realizamos o compartilhamento de nenhuma informação ou dado
-        pessoal de sua Conta do Google, bem como o conteúdo de suas planilhas
-        e dos arquivos de seu Google Drive com terceiros. Tal fato pode ser
-        comprovado através de uma inspeção do código-fonte do site no
-        repositório público no GitHub.
-
-        Por ser um site de código-aberto, qualquer um pode clonar o código
-        em sua totalidade ou criar uma ramificação, modificar, compilar
-        e hospedar em seu próprio servidor. Não temos controle e nem
-        responsabilidade sobre outras instâncias ou ramificações do
-        Toshokan que não sejam esta neste site ({demoBuildLink}).
-        Pedimos que sempre se atente se está acessando do site de
-        demonstração ou de sua própria versão local, como recomendado
-        nas instruções do arquivo README.md do repositório.
-
-        Apesar de não compartilharmos nenhum dado pessoal seu com terceiros,
-        nos reservamos ao direito de incluir futuramente links de compra
-        de produtos que participem do produto de afiliados de algumas lojas.
-        Estes links não incluem nenhuma informação pessoal, mas os sites das
-        lojas podem possuir algum mecanismo de monitoramento e identificação
-        única, as quais não temos responsabilidade e nem controle. Você pode
-        obter mais informações em relação a esta prática nos Termos de Uso e
-        Política de Privacidade das lojas.
-
-        ## Atualizações em nossa Política de Privacidade
-
-        Podemos alterar ou atualizar nossa Política de Privacidade.
-        Iremos informá-lo sobre alterações a esta Política de Privacidade,
-        se apropriado, e atualizar a data de "Última atualização" na
-        parte inferior desta página. Por favor, verifique nossa Política
-        de Privacidade periodicamente.
-
-        ## Lei Geral de Proteção de Dados Pessoais (LGPD)
-
-        Esta seção se aplica ao processamento de dados pessoais dentro
-        da lei brasileira e complementa a nossa Política de Privacidade.
-
-        Dentro da Lei Geral de Proteção de Dados Pessoais, você tem
-        o direito de acessar, retificar, possuir, deletar, e confirmar
-        que processamos seus dados. Em certas circunstâncias, você também
-        tem o direito de se opor e restringir o processamento de
-        seus dados pessoais. Esta página fornece informações nas seções
-        anteriores sobre como processamos e utilizamos seus dados.
-
-        Você pode remover completamente a permissão de acesso do Toshokan
-        a sua Conta do Google seguindo as instruções
-        [neste artigo]({googleHelpLink}) da Central de Ajuda do Google.
-        Após remover a permissão de acesso, não teremos mais acesso a
-        seus dados.
-
-        Informações sobre como o Google se responsabiliza com seus dados
-        segundo a LGPD podem ser obtidas [neste artigo]({googleLgpdLink})
-        da Central de Ajuda do Google.
-
-        O conteúdo completo da Lei Nº 13.709,
-        de 14 de Agosto de 2018, pode ser acessado através
-        [desta página]({lgpdLawLink}) no site do Planalto Federal.
-      `
-    },
-    termsOfUse: {
-      title: 'Termos de Uso',
-      body: dedent`
-        Esta página lista os termos de uso do site Toshokan.
-
-        **Por favor, leia cuidadosamente estes termos, pois ao acessar ou usar
-        qualquer parte deste site, você automaticamente concorda com eles.
-        Se não concordar com os termos, você não poderá acessar o site
-        ou usar quaisquer de seus serviços.**
-
-        Reservamos o direito de alterar esses termos a qualquer momento.
-        É sua responsabilidade verificar as alterações feitas nesta página
-        periodicamente. Seu acesso ao site após a publicação de quaisquer
-        alterações constitui aceitação de tais alterações. Você pode revisar
-        a versão mais atual dos termos a qualquer momento nesta página.
-
-        [[toc]]
-
-        ## Comunicação eletrônica
-
-        Você entende que o seu conteúdo pode ser transferido sem criptografia
-        e pode: **(a)** ser transmitido por várias redes; e
-        **(b)** sofrer alterações para se adaptar e se adequar
-        às exigências técnicas de conexão de redes ou dispositivos. As
-        informações de autenticação sempre são criptografadas durante
-        a transferência entre redes.
-
-        ## Serviços de Terceiros
-
-        Utilizamos o [Serviço de Autenticação do Google]({googleSignInLink}),
-        bem como o Google Drive e Google Sheets. Ao utilizar este site e se
-        autenticar através da sua Conta do Google, você concorda
-        com os [Termos de Serviço]({googleTermsLink}) e a
-        [Política de Privacidade]({googlePrivacyPolicyLink}) do Google.
-
-        ## Política de Privacidade
-
-        Ao utilizar este site, você concorda com nossa Política de Privacidade.
-      `
     }
   }
 }

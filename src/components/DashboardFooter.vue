@@ -6,6 +6,7 @@ import useAppInfo from '@/composables/useAppInfo'
 
 import {
   CurrencyDollarIcon,
+  HandIcon,
   QuestionMarkCircleIcon
 } from '@heroicons/vue/outline'
 
@@ -40,12 +41,25 @@ const releaseLink = computed(() => {
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-2">
           <router-link
-            :to="{ name: 'Instructions' }"
-            :title="t('about.instructions.title')"
+            :to="{ name: 'Accessibility' }"
+            :title="t('app.routes.about.a11y')"
             class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
           >
             <span class="sr-only">
-              {{ t('about.instructions.title') }}
+              {{ t('app.routes.about.a11y') }}
+            </span>
+            <span aria-hidden="true">
+              <HandIcon class="w-6 h-6" />
+            </span>
+          </router-link>
+
+          <router-link
+            :to="{ name: 'Instructions' }"
+            :title="t('app.routes.about.instructions')"
+            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
+          >
+            <span class="sr-only">
+              {{ t('app.routes.about.instructions') }}
             </span>
             <span aria-hidden="true">
               <QuestionMarkCircleIcon class="w-6 h-6" />
@@ -69,7 +83,7 @@ const releaseLink = computed(() => {
             :href="githubLink"
             target="_blank"
             title="GitHub"
-            class="p-2 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
+            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
           >
             <span class="sr-only">GitHub</span>
             <span aria-hidden="true">

@@ -22,7 +22,10 @@
 }
 
 .content-body kbd {
-  @apply inline-flex rounded-md py-0.5 px-2 text-xs dark:text-white dark:bg-gray-700;
+  @apply inline-flex rounded-md py-0.5 px-2 text-xs select-none
+    font-sans supports-var-font:font-sans-var
+    bg-gray-200/80 dark:bg-gray-700 dark:text-white
+    border-b-2 border-gray-300 dark:border-gray-600;
 }
 
 .content-body :where(h1, h2, h3, h4, h5, h6) {
@@ -30,6 +33,6 @@
 }
 
 .content-body .table-of-contents {
-  @apply hidden;
+  @apply sr-only;
 }
 </style>

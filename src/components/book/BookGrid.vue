@@ -1,11 +1,15 @@
 <script setup>
 import { nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useBreakpoints } from '@vueuse/core'
+
+import useTailwindTheme from '@/composables/useTailwindTheme'
 
 import BookCard from '@/components/book/BookCard.vue'
 
 const props = defineProps({
   currentPage: Number,
+  current: String,
   items: Array,
   loading: Boolean,
   skeletonItems: Number,
@@ -14,24 +18,29 @@ const props = defineProps({
 })
 
 const { t } = useI18n({ useScope: 'global' })
+const { breakpoints: themeBreakpoints } = useTailwindTheme()
+
+const breakpoints = useBreakpoints(themeBreakpoints)
 
 const focused = ref(0)
 const grid = ref(null)
 const { items, loading, currentPage, sortDirection, sortProperty } =
   toRefs(props)
 
-const columnSize = {
-  '1024px': 6, // lg
-  '768px': 5, // md
-  '640px': 3 // sm
-}
-
 function getColumnSize() {
-  const match = Object.entries(columnSize).find(([minWidth]) => {
-    return window.matchMedia(`(min-width: ${minWidth})`).matches
-  })
+  if (breakpoints.isGreater('lg')) {
+    return 6
+  }
 
-  return match?.[1] || 2
+  if (breakpoints.isGreater('md')) {
+    return 5
+  }
+
+  if (breakpoints.isGreater('sm')) {
+    return 3
+  }
+
+  return 2
 }
 
 /**
@@ -134,6 +143,7 @@ defineExpose({ focus })
           class="scroll-mt-20"
           :book="book"
           :loading="loading"
+          :current="book.id === current"
           :tabindex="bookIdx === focused ? '0' : '-1'"
           @keydown="handleKeydown"
         />

@@ -144,38 +144,39 @@ const itemsBought = computed(() => ({
 
 <template>
   <section
-    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2"
+    class="bg-white dark:bg-gray-800 md:rounded-md shadow"
     :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
   >
-    <div
-      v-if="loading"
-      class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"
-    ></div>
-    <h2
-      v-else
-      id="monthly-boughts-title"
-      class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100"
-    >
-      {{ t('dashboard.stats.booksBoughtAndRead.title') }}
-    </h2>
-    <div class="aspect-w-16 aspect-h-10 md:aspect-h-6 sm:-mx-3" role="img">
-      <FadeTransition>
-        <div v-if="loading" class="flex items-center justify-center">
-          <ChartBarIcon
-            class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600"
-            aria-hidden="true"
-          />
-        </div>
-        <div v-else>
-          <ApexChart
-            width="100%"
-            height="100%"
-            type="bar"
-            :options="itemsBought.options"
-            :series="itemsBought.series"
-          />
-        </div>
-      </FadeTransition>
+    <div class="px-4 sm:px-6 py-3 border-b dark:border-b-gray-700">
+      <div v-if="loading" class="skeleton h-6 w-40" />
+      <h2
+        v-else
+        id="monthly-boughts-title"
+        class="font-medium font-display text-gray-900 dark:text-gray-100"
+      >
+        {{ t('dashboard.stats.booksBoughtAndRead.title') }}
+      </h2>
+    </div>
+    <div class="px-4 py-3 sm:px-6">
+      <div class="aspect-w-16 aspect-h-10 md:aspect-h-7 sm:-mx-3" role="img">
+        <FadeTransition>
+          <div v-if="loading" class="flex items-center justify-center">
+            <ChartBarIcon
+              class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600"
+              aria-hidden="true"
+            />
+          </div>
+          <div v-else>
+            <ApexChart
+              width="100%"
+              height="100%"
+              type="bar"
+              :options="itemsBought.options"
+              :series="itemsBought.series"
+            />
+          </div>
+        </FadeTransition>
+      </div>
     </div>
   </section>
 </template>

@@ -1,11 +1,16 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useBreakpoints } from '@vueuse/core'
 
+import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
 const sheetStore = useSheetStore()
+const { breakpoints: themeBreakpoints } = useTailwindTheme()
+
+const breakpoints = useBreakpoints(themeBreakpoints)
 
 const sheetLoading = computed(() => sheetStore.loading)
 
@@ -20,17 +25,16 @@ const { t, n } = useI18n({ useScope: 'global' })
 const container = ref(null)
 const focused = ref(0)
 
-const columnSize = {
-  '1024px': 5, // lg
-  '768px': 4 // md
-}
-
 function getColumnSize() {
-  const match = Object.entries(columnSize).find(([minWidth]) => {
-    return window.matchMedia(`(min-width: ${minWidth})`).matches
-  })
+  if (breakpoints.isGreater('lg')) {
+    return 5
+  }
 
-  return match?.[1] || 2
+  if (breakpoints.isGreater('md')) {
+    return 4
+  }
+
+  return 2
 }
 
 /**

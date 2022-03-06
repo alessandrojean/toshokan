@@ -1,30 +1,26 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
+import { useLocalStorage } from '@vueuse/core'
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
-    history: localStorage.getItem('search_history')
-      ? JSON.parse(localStorage.getItem('search_history'))
-      : [],
+    history: useLocalStorage('search_history', []),
     query: '',
     page: 1,
     pagination: null,
-    sortBy: 'createdAt',
-    sortDirection: 'desc'
+    sortBy: useLocalStorage('search_sort_by', 'createdAt'),
+    sortDirection: useLocalStorage('search_sort_direction', 'desc')
   }),
   actions: {
     clear() {
       this.$patch({
         query: '',
         page: 1,
-        paginationInfo: null,
-        sortBy: 'createdAt',
-        sortDirection: 'desc'
+        pagination: null
       })
     },
 
     updateHistory(history) {
       this.history = history
-      localStorage.setItem('search_history', JSON.stringify(history))
     },
 
     updatePage(page) {
@@ -48,3 +44,7 @@ export const useSearchStore = defineStore('search', {
     }
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSearchStore, import.meta.hot))
+}

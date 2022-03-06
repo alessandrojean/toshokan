@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/auth'
 
 import { LibraryIcon } from '@heroicons/vue/solid'
 
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 const authStore = useAuthStore()
@@ -17,18 +19,19 @@ const isDev = ref(import.meta.env.DEV)
 
 const { appVersion } = useAppInfo()
 
-const started = computed(() => authStore.started)
-const signedIn = computed(() => authStore.signedIn)
+const authenticated = computed(() => authStore.authenticated)
+const authorized = computed(() => authStore.authorized)
+const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
 const redirectToDashboard = () => {
-  if (signedIn.value) {
-    router.replace('/dashboard')
+  if (shouldRedirect.value) {
+    router.replace({ name: 'DashboardHome' })
   }
 }
 
 onMounted(redirectToDashboard)
 
-watch(signedIn, redirectToDashboard)
+watch(shouldRedirect, redirectToDashboard)
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -38,6 +41,13 @@ const links = computed(() => [
   { route: 'PrivacyPolicy', text: t('footer.links.privacyPolicy') },
   { route: 'TermsOfUse', text: t('footer.links.termsOfUse') }
 ])
+
+const showOverlay = ref(false)
+
+function handleNotification(notification) {
+  showOverlay.value =
+    notification.isDisplayMoment() && notification.isDisplayed()
+}
 </script>
 
 <template>
@@ -48,12 +58,19 @@ const links = computed(() => [
   >
     <div class="max-w-xs w-full space-y-8">
       <header>
-        <span aria-hidden="true">
-          <LibraryIcon
-            class="h-14 w-14 mx-auto text-primary-500"
-            aria-hidden="true"
-          />
-        </span>
+        <RouterLink
+          :to="{ name: 'Home' }"
+          class="h-14 w-14 block mx-auto has-ring-focus dark:focus-visible:ring-offset-gray-900 rounded-md"
+          :title="t('app.routes.home')"
+        >
+          <span aria-hidden="true">
+            <LibraryIcon
+              class="h-14 w-14 mx-auto text-primary-500"
+              aria-hidden="true"
+            />
+          </span>
+          <span class="sr-only">{{ t('app.routes.home') }}</span>
+        </RouterLink>
         <h1
           class="mt-6 font-display text-center text-3xl font-bold text-gray-900 dark:text-gray-100"
         >
@@ -68,7 +85,20 @@ const links = computed(() => [
         </p>
       </header>
       <div class="mt-8 space-y-8 flex flex-col items-center">
-        <SignInWithGoogleButton class="is-large" />
+        <SignInWithGoogleButton @notification="handleNotification" />
+
+        <FadeTransition>
+          <p v-if="authenticated" class="flex items-center font-medium">
+            <span aria-hidden="true" class="inline-block mr-2.5">
+              <LoadingSpinIcon
+                class="w-5 h-5 text-primary-600 dark:text-primary-400 motion-safe:animate-spin"
+              />
+            </span>
+
+            <span v-if="!authorized">{{ t('auth.authorizing') }}</span>
+            <span v-else>{{ t('auth.redirecting') }}</span>
+          </p>
+        </FadeTransition>
 
         <footer role="contentinfo">
           <nav role="navigation" aria-label="Links úteis" class="text-sm mb-6">
@@ -112,6 +142,10 @@ const links = computed(() => [
         </footer>
       </div>
     </div>
+
+    <FadeTransition>
+      <div v-if="showOverlay" class="dialog-overlay" />
+    </FadeTransition>
   </main>
 </template>
 

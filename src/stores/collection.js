@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import Paginator from 'paginator'
+import { StorageSerializers, useLocalStorage } from '@vueuse/core'
 
 export const HIDE = 'hide'
 export const ONLY = 'only'
@@ -9,15 +10,15 @@ export const useCollectionStore = defineStore('collection', {
   state: () => ({
     currentPage: 1,
     filters: {
-      groups: JSON.parse(localStorage.getItem('collection_groups') || '[]')
+      groups: useLocalStorage('collection_groups', [])
     },
-    favorites: INDIFERENT,
-    futureItems: HIDE,
+    favorites: useLocalStorage('collection_favorites', INDIFERENT),
+    futureItems: useLocalStorage('collection_future_items', HIDE),
     links: 6,
     paginationInfo: {},
     perPage: 18,
-    sortBy: 'createdAt',
-    sortDirection: 'desc'
+    sortBy: useLocalStorage('collection_sort_by', 'createdAt'),
+    sortDirection: useLocalStorage('collection_sort_direction', 'desc')
   }),
   actions: {
     buildPaginationInfo({ perPage, links, totalResults, page }) {
@@ -50,8 +51,6 @@ export const useCollectionStore = defineStore('collection', {
 
     updateGroups(groups) {
       this.filters.groups = groups || []
-
-      localStorage.setItem('collection_groups', JSON.stringify(groups || []))
     },
 
     updateSort({ sortBy, sortDirection }) {
@@ -60,3 +59,7 @@ export const useCollectionStore = defineStore('collection', {
     }
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useCollectionStore, import.meta.hot))
+}

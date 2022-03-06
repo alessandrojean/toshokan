@@ -1,4 +1,5 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
+import { useLocalStorage } from '@vueuse/core'
 
 const LocalStorageKeys = {
   BLUR_NSFW: 'blur_nsfw',
@@ -57,33 +58,27 @@ const isDevEnvironment = !!import.meta.env.DEV
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    blurNsfw: localStorage.getItem(LocalStorageKeys.BLUR_NSFW) === 'true',
-    gridMode: localStorage.getItem(LocalStorageKeys.GRID_MODE) || 'comfortable',
+    blurNsfw: useLocalStorage(LocalStorageKeys.BLUR_NSFW, false),
+    gridMode: useLocalStorage(LocalStorageKeys.GRID_MODE, 'comfortable'),
     showVueQueryDevTools:
       isDevEnvironment &&
       localStorage.getItem(LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS) ===
         'true',
     spoilerMode: {
-      cover:
-        localStorage.getItem(LocalStorageKeys.SPOILER_MODE_COVER) === 'true',
-      synopsis:
-        localStorage.getItem(LocalStorageKeys.SPOILER_MODE_SYNOPSIS) === 'true'
+      cover: useLocalStorage(LocalStorageKeys.SPOILER_MODE_COVER, false),
+      synopsis: useLocalStorage(LocalStorageKeys.SPOILER_MODE_SYNOPSIS, false)
     },
     theme: getTheme(),
     useDevSheet: isDevEnvironment,
-    viewMode: localStorage.getItem(LocalStorageKeys.VIEW_MODE) || 'grid'
+    viewMode: useLocalStorage(LocalStorageKeys.VIEW_MODE, 'grid')
   }),
   actions: {
     updateBlurNsfw(blurNsfw) {
       this.blurNsfw = blurNsfw
-
-      localStorage.setItem(LocalStorageKeys.BLUR_NSFW, blurNsfw)
     },
 
     updateGridMode(gridMode) {
       this.gridMode = gridMode
-
-      localStorage.setItem(LocalStorageKeys.GRID_MODE, gridMode)
     },
 
     updateShowVueQueryDevTools(showVueQueryDevTools) {
@@ -99,15 +94,6 @@ export const useSettingsStore = defineStore('settings', {
       this.spoilerMode.cover = spoilerMode.cover || this.spoilerMode.cover
       this.spoilerMode.synopsis =
         spoilerMode.synopsis || this.spoilerMode.synopsis
-
-      localStorage.setItem(
-        LocalStorageKeys.SPOILER_MODE_COVER,
-        this.spoilerMode.cover
-      )
-      localStorage.setItem(
-        LocalStorageKeys.SPOILER_MODE_SYNOPSIS,
-        this.spoilerMode.synopsis
-      )
     },
 
     updateTheme(theme) {
@@ -136,8 +122,10 @@ export const useSettingsStore = defineStore('settings', {
 
     updateViewMode(viewMode) {
       this.viewMode = viewMode
-
-      localStorage.setItem(LocalStorageKeys.VIEW_MODE, viewMode)
     }
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSettingsStore, import.meta.hot))
+}

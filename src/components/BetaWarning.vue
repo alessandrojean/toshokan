@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useLocalStorage } from '@vueuse/core'
 
 import { SpeakerphoneIcon, XIcon } from '@heroicons/vue/outline'
 
@@ -8,11 +9,10 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 const LOCAL_STORAGE_KEY = 'hide_beta_warning'
 
-const hideBetaWarning = ref(localStorage.getItem(LOCAL_STORAGE_KEY) !== null)
+const hideBetaWarning = useLocalStorage(LOCAL_STORAGE_KEY, false)
 
 function handleDismiss() {
   hideBetaWarning.value = true
-  localStorage.setItem(LOCAL_STORAGE_KEY, 'true')
 }
 
 const { t } = useI18n({ useScope: 'global' })

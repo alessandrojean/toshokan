@@ -39,40 +39,74 @@ const routes = [
     component: () => import('../views/about/Index.vue'),
     children: [
       {
+        path: 'about-the-project',
+        name: 'About',
+        component: () => import('../views/about/BaseAbout.vue'),
+        meta: {
+          title: () => t('app.routes.about.about'),
+          category: 'general'
+        },
+        props: { file: 'about' }
+      },
+      {
         path: 'accessibility',
         name: 'Accessibility',
-        component: () => import('../views/about/Accessibility.vue'),
+        component: () => import('../views/about/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.a11y'),
           category: 'general'
-        }
-      },
-      {
-        path: 'guides/instructions',
-        name: 'Instructions',
-        component: () => import('../views/about/Instructions.vue'),
-        meta: {
-          title: () => t('app.routes.about.instructions'),
-          category: 'guide'
-        }
+        },
+        props: { file: 'a11y' }
       },
       {
         path: 'privacy-policy',
         name: 'PrivacyPolicy',
-        component: () => import('../views/about/PrivacyPolicy.vue'),
+        component: () => import('../views/about/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.privacyPolicy'),
           category: 'general'
-        }
+        },
+        props: { file: 'privacy-policy' }
       },
       {
         path: 'terms-of-use',
         name: 'TermsOfUse',
-        component: () => import('../views/about/TermsOfUse.vue'),
+        component: () => import('../views/about/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.termsOfUse'),
           category: 'general'
-        }
+        },
+        props: { file: 'terms-of-use' }
+      },
+      {
+        path: 'guides/instructions',
+        name: 'Instructions',
+        component: () => import('../views/about/BaseAbout.vue'),
+        meta: {
+          title: () => t('app.routes.about.instructions'),
+          category: 'guide'
+        },
+        props: { file: 'instructions' }
+      },
+      {
+        path: 'guides/searching',
+        name: 'Searching',
+        component: () => import('../views/about/BaseAbout.vue'),
+        meta: {
+          title: () => t('app.routes.about.searching'),
+          category: 'guide'
+        },
+        props: { file: 'searching' }
+      },
+      {
+        path: 'guides/sharing',
+        name: 'Sharing',
+        component: () => import('../views/about/BaseAbout.vue'),
+        meta: {
+          title: () => t('app.routes.about.sharing'),
+          category: 'guide'
+        },
+        props: { file: 'sharing' }
       }
     ]
   },
@@ -132,10 +166,12 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior() {
-    return {
-      top: 0,
-      behavior: 'smooth'
+  scrollBehavior(to, from) {
+    if (to.name !== from.name) {
+      return {
+        top: 0,
+        behavior: 'smooth'
+      }
     }
   },
   routes
@@ -146,6 +182,7 @@ const router = createRouter({
  */
 router.afterEach((to) => {
   document.title = to.meta.title() + ' | ' + t('app.name')
+  document.body.dataset.route = to.name
 })
 
 /**
@@ -155,39 +192,26 @@ router.beforeEach(async (to) => {
   const authStore = useAuthStore()
   const mainStore = useStore()
 
-  if (to.fullPath.includes('/dashboard')) {
-    if (authStore.isStarted && authStore.isSignedIn) {
-      return
-    }
-
-    if (!authStore.isStarted) {
-      let isSignedIn
-
-      try {
-        isSignedIn = await authStore.initApp()
-
-        return !isSignedIn ? '/sign-in' : undefined
-      } catch (e) {
-        isSignedIn = false
-        console.error(e)
-        mainStore.updateCriticalError(e)
-        return '/error'
-      }
-    }
-
-    return '/'
-  }
-
-  if (!authStore.isStarted && !mainStore.hasCriticalError) {
+  if (!authStore.started && !mainStore.hasCriticalError) {
     try {
-      const isSignedIn = await authStore.initApp()
-
-      return isSignedIn && to.path === '/sign-in' ? '/dashboard' : undefined
+      await authStore.initApp()
     } catch (e) {
       console.error(e)
       mainStore.updateCriticalError(e)
-      return '/error'
+      return { name: 'Error' }
     }
+  }
+
+  if (to.name === 'SignIn' || to.name === 'Error') {
+    return
+  }
+
+  if (to.fullPath.includes('/dashboard')) {
+    if (authStore.authenticated && authStore.authorized) {
+      return
+    }
+
+    return { name: 'SignIn', query: { redirect: to.fullPath } }
   }
 })
 

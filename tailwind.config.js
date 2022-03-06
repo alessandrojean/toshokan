@@ -114,10 +114,13 @@ module.exports = {
                 opacity: '1'
               }
             },
-            ':where(h1, h2, h3, h4, h5, h6):where(:hover, :focus) .header-anchor':
-              {
-                opacity: '1'
-              }
+            ':where(h1, h2, h3, h4, h5, h6):hover .header-anchor': {
+              opacity: '1'
+            },
+            'table tbody': {
+              borderBottomWidth: '1px',
+              borderBottomColor: 'var(--tw-prose-th-borders)'
+            }
           }
         },
         invert: {

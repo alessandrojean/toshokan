@@ -18,7 +18,8 @@ import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 import Typewriter from '@/components/Typewriter.vue'
 
 const authStore = useAuthStore()
-const signedIn = computed(() => authStore.signedIn)
+const authenticated = computed(() => authStore.authenticated)
+const authorized = computed(() => authStore.authorized)
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -108,7 +109,7 @@ const features = computed(() => [
             </div>
             <img
               class="md:hidden"
-              src="@/assets/home/screenshot-library-mobile.png"
+              src="@/assets/home/screenshot-library-mobile.jpg"
               alt=""
             />
             <img
@@ -136,7 +137,7 @@ const features = computed(() => [
 
       <section class="functionality">
         <figure>
-          <img src="@/assets/home/screenshot-metadata.png" alt="" />
+          <img src="@/assets/home/screenshot-metadata.jpg" alt="" />
         </figure>
 
         <div class="functionality-description">
@@ -157,11 +158,11 @@ const features = computed(() => [
           <router-link
             :to="{ name: 'DashboardHome' }"
             class="button is-primary"
-            v-if="signedIn"
+            v-if="authenticated && authorized"
           >
             {{ t('home.cta.dashboard') }}
           </router-link>
-          <SignInWithGoogleButton class="is-cta" />
+          <SignInWithGoogleButton :prompt="false" />
           <router-link
             :to="{ name: 'Instructions' }"
             class="button is-secondary"
@@ -253,15 +254,14 @@ const features = computed(() => [
 }
 
 .cta .button {
-  @apply py-3 px-5 font-medium text-base shadow-md justify-center
-    motion-safe:transition-transform;
+  @apply py-2 px-5 font-medium rounded shadow-md justify-center;
 }
 
 .cta .button.is-secondary {
   @apply text-primary-600 dark:text-gray-100;
 }
 
-.cta .button:hover {
-  @apply -translate-y-0.5;
+.cta .google-button {
+  @apply shadow-md;
 }
 </style>

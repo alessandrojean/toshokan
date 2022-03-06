@@ -11,7 +11,8 @@ import ThemeToggle from '@/components/ThemeToggle.vue'
 import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 
 const authStore = useAuthStore()
-const signedIn = computed(() => authStore.signedIn)
+const authenticated = computed(() => authStore.authenticated)
+const authorized = computed(() => authStore.authorized)
 
 const { t } = useI18n({ useScope: 'global' })
 </script>
@@ -32,6 +33,7 @@ const { t } = useI18n({ useScope: 'global' })
           </span>
           <sup
             class="text-gray-500 dark:text-gray-400 font-semibold text-[0.6rem] align-super ml-0.5"
+            aria-hidden="true"
           >
             BETA
           </sup>
@@ -45,13 +47,13 @@ const { t } = useI18n({ useScope: 'global' })
           <router-link
             :to="{ name: 'DashboardHome' }"
             class="button is-primary is-rounded"
-            v-if="signedIn"
+            v-if="authenticated && authorized"
           >
             {{ t('home.header.dashboard') }}
           </router-link>
-          <SignInWithGoogleButton collapse />
+          <SignInWithGoogleButton />
           <ThemeToggle light class="ml-3" />
-          <ProfileMenu v-if="signedIn" class="ml-3" light hide-settings />
+          <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
         </div>
       </div>
     </div>

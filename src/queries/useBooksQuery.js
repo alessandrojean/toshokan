@@ -1,14 +1,16 @@
 import { computed } from 'vue'
 import { useQuery } from 'vue-query'
 
-import { useSheetStore } from '@/stores/sheet'
-import getBooks from '@/services/sheet/getBooks'
 import { PropertyToColumn } from '@/model/Book'
+import getBooks from '@/services/sheet/getBooks'
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBooksQuery(
   { favorites, futureItems, groups, page, sortBy, sortDirection },
   { enabled }
 ) {
+  const authStore = useAuthStore()
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
@@ -25,6 +27,15 @@ export default function useBooksQuery(
   return useQuery(
     ['books', { favorites, futureItems, groups, page, sortBy, sortDirection }],
     fetcher,
-    { enabled }
+    {
+      enabled,
+      retry(_, error) {
+        if (error.code === 401) {
+          authStore.refreshToken()
+        }
+
+        return 2
+      }
+    }
   )
 }

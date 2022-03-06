@@ -113,6 +113,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
             </span>
             <sup
               class="text-gray-400 group-hover:text-gray-300 group-focus-visible:text-gray-300 font-semibold text-[0.6rem] align-super ml-0.5"
+              aria-hidden="true"
             >
               BETA
             </sup>

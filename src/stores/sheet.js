@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 import SheetService from '@/services/sheet'
 import { useSettingsStore } from './settings'
@@ -76,3 +76,7 @@ export const useSheetStore = defineStore('sheet', {
     }
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSheetStore, import.meta.hot))
+}

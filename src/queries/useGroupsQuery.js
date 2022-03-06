@@ -1,10 +1,12 @@
 import { computed } from 'vue'
 import { useQuery } from 'vue-query'
 
-import { useSheetStore } from '@/stores/sheet'
 import getGroups from '@/services/sheet/getGroups'
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useGroupsQuery({ enabled }) {
+  const authStore = useAuthStore()
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
@@ -12,5 +14,14 @@ export default function useGroupsQuery({ enabled }) {
     return await getGroups(sheetId.value)
   }
 
-  return useQuery('groups', fetcher, { enabled })
+  return useQuery('groups', fetcher, {
+    enabled,
+    retry(_, error) {
+      if (error.code === 401) {
+        authStore.refreshToken()
+      }
+
+      return 2
+    }
+  })
 }

@@ -118,13 +118,21 @@ function showSettingsDialog(close) {
               :aria-current="isExactActive ? 'page' : undefined"
               :class="[
                 (item.exact ? isExactActive : isActive)
-                  ? 'text-primary-600 dark:text-primary-400'
-                  : '',
-                'w-full sm:w-auto sm:p-2 text-gray-500 dark:text-gray-400 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
+                  ? 'text-primary-600 dark:text-primary-100'
+                  : 'text-gray-500 dark:text-gray-400',
+                'w-full sm:w-auto sm:p-2 font-semibold inline-flex space-y-1 flex-col items-center justify-center rounded-md'
               ]"
               @click="navigate"
             >
-              <span aria-hidden="true">
+              <span
+                aria-hidden="true"
+                :class="[
+                  (item.exact ? isExactActive : isActive)
+                    ? 'bg-primary-200 dark:bg-primary-500/50 text-primary-700 dark:text-primary-100'
+                    : '',
+                  'w-16 sm:w-auto py-1 sm:p-1.5 mb-0.5 sm:mb-0 rounded-full flex items-center justify-center motion-safe:transition-colors'
+                ]"
+              >
                 <component
                   :is="item.icon"
                   class="w-6 h-6 sm:w-7 sm:h-7 motion-safe:transition-colors duration-500"
@@ -132,8 +140,9 @@ function showSettingsDialog(close) {
               </span>
               <span
                 class="text-xs sm:sr-only motion-safe:transition-colors duration-500"
-                >{{ item.title }}</span
               >
+                {{ item.title }}
+              </span>
             </a>
           </router-link>
         </li>
@@ -233,7 +242,7 @@ function showSettingsDialog(close) {
   @apply shadow-top md:hidden z-20 sm:z-20 flex sm:flex-col items-center
     bg-white dark:bg-gray-800
     fixed bottom-0 left-0 sm:inset-y-0
-    w-full sm:w-16 h-16 sm:h-screen
+    w-full sm:w-16 h-[4.75rem] sm:h-screen
     p-2 border-t sm:border-t-0 sm:border-r
     border-gray-200 dark:border-gray-700
     transition duration-300 ease-in-out;

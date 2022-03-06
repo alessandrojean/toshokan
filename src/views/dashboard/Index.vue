@@ -23,7 +23,7 @@ const sheetStore = useSheetStore()
 const settingsStore = useSettingsStore()
 const router = useRouter()
 
-const signedIn = computed(() => authStore.signedIn)
+const authenticated = computed(() => authStore.authenticated)
 const hasGrantedScopes = computed(() => authStore.hasGrantedScopes)
 
 async function findSheetId() {
@@ -43,7 +43,7 @@ async function findSheetId() {
 
 onMounted(findSheetId)
 
-watch(signedIn, (newValue) => {
+watch(authenticated, (newValue) => {
   if (!newValue) {
     router.replace('/')
   }

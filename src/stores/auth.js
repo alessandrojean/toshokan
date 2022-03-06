@@ -1,5 +1,7 @@
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import i18n from '@/i18n'
+
+import jwtDecode from 'jwt-decode'
 
 const { t } = i18n.global
 
@@ -19,134 +21,176 @@ const SCOPES = [
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    googleAuth: null,
+    accessToken: null,
+    expiresIn: 0,
     hasGrantedScopes: null,
     started: false,
-    signedIn: false,
+    authenticated: false,
     profileName: null,
     profileEmail: null,
-    profileImageUrl: null
+    profileImageUrl: null,
+    refreshing: false,
+    tokenClient: null
   }),
   getters: {
-    isSignedIn: (state) => state.signedIn,
+    authorized: (state) => state.accessToken !== null,
+    isAuthenticated: (state) => state.authenticated,
     isStarted: (state) => state.started
   },
   actions: {
+    clear() {
+      this.$patch({
+        accessToken: null,
+        expiresIn: 0,
+        authenticated: false,
+        hasGrantedScopes: false,
+        profileEmail: null,
+        profileName: null,
+        profileImageUrl: null,
+        refreshing: false
+      })
+    },
+
     /**
      * Attempt to disconnect the user.
      */
     disconnect() {
-      this.googleAuth?.disconnect()
+      window.google.accounts.oauth2.revoke(this.accessToken)
+      window.google.accounts.id.revoke(this.profileEmail)
+      window.google.accounts.id.disableAutoSelect()
+
+      this.clear()
     },
 
     /**
      * Try to grant the missing permissions.
      */
-    async grantPermissions() {
-      const GoogleUser = this.googleAuth?.currentUser?.get()
-      const missingScopes = SCOPES.filter((scope) => {
-        return !GoogleUser.hasGrantedScopes(scope)
+    grantPermissions() {
+      this.tokenClient.requestAccessToken({
+        hint: this.profileEmail,
+        prompt: ''
       })
-
-      if (missingScopes.length) {
-        await this.googleAuth?.currentUser
-          ?.get()
-          ?.grant({ scope: missingScopes.join(' ') })
-
-        this.hasGrantedScopes = this.googleAuth?.currentUser
-          ?.get()
-          ?.hasGrantedScopes(SCOPES.join(' '))
-      }
     },
 
     /**
      * Init the authentication.
      *
-     * @returns {Promise<boolean>} the signedIn status
+     * @returns {Promise<void>}
      */
     async initApp() {
+      await this.initGoogleApiClient()
+      this.initGoogleIdentityServices()
+    },
+
+    /**
+     * Init the Google Api Client.
+     *
+     * @returns {Promise<void>}
+     */
+    async initGoogleApiClient() {
       return new Promise((resolve, reject) => {
-        window.gapi.load('client:auth2', () => {
-          window.gapi.client
-            .init({
-              discoveryDocs: DISCOVERY_DOCS,
-              clientId: import.meta.env.VITE_APP_CLIENT_ID,
-              scope: SCOPES.join(' ')
-            })
-            .then(
-              () => {
-                this.googleAuth = window.gapi.auth2.getAuthInstance()
+        window.gapi.load('client', () => {
+          window.gapi.client.init({ discoveryDocs: DISCOVERY_DOCS }).then(
+            () => resolve(),
+            (error) => {
+              const errorMessage =
+                error.details === GoogleApiErrors.COOKIES_DISABLED
+                  ? t('errors.cookiesDisabled')
+                  : t('errors.authStartedFailed')
 
-                this.googleAuth.isSignedIn.listen((signedIn) => {
-                  this.updateSignedIn(signedIn)
+              reject(
+                new Error(errorMessage, {
+                  cause: { ...error, refresh: true }
                 })
-
-                const signedIn = this.googleAuth.isSignedIn.get()
-                const hasGrantedScopes = this.hasGrantedScopes
-
-                this.started = true
-                this.updateSignedIn(signedIn)
-                this.hasGrantedScopes = hasGrantedScopes
-
-                resolve(signedIn)
-              },
-              (error) => {
-                const errorMessage =
-                  error.details === GoogleApiErrors.COOKIES_DISABLED
-                    ? t('errors.cookiesDisabled')
-                    : t('errors.authStartedFailed')
-
-                reject(
-                  new Error(errorMessage, {
-                    cause: { ...error, refresh: true }
-                  })
-                )
-              }
-            )
+              )
+            }
+          )
         })
       })
     },
 
     /**
-     * Attempt to sign in the user.
+     * Init the new Google Identity Services SDK.
      */
-    async signIn() {
-      try {
-        await this.googleAuth?.signIn()
-      } catch (e) {
-        // Do nothing.
+    initGoogleIdentityServices() {
+      window.google.accounts.id.initialize({
+        auto_select: true,
+        client_id: import.meta.env.VITE_APP_CLIENT_ID,
+        context: 'use',
+        callback: (credentialResponse) => {
+          const payload = jwtDecode(credentialResponse.credential)
+
+          this.updateProfile(payload)
+
+          if (!this.hasGrantedScopes) {
+            this.grantPermissions()
+          }
+
+          this.authenticated = true
+        }
+      })
+
+      this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+        client_id: import.meta.env.VITE_APP_CLIENT_ID,
+        scope: SCOPES.join(' '),
+        prompt: 'consent',
+        callback: (tokenResponse) => {
+          if (tokenResponse?.access_token) {
+            this.$patch({
+              accessToken: tokenResponse.access_token,
+              expiresIn: new Date().getTime() + tokenResponse.expires_in,
+              hasGrantedScopes:
+                window.google.accounts.oauth2.hasGrantedAllScopes(
+                  tokenResponse,
+                  ...SCOPES
+                ),
+              refreshing: false
+            })
+          }
+        }
+      })
+
+      this.started = true
+    },
+
+    /**
+     * Refresh the token if needed.
+     */
+    refreshToken() {
+      if (new Date().getTime() > this.expiresIn && !this.refreshing) {
+        this.refreshing = true
+        this.grantPermissions()
       }
     },
 
     /**
      * Attempt to sign out the user.
      */
-    async signOut() {
-      await this.googleAuth?.signOut()
+    signOut() {
+      // window.google.accounts.oauth2.revoke(this.accessToken)
+      window.google.accounts.id.disableAutoSelect()
+
+      this.clear()
     },
 
     /**
-     * Updates the user information.
+     * Update the profile data.
      *
-     * @param {boolean} signedIn the signedIn status
+     * @param {object} account The account info
+     * @param {string | null} account.name The profile name
+     * @param {string | null} account.email The profile email
+     * @param {string | null} account.picture The profile picture
      */
-    updateSignedIn(signedIn) {
-      this.signedIn = signedIn
-
-      if (signedIn) {
-        const user = this.googleAuth.currentUser.get()
-        const profile = user.getBasicProfile()
-
-        this.profileName = profile.getName()
-        this.profileEmail = profile.getEmail()
-        this.profileImageUrl = profile.getImageUrl()
-        this.hasGrantedScopes = user.hasGrantedScopes(SCOPES.join(' '))
-      } else {
-        this.profileName = null
-        this.profileEmail = null
-        this.profileImageUrl = null
-        this.hasGrantedScopes = null
-      }
+    updateProfile({ name, email, picture }) {
+      this.$patch({
+        profileName: name,
+        profileEmail: email,
+        profileImageUrl: picture
+      })
     }
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot))
+}

@@ -3,10 +3,14 @@ import md from 'markdown-it'
 import mdAbbr from 'markdown-it-abbr'
 import mdAnchor from 'markdown-it-anchor'
 import mdDefList from 'markdown-it-deflist'
+import mdFrontMatter from 'markdown-it-front-matter'
 import mdImplicitFigures from 'markdown-it-implicit-figures'
+import mdKbd from 'markdown-it-kbd'
 import mdToc from 'markdown-it-table-of-contents'
 import slugify from 'slugify'
+import YAML from 'yaml'
 
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 function youtube(md) {
@@ -90,8 +94,9 @@ function externalLinks(md) {
   }
 }
 
-export default function useMarkdown(options = {}) {
+export default function useMarkdown(options = { typographer: true }) {
   const { t } = useI18n({ useScope: 'global' })
+  const frontmatter = ref(null)
 
   let markdown = md(options.mdOptions || {})
     .use(mdAbbr)
@@ -105,6 +110,10 @@ export default function useMarkdown(options = {}) {
       listType: 'ol',
       containerHeaderHtml: `<h2>${t('about.summary')}</h2>`
     })
+    .use(mdFrontMatter, (fm) => {
+      frontmatter.value = fm
+    })
+    .use(mdKbd)
     .use(imageLazyLoad)
     .use(externalLinks)
 
@@ -116,11 +125,9 @@ export default function useMarkdown(options = {}) {
   markdown = markdown
     .use(mdImplicitFigures, { figcaption: true })
     .disable([
-      'table',
       'code',
       'fence',
       'hr',
-      'reference',
       'html_block',
       'lheading',
       ...(options.disable || [])
@@ -130,5 +137,12 @@ export default function useMarkdown(options = {}) {
     return markdown.render(source)
   }
 
-  return { markdown, renderMarkdown, escapeHtml: markdown.utils.escapeHtml }
+  return {
+    markdown,
+    renderMarkdown,
+    escapeHtml: markdown.utils.escapeHtml,
+    frontmatter: computed(() =>
+      frontmatter.value ? YAML.parse(frontmatter.value) : null
+    )
+  }
 }

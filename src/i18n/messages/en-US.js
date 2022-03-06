@@ -13,8 +13,11 @@ export default {
       notFound: 'Page not found',
       about: {
         a11y: 'Accessibility',
+        about: 'About the project',
         instructions: 'Instructions',
         privacyPolicy: 'Privacy Policy',
+        searching: 'Searching',
+        sharing: 'Sharing',
         termsOfUse: 'Terms of Use'
       },
       dashboard: {
@@ -189,7 +192,7 @@ export default {
     version: 'Toshokan v{version}',
     copyright: '© {year} Alessandro Jean. All rights reserved.',
     dev: 'Development environment',
-    lastUpdate: 'Latest update in {0}.',
+    lastUpdate: 'Updated at {0}.',
     donate: {
       actionDonate: 'Make a donation',
       actionClose: 'Close',
@@ -212,26 +215,9 @@ export default {
     goToPage: 'Go to page '
   },
   auth: {
-    google: {
-      signIn: 'Sign in',
-      withGoogle: 'with Google',
-      disconnectModal: {
-        title: 'Disconnecting from your Google Account',
-        message1: `
-          Disconnecting Toshokan will revoke its permission to access
-          and modify your collection spreadsheet file.
-        `,
-        message2: `
-          Your collection spreadsheet will not be erased,
-          and you still can have access to the file in your Google Drive.
-        `,
-        message3: `
-          You can grant the permissions again by signing in.
-        `,
-        disconnect: 'Disconnect',
-        cancel: 'Cancel'
-      }
-    }
+    authorizing: 'Authorizing…',
+    redirecting: 'Redirecting…',
+    currentlyBeta: 'Currently in closed Beta'
   },
   signIn: {
     title: 'Please sign in',
@@ -741,7 +727,12 @@ export default {
       authorsRankTitle: 'Authors rank',
       seriesRankTitle: 'Series rank',
       bookQuantity: 'Book quantity',
-      monthlyExpense: 'Monthly expense'
+      monthlyExpense: 'Monthly expense',
+      thisMonth: 'Current expense',
+      bought: 'Bought',
+      read: 'Read',
+      count: 'Count',
+      book: 'book | books'
     },
     sheetChooser: {
       title: 'Pick a sheet',
@@ -767,391 +758,12 @@ export default {
     onThisPage: 'On this page',
     previous: 'Previous',
     next: 'Next',
+    englishOnly: 'Unfortunately this content is only available in English.',
+    helpTranslate: 'Help to translate this page',
+    editThisPage: 'Edit this page on GitHub',
     categories: {
       general: 'General',
       guide: 'Guides'
-    },
-    a11y: {
-      title: 'Accessibility',
-      body: dedent`
-        This site have some accessibility features.
-
-        [[toc]]
-
-        ## Jump to the content
-
-        All pages have a internal link to jump to the main content.
-        It can be used by users browsing with only the keyboard
-        or by users that depend on a screenreader. Follow the link
-        to get the focus directly in the page main content.
-
-        ## Jump to the navigation
-
-        In pages such as Dashboard, you will also find a internal
-        link to jump directly to the main navigation.
-
-        ## Menus
-
-        The menus utilized in this website are from the Headless UI library,
-        and they follow all the WAI-ARIA patterns for menu components.
-        The keyboard shortcuts can be found at the
-        [component documentation]({headlessUiLink}).
-
-        ## Navigation
-
-        This website load dinamically its content. When the page is
-        changed, the screenreader will be updated by a modification
-        of a control element.
-
-        ## Animations
-
-        This website follow the Operating System setting, if available,
-        to disable non-essential animations. You can find this setting
-        at the Accessibility section of your computer or device.
-
-        ## Issues during access
-
-        If you find some issue during the access or some wrong implementation
-        of an accessibility feature, please report it at the repository
-        on GitHub.
-      `
-    },
-    instructions: {
-      title: 'Instructions',
-      body: dedent`
-        Toshokan is a utility aiming to provide a friendly user interface
-        for better management of your manga, comic and book collection
-        spreadsheet.
-
-        The spreadsheet must follow a strict template, that have to be
-        copied to your Google Drive account so the application can
-        have access to it.
-
-        The application only reads and writes information on the
-        spreadsheet, so you still have total control over your collection
-        data and can have an easy access in case you want to export
-        or use in other third party service.
-
-        [[toc]]
-
-        ## Before starting
-
-        Before the first use, you have to create the spreadsheet
-        file in your Google Drive that will store your collection information.
-
-        - Sign in with your Google Account at the
-          [Google Drive]({googleDriveLink}) website.
-        - Access [this sheet]({templateSheetLink}) and create a copy
-          by clicking on **File → Make a copy**.
-        - **Do not rename the file**, it should be named **Toshokan**.
-
-        In the next time, the copied spreadsheet will be selected automatically.
-
-        ## Signing in
-
-        After you copied the spreadsheet to your Google Drive, you can
-        start to use Toshokan, by signing in with your Google Account.
-
-        - Access the homepage and click on **Sign in with Google**.
-        - Grant access to the information requested by Toshokan.
-
-        In the next time, you will not need to grant the permissions again.
-
-        ### Usage of your personal information
-
-        Toshokan is a open source application and rendered at the browser
-        side. We do not have a server that store your data and we also
-        do not share your information with any third party services.
-
-        You can remove the granted permissions of access to your Google
-        Drive files and Google Sheets spreadsheets at any time
-        on your Google Account settings.
-
-        More information can be found in our Privacy Policy.
-
-        ## Creating the first book
-
-        When you sign in by the first time the sheet will be empty,
-        and you will be asked to create the first book by using the wizard.
-
-        If the ISBN search is available, you can search the book you
-        want to add by typing the ISBN. If the book exists and the code
-        is valid, you will be taken to the next step with some fields of
-        the formulary already filled.
-
-        ![First step: ISBN search.]({figure1})
-
-        The ISBN used to search can be typed with or without the dashes,
-        and the search also works with old books that have the ISBN
-        with 10 digits. However, at the moment, the search will only
-        work with Brazilian books that have the ISBN starting with
-        **978-85** or **978-65**.
-
-        If the search returns no results or the book don't have a
-        Brazilian ISBN, you can use the **Fill manually** option.
-
-        ![Second step: fill the book's metadata.]({figure2})
-
-        The book metadata not always is right or follow a pattern, so
-        you will probably need to fix some minor issues at the data.
-        In the image above the manga had it title and author filled
-        with upper case characters, and needs to be fixed.
-
-        ### The book metadata
-
-        Below you will find an brief explanation of each metadata.
-
-        ID
-        : Usually the ISBN of the book, but other unique codes such
-          as ISSN or EAN can be used too. In independent publications,
-          the **N/A** (not applicable) value can be used.
-
-        Title
-        : Official name of the book. In case of publications with more
-          than one volume, you can use the **#** (number sign) character
-          followed by the volume/issue number.
-
-          **Example:** Lone Wolf and Cub #01: The Assassin's Road
-
-        Authors
-        : People involved in the creation of the book, such as writers,
-          artists, letterers, etc. In case of multiple people, you
-          must separate their names by using the **semicolon** character.
-
-          **Example:** Kazuo Koike; Goseki Kojima
-
-        Publisher
-        : Publisher that released the book. Sometimes te value retorned
-          by the search is incorrect and the tool will perform a fix,
-          but you may still need to modify it manually.
-
-        Group
-        : The group the book has in common with the others in your collection.
-          Although ideally it is recommended to use the publication type
-          (such as "books", "comics" or "manga"), you can also use
-          the name of the franchise in cases with multiple volumes.
-
-          You must always manually fill this metadata.
-
-        Size
-        : Width and height ratio, *in centimeters*. You must use the
-          **x** character to separate the values, wich can have a maximum
-          of one digit in the decimal place.
-
-        Label price
-        : Full price of the book. You can use up to two digits for the
-          decimal places.
-
-          In case of imported books, you can change the currency in the
-          select field on the side, choosing the equivalent
-          [ISO 4217]({iso4217link}) code.
-
-        Paid price
-        : Promotional price paid in the book purchase. When not applicable,
-          you must fill in the label price value. You can also change
-          the currency.
-
-        Store
-        : Place where the book was purchase. You can fill it with the
-          **Unknown** value when you don't remember or when you
-          don't want to fill it.
-
-        Bought at
-        : Date when the book entered your collection. It is used to
-          generate the monthly statistics. If you do not remember
-          or do not have this information, you can leave the field
-          value blank by erasing the day, month and year at the input.
-
-        ![Book metadata correctly filled.]({figure3})
-
-        ### Cover image
-
-        After filling the book metadata, you can choose a cover image
-        automatically obtained from Amazon or from the publisher's website,
-        or provide a custom valid URL to another image.
-
-        If you want to leave the book without a cover image, just do not
-        select any option and skip to the next step.
-
-        ![Third step: choosing the cover image.]({figure4})
-
-        ### Information review
-
-        With all the metadata correct filled and the cover image choosen,
-        you can do a last review on the information provided before
-        finishing the wizard and creating the book at the spreadsheet.
-
-        ![Fourth step: information review.]({figure5})
-
-        If all information is correct, you must click on
-        **Finish**.
-
-        ![Creation confirmation dialog.]({figure6})
-
-        With this, the book will be added to the spreadsheet and you
-        can then choose **View**, if you want to go straight to the
-        book page, or **New book** if you want to add another book
-        in sequence.
-
-        ![Book information page.]({figure7})
-
-        The book is now saved in the spreadsheet and you can repeat
-        the wizard when you want to add new books. You can explore
-        your library items via the **Library** item in the main navigation.
-      `
-    },
-    privacyPolicy: {
-      title: 'Privacy Policy',
-      body: dedent`
-        This privacy policy applies to all pages in this website.
-
-        [[toc]]
-
-        ## Information we collect
-
-        Toshokan must receive some personal information from your
-        Google Account in order for the website to work properly.
-
-        All received information is handled in the browser and is
-        neither stored nor retransmitted to any third party service.
-        Also, this website is open source, so anyone can inspect
-        the code and point out any issues at the repository on GitHub.
-
-        ### Information you provide
-
-        This information is obtained when you grant permission for
-        Toshokan to access your collection sheet.
-
-        - **Your account information**. We use your name, e-mail and
-          profile picture from your Google Account to customize the
-          user interface. The Google Authentication Service provide
-          this information by default and it's not possible to
-          disable it.
-        - **Your Google Drive files**. We request a read-only
-          information scope from your Google Drive files so we
-          can find the collection sheet ID. Besides the collection
-          sheet, we do not have access to the content of the other files.
-        - **Your Google Sheets spreadsheets**. We need read and write
-          access to your spreadsheets so we can obtain the data and
-          write new information about the collection. Only the
-          collection sheet is read and modified.
-
-        You can remove the permissions granted to Toshokan at any time
-        from your Google Account by following the instructions at
-        [this article]({googleHelpLink}) of the Google Account Help.
-        When you remove the access permission, we will not have access
-        anymore to your data.
-
-        ### How we use information
-
-        We do not store your information in the website server.
-        Toshokan is just a static website. Your Google Account
-        personal information is only stored at your local memory
-        during your use of the tool. When you sign out or close
-        the website, all the information is automatically erased.
-        The information will only be requested again at the next
-        time you use the website and sign in.
-
-        ## Information we share with third party services
-
-        We do not share neither any personal information or data from your
-        Google Account nor your spreadsheets and files from your Google
-        Drive with third party services. This can be comprovated
-        by a inspection on the website source code at the public
-        repository on GitHub.
-
-        Since Toshokan is a open source project, anyone can clone
-        or fork the repository and modify, compile and host in
-        any other server. We do not have control or responsibility
-        over other instances or Toshokan forks besides this
-        website ({demoBuildLink}). Make sure to always check if
-        you are accesing the demonstration website or your
-        own local version, as recommended at the instructions
-        on the README.md file in the repository.
-
-        Although we do not share any of your personal data with
-        third parties, we reserve the right to include affiliate
-        links to purchase books in some stores in the future.
-        These links do not include any personal information,
-        but the store's websites may have some monitoring system
-        and unique identification, which we have no responsibility
-        or control. You can get more information regarding this
-        practice in the store's Terms of Use and Privacy Policy.
-
-        ## Updates to our policy
-
-        We may amend or update our Privacy Policy. We will provide you
-        notice of amendments to this Privacy Policy, as appropriate,
-        and update the "Last modified" date at the top of this
-        Privacy Policy. Please review our Privacy Policy from time to time.
-
-        ## Brazilian General Data Protection Law (LGPD)
-
-        This section applies to personal data processing activities
-        under Brazilian law and supplements our Privacy Policy.
-
-        Under the Brazilian General Data Protection Law (the "LGPD"),
-        you have the right to access, rectify, port, erase, and confirm
-        that we process your data. In certain circumstances, you also
-        have the right to object to and to restrict the processing
-        of your personal data. This page have more information at
-        the previous sections about how we process and use your data.
-
-        You can remove the permissions granted to Toshokan at any time
-        from your Google Account by following the instructions at
-        [this article]({googleHelpLink}) of the Google Account Help.
-        When you remove the access permission, we will not have access
-        anymore to your data.
-
-        Information about how Google takes responsability for your
-        data according to the Brazilian General Data Protection Law
-        can be obtained in [this article]({googleLgpdLink}) from
-        Google Account Help.
-
-        The complete content of Law No. 13,709 of August 14, 2018,
-        can be accessed through [this page]({lgpdLawLink}) on the
-        Federal government of Brazil website.
-      `
-    },
-    termsOfUse: {
-      title: 'Terms of Use',
-      body: dedent`
-        This page contains the terms of use of the Toshokan website.
-
-        **Please read this terms carefully, because by acessing
-        or using any part of this website, you automatically agree
-        with them. If you don't agree with the terms, you can't
-        access this website or use any of its services.**
-
-        We reserve our right to change these terms at any time.
-        It is your responsability to periodically check changes
-        made to this page. Your access to this website before
-        those updates implies in your agreement of such changes.
-        You can review the most current version of the terms
-        at any time on this page.
-
-        [[toc]]
-
-        ## Electronic communication
-
-        You understant that your content may be transferred unencrypted
-        and may: **(a)** be transmitted over various networks; and **(b)**
-        go through changes to adapt to the technical requirements of
-        network or device connections. Authentication information is always
-        encrypted during the transfer across networks.
-
-        ## Third party services
-
-        We use the [Google Authentication Service]({googleSignInLink})
-        with Google Drive and Google Sheets. By using this website and
-        authenticating with your Google Account, you agree with Google's
-        [Service Terms]({googleTermsLink}) and
-        [Privacy Policy]({googlePrivacyPolicyLink}).
-
-        ## Privacy policy
-
-        By using this website, you agree with our Privacy Policy.
-      `
     }
   }
 }

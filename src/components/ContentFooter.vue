@@ -1,22 +1,15 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
-import useAppInfo from '@/composables/useAppInfo'
-
+import { PencilAltIcon } from '@heroicons/vue/outline'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
 
-import LocaleSelector from '@/components/LocaleSelector.vue'
+defineProps({ githubLink: String })
 
-defineProps({
-  date: {
-    type: String,
-    required: true
-  }
-})
-
-const { t, d, locale } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
+const categories = inject('categoryOrder')
 
 const route = useRoute()
 const aboutRoute = computed(() => route.matched[0])
@@ -32,7 +25,9 @@ const groups = computed(() =>
   }, {})
 )
 
-const aboutRoutes = computed(() => Object.values(groups.value).flat())
+const aboutRoutes = computed(() => {
+  return categories.value.flatMap((group) => groups.value[group])
+})
 
 const currentIdx = computed(() =>
   aboutRoutes.value.findIndex((r) => r.name === route.name)
@@ -43,16 +38,18 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
 
 <template>
   <footer class="content-footer">
-    <div
-      class="pb-4 space-y-3 sm:space-y-0 flex flex-col sm:flex-row sm:justify-between items-center text-sm border-b border-gray-300 dark:border-gray-600"
+    <a
+      v-if="githubLink"
+      :href="githubLink"
+      class="flex items-center w-fit text-sm mb-3 font-medium text-primary-600 dark:text-primary-400 rounded has-ring-focus hocus:underline"
     >
-      <LocaleSelector class="w-56" v-model="locale" top />
-      <time :datetime="date" class="text-gray-500 dark:text-gray-400">
-        {{ t('footer.lastUpdate', [d(date, 'long')]) }}
-      </time>
-    </div>
+      <span aria-hidden="true">
+        <PencilAltIcon class="w-5 h-5 mr-2" />
+      </span>
+      <span>{{ t('about.editThisPage') }}</span>
+    </a>
     <div
-      class="-mx-1 flex flex-col md:flex-row md:justify-between md:items-center pt-4 space-y-4 md:space-y-0"
+      class="-mx-1 flex flex-col md:flex-row md:justify-between md:items-center pt-2.5 space-y-4 md:space-y-0 border-t border-gray-300 dark:border-gray-600"
     >
       <RouterLink
         v-if="previous"
@@ -82,8 +79,7 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
 
 <style lang="postcss" scoped>
 .content-footer {
-  @apply space-y-2 sm:space-y-0 pt-3 mt-10
-    text-center sm:text-left;
+  @apply pt-2.5 mt-10 text-center sm:text-left;
 }
 
 .link {

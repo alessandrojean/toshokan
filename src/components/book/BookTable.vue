@@ -2,7 +2,9 @@
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useBreakpoints } from '@vueuse/core'
 
+import useTailwindTheme from '@/composables/useTailwindTheme'
 import { STATUS_FUTURE, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
@@ -121,7 +123,7 @@ const isMac = ref(
 )
 
 function handleTopCheckbox(checked) {
-  if (!selectable.value || !hasMinimumBreakpoint()) {
+  if (!selectable.value || !isMdBreakpoint.value) {
     return
   }
 
@@ -148,9 +150,8 @@ function rangeArray(startIdx, endIdx) {
   ).sort((a, b) => a - b)
 }
 
-function hasMinimumBreakpoint() {
-  return window.matchMedia('(min-width: 768px)').matches
-}
+const { breakpoints } = useTailwindTheme()
+const isMdBreakpoint = useBreakpoints(breakpoints).greater('md')
 
 /**
  * Try to mimic the Windows behavior on selecting items
@@ -165,7 +166,7 @@ function handleCheckbox(checked, idx, event) {
     return
   }
 
-  if (!hasMinimumBreakpoint()) {
+  if (!isMdBreakpoint.value) {
     router.push({
       name: 'BookDetails',
       params: { bookId: items.value[idx].id }
@@ -235,7 +236,7 @@ function handleKeyboard(event, idx) {
   const totalItems = items.value.length
   const selectionTotalItems = selection.value.length
 
-  if (!allowedKeys.includes(key) || !hasMinimumBreakpoint()) {
+  if (!allowedKeys.includes(key) || !isMdBreakpoint.value) {
     return
   }
 

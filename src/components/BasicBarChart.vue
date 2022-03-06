@@ -6,12 +6,13 @@ import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
 
 import { ChartBarIcon } from '@heroicons/vue/solid'
-const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
+
+const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 
 const apexLocales = {
   'en-US': apexEnUs,
@@ -125,37 +126,36 @@ const plot = computed(() => ({
 </script>
 
 <template>
-  <section
-    class="bg-white dark:bg-gray-800 px-4 py-5 sm:p-6 md:rounded-md shadow space-y-2"
-  >
-    <div
-      v-if="loading"
-      class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-40"
-    ></div>
-    <h2
-      v-else
-      class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100"
-    >
-      {{ title }}
-    </h2>
-    <div class="aspect-w-3 aspect-h-4 sm:-mx-3" role="img">
-      <FadeTransition>
-        <div v-if="loading" class="flex items-center justify-center">
-          <ChartBarIcon
-            class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600"
-            aria-hidden="true"
-          />
-        </div>
-        <div v-else>
-          <ApexChart
-            width="100%"
-            height="100%"
-            type="bar"
-            :options="plot.options"
-            :series="plot.series"
-          />
-        </div>
-      </FadeTransition>
+  <section class="bg-white dark:bg-gray-800 md:rounded-md shadow">
+    <div class="px-4 sm:px-6 py-3 border-b dark:border-b-gray-700">
+      <div v-if="loading" class="skeleton h-6 w-40" />
+      <h2
+        v-else
+        class="font-medium font-display leading-6 text-gray-900 dark:text-gray-100"
+      >
+        {{ title }}
+      </h2>
+    </div>
+    <div class="px-4 py-3 sm:px-6">
+      <div class="aspect-w-3 aspect-h-4 sm:-mt-4" role="img">
+        <FadeTransition>
+          <div v-if="loading" class="flex items-center justify-center">
+            <ChartBarIcon
+              class="motion-safe:animate-pulse w-10 h-10 text-gray-400 dark:text-gray-600"
+              aria-hidden="true"
+            />
+          </div>
+          <div v-else>
+            <ApexChart
+              width="100%"
+              height="100%"
+              type="bar"
+              :options="plot.options"
+              :series="plot.series"
+            />
+          </div>
+        </FadeTransition>
+      </div>
     </div>
   </section>
 </template>

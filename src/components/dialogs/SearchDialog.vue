@@ -545,7 +545,7 @@ function focusOnResults() {
                 <div
                   v-if="searchResults.length > 0"
                   class="search-footer"
-                  :data-total-pages="searchPagination.total_pages"
+                  :data-total-pages="searchPagination?.total_pages"
                 >
                   <p class="hidden sm:block">
                     {{

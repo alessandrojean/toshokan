@@ -1,10 +1,12 @@
 import { computed } from 'vue'
 import { useQuery } from 'vue-query'
 
-import { useSheetStore } from '@/stores/sheet'
 import getBooksFromCollection from '@/services/sheet/getBooksFromCollection'
+import { useAuthStore } from '@/stores/auth'
+import { useSheetStore } from '@/stores/sheet'
 
 export default function useBookCollectionQuery(book, { enabled }) {
+  const authStore = useAuthStore()
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
@@ -14,5 +16,14 @@ export default function useBookCollectionQuery(book, { enabled }) {
 
   const bookTitle = computed(() => book.value?.titleParts?.title + ' #')
 
-  return useQuery(['book-collection', bookTitle], fetcher, { enabled })
+  return useQuery(['book-collection', bookTitle], fetcher, {
+    enabled,
+    retry(_, error) {
+      if (error.code === 401) {
+        authStore.refreshToken()
+      }
+
+      return 2
+    }
+  })
 }
