@@ -19,6 +19,17 @@ const SCOPES = [
   'https://www.googleapis.com/auth/drive.metadata.readonly'
 ]
 
+async function whenAvailable(name, intervalMs = 100) {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (window[name]) {
+        clearInterval(interval)
+        resolve()
+      }
+    }, intervalMs)
+  })
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: null,
@@ -79,7 +90,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async initApp() {
       await this.initGoogleApiClient()
-      this.initGoogleIdentityServices()
+      await this.initGoogleIdentityServices()
     },
 
     /**
@@ -88,6 +99,8 @@ export const useAuthStore = defineStore('auth', {
      * @returns {Promise<void>}
      */
     async initGoogleApiClient() {
+      await whenAvailable('gapi')
+
       return new Promise((resolve, reject) => {
         window.gapi.load('client', () => {
           window.gapi.client.init({ discoveryDocs: DISCOVERY_DOCS }).then(
@@ -112,7 +125,9 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Init the new Google Identity Services SDK.
      */
-    initGoogleIdentityServices() {
+    async initGoogleIdentityServices() {
+      await whenAvailable('google')
+
       window.google.accounts.id.initialize({
         auto_select: true,
         client_id: import.meta.env.VITE_APP_CLIENT_ID,

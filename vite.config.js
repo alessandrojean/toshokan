@@ -5,6 +5,7 @@ import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  assetsInclude: ['**/*.md'],
   define: {
     'import.meta.env.PACKAGE_VERSION': JSON.stringify(
       process.env.npm_package_version
@@ -13,7 +14,12 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      includeAssets: ['favicon.ico', 'favicon.svg', 'robots.txt', 'img/icons/apple-touch-icon.png'],
+      includeAssets: [
+        'favicon.ico',
+        'favicon.svg',
+        'robots.txt',
+        'img/icons/apple-touch-icon.png'
+      ],
       manifest: {
         name: 'Toshokan',
         short_name: 'Toshokan',
@@ -51,30 +57,36 @@ export default defineConfig({
             short_name: 'Dashboard',
             description: 'Visualizar o dashboard da coleção.',
             url: '/dashboard',
-            icons: [{
-              src: './img/icons/shortcut-dashboard-192x192.png',
-              sizes: '192x192'
-            }]
+            icons: [
+              {
+                src: './img/icons/shortcut-dashboard-192x192.png',
+                sizes: '192x192'
+              }
+            ]
           },
           {
             name: 'Biblioteca',
             short_name: 'Biblioteca',
             description: 'Visualizar a biblioteca.',
             url: '/dashboard/library',
-            icons: [{
-              src: './img/icons/shortcut-library-192x192.png',
-              sizes: '192x192'
-            }]
+            icons: [
+              {
+                src: './img/icons/shortcut-library-192x192.png',
+                sizes: '192x192'
+              }
+            ]
           },
           {
             name: 'Estatísticas',
             short_name: 'Estatísticas',
             description: 'Visualizar as estatísticas.',
             url: '/dashboard/stats',
-            icons: [{
-              src: './img/icons/shortcut-stats-192x192.png',
-              sizes: '192x192'
-            }]
+            icons: [
+              {
+                src: './img/icons/shortcut-stats-192x192.png',
+                sizes: '192x192'
+              }
+            ]
           }
         ]
       }
@@ -87,9 +99,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: [
-      'tailwind.config.js'
-    ]
+    include: ['tailwind.config.js']
   },
   build: {
     commonjsOptions: {

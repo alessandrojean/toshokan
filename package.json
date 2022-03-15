@@ -1,6 +1,6 @@
 {
   "name": "toshokan",
-  "version": "0.2.46",
+  "version": "0.2.47",
   "private": true,
   "scripts": {
     "build": "vite build",
@@ -8,7 +8,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "prepare": "husky install",
-    "serve": "vite preview",
+    "serve": "vite preview --port 5000",
     "test": "jest ./src/tests",
     "test:watch": "jest --watch ./src/tests"
   },
