@@ -1,7 +1,7 @@
 ---
 title: Pesquisando
 category: guide
-date: 2022-03-06T22:30:00.000-03:00
+date: 2022-05-17T13:20:00.000-03:00
 ---
 
 Após ter cadastrado os livros de sua coleção, você pode pesquisar
@@ -117,4 +117,4 @@ da editora.
 
 `grupo:mangás -editora:panini`
 : Livros que sejam do grupo "mangás" **e** não 
-  sejam da editora "newpop".
+  sejam da editora "panini".
