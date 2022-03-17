@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
 import { VitePWA } from 'vite-plugin-pwa'
+import vueI18n from '@intlify/vite-plugin-vue-i18n'
 
 export default defineConfig({
   assetsInclude: ['**/*.md'],
@@ -13,6 +14,9 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    vueI18n({
+      include: path.resolve(__dirname, './src/i18n/messages/**')
+    }),
     VitePWA({
       includeAssets: [
         'favicon.ico',

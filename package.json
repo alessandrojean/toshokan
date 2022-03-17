@@ -53,6 +53,7 @@
     "@babel/core": "^7.17.7",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
     "@types/dedent": "^0.7.0",
     "@types/gapi.client": "^1.0.5",
     "@types/gapi.client.drive": "^3.0.13",

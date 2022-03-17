@@ -5,7 +5,7 @@ module.exports = {
       plugins: [
         () => ({
           visitor: {
-            MetaProperty (path) {
+            MetaProperty(path) {
               path.replaceWithSourceString('process')
             }
           }

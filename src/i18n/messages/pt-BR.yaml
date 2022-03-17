@@ -1,0 +1,611 @@
+app:
+  name: Toshokan
+  localeName: Português (Brasil)
+  localeFlag: BR
+  starting: Iniciando a aplicação.
+  routes:
+    home: Início
+    signIn: Autentique-se
+    error: Erro crítico
+    notFound: Página não encontrada
+    about:
+      a11y: Acessibilidade
+      about: Sobre o projeto
+      instructions: Instruções de uso
+      privacyPolicy: Política de Privacidade
+      searching: Pesquisando
+      sharing: Compartilhando
+      termsOfUse: Termos de Uso
+    dashboard:
+      home: Dashboard
+      library: Biblioteca
+      details: Detalhes
+      newBook: Novo livro
+      search: Busca
+      stats: Estatísticas
+      settings: Configurações
+a11y:
+  jumpToMain: Pular para o conteúdo principal
+  jumpToNavigation: Pular para a navegação principal
+  pageChanged: 'Página alterada para {pageTitle}.'
+errors:
+  cookiesDisabled: Os cookies estão desabilitados. Habilite-os e atualize a página.
+  authStartedFailed: Não foi possivel inicializar o sistema de autenticação.
+  missingScopes: Algumas permissões não foram concedidas para a aplicação.
+  badQuery: 'Há um erro na query: {error}'
+  refresh: Atualizar a página
+  grantPermissions: Conceder as permissões
+  unexpected: Um erro inesperado aconteceu na aplicação.
+pwa:
+  newContent:
+    title: Novos conteúdos disponíveis
+    message: A aplicação possui uma versão mais recente disponível!
+    update: Atualizar
+    close: Fechar
+book:
+  book: Livro
+  volume: 'Volume #{number}'
+  single: Volume único
+  read: Lido
+  unread: Não lido
+  currentVolume: Volume atual
+  emptySynopsis: A sinopse do livro não foi preenchida.
+  future: Futuro
+  properties:
+    id: Identificação
+    title: Título
+    author: Autor | Autores
+    authors: Autores
+    publisher: Editora
+    group: Grupo
+    dimensions: Dimensões
+    width: Largura
+    height: Altura
+    labelPrice: Preço de capa
+    labelPriceCurrency: Moeda do preço de capa
+    paidPrice: Preço pago
+    paidPriceCurrency: Moeda do preço pago
+    store: Local da compra
+    boughtAt: Data de compra
+    status: Estado
+    readAt: Data de leitura
+    createdAt: Data de criação
+    updatedAt: Data de modificação
+    currency: Moeda
+    synopsis: Sinopse
+    notes: Observações
+    tags: Tags
+    language: Idioma
+  coverSelector:
+    blankField: Campo não preenchido.
+    invalidUrl: Formato da URL inválido.
+    label: Imagem de capa
+    empty:
+      title: Nenhuma capa encontrada
+      description: Você pode adicionar uma personalizada abaixo.
+    about: As imagens são obtidas da Amazon e dos sites das editoras.
+    custom:
+      title: Imagem personalizada
+      description: Você também pode adicionar uma nova imagem nas opções.
+      label: URL da Imagem
+      placeholder: Insira uma URL personalizada
+      add: Adicionar
+      error: Há um erro no formulário de imagem personalizada
+  form:
+    blankField: Campo não preenchido.
+    invalidValue: Valor inválido.
+    invalidNumber: Número inválido.
+    required: Obrigatório
+    optional: Opcional
+    markdown: O Markdown é suportado neste campo.
+    notInCollection: Este livro ainda não está na coleção
+    addNotes: Adicionar observações sobre este livro
+    addAuthor: Adicionar
+    addAuthorPlaceholder: Adicionar um autor…
+    removeAuthor: Remover este autor
+    addTag: Adicionar
+    addTagPlaceholder: Adicionar uma tag…
+    removeTag: Remover esta tag
+    example:
+      placeholder: 'ex. {0}'
+      id: '9788583621508'
+      title: A Nova Ilha do Tesouro
+      authors: Osamu Tezuka
+      publisher: NewPOP
+      group: Mangás
+      dimensions: 15 x 21
+      labelPrice: '26,90'
+      paidPrice: '22,90'
+      store: Amazon
+      synopsis: 'No meio dos pertences de seu falecido pai, o garoto Pete encontra…'
+      notes: O mangá tem um autógrafo do Tezuka na primeira página.
+      boughtAt: 18/02/2021
+    authorsHint: Separe os nomes utilizando o caractere de ponto-e-vírgula.
+    requiredHint: 'Os campos marcados com {0} são obrigatórios.'
+    error:
+      title: 'O formulário dos metadados do livro possui {errorsCount}'
+      count: 'um erro | {n} erros'
+  deleteModal:
+    title: Deletar livro | Deletar livros
+    message1: Você tem certeza de que deseja deletar este livro? | Você tem certeza de que deseja deletar estes livros?
+    message2: Esta ação não pode ser revertida.
+    delete: Deletar
+    cancel: Cancelar
+  createdModal:
+    title: Livro adicionado com sucesso
+    message: >
+      Os metadados do livro foram inseridos na planilha. Você pode
+      visualizar a página do livro recém-criado ou repetir o processo
+      de criação e adicionar mais um livro logo em sequência.      
+    view: Visualizar
+    newBook: Novo livro
+  card:
+    markAsRead: Marcar como lido
+    markAsReadToday: Marcar como lido hoje
+isbn:
+  keyMissing: Chave de consulta inexistente.
+  searchError: Houve um erro durante a pesquisa.
+  invalid: O ISBN informado é inválido.
+sheet:
+  notFound: Planilha não encontrada.
+table:
+  selectAll: Selecionar todos
+footer:
+  links:
+    a11y: Acessibilidade
+    instructions: Instruções de uso
+    privacyPolicy: Política de Privacidade
+    termsOfUse: Termos de Uso
+  version: 'Toshokan v{version}'
+  copyright: '© {year} Alessandro Jean. Todos os direitos reservados.'
+  dev: Ambiente de desenvolvimento
+  lastUpdate: 'Atualizado em {0}.'
+  donate:
+    actionDonate: Fazer uma doação
+    actionClose: Fechar
+    description: >
+      Se o projeto está te ajudando e você deseja fazer uma doação,
+      utilize os códigos disponíveis abaixo. Agradecemos bastante
+      a sua colaboração e seremos eternamente gratos.
+pagination:
+  text: 'Página {0} de {1} de {2} resultados'
+  previous: Anterior
+  previousPage: Página anterior
+  next: Próximo
+  nextPage: Próxima página
+  firstPage: Primeira página
+  lastPage: Última página
+  current: 'Página atual, '
+  goToPage: 'Ir para a página '
+auth:
+  authorizing: Autorizando…
+  redirecting: Redirecionando…
+  currentlyBeta: Atualmente em Beta fechado
+signIn:
+  title: Autentique-se
+  titleSr: para obter acesso ao Toshokan
+  subTitle: para obter acesso ao dashboard
+pageNotFound:
+  title: Página não encontrada
+  description: O conteúdo procurado não foi localizado.
+  goBack: Voltar para o início
+  goBackDashboard: Voltar para o dashboard
+criticalError:
+  title: Erro crítico
+home:
+  leading1: Gerencie sua planilha da
+  leading2: ' coleção de {0}'
+  types:
+    mangas: mangás
+    manhwas: manhwas
+    manhuas: manhuas
+    comics: quadrinhos
+    books: livros
+  shortDescription: >
+    Visualize os dados e estatísticas em uma interface limpa e moderna,
+    com recursos que permitem uma rápida criação de novos itens.
+  features:
+    title: O intuito é facilitar o controle da coleção.
+    isbn:
+      title: Adicione novos livros por ISBN
+      description: >
+        Preenchimento automático dos metadados através da
+        pesquisa de ISBN-13.
+    cover:
+      title: Imagens de capa automáticas
+      description: >
+        Escolha dentre uma das opções encontradas ou adicione uma
+        nova imagem personalizada.
+    data:
+      title: Tenha controle sobre seus dados
+      description: >
+        A planilha é um arquivo do Google Sheets que fica
+        armazenado em seu Google Drive.
+    openSource:
+      title: Site de código-aberto
+      description: >
+        Qualquer um pode navegar pelo código e contribuir
+        através do repositório no GitHub.
+  collection:
+    title: Ideal para também gerenciar a sua coleção de quadrinhos e livros
+    description: >
+      Apesar do Toshokan ser inicialmente criado com a intenção
+      de gerenciar mangás, a planilha é versátil para também suportar
+      outras mídias impressas, como os quadrinhos e livros.
+
+      Ao preencher a ficha catalográfica de cada item, você permite
+      com que filtros possam ser utilizados na coleção para uma
+      melhor organização do conteúdo cadastrado na planilha.
+  cta:
+    title: Pronto para começar?
+    dashboard: Dashboard
+    instructions: Instruções de uso
+  header:
+    instructions: Instruções de uso
+    dashboard: Dashboard
+dashboard:
+  header:
+    links:
+      start: Início
+      dashboard: Dashboard
+      library: Biblioteca
+      statistics: Estatísticas
+    search:
+      title: Pesquisa na coleção
+      link: Pesquisar na coleção
+      label: Pesquisar por
+      placeholder: Pesquisar na coleção
+      press: Pressione
+      ctrl: Ctrl
+      plus: mais
+      toFocus: para focar
+      enter: Enter
+      toSearch: para pesquisar
+      search: Pesquisar
+    menu:
+      more: Mais
+      open: Abrir menu de usuário
+      settings: Configurações
+      signOut: Sair
+  details:
+    zoom:
+      view: Dar zoom na imagem
+      title: Capa do livro
+      close: Fechar
+    header:
+      library: Biblioteca
+      author: 'Autor: | Autores:'
+      authorListIncomplete: '{authors} e mais {number}'
+      authorListComplete: '{authors} e {lastAuthor}'
+      authorSeparator: ', '
+      authorLastSeparator: ' e '
+      status: 'Estado: '
+      group: 'Grupo: '
+      store: 'Loja da compra: '
+      edit: Editar
+      options:
+        title: Opções
+        amazon: Abrir na Amazon
+        updateCover: Alterar capa
+        markAs: 'Marcar como {status}'
+        addToFavorites: Adicionar aos favoritos
+        removeFromFavorites: Remover dos favoritos
+        delete: Deletar
+    tabs:
+      metadata: Metadados do livro
+      notes: Observações
+      collection: Outros volumes
+    info:
+      title: Informações do livro
+      dateUnknown: Desconhecida
+    editDialog:
+      title: Edição do livro
+      description: Preencha as informações abaixo para alterar os dados do livro.
+    editForm:
+      title: Metadados
+      description: Edite as informações necessárias na planilha.
+      cancel: Cancelar
+      finish: Concluir
+    coverForm:
+      title: Imagem de capa
+      description: Escolha uma imagem de capa do livro obtida automaticamente.
+      cancel: Cancelar
+      finish: Concluir
+    readingForm:
+      title: Leitura
+      description: >
+        As datas de leitura são usadas para computar as estatísticas
+        de livros lidos mensalmente. Defina-as de maneira precisa, se possível.
+      options:
+        notReadYet: Ainda não li o livro
+        readToday: Terminei a leitura do livro hoje
+        readOtherDate: Terminei a leitura do livro em outra data
+      fieldHelp: Deixe em branco caso desconheça.
+      actionClear: Limpar
+    organizationForm:
+      title: Organização
+  home:
+    title: Dashboard
+    hello: 'Olá, {name}!'
+    newBook: Novo livro
+    reload: Recarregar
+    viewAll: Visualizar todos
+    beta:
+      short: Serviço atualmente em beta!
+      full: >
+        Este serviço está atualmente em beta,
+        é possível que você encontre alguns bugs.
+      close: Fechar
+    overview:
+      title: Visão geral
+      item: 'um item | {n} itens'
+      stats:
+        count: Contagem
+        read: Leitura
+        totalExpense: Gasto total
+        totalSavings: Economia total
+      showValue: 'Mostrar o valor de {title}'
+      hideValue: 'Ocultar o valor de {title}'
+    lastAdded: Últimos adicionados
+    latestReadings: Últimas leituras
+    nextReads: Próximas leituras
+    groups: Grupos
+    empty:
+      title: Você ainda não possui nenhum livro
+      description: >
+        Adicione pelo menos um livro para que as informações
+        possam ser calculadas e disponibilizadas nesta página.
+  library:
+    title: Biblioteca
+    currentGroup: 'Grupo atual: '
+    allGroups: Todos os grupos
+    groupCount: 'Todos os grupos | Um grupo | {count} grupos'
+    sortingBy: 'Ordenando por: '
+    filter: Filtrar
+    newBook: Novo livro
+    items:
+      current: 'Itens de todos os grupos | Itens do grupo {count} | Itens de {count} grupos'
+      tableColumns:
+        actions: Ações
+        deleteSelection: Deletar
+      view: Visualizar
+    filters:
+      title: Filtros
+      close: Fechar painel
+      closeMobile: Fechar
+      apply: Aplicar
+      visualization: Visualização
+      books: Livros
+      viewMode:
+        label: Modo de visualização
+        table: Tabela
+        grid: Grade
+      gridMode:
+        label: Modo da grade
+        compact: Compacto
+        compactGrid: Grade compacta
+        comfortable: Confortável
+        comfortableGrid: Grade confortável
+      groups: Grupos
+      sortDirection:
+        label: Sentido
+        asc: Crescente
+        desc: Decrescente
+      sortBy: Ordenar por
+      favorites:
+        label: Favoritos
+        indiferent: Indiferente
+        only: Somente
+      futureItems:
+        label: Itens futuros
+        indiferent: Indiferente
+        only: Somente
+        hide: Ocultar
+    empty:
+      title: Sua biblioteca está vazia
+      description: >
+        Adicione um primeiro livro para começar a organizar
+        melhor suas coleções e poder visualizar as estatísticas mensais.
+    noResults:
+      title: Nenhum resultado encontrado
+      description: >
+        Não há livros que sejam relacionados aos filtros aplicados.
+        Dê uma conferida nos filtros e tente novamente!
+  newBook:
+    title: Novo livro
+    description: Preencha as informações abaixo para inserir o livro na planilha.
+    step: 'Etapa {0} de {1}'
+    goBack: Voltar uma etapa
+    autoFill:
+      title: Busca
+      titleSr: a partir do ISBN
+      description: Obtenha automaticamente os metadados do livro a partir de seu ISBN.
+      ariaLabel: Pesquisa na CBL
+      label: ISBN para pesquisa
+      placeholder: Pesquisar por ISBN
+      press: Pressione
+      enter: Enter
+      toSearch: para pesquisar
+      searchPowered: 'Mecanismo de pesquisa por {0}{1}'
+      cbl: CBL
+      search: Pesquisar
+      error: Houve um erro durante a pesquisa
+      noResults: Nenhum resultado encontrado.
+      fillManually: Preencher manualmente
+      editInfo: Editar informações
+      isbnAlert:
+        title: O que é o ISBN?
+        body: >
+          O ISBN é um sistema internacional de identificação de livros
+          que atribui um identificador numérico único para cada item,
+          permitindo a classificação por título, autores, país, editora
+          e edição.
+
+          Este código pode ser normalmente encontrado na página de expediente
+          do livro, junto a ficha catalográfica, ou próximo ao código de
+          barras. A busca aceita ambas as versões do código, a com 10
+          dígitos e a com 13 dígitos, sendo esta última a mais utilizada
+          recentemente.
+
+          Caso o livro não possua um ISBN, você pode preencher as informações
+          para a criação do item na planilha de modo manual.
+
+          *[ISBN]: International Standard Book Number
+        additionalInfo: Informações adicionais
+        wikipediaLink: 'https://pt.wikipedia.org/wiki/International_Standard_Book_Number'
+      existAlert:
+        title: Já existe um livro com este ISBN
+        body: Você pode optar por criar uma cópia se for de seu interesse.
+        actionView: Visualizar
+        actionMakeCopy: Criar uma cópia
+    metadata:
+      title: Informações
+      description: Metadados que serão cadastrados na planilha.
+      review: Revisar
+      findCover: Procurar capa
+    cover:
+      title: Imagem de capa
+      description: Escolha a imagem de capa do livro ou pule direto para a revisão.
+      review: Revisar
+    review:
+      title: Revisão
+      description: Revise as informações antes de concluir o procedimento.
+      dateUnknown: Desconhecida
+      finish: Concluir
+  search:
+    close: Fechar
+    title: Pesquisa
+    label: Pesquisar por
+    searchBy: 'Pesquisar por "{0}"'
+    placeholder: O quê você deseja buscar?
+    results: Resultados
+    history: Histórico
+    removeFromHistory: Remover esta busca do histórico
+    noHistory: Sem buscas recentes.
+    resultCount: 'Um resultado encontrado | {count} resultados encontrados'
+    noResultsFound: 'Nenhum resultado encontrado para "{0}".'
+    searching: Pesquisando
+    clear: Limpar
+    keywords:
+      id: id
+      code: código
+      title: título
+      group: grupo
+      author: autor
+      publisher: editora
+      store: loja
+      notes: observações
+      tags: tag
+      boughtAt: comprado-em
+      boughtBefore: comprado-antes-de
+      boughtAfter: comprado-depois-de
+      readAt: lido-em
+      readBefore: lido-antes-de
+      readAfter: lido-depois-de
+      createdAt: criado-em
+      createdBefore: criado-antes-de
+      createdAfter: criado-depois-de
+      updatedAt: atualizado-em
+      updatedBefore: atualizado-antes-de
+      updatedAfter: atualizado-depois-de
+  settings:
+    title: Configurações
+    save: Salvar
+    appearence:
+      title: Aparência
+      description: Atualize suas configurações de aparência.
+      locale:
+        label: Idioma da aplicação
+        description: O local também será utilizado para a formatação de números e datas.
+      theme:
+        label: Tema
+        description: Defina o tema atual da aplicação.
+        system: Sistema
+        light: Claro
+        dark: Escuro
+      viewMode:
+        label: Modo de visualização
+        description: Define o layout utilizado para exibir os itens da biblioteca.
+      gridMode:
+        label: Modo da grade
+        description: Defina o layout do card utilizado para exibir os livros no modo de grade.
+      spoilerModeSynopsis:
+        label: Ocultar as sinopses de livros não lidos
+        description: Se ativado, as sinopses serão desfocadas para prevenir spoilers.
+      spoilerModeCover:
+        label: Ocultar as capas de livros não lidos
+        description: Se ativado, as capas serão desfocadas para prevenir spoilers.
+      blurNsfwCover:
+        label: Ocultar as capas de livros marcados como NSFW
+        description: Se ativado, as capas dos livros marcados como NSFW serão desfocadas.
+    privacy:
+      title: Privacidade
+      description: Atualize suas configurações de privacidade.
+      removeAccess:
+        label: Remover a permissão de acesso
+        description: Remove a permissão de acesso do Toshokan de sua Conta do Google.
+        remove: Remover acesso
+    development:
+      title: Desenvolvimento
+      showVueQueryDevTools:
+        label: Exibir o DevTools do vue-query
+        description: Se ativado, o DevTools do vue-query ficará visível.
+      useDevSheet:
+        label: Usar somente planilhas de desenvolvimento
+        description: Se ativado, somente as planilhas de desenvolvimento serão exibidas.
+  stats:
+    title: Estatísticas
+    moreSoon: Mais estatísticas em breve.
+    empty:
+      title: Você ainda não possui nenhum livro
+      description: >
+        Adicione pelo menos um livro para que possamos começar a
+        realizar os cálculos das estatísticas de sua biblioteca.
+      action: New book
+    tooEarly:
+      title: Ainda é cedo para exibir as estatísticas
+      description: >
+        As estatísticas serão exibidas após o cadastro de pelo menos
+        dois meses de compras de livros na biblioteca.
+    booksBoughtAndRead:
+      title: Livros comprados e lidos por mês
+      bought: Livros comprados
+      read: Livros lidos
+    publishersRankTitle: Rank de editoras
+    authorsRankTitle: Rank de autores
+    seriesRankTitle: Rank de séries
+    bookQuantity: Quantidade de livros
+    monthlyExpense: Gasto mensal
+    thisMonth: Gasto atual
+    bought: Comprados
+    read: Lidos
+    count: Contagem
+    book: livro | livros
+  sheetChooser:
+    title: Escolha uma planilha
+    description: Você pode visualizar e editar outras planilhas compartilhadas.
+    actionCancel: Cancelar
+    actionSelect: Selecionar
+    actionSelectSheet: Escolher planilha
+    owner: Proprietário
+    you: Você
+    lastModified: Última modificação
+    sharedWithYou: Compartilhada com você
+    readOnly: Somente leitura
+    readAndEdit: Leitura e edição
+    starred: Com estrela
+    label: Planilha
+    libraryOf: Biblioteca de
+    viewing: 'Visualizando a biblioteca de {0}'
+about:
+  summary: Sumário
+  helpCenter: Central de ajuda
+  onThisPage: Nesta página
+  previous: Anterior
+  next: Próxima
+  englishOnly: Infelizmente este conteúdo está disponível apenas em inglês.
+  helpTranslate: Ajude a traduzir esta página
+  editThisPage: Edite esta página no GitHub
+  categories:
+    general: Geral
+    guide: Guias
