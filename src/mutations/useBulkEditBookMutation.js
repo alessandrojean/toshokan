@@ -2,12 +2,17 @@ import { useMutation, useQueryClient } from 'vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import bulkUpdateBooks from '@/services/sheet/bulkUpdateBooks'
+import { fetch } from '@/util/gapi'
 
 export default function useBulkEditBookMutation() {
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
-  return useMutation((books) => bulkUpdateBooks(sheetStore.sheetId, books), {
+  async function mutate(books) {
+    return await fetch(bulkUpdateBooks(sheetStore.sheetId, books))
+  }
+
+  return useMutation(mutate, {
     onSuccess(_, books) {
       books.forEach((book) => {
         queryClient.setQueryData(['book', book.id], book)

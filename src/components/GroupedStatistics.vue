@@ -52,7 +52,8 @@ const groups = computed(() => [
       monthlyReversed.value?.[0]?.totalSpent,
       monthlyReversed.value?.[1]?.totalSpent
     ),
-    currency: true
+    currency: true,
+    inverted: true
   },
   {
     label: t('dashboard.stats.bought'),
@@ -94,7 +95,7 @@ const groups = computed(() => [
         <div class="mt-0.5 flex items-center justify-between">
           <p>
             <span
-              class="text-lg md:text-xl lg:text-2xl font-semibold text-primary-700 dark:text-primary-400 shrink-0"
+              class="sm:text-lg md:text-xl lg:text-2xl font-semibold text-primary-700 dark:text-primary-400 shrink-0"
             >
               {{
                 n(
@@ -115,9 +116,9 @@ const groups = computed(() => [
             v-if="(group.percentage?.percentage || 0) !== 0"
             :class="[
               'flex items-center text-xxs lg:text-xs font-semibold tracking-wide uppercase px-2 py-0.5 lg:py-1 rounded-full shrink-0',
-              group.percentage?.increased
-                ? 'bg-red-100 dark:bg-red-700/40 text-red-800 dark:text-red-200'
-                : 'bg-green-100 dark:bg-green-600/40 text-green-800 dark:text-green-200'
+              group.percentage?.increased !== !!group.inverted
+                ? 'bg-green-100 dark:bg-green-600/40 text-green-800 dark:text-green-200'
+                : 'bg-red-100 dark:bg-red-700/40 text-red-800 dark:text-red-200'
             ]"
           >
             <span aria-hidden="true">

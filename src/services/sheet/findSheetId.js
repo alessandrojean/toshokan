@@ -1,4 +1,5 @@
 import i18n from '@/i18n'
+import { promisify } from '@/util/gapi'
 
 const SHEET_FILE_NAME = 'Toshokan'
 const SHEET_MIME_TYPE = 'application/vnd.google-apps.spreadsheet'
@@ -16,12 +17,14 @@ export default async function findSheetId(useDevSheet = false) {
   const sheetSuffix = isDevEnvironment && useDevSheet ? SHEET_DEV_SUFFIX : ''
   const fileName = SHEET_FILE_NAME + sheetSuffix
 
-  const response = await window.gapi.client.drive.files.list({
+  const thenable = window.gapi.client.drive.files.list({
     q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
     orderBy: 'starred',
     fields:
       'files(capabilities/canEdit,id,modifiedTime,name,ownedByMe,owners(displayName,emailAddress,photoLink),starred)'
   })
+
+  const response = await promisify(thenable)
 
   if (response.result.files.length === 0) {
     throw new Error(i18n.global.t('sheet.notFound'))

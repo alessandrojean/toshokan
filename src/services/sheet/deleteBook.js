@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Delete a book in the sheet.
  *
@@ -7,7 +9,7 @@
 export default async function deleteBook(sheetId, book) {
   const bookRow = parseInt(book.sheetLocation.substring(12))
 
-  await window.gapi.client.sheets.spreadsheets.batchUpdate({
+  const thenable = window.gapi.client.sheets.spreadsheets.batchUpdate({
     spreadsheetId: sheetId,
     resource: {
       requests: [
@@ -24,4 +26,6 @@ export default async function deleteBook(sheetId, book) {
       ]
     }
   })
+
+  return await promisify(thenable)
 }

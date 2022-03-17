@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Update a book in the sheet.
  *
@@ -7,10 +9,12 @@
 export default async function updateBook(sheetId, book) {
   const bookFormatted = book.toArray()
 
-  await window.gapi.client.sheets.spreadsheets.values.update({
+  const thenable = window.gapi.client.sheets.spreadsheets.values.update({
     spreadsheetId: sheetId,
     range: book.sheetLocation,
     valueInputOption: 'USER_ENTERED',
     values: [bookFormatted]
   })
+
+  await promisify(thenable)
 }

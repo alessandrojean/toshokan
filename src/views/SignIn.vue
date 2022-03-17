@@ -85,7 +85,10 @@ function handleNotification(notification) {
         </p>
       </header>
       <div class="mt-8 space-y-8 flex flex-col items-center">
-        <SignInWithGoogleButton @notification="handleNotification" />
+        <SignInWithGoogleButton
+          type="standard"
+          @notification="handleNotification"
+        />
 
         <FadeTransition>
           <p v-if="authenticated" class="flex items-center font-medium">

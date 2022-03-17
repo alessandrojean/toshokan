@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Insert a book in the sheet.
  *
@@ -8,13 +10,15 @@
 export default async function insertBook(sheetId, book) {
   const bookFormatted = book.toArray()
 
-  await window.gapi.client.sheets.spreadsheets.values.append({
+  const thenable = window.gapi.client.sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
     range: 'Collection!B5',
     valueInputOption: 'USER_ENTERED',
     insertDataOption: 'INSERT_ROWS',
     values: [bookFormatted]
   })
+
+  await promisify(thenable)
 
   return bookFormatted[1]
 }

@@ -1,13 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import i18n from '@/i18n'
-
 import jwtDecode from 'jwt-decode'
 
-const { t } = i18n.global
-
-const GoogleApiErrors = {
-  COOKIES_DISABLED: 'Cookies are not enabled in current environment.'
-}
+import { loadApiAsync, promisify, whenAvailable } from '@/util/gapi'
 
 const DISCOVERY_DOCS = [
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
@@ -18,17 +12,6 @@ const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
   'https://www.googleapis.com/auth/drive.metadata.readonly'
 ]
-
-async function whenAvailable(name, intervalMs = 100) {
-  return new Promise((resolve) => {
-    const interval = setInterval(() => {
-      if (window[name]) {
-        clearInterval(interval)
-        resolve()
-      }
-    }, intervalMs)
-  })
-}
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -74,6 +57,15 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
+     * Checks if the token is expired.
+     *
+     * @returns {boolean} If the token is expired.
+     */
+    expired() {
+      return new Date().getTime >= this.expiresIn
+    },
+
+    /**
      * Try to grant the missing permissions.
      */
     grantPermissions() {
@@ -100,26 +92,13 @@ export const useAuthStore = defineStore('auth', {
      */
     async initGoogleApiClient() {
       await whenAvailable('gapi')
+      await loadApiAsync('client')
 
-      return new Promise((resolve, reject) => {
-        window.gapi.load('client', () => {
-          window.gapi.client.init({ discoveryDocs: DISCOVERY_DOCS }).then(
-            () => resolve(),
-            (error) => {
-              const errorMessage =
-                error.details === GoogleApiErrors.COOKIES_DISABLED
-                  ? t('errors.cookiesDisabled')
-                  : t('errors.authStartedFailed')
-
-              reject(
-                new Error(errorMessage, {
-                  cause: { ...error, refresh: true }
-                })
-              )
-            }
-          )
-        })
+      const initThenable = window.gapi.client.init({
+        discoveryDocs: DISCOVERY_DOCS
       })
+
+      await promisify(initThenable)
     },
 
     /**
@@ -153,7 +132,7 @@ export const useAuthStore = defineStore('auth', {
           if (tokenResponse?.access_token) {
             this.$patch({
               accessToken: tokenResponse.access_token,
-              expiresIn: new Date().getTime() + tokenResponse.expires_in,
+              expiresIn: new Date().getTime() + tokenResponse.expires_in * 1000,
               hasGrantedScopes:
                 window.google.accounts.oauth2.hasGrantedAllScopes(
                   tokenResponse,
@@ -172,17 +151,47 @@ export const useAuthStore = defineStore('auth', {
      * Refresh the token if needed.
      */
     refreshToken() {
-      if (new Date().getTime() > this.expiresIn && !this.refreshing) {
+      if (this.expired() && !this.refreshing) {
         this.refreshing = true
         this.grantPermissions()
       }
     },
 
     /**
+     * Refresh the token if needed, asynchronously.
+     *
+     * If the refreshing is already happening, the Promise
+     * will be blocked to wait until it gets finished.
+     *
+     * @returns {Promise<void>} An promise that will resolve when refreshed.
+     */
+    async refreshTokenAsync() {
+      return new Promise((resolve) => {
+        if (!this.expired()) {
+          resolve()
+        }
+
+        const removeWatcher = this.$subscribe(
+          (_, state) => {
+            if (state.refreshing == false) {
+              removeWatcher()
+              resolve()
+            }
+          },
+          { detached: true }
+        )
+
+        if (!this.refreshing) {
+          this.refreshing = true
+          this.grantPermissions()
+        }
+      })
+    },
+
+    /**
      * Attempt to sign out the user.
      */
     signOut() {
-      // window.google.accounts.oauth2.revoke(this.accessToken)
       window.google.accounts.id.disableAutoSelect()
 
       this.clear()

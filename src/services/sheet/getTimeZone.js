@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Get the sheet time zone data.
  *
@@ -5,12 +7,14 @@
  * @returns The sheet time zone
  */
 export default async function getTimeZone(sheetId) {
-  const propertiesResponse = await window.gapi.client.sheets.spreadsheets.get({
+  const thenable = window.gapi.client.sheets.spreadsheets.get({
     spreadsheetId: sheetId,
     fields: 'properties.timeZone'
   })
 
-  const timeZoneName = propertiesResponse.result.properties.timeZone
+  const response = await promisify(thenable)
+
+  const timeZoneName = response.result.properties.timeZone
   const offset = parseInt(
     new Date()
       .toLocaleString('en-US', {

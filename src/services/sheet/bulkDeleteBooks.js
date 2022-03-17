@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Bulk delete books in the sheet.
  *
@@ -5,7 +7,7 @@
  * @param {import('@/model/Book').default[]} books The books to delete
  */
 export default async function bulkDeleteBooks(sheetId, books) {
-  await window.gapi.client.sheets.spreadsheets.batchUpdate({
+  const thenable = window.gapi.client.sheets.spreadsheets.batchUpdate({
     spreadsheetId: sheetId,
     resource: {
       requests: books.map((book) => {
@@ -24,4 +26,6 @@ export default async function bulkDeleteBooks(sheetId, books) {
       })
     }
   })
+
+  return await promisify(thenable)
 }

@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Bulk update books in the sheet.
  *
@@ -5,7 +7,7 @@
  * @param {import('@/model/Book').default[]} books The books to update.
  */
 export default async function bulkUpdateBooks(sheetId, books) {
-  await window.gapi.client.sheets.spreadsheets.values.batchUpdate({
+  const thenable = window.gapi.client.sheets.spreadsheets.values.batchUpdate({
     spreadsheetId: sheetId,
     resource: {
       valueInputOption: 'USER_ENTERED',
@@ -15,4 +17,6 @@ export default async function bulkUpdateBooks(sheetId, books) {
       }))
     }
   })
+
+  return await promisify(thenable)
 }

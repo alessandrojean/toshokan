@@ -16,8 +16,17 @@ import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useAuthStore } from '@/stores/auth'
 
-const props = defineProps({ prompt: { type: Boolean, default: true } })
-const { prompt } = toRefs(props)
+const props = defineProps({
+  prompt: {
+    type: Boolean,
+    default: true
+  },
+  type: {
+    type: String,
+    validator: (value) => ['icon', 'standard'].includes(value)
+  }
+})
+const { prompt, type } = toRefs(props)
 
 const emit = defineEmits(['notification'])
 
@@ -64,7 +73,7 @@ function renderButton() {
       size: 'large',
       locale: locale.value,
       text: 'continue_with',
-      type: isMdBreakpoint.value ? 'standard' : 'icon'
+      type: type.value || (isMdBreakpoint.value ? 'standard' : 'icon')
     })
   }
 }

@@ -3,13 +3,18 @@ import { useMutation, useQueryClient } from 'vue-query'
 import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import insertBook from '@/services/sheet/insertBook'
+import { fetch } from '@/util/gapi'
 
 export default function useCreateBookMutation() {
   const collectionStore = useCollectionStore()
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
-  return useMutation((book) => insertBook(sheetStore.sheetId, book), {
+  async function mutate(book) {
+    return await fetch(insertBook(sheetStore.sheetId, book))
+  }
+
+  return useMutation(mutate, {
     onSuccess(_, book) {
       const groups = collectionStore.filters.groups
 

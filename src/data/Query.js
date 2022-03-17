@@ -48,17 +48,19 @@ export default class Query {
           const reasons = response.getReasons()
 
           if (reasons.includes('timeout')) {
-            reject(new Error(errorMessage), { reason: 'timeout' })
+            reject({ message: errorMessage, reason: 'timeout' })
           } else if (reasons.includes('access_denied')) {
-            reject(
-              new Error(errorMessage, { code: 401, reason: 'access_denied' })
-            )
+            reject({
+              message: errorMessage,
+              status: 401,
+              reason: 'access_denied'
+            })
           } else {
             const message = i18n.global.t('errors.badQuery', {
               error: errorMessage
             })
 
-            reject(new Error(message, { reason: 'invalid_query' }))
+            reject({ message, reason: 'invalid_query' })
           }
 
           return

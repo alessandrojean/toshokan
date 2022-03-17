@@ -1,3 +1,5 @@
+import { promisify } from '@/util/gapi'
+
 /**
  * Get the sheet statistics.
  *
@@ -5,21 +7,21 @@
  * @returns The sheet statistics
  */
 export default async function getStatistics(sheetId) {
-  const response = await window.gapi.client.sheets.spreadsheets.values.batchGet(
-    {
-      spreadsheetId: sheetId,
-      ranges: [
-        'TotalItems',
-        'Expense',
-        'Reading',
-        'MonthlyStatistics',
-        'AuthorRank',
-        'SeriesRank',
-        'PublisherRank',
-        'Currency'
-      ]
-    }
-  )
+  const thenable = window.gapi.client.sheets.spreadsheets.values.batchGet({
+    spreadsheetId: sheetId,
+    ranges: [
+      'TotalItems',
+      'Expense',
+      'Reading',
+      'MonthlyStatistics',
+      'AuthorRank',
+      'SeriesRank',
+      'PublisherRank',
+      'Currency'
+    ]
+  })
+
+  const response = await promisify(thenable)
 
   return {
     count: parseInt(response.result.valueRanges[0].values[0][0]),

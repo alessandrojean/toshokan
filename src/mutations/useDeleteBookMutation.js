@@ -2,12 +2,17 @@ import { useMutation, useQueryClient } from 'vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import deleteBook from '@/services/sheet/deleteBook'
+import { fetch } from '@/util/gapi'
 
 export default function useDeleteBookMutation() {
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
-  return useMutation((book) => deleteBook(sheetStore.sheetId, book), {
+  async function mutate(book) {
+    return await fetch(deleteBook(sheetStore.sheetId, book))
+  }
+
+  return useMutation(mutate, {
     onSuccess(_, book) {
       queryClient.setQueryData(['book', book.id], null)
 
