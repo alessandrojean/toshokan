@@ -236,10 +236,11 @@ home:
         através do repositório no GitHub.
   collection:
     title: Ideal para também gerenciar a sua coleção de quadrinhos e livros
-    description: >
+    description: >-2
       Apesar do Toshokan ser inicialmente criado com a intenção
       de gerenciar mangás, a planilha é versátil para também suportar
       outras mídias impressas, como os quadrinhos e livros.
+
 
       Ao preencher a ficha catalográfica de cada item, você permite
       com que filtros possam ser utilizados na coleção para uma
@@ -486,14 +487,17 @@ dashboard:
           permitindo a classificação por título, autores, país, editora
           e edição.
 
+
           Este código pode ser normalmente encontrado na página de expediente
           do livro, junto a ficha catalográfica, ou próximo ao código de
           barras. A busca aceita ambas as versões do código, a com 10
           dígitos e a com 13 dígitos, sendo esta última a mais utilizada
           recentemente.
 
+
           Caso o livro não possua um ISBN, você pode preencher as informações
           para a criação do item na planilha de modo manual.
+
 
           *[ISBN]: International Standard Book Number
         additionalInfo: Informações adicionais

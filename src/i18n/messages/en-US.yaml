@@ -237,6 +237,7 @@ home:
       it also allows the creation of other printed medias, such as books
       and comic books.
 
+
       By filling the catalographic record of each item, you will permit
       that filters can be used in the collection to a better organization
       of the sheet contents.  
@@ -480,12 +481,15 @@ dashboard:
           gives a unique numeric identifier for each item, allowing the
           classification by title, authors, country, publisher and edition.
 
+
           This code can be normally found next to the barcode. The search
           accepts both versions of the code, the 10-digit and the 13-digit.
           Books recently published usually have a 13-digit version.
 
+
           If the book does not have an ISBN, you can manually fill in the
           information needed to create the item in the spreadsheet.
+
 
           *[ISBN]: International Standard Book Number
         additionalInfo: Additional information
