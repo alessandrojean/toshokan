@@ -12,9 +12,9 @@ import {
   SparklesIcon
 } from '@heroicons/vue/outline'
 
+import CreateBookDialogWireframe from '@/components/wireframes/CreateBookDialog.vue'
 import HomeFooter from '@/components/HomeFooter.vue'
 import HomeHeader from '@/components/HomeHeader.vue'
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 import Typewriter from '@/components/Typewriter.vue'
 
 const authStore = useAuthStore()
@@ -139,7 +139,7 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
 
       <section class="functionality">
         <figure>
-          <img src="@/assets/home/screenshot-metadata.jpg" alt="" />
+          <CreateBookDialogWireframe />
         </figure>
 
         <div class="functionality-description">
@@ -283,8 +283,8 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
   @apply px-6 md:pl-0 md:pr-8;
 }
 
-.functionality figure img {
-  @apply shadow-lg rounded-lg border border-gray-200 dark:border-gray-600;
+.functionality figure svg {
+  @apply w-full h-full shadow-lg rounded-lg border border-gray-200 dark:border-gray-600;
 }
 
 .button.is-secondary {
