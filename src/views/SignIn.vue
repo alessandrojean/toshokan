@@ -183,7 +183,7 @@ const { darkMode } = useDarkMode()
           <nav
             role="navigation"
             aria-label="Links úteis"
-            class="text-sm flex justify-between items-center relative"
+            class="text-xs flex justify-between items-center relative"
           >
             <ul class="flex flex-wrap pr-8">
               <li v-for="link in links" :key="link.route">
