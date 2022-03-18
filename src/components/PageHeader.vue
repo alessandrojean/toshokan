@@ -4,10 +4,9 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { LibraryIcon } from '@heroicons/vue/solid'
+import { LibraryIcon, LoginIcon } from '@heroicons/vue/solid'
 
 import ProfileMenu from '@/components/ProfileMenu.vue'
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -53,8 +52,26 @@ const authorized = computed(() => authStore.authorized)
         >
           {{ t('home.header.dashboard') }}
         </router-link>
-        <SignInWithGoogleButton :prompt="false" />
         <ThemeToggle class="ml-3" light />
+        <router-link
+          :to="{ name: 'DashboardHome' }"
+          class="button is-primary is-rounded ml-3 hidden md:flex"
+          v-if="!authenticated"
+        >
+          {{ t('home.header.signIn') }}
+        </router-link>
+        <router-link
+          :to="{ name: 'SignIn' }"
+          class="button is-primary is-rounded is-icon-only ml-3 md:hidden"
+          v-if="!authenticated"
+        >
+          <span aria-hidden="true">
+            <LoginIcon class="w-5 h-5 rotate-180" />
+          </span>
+          <span class="sr-only">
+            {{ t('home.header.signIn') }}
+          </span>
+        </router-link>
         <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
       </div>
     </div>

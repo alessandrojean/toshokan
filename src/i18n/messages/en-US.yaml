@@ -158,6 +158,9 @@ footer:
     termsOfUse: Terms of Use
   version: 'Toshokan v{version}'
   copyright: '© {year} Alessandro Jean. All rights reserved.'
+  googleTrademarks: >
+    Google Drive, Google Sheets and Google Books are trademarks of Google
+    Inc. Use of these trademarks are subject to Google Permissions.
   dev: Development environment
   lastUpdate: 'Updated at {0}.'
   donate:
@@ -184,7 +187,11 @@ auth:
 signIn:
   title: Please sign in
   titleSr: to use Toshokan
-  subTitle: to be redirected to the dashboard
+  subTitle: to be redirected to the dashboard.
+  step1: Sign In with your Google Account.
+  step2: Grant all the needed permissions.
+  step3: Access the dashboard.
+  enablePopups: Remember to enable popups.
 pageNotFound:
   title: Page not found
   description: The content you're looking for coudn't be found.
@@ -215,8 +222,8 @@ home:
     data:
       title: Control over your data
       description: >
-        The sheet is a Google Spreadsheets file that is stored
-        at your Google Drive.      
+        The sheet is a Google Sheets™ file that is stored
+        at your Google Drive™.      
     openSource:
       title: Open source website
       description: >
@@ -233,13 +240,49 @@ home:
       By filling the catalographic record of each item, you will permit
       that filters can be used in the collection to a better organization
       of the sheet contents.  
+  faq:
+    title: Frequently Asked Questions
+    help: >
+      For more information, visit our Help Center and check the
+      available articles.
+    currentState:
+      question: What's the project current status?
+      answer: >
+        At the moment the project is unstable and in Beta, with new
+        features and issues fixes being made gradually. You can follow
+        the development progress in our GitHub.
+    beta:
+      question: How can I apply for the Beta?
+      answer: >
+        Unfortunately our testing program is closed at the moment.
+    costs:
+      question: What are the usage costs?
+      answer: >
+        Toshokan is a free service, without ads and open-source.
+    share:
+      question: Can I share my library?
+      answer: >
+        Yes! You can view and share your collection with other users by
+        sharing the edition of the sheet in your Google Drive. For more
+        details, check the “Sharing” guide.
+    metadata:
+      question: Where is the metadata pulled from?
+      answer: >
+        Toshokan uses services that have public APIs to search the
+        book metadata from the ISBN. Some examples of providers are
+        OpenLibrary and Google Books™.
   cta:
     title: Ready to start?
+    description: >
+      Manage your library, view the statistics of books bought and read,
+      share with friends, and don't buy repeated books anymore!
+    free: Totally free and open-source.
     dashboard: Dashboard
-    instructions: Instructions
+    signIn: Sign In
   header:
     dashboard: Dashboard
     instructions: Instructions
+    signIn: Sign In
 dashboard:
   header:
     links:

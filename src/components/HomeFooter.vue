@@ -34,6 +34,10 @@ const links = computed(() => [
       <p>
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
+
+      <p class="mt-5 text-xxs">
+        {{ t('footer.googleTrademarks') }}
+      </p>
     </div>
   </footer>
 </template>

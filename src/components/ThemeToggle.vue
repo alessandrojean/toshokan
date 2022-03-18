@@ -25,7 +25,7 @@ import {
   SunIcon as SunIconSolid
 } from '@heroicons/vue/solid'
 
-defineProps({ light: Boolean })
+defineProps({ light: Boolean, bottom: Boolean })
 
 const { t } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()
@@ -87,7 +87,7 @@ const currentOption = computed(() => {
       leave-from-class="scale-100 opacity-100"
       leave-to-class="scale-95 opacity-0"
     >
-      <ListboxOptions class="theme-options">
+      <ListboxOptions :class="bottom ? 'is-bottom' : ''" class="theme-options">
         <ListboxOption
           v-for="option in options"
           :key="option.key"
@@ -164,6 +164,10 @@ const currentOption = computed(() => {
     rounded-md shadow-lg overflow-hidden
     w-36 py-1 mt-2 origin-top-right
     ring-1 ring-black ring-opacity-5;
+}
+
+.theme-options.is-bottom {
+  @apply top-0 -translate-y-full origin-bottom-right -mt-2;
 }
 
 .theme-options:focus {

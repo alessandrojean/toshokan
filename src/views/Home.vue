@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
@@ -45,6 +45,8 @@ const features = computed(() => [
     description: t('home.features.openSource.description')
   }
 ])
+
+const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
 </script>
 
 <template>
@@ -152,24 +154,68 @@ const features = computed(() => [
         </div>
       </section>
 
-      <section class="cta">
-        <h2>{{ t('home.cta.title') }}</h2>
-        <div class="button-wrapper">
-          <router-link
-            :to="{ name: 'DashboardHome' }"
-            class="button is-primary"
-            v-if="authenticated && authorized"
+      <section class="md:grid md:grid-cols-3 gap-12 py-12 lg:px-16">
+        <div>
+          <h2
+            class="text-gray-800 dark:text-gray-100 font-display font-bold text-2xl"
           >
-            {{ t('home.cta.dashboard') }}
-          </router-link>
-          <SignInWithGoogleButton :prompt="false" />
+            {{ t('home.faq.title') }}
+          </h2>
+
+          <p class="mt-2 text-gray-500 dark:text-gray-400">
+            {{ t('home.faq.help') }}
+          </p>
+        </div>
+
+        <div class="col-span-2 space-y-10 mt-10 md:mt-0">
+          <div v-for="key in faqKeys" :key="key">
+            <h3 class="font-medium">
+              {{ t(`home.faq.${key}.question`) }}
+            </h3>
+            <p class="text-sm mt-2 text-gray-500 dark:text-gray-400">
+              {{ t(`home.faq.${key}.answer`) }}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="md:grid md:grid-cols-2 overflow-hidden bg-gradient-to-r from-primary-800 to-primary-500 rounded-2xl shadow-2xl"
+      >
+        <div
+          class="py-12 px-12 md:px-16 md:pr-0 flex flex-col justify-center space-y-6"
+        >
+          <h2 class="text-white/95 font-bold font-display text-3xl -mb-2">
+            {{ t('home.cta.title') }}
+          </h2>
+          <p class="text-white/[0.85]">
+            {{ t('home.cta.description') }}
+          </p>
+          <p class="text-white/[0.85]">
+            {{ t('home.cta.free') }}
+          </p>
           <router-link
-            :to="{ name: 'Instructions' }"
-            class="button is-secondary"
+            :to="{
+              name: authenticated && authorized ? 'DashboardHome' : 'SignIn'
+            }"
+            class="button is-secondary px-4 py-2.5 w-fit"
           >
-            {{ t('home.cta.instructions') }}
+            {{
+              t(
+                authenticated && authorized
+                  ? 'home.cta.dashboard'
+                  : 'home.cta.signIn'
+              )
+            }}
           </router-link>
         </div>
+        <figure class="w-full md:w-[160%] lg:w-full -mt-8 md:-mt-5">
+          <img
+            class="rounded-xl translate-y-10 md:translate-y-16 translate-x-16"
+            src="@/assets/home/screenshot-library.jpg"
+            alt=""
+          />
+        </figure>
       </section>
     </main>
 
@@ -179,7 +225,7 @@ const features = computed(() => [
 
 <style lang="postcss" scoped>
 .features {
-  @apply grid grid-cols-3 gap-12 py-6;
+  @apply grid grid-cols-3 gap-12 py-6 lg:px-8;
 }
 
 .features h2 {
@@ -241,27 +287,10 @@ const features = computed(() => [
   @apply shadow-lg rounded-lg border border-gray-200 dark:border-gray-600;
 }
 
-.cta {
-  @apply flex flex-col items-center space-y-6;
-}
-
-.cta h2 {
-  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-display font-bold text-3xl text-center;
-}
-
-.cta .button-wrapper {
-  @apply flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4;
-}
-
-.cta .button {
-  @apply py-2 px-5 font-medium rounded shadow-md justify-center;
-}
-
-.cta .button.is-secondary {
-  @apply text-primary-600 dark:text-gray-100;
-}
-
-.cta .google-button {
-  @apply shadow-md;
+.button.is-secondary {
+  @apply text-primary-600 dark:text-primary-600 border-none
+    dark:bg-white dark:border-0 dark:hover:bg-gray-100
+    focus-visible:ring-offset-primary-600 focus-visible:ring-white
+    dark:focus-visible:ring-offset-primary-600 dark:focus-visible:ring-white;
 }
 </style>

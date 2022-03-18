@@ -158,6 +158,10 @@ footer:
     termsOfUse: Termos de Uso
   version: 'Toshokan v{version}'
   copyright: '© {year} Alessandro Jean. Todos os direitos reservados.'
+  googleTrademarks: >
+    Google Drive, Google Sheets e Google Books são marcas registradas do
+    Google Inc. O uso dessas marcas registradas está sujeito às 
+    Permissões do Google.
   dev: Ambiente de desenvolvimento
   lastUpdate: 'Atualizado em {0}.'
   donate:
@@ -184,7 +188,11 @@ auth:
 signIn:
   title: Autentique-se
   titleSr: para obter acesso ao Toshokan
-  subTitle: para obter acesso ao dashboard
+  subTitle: para obter acesso ao dashboard.
+  step1: Autentique-se com sua Conta do Google.
+  step2: Conceda as permissões necessárias.
+  step3: Obtenha acesso ao dashboard.
+  enablePopups: Lembre-se de habilitar os popups.
 pageNotFound:
   title: Página não encontrada
   description: O conteúdo procurado não foi localizado.
@@ -219,8 +227,8 @@ home:
     data:
       title: Tenha controle sobre seus dados
       description: >
-        A planilha é um arquivo do Google Sheets que fica
-        armazenado em seu Google Drive.
+        A planilha é um arquivo do Google Sheets™ que fica
+        armazenado em seu Google Drive™.
     openSource:
       title: Site de código-aberto
       description: >
@@ -236,13 +244,50 @@ home:
       Ao preencher a ficha catalográfica de cada item, você permite
       com que filtros possam ser utilizados na coleção para uma
       melhor organização do conteúdo cadastrado na planilha.
+  faq:
+    title: Perguntas frequentes
+    help: >
+      Para mais informações, visite nossa Central de Ajuda e consulte
+      os artigos disponíveis.
+    currentState:
+      question: Qual o estado atual do projeto?
+      answer: >
+        No momento o projeto está instável e em Beta, com novos recursos e 
+        correções de problemas sendo feitas gradativamente. Você pode 
+        acompanhar o progresso do desenvolvimento em nosso GitHub.
+    beta:
+      question: Como posso entrar no Beta?
+      answer: >
+        Infelizmente nosso programa de testes está fechado no momento.
+    costs:
+      question: Quais são os custos de utilização?
+      answer: >
+        O Toshokan é um serviço totalmente gratuito, sem anúncios e de
+        código aberto.
+    share:
+      question: Posso compartilhar minha biblioteca?
+      answer: >
+        Sim! Você pode visualizar e compartilhar sua biblioteca com outras 
+        pessoas ao compartilhar a visualização ou edição da planilha em 
+        seu Google Drive. Para mais detalhes, consulte o guia “Compartilhando”.
+    metadata:
+      question: De onde os metadados são retirados?
+      answer: >
+        O Toshokan utiliza serviços com APIs públicas para consultar os
+        dados dos livros a partir do ISBN. Alguns exemplos de provedores 
+        são a CBL, OpenLibrary e Google Books™.
   cta:
     title: Pronto para começar?
+    description: >
+      Gerencie sua biblioteca, visualize as estatísticas de compra e leitura, 
+      compartilhe com amigos, e nunca mais compre itens repetidos!
+    free: Totalmente gratuito e de código aberto.
     dashboard: Dashboard
-    instructions: Instruções de uso
+    signIn: Autentique-se
   header:
     instructions: Instruções de uso
     dashboard: Dashboard
+    signIn: Autentique-se
 dashboard:
   header:
     links:
