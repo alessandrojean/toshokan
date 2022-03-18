@@ -35,13 +35,13 @@ const routes = [
     }
   },
   {
-    path: '/about',
-    component: () => import('../views/about/Index.vue'),
+    path: '/help',
+    component: () => import('../views/help/Index.vue'),
     children: [
       {
-        path: 'about-the-project',
+        path: 'general/about-the-project',
         name: 'About',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.about'),
           category: 'general'
@@ -49,9 +49,9 @@ const routes = [
         props: { file: 'about' }
       },
       {
-        path: 'accessibility',
+        path: 'general/accessibility',
         name: 'Accessibility',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.a11y'),
           category: 'general'
@@ -59,9 +59,9 @@ const routes = [
         props: { file: 'a11y' }
       },
       {
-        path: 'privacy-policy',
+        path: 'general/privacy-policy',
         name: 'PrivacyPolicy',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.privacyPolicy'),
           category: 'general'
@@ -69,9 +69,9 @@ const routes = [
         props: { file: 'privacy-policy' }
       },
       {
-        path: 'terms-of-use',
+        path: 'general/terms-of-use',
         name: 'TermsOfUse',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.termsOfUse'),
           category: 'general'
@@ -81,7 +81,7 @@ const routes = [
       {
         path: 'guides/instructions',
         name: 'Instructions',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.instructions'),
           category: 'guide'
@@ -91,7 +91,7 @@ const routes = [
       {
         path: 'guides/searching',
         name: 'Searching',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.searching'),
           category: 'guide'
@@ -101,7 +101,7 @@ const routes = [
       {
         path: 'guides/sharing',
         name: 'Sharing',
-        component: () => import('../views/about/BaseAbout.vue'),
+        component: () => import('../views/help/BaseAbout.vue'),
         meta: {
           title: () => t('app.routes.about.sharing'),
           category: 'guide'
