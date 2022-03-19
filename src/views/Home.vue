@@ -13,8 +13,11 @@ import {
 } from '@heroicons/vue/outline'
 
 import CreateBookDialogWireframe from '@/components/wireframes/CreateBookDialog.vue'
+import Dashboard from '@/components/wireframes/Dashboard.vue'
+import DesktopLibrary from '@/components/wireframes/DesktopLibrary.vue'
 import HomeFooter from '@/components/HomeFooter.vue'
 import HomeHeader from '@/components/HomeHeader.vue'
+import MobileLibrary from '@/components/wireframes/MobileLibrary.vue'
 import Typewriter from '@/components/Typewriter.vue'
 
 const authStore = useAuthStore()
@@ -109,16 +112,8 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
                 <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
               </div>
             </div>
-            <img
-              class="md:hidden"
-              src="@/assets/home/screenshot-library-mobile.jpg"
-              alt=""
-            />
-            <img
-              class="hidden md:block"
-              src="@/assets/home/screenshot-dashboard.jpg"
-              alt=""
-            />
+            <MobileLibrary class="md:hidden w-full h-full" />
+            <Dashboard class="hidden md:block w-full h-full" />
           </figure>
         </div>
       </section>
@@ -209,11 +204,9 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
             }}
           </router-link>
         </div>
-        <figure class="w-full md:w-[160%] lg:w-full -mt-8 md:-mt-5">
-          <img
-            class="rounded-xl translate-y-10 md:translate-y-16 translate-x-16"
-            src="@/assets/home/screenshot-library.jpg"
-            alt=""
+        <figure class="-mt-8 md:-mt-5 h-80 lg:h-[25rem]">
+          <DesktopLibrary
+            class="w-[200%] sm:w-[150%] md:w-[200%] lg:w-[150%] h-auto rounded-xl translate-y-10 md:translate-y-16 translate-x-16"
           />
         </figure>
       </section>
