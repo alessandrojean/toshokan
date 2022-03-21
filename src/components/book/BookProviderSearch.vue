@@ -67,7 +67,7 @@ async function searchInSheet() {
 const { renderMarkdown } = useMarkdown()
 
 function viewExisting() {
-  emit('click:viewExisting', existingIds.value[0])
+  emit('click:viewExisting', existingIds.value[0].id)
 }
 </script>
 
