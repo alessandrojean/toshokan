@@ -1,5 +1,9 @@
 import { useAuthStore } from '@/stores/auth'
 
+export const STATUS_CODE_FORBIDDEN = 403
+export const STATUS_CODE_TIMEOUT = 408
+export const STATUS_CODE_UNAUTHORIZED = 401
+
 /**
  * Google GAPI returns a Thenable instead of ES6 Promises.
  *
@@ -16,7 +20,7 @@ export function promisify(thenable) {
       (reason) =>
         reject({
           message: reason.result.error.message,
-          status: reason.status,
+          status: reason.result.error.code,
           reason
         })
     )
@@ -30,8 +34,8 @@ export function promisify(thenable) {
  * @returns {Promise<void>}
  */
 export function loadApiAsync(api) {
-  return new Promise((resolve) => {
-    window.gapi.load(api, () => resolve())
+  return new Promise((resolve, reject) => {
+    window.gapi.load(api, { callback: resolve, onerror: reject })
   })
 }
 
@@ -45,20 +49,27 @@ export function loadApiAsync(api) {
  */
 export async function fetch(promise) {
   const authStore = useAuthStore()
+  const maxAttempts = 3
+  const refreshStatusCodes = [STATUS_CODE_FORBIDDEN, STATUS_CODE_UNAUTHORIZED]
 
-  try {
-    if (authStore.expired()) {
-      await authStore.refreshTokenAsync()
-    }
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      if (authStore.expired()) {
+        await authStore.refreshTokenAsync()
+      }
 
-    return await promise
-  } catch (error) {
-    if (error.status === 401) {
-      await authStore.refreshTokenAsync()
       return await promise
-    }
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error
+      }
 
-    throw error
+      if (refreshStatusCodes.includes(error.status)) {
+        await authStore.refreshTokenAsync()
+      }
+
+      attempt++
+    }
   }
 }
 

@@ -3,6 +3,7 @@ import cloneDeep from 'lodash.clonedeep'
 import i18n from '@/i18n'
 import QueryBuilder from './QueryBuilder'
 import DataTable from './DataTable'
+import { STATUS_CODE_TIMEOUT, STATUS_CODE_UNAUTHORIZED } from '@/util/gapi'
 
 /**
  * Enhanced Google Visualization Query.
@@ -44,24 +45,28 @@ export default class Query {
     return new Promise((resolve, reject) => {
       this.#query.send((response) => {
         if (response.isError()) {
-          const errorMessage = response.getMessage()
           const reasons = response.getReasons()
 
-          if (reasons.includes('timeout')) {
-            reject({ message: errorMessage, reason: 'timeout' })
-          } else if (reasons.includes('access_denied')) {
+          if (reasons.includes('invalid_query')) {
             reject({
-              message: errorMessage,
-              status: 401,
-              reason: 'access_denied'
-            })
-          } else {
-            const message = i18n.global.t('errors.badQuery', {
-              error: errorMessage
+              message: i18n.global.t('errors.badQuery', {
+                error: errorMessage
+              }),
+              detailedMessage: response.getDetailedMessage(),
+              reasons
             })
 
-            reject({ message, reason: 'invalid_query' })
+            return
           }
+
+          reject({
+            message: response.getMessage(),
+            detailedMessage: response.getDetailedMessage(),
+            status: reasons.includes('access_denied')
+              ? STATUS_CODE_UNAUTHORIZED
+              : STATUS_CODE_TIMEOUT,
+            reasons
+          })
 
           return
         }
