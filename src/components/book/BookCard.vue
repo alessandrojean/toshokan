@@ -179,8 +179,14 @@ const blurCover = computed(() => {
 
       <FadeTransition>
         <div
-          v-if="mode === 'compact' && !imageOnly"
-          class="book-gradient absolute top-0 left-0 w-full h-full flex items-end justify-end pb-2 px-2 lg:pb-3 lg:px-3"
+          v-if="
+            (mode === 'compact' && !imageOnly) || (imageOnly && imageHasError)
+          "
+          :class="[
+            'book-gradient absolute top-0 left-0 w-full h-full flex justify-end py-2 px-2 lg:pb-3 lg:px-3',
+            imageOnly && imageHasError ? 'items-start' : 'items-end',
+            imageOnly ? 'image-only' : ''
+          ]"
         >
           <div class="inline-flex text-white w-full items-center">
             <div class="inline-flex flex-col grow min-w-0">
@@ -246,6 +252,14 @@ const blurCover = computed(() => {
 .book-gradient {
   background-image: linear-gradient(
     to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    transparent 60%
+  );
+}
+
+.book-gradient.image-only {
+  background-image: linear-gradient(
+    to bottom,
     rgba(0, 0, 0, 0.7) 0%,
     transparent 60%
   );
