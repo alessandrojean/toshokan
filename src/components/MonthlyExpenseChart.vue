@@ -42,6 +42,47 @@ const localeStr = computed(() => {
 
 const { darkMode } = useDarkMode()
 
+const currentYear = new Date().getFullYear()
+const pastYear = currentYear - 1
+
+function fillMissingMonths(values, year) {
+  const newValues = []
+
+  for (const m of values) {
+    newValues[m.month.getMonth()] = m
+  }
+
+  for (let i = 0; i < newValues.length; i++) {
+    if (newValues[i] === undefined) {
+      newValues[i] = {
+        month: new Date(`${year}-${String(i + 1).padStart(2, '0')}-02`),
+        totalSpent: 0,
+        count: 0,
+        read: 0
+      }
+    }
+  }
+
+  return newValues
+}
+
+const currentYearValues = computed(() => {
+  const values = (stats.value?.monthly || []).filter(
+    (m) => m.month.getFullYear() === currentYear
+  )
+
+  return fillMissingMonths(values, currentYear)
+})
+
+const pastYearValues = computed(() => {
+  const values = (stats.value?.monthly || []).filter(
+    (m) => m.month.getFullYear() === pastYear
+  )
+
+  const lastMonth = currentYearValues.value.length
+  return fillMissingMonths(values, pastYear).slice(0, lastMonth)
+})
+
 const expenses = computed(() => ({
   options: {
     chart: {
@@ -54,7 +95,7 @@ const expenses = computed(() => ({
       toolbar: { show: false },
       zoom: { enabled: false }
     },
-    colors: [theme.colors.primary[500]],
+    colors: [theme.colors.cyan[500], theme.colors.primary[500]],
     dataLabels: { enabled: false },
     grid: {
       borderColor: darkMode.value
@@ -66,14 +107,12 @@ const expenses = computed(() => ({
       theme: darkMode.value ? 'dark' : 'light',
       x: {
         formatter: (value) => {
-          return d(stats.value.monthly[value - 1].month, 'monthYear')
+          return d(currentYearValues.value[value - 1].month, 'monthYear')
         }
       }
     },
     xaxis: {
-      categories: (stats.value?.monthly || []).map((m) =>
-        m.month.toISOString()
-      ),
+      categories: currentYearValues.value.map((m) => m.month.toISOString()),
       labels: {
         formatter: (value) => {
           return value ? d(new Date(value), 'month') : value
@@ -103,8 +142,12 @@ const expenses = computed(() => ({
   },
   series: [
     {
-      name: t('dashboard.stats.monthlyExpense'),
-      data: (stats.value?.monthly || []).map((m) => m.totalSpent)
+      name: t('dashboard.stats.monthlyExpense', { year: pastYear }),
+      data: pastYearValues.value.map((m) => m.totalSpent)
+    },
+    {
+      name: t('dashboard.stats.monthlyExpense', { year: currentYear }),
+      data: currentYearValues.value.map((m) => m.totalSpent)
     }
   ]
 }))
@@ -122,7 +165,7 @@ const expenses = computed(() => ({
         id="monthly-expense-title"
         class="font-medium font-display text-gray-900 dark:text-gray-100"
       >
-        {{ t('dashboard.stats.monthlyExpense') }}
+        {{ t('dashboard.stats.monthlyExpenseTitle') }}
       </h2>
     </div>
     <div class="px-4 py-3 sm:px-6">

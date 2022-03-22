@@ -624,7 +624,9 @@ dashboard:
     authorsRankTitle: Rank de autores
     seriesRankTitle: Rank de séries
     bookQuantity: Quantidade de livros
-    monthlyExpense: Gasto mensal
+    monthlyExpenseTitle: Gasto mensal
+    monthlyExpense: 'Gasto mensal ({year})'
+    ytd: 'YTD ({year})'
     thisMonth: Gasto atual
     bought: Comprados
     read: Lidos

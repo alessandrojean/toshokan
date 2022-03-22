@@ -42,7 +42,36 @@ const localeStr = computed(() => {
   return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
 })
 
-const monthly = computed(() => (stats.value?.monthly || []).slice(-6))
+const currentYear = new Date().getFullYear()
+
+function fillMissingMonths(values, year) {
+  const newValues = []
+
+  for (const m of values) {
+    newValues[m.month.getMonth()] = m
+  }
+
+  for (let i = 0; i < newValues.length; i++) {
+    if (newValues[i] === undefined) {
+      newValues[i] = {
+        month: new Date(`${year}-${String(i + 1).padStart(2, '0')}-02`),
+        totalSpent: 0,
+        count: 0,
+        read: 0
+      }
+    }
+  }
+
+  return newValues
+}
+
+const currentYearValues = computed(() => {
+  const values = (stats.value?.monthly || []).filter(
+    (m) => m.month.getFullYear() === currentYear
+  )
+
+  return fillMissingMonths(values, currentYear)
+})
 
 const itemsBought = computed(() => ({
   options: {
@@ -68,7 +97,7 @@ const itemsBought = computed(() => ({
     },
     tooltip: { enabled: false },
     xaxis: {
-      categories: monthly.value.map((m) => m.month.toISOString()),
+      categories: currentYearValues.value.map((m) => m.month.toISOString()),
       labels: {
         formatter: (_, timestamp) => {
           return d(new Date(timestamp), 'month')
@@ -90,7 +119,9 @@ const itemsBought = computed(() => ({
             ? theme.colors.slate[300]
             : theme.colors.slate[600]
         }
-      }
+      },
+      max: (max) => max + 1,
+      forceNiceScale: true
     },
     legend: {
       labels: {
@@ -132,11 +163,11 @@ const itemsBought = computed(() => ({
   series: [
     {
       name: t('dashboard.stats.booksBoughtAndRead.bought'),
-      data: monthly.value.map((m) => m.count)
+      data: currentYearValues.value.map((m) => m.count)
     },
     {
       name: t('dashboard.stats.booksBoughtAndRead.read'),
-      data: monthly.value.map((m) => m.read)
+      data: currentYearValues.value.map((m) => m.read)
     }
   ]
 }))

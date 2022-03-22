@@ -619,7 +619,9 @@ dashboard:
     authorsRankTitle: Authors rank
     seriesRankTitle: Series rank
     bookQuantity: Book quantity
-    monthlyExpense: Monthly expense
+    monthlyExpenseTitle: Monthly expense
+    monthlyExpense: 'Monthly expense ({year})'
+    ytd: 'YTD ({year})'
     thisMonth: Current expense
     bought: Bought
     read: Read

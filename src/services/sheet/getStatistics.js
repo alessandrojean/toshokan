@@ -38,7 +38,6 @@ export default async function getStatistics(sheetId) {
       percent: parseFloat(response.result.valueRanges[2].values[2][1], 10)
     },
     monthly: (response.result.valueRanges[3].values || [])
-      .slice(0, 10)
       .reverse()
       .filter((row) => row[0].length > 0)
       .map((row) => ({
