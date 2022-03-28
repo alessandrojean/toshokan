@@ -3,6 +3,7 @@ import slugify from 'slugify'
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 import UrlReplacerFinder from './UrlReplacerFinder'
 import WordPressFinder from './WordPressFinder'
+// import OEmbedFinder from './OEmbedFinder'
 
 export const AMAZON = new UrlReplacerFinder({
   url: 'https://images-na.ssl-images-amazon.com/images/P/{value}.01._SCRM_SL700_.jpg',
@@ -24,10 +25,10 @@ const AVAILABLE_SITES = [
   // new OEmbedFinder({
   //   name: 'JBC',
   //   baseUrl: 'https://editorajbc.com.br',
-  //   createPath: book => {
+  //   createPath: (book) => {
   //     const series = slugify(book.titleParts.title).replace('especial', 'esp')
   //     const title = slugify(book.title).replace('especial', 'esp')
-  //
+
   //     return `/mangas/colecao/${series}/vol/${title}`
   //   }
   // }),
