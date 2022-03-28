@@ -16,14 +16,17 @@ const SCOPES = [
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: null,
-    expiresIn: 0,
-    hasGrantedScopes: null,
-    started: false,
     authenticated: false,
+    expiresIn: 0,
+    eventListeners: {
+      token: []
+    },
+    hasGrantedScopes: null,
     profileName: null,
     profileEmail: null,
     profileImageUrl: null,
     refreshing: false,
+    started: false,
     tokenClient: null
   }),
   getters: {
@@ -32,6 +35,28 @@ export const useAuthStore = defineStore('auth', {
     isStarted: (state) => state.started
   },
   actions: {
+    /**
+     * Add a new event listener.
+     *
+     * @param {'token'} type The event type
+     * @param {Function} listener The listener
+     */
+    addEventListener(type, listener) {
+      this.eventListeners[type].push(listener)
+    },
+
+    /**
+     * Remove a event listener.
+     *
+     * @param {'token'} type The event type
+     * @param {Function} listener The listener
+     */
+    removeEventListener(type, listener) {
+      this.eventListeners[type] = this.eventListeners[type].filter(
+        (l) => l !== listener
+      )
+    },
+
     clear() {
       this.$patch({
         accessToken: null,
@@ -62,7 +87,7 @@ export const useAuthStore = defineStore('auth', {
      * @returns {boolean} If the token is expired.
      */
     expired() {
-      return new Date().getTime >= this.expiresIn
+      return new Date().getTime() >= this.expiresIn
     },
 
     /**
@@ -129,18 +154,23 @@ export const useAuthStore = defineStore('auth', {
         scope: SCOPES.join(' '),
         prompt: 'consent',
         callback: (tokenResponse) => {
-          if (tokenResponse?.access_token) {
-            this.$patch({
-              accessToken: tokenResponse.access_token,
-              expiresIn: new Date().getTime() + tokenResponse.expires_in * 1000,
-              hasGrantedScopes:
-                window.google.accounts.oauth2.hasGrantedAllScopes(
-                  tokenResponse,
-                  ...SCOPES
-                ),
-              refreshing: false
-            })
-          }
+          this.eventListeners.token.forEach((listener) =>
+            listener.call(this, tokenResponse)
+          )
+        }
+      })
+
+      this.addEventListener('token', (tokenResponse) => {
+        if (tokenResponse?.access_token) {
+          this.$patch({
+            accessToken: tokenResponse.access_token,
+            expiresIn: new Date().getTime() + tokenResponse.expires_in * 1000,
+            hasGrantedScopes: window.google.accounts.oauth2.hasGrantedAllScopes(
+              tokenResponse,
+              ...SCOPES
+            ),
+            refreshing: false
+          })
         }
       })
 
@@ -171,18 +201,17 @@ export const useAuthStore = defineStore('auth', {
           resolve()
         }
 
-        const removeWatcher = this.$subscribe(
-          (_, state) => {
-            if (state.refreshing == false) {
-              removeWatcher()
-              resolve()
-            }
-          },
-          { detached: true }
-        )
+        const handleToken = () => {
+          this.removeEventListener('token', handleToken)
+
+          if (this.refreshing === false) {
+            resolve()
+          }
+        }
 
         if (!this.refreshing) {
           this.refreshing = true
+          this.addEventListener('token', handleToken)
           this.grantPermissions()
         }
       })
