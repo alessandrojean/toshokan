@@ -591,9 +591,6 @@ dashboard:
         remove: Remove access
     development:
       title: Development
-      showVueQueryDevTools:
-        label: Show vue-query DevTools
-        description: If enabled, the vue-query DevTools will be visible.
       useDevSheet:
         label: Use development sheets only
         description: If enabled, only development sheets will be shown to select.

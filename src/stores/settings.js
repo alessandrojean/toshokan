@@ -60,10 +60,6 @@ export const useSettingsStore = defineStore('settings', {
   state: () => ({
     blurNsfw: useLocalStorage(LocalStorageKeys.BLUR_NSFW, false),
     gridMode: useLocalStorage(LocalStorageKeys.GRID_MODE, 'comfortable'),
-    showVueQueryDevTools:
-      isDevEnvironment &&
-      localStorage.getItem(LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS) ===
-        'true',
     spoilerMode: {
       cover: useLocalStorage(LocalStorageKeys.SPOILER_MODE_COVER, false),
       synopsis: useLocalStorage(LocalStorageKeys.SPOILER_MODE_SYNOPSIS, false)
@@ -79,15 +75,6 @@ export const useSettingsStore = defineStore('settings', {
 
     updateGridMode(gridMode) {
       this.gridMode = gridMode
-    },
-
-    updateShowVueQueryDevTools(showVueQueryDevTools) {
-      this.showVueQueryDevTools = showVueQueryDevTools
-
-      localStorage.setItem(
-        LocalStorageKeys.SHOW_VUE_QUERY_DEV_TOOLS,
-        showVueQueryDevTools
-      )
     },
 
     updateSpoilerMode(spoilerMode) {

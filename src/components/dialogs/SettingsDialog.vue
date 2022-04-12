@@ -81,7 +81,6 @@ const settings = reactive({
     blurNsfw: settingsStore.blurNsfw
   },
   development: {
-    showVueQueryDevTools: settingsStore.showVueQueryDevTools,
     useDevSheet: settingsStore.useDevSheet
   }
 })
@@ -98,7 +97,6 @@ watch(isOpen, (newIsOpen) => {
         blurNsfw: settingsStore.blurNsfw
       },
       development: {
-        showVueQueryDevTools: settingsStore.showVueQueryDevTools,
         useDevSheet: settingsStore.useDevSheet
       }
     })
@@ -159,8 +157,6 @@ function saveAppearenceSettings() {
 
 async function saveDevelopmentSettings() {
   const { development } = settings
-
-  settingsStore.updateShowVueQueryDevTools(development.showVueQueryDevTools)
 
   if (development.useDevSheet !== settingsStore.useDevSheet) {
     settingsStore.updateUseDevSheet(development.useDevSheet)
@@ -604,49 +600,6 @@ function handleDisconnect() {
                           aria-hidden="true"
                           :class="
                             settings.development.useDevSheet
-                              ? 'translate-x-6 dark:bg-white'
-                              : 'translate-x-1 dark:bg-gray-100'
-                          "
-                          class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
-                        />
-                      </Switch>
-                    </SwitchGroup>
-                    <SwitchGroup as="div" class="preference">
-                      <div class="preference-description">
-                        <SwitchLabel>
-                          {{
-                            t(
-                              'dashboard.settings.development.showVueQueryDevTools.label'
-                            )
-                          }}
-                        </SwitchLabel>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.development.showVueQueryDevTools.description'
-                            )
-                          }}
-                        </p>
-                      </div>
-                      <Switch
-                        :model-value="settings.development.showVueQueryDevTools"
-                        @update:model-value="
-                          updateSetting(
-                            'development.showVueQueryDevTools',
-                            $event
-                          )
-                        "
-                        :class="
-                          settings.development.showVueQueryDevTools
-                            ? 'bg-primary-600 dark:bg-primary-500'
-                            : 'bg-gray-200 dark:bg-gray-600'
-                        "
-                        class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                      >
-                        <span
-                          aria-hidden="true"
-                          :class="
-                            settings.development.showVueQueryDevTools
                               ? 'translate-x-6 dark:bg-white'
                               : 'translate-x-1 dark:bg-gray-100'
                           "

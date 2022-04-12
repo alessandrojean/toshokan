@@ -36,9 +36,7 @@ const rebuildPageContents = inject('rebuildPageContents')
 
 const { renderMarkdown, frontmatter } = useMarkdown()
 
-const docs = import.meta.glob('/docs/**/*.md', {
-  assert: { type: 'raw' }
-})
+const docs = import.meta.glob('/docs/**/*.md', { as: 'raw' })
 
 function getMarkdownContent(locale, file) {
   const localeFile = `/docs/${locale}/${file}.md`

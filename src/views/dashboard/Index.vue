@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { VueQueryDevTools } from 'vue-query/devtools'
 
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
@@ -129,8 +128,6 @@ function closeSettingsDialog() {
 }
 
 provide('showSettingsDialog', showSettingsDialog)
-
-const showVueQueryDevTools = computed(() => settingsStore.showVueQueryDevTools)
 </script>
 
 <template>
@@ -167,7 +164,5 @@ const showVueQueryDevTools = computed(() => settingsStore.showVueQueryDevTools)
     />
 
     <BetaWarning />
-
-    <VueQueryDevTools v-if="showVueQueryDevTools" position="bottom-right" />
   </div>
 </template>
