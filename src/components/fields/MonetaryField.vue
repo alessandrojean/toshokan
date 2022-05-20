@@ -38,7 +38,9 @@ const currencies = computed(() => {
 
 const currency = ref(monetaryValue.value?.currency || 'BRL')
 const value = ref(
-  monetaryValue.value?.value ? n(monetaryValue.value.value, 'decimal') : ''
+  typeof monetaryValue.value?.value === 'number'
+    ? n(monetaryValue.value.value, 'decimal')
+    : ''
 )
 
 const validator = decimalComma(2)
