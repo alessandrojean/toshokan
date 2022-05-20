@@ -8,7 +8,7 @@ import { useSheetStore } from '@/stores/sheet'
 import {
   Dialog,
   DialogDescription,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle,
   RadioGroup,
   RadioGroupDescription,
@@ -85,12 +85,12 @@ watch(isOpen, (newIsOpen) => {
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="dialog-overlay" />
+          <div class="dialog-overlay" />
         </TransitionChild>
 
         <TransitionChild
-          as="div"
-          class="dialog-content transform"
+          as="template"
+          class="transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
           enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
@@ -98,158 +98,160 @@ watch(isOpen, (newIsOpen) => {
           leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
           leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
         >
-          <div class="dialog-header">
-            <div class="flex-grow">
-              <DialogTitle as="h2" class="dialog-title">
-                {{ t('dashboard.sheetChooser.title') }}
-              </DialogTitle>
-              <DialogDescription as="p" class="dialog-description">
-                {{ t('dashboard.sheetChooser.description') }}
-              </DialogDescription>
+          <DialogPanel class="dialog-content">
+            <div class="dialog-header">
+              <div class="flex-grow">
+                <DialogTitle as="h2" class="dialog-title">
+                  {{ t('dashboard.sheetChooser.title') }}
+                </DialogTitle>
+                <DialogDescription as="p" class="dialog-description">
+                  {{ t('dashboard.sheetChooser.description') }}
+                </DialogDescription>
+              </div>
+
+              <button class="close-button has-ring-focus" @click="closeDialog">
+                <span aria-hidden="true">
+                  <XIcon class="w-5 h-5" />
+                </span>
+              </button>
+
+              <span aria-hidden="true" class="absolute left-2">
+                <svg
+                  class="text-white opacity-30 block h-48 w-48"
+                  viewBox="0 0 184 184"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                    opacity="0.503"
+                  ></path>
+                </svg>
+              </span>
             </div>
 
-            <button class="close-button has-ring-focus" @click="closeDialog">
-              <span aria-hidden="true">
-                <XIcon class="w-5 h-5" />
-              </span>
-            </button>
+            <RadioGroup class="sheet-options" v-model="selected">
+              <RadioGroupLabel class="sr-only">
+                {{ t('dashboard.sheetChooser.label') }}
+              </RadioGroupLabel>
 
-            <span aria-hidden="true" class="absolute left-2">
-              <svg
-                class="text-white opacity-30 block h-48 w-48"
-                viewBox="0 0 184 184"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                  opacity="0.503"
-                ></path>
-              </svg>
-            </span>
-          </div>
+              <div class="space-y-2">
+                <RadioGroupOption
+                  as="template"
+                  v-for="option in options"
+                  :key="option.id"
+                  :value="option.id"
+                >
+                  <div class="sheet has-input-focus">
+                    <div class="sheet-group">
+                      <span aria-hidden="true" class="fake-radio" />
+                      <RadioGroupLabel as="div" class="sheet-info">
+                        <p class="sheet-name">
+                          {{ option.name }}
+                        </p>
+                        <time
+                          class="sheet-modified"
+                          :datetime="option.modifiedTime"
+                        >
+                          {{ d(option.modifiedTime, 'long') }}
+                        </time>
+                      </RadioGroupLabel>
+                    </div>
 
-          <RadioGroup class="sheet-options" v-model="selected">
-            <RadioGroupLabel class="sr-only">
-              {{ t('dashboard.sheetChooser.label') }}
-            </RadioGroupLabel>
+                    <div class="file-group">
+                      <div class="sheet-owner">
+                        <img
+                          class="owner-picture"
+                          :alt="option.owners[0].displayName"
+                          :src="option.owners[0].photoLink"
+                        />
+                        <div class="owner-info">
+                          <p class="owner-name">
+                            {{ option.owners[0].displayName }}
 
-            <div class="space-y-2">
-              <RadioGroupOption
-                as="template"
-                v-for="option in options"
-                :key="option.id"
-                :value="option.id"
-              >
-                <div class="sheet has-input-focus">
-                  <div class="sheet-group">
-                    <span aria-hidden="true" class="fake-radio" />
-                    <RadioGroupLabel as="div" class="sheet-info">
-                      <p class="sheet-name">
-                        {{ option.name }}
-                      </p>
-                      <time
-                        class="sheet-modified"
-                        :datetime="option.modifiedTime"
-                      >
-                        {{ d(option.modifiedTime, 'long') }}
-                      </time>
-                    </RadioGroupLabel>
-                  </div>
-
-                  <div class="file-group">
-                    <div class="sheet-owner">
-                      <img
-                        class="owner-picture"
-                        :alt="option.owners[0].displayName"
-                        :src="option.owners[0].photoLink"
-                      />
-                      <div class="owner-info">
-                        <p class="owner-name">
-                          {{ option.owners[0].displayName }}
-
-                          <span v-if="option.ownedByMe" class="owner-self">
-                            {{ t('dashboard.sheetChooser.you') }}
+                            <span v-if="option.ownedByMe" class="owner-self">
+                              {{ t('dashboard.sheetChooser.you') }}
+                            </span>
+                          </p>
+                          <span class="owner-email">
+                            {{ option.owners[0].emailAddress }}
+                          </span>
+                        </div>
+                      </div>
+                      <RadioGroupDescription as="div" class="sheet-attributes">
+                        <p
+                          class="sheet-starred"
+                          v-if="!option.starred"
+                          :title="t('dashboard.sheetChooser.starred')"
+                        >
+                          <span aria-hidden="true">
+                            <StarIcon class="w-5 h-5" />
+                          </span>
+                          <span class="sr-only">
+                            {{ t('dashboard.sheetChooser.starred') }}
                           </span>
                         </p>
-                        <span class="owner-email">
-                          {{ option.owners[0].emailAddress }}
-                        </span>
-                      </div>
-                    </div>
-                    <RadioGroupDescription as="div" class="sheet-attributes">
-                      <p
-                        class="sheet-starred"
-                        v-if="!option.starred"
-                        :title="t('dashboard.sheetChooser.starred')"
-                      >
-                        <span aria-hidden="true">
-                          <StarIcon class="w-5 h-5" />
-                        </span>
-                        <span class="sr-only">
-                          {{ t('dashboard.sheetChooser.starred') }}
-                        </span>
-                      </p>
-                      <p
-                        class="sheet-shared"
-                        v-if="!option.ownedByMe"
-                        :title="t('dashboard.sheetChooser.sharedWithYou')"
-                      >
-                        <span aria-hidden="true">
-                          <UserGroupIcon class="w-5 h-5" />
-                        </span>
-                        <span class="sr-only">
-                          {{ t('dashboard.sheetChooser.sharedWithYou') }}
-                        </span>
-                      </p>
-                      <p
-                        class="sheet-readonly"
-                        :title="
-                          option.capabilities.canEdit
-                            ? t('dashboard.sheetChooser.readAndEdit')
-                            : t('dashboard.sheetChooser.readOnly')
-                        "
-                      >
-                        <span aria-hidden="true">
-                          <LockOpenIcon
-                            v-if="option.capabilities.canEdit"
-                            class="w-5 h-5"
-                          />
-                          <LockClosedIcon v-else class="w-5 h-5" />
-                        </span>
-                        <span class="sr-only">
-                          {{
+                        <p
+                          class="sheet-shared"
+                          v-if="!option.ownedByMe"
+                          :title="t('dashboard.sheetChooser.sharedWithYou')"
+                        >
+                          <span aria-hidden="true">
+                            <UserGroupIcon class="w-5 h-5" />
+                          </span>
+                          <span class="sr-only">
+                            {{ t('dashboard.sheetChooser.sharedWithYou') }}
+                          </span>
+                        </p>
+                        <p
+                          class="sheet-readonly"
+                          :title="
                             option.capabilities.canEdit
                               ? t('dashboard.sheetChooser.readAndEdit')
                               : t('dashboard.sheetChooser.readOnly')
-                          }}
-                        </span>
-                      </p>
-                    </RadioGroupDescription>
+                          "
+                        >
+                          <span aria-hidden="true">
+                            <LockOpenIcon
+                              v-if="option.capabilities.canEdit"
+                              class="w-5 h-5"
+                            />
+                            <LockClosedIcon v-else class="w-5 h-5" />
+                          </span>
+                          <span class="sr-only">
+                            {{
+                              option.capabilities.canEdit
+                                ? t('dashboard.sheetChooser.readAndEdit')
+                                : t('dashboard.sheetChooser.readOnly')
+                            }}
+                          </span>
+                        </p>
+                      </RadioGroupDescription>
+                    </div>
                   </div>
-                </div>
-              </RadioGroupOption>
+                </RadioGroupOption>
+              </div>
+            </RadioGroup>
+
+            <div class="dialog-footer">
+              <button
+                type="button"
+                class="button is-primary ml-2"
+                @click.stop="selectCurrent"
+              >
+                {{ t('dashboard.sheetChooser.actionSelect') }}
+              </button>
+
+              <button
+                type="button"
+                class="button is-ghost"
+                @click.stop="closeDialog"
+              >
+                {{ t('dashboard.sheetChooser.actionCancel') }}
+              </button>
             </div>
-          </RadioGroup>
-
-          <div class="dialog-footer">
-            <button
-              type="button"
-              class="button is-primary ml-2"
-              @click.stop="selectCurrent"
-            >
-              {{ t('dashboard.sheetChooser.actionSelect') }}
-            </button>
-
-            <button
-              type="button"
-              class="button is-ghost"
-              @click.stop="closeDialog"
-            >
-              {{ t('dashboard.sheetChooser.actionCancel') }}
-            </button>
-          </div>
+          </DialogPanel>
         </TransitionChild>
       </div>
     </Dialog>

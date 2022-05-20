@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import {
   Dialog,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle,
   TransitionChild,
   TransitionRoot
@@ -49,7 +49,7 @@ watch(open, (newOpen) => {
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="dialog-overlay" />
+        <div class="dialog-overlay" />
       </TransitionChild>
 
       <TransitionChild
@@ -61,7 +61,7 @@ watch(open, (newOpen) => {
         leave-from="opacity-100 scale-100"
         leave-to="opacity-0 scale-95"
       >
-        <div
+        <DialogPanel
           class="inline-block w-full max-w-lg px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
         >
           <div class="flex justify-between items-center">
@@ -106,7 +106,7 @@ watch(open, (newOpen) => {
               </div>
             </div>
           </div>
-        </div>
+        </DialogPanel>
       </TransitionChild>
     </Dialog>
   </TransitionRoot>

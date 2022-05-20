@@ -6,7 +6,7 @@ import { TrashIcon } from '@heroicons/vue/outline'
 
 import {
   Dialog,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle,
   TransitionChild,
   TransitionRoot
@@ -58,7 +58,7 @@ watch(open, (newOpen) => {
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="dialog-overlay" />
+          <div class="dialog-overlay" />
         </TransitionChild>
 
         <!-- This element is to trick the browser into centering the modal contents. -->
@@ -78,7 +78,7 @@ watch(open, (newOpen) => {
           leave-from="opacity-100 translate-y-0 sm:scale-100"
           leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
-          <div
+          <DialogPanel
             class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full ring-1 ring-black/5"
           >
             <div
@@ -129,7 +129,7 @@ watch(open, (newOpen) => {
                 {{ t('book.deleteModal.cancel') }}
               </button>
             </div>
-          </div>
+          </DialogPanel>
         </TransitionChild>
       </div>
     </Dialog>

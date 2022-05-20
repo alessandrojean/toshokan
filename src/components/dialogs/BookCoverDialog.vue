@@ -6,7 +6,7 @@ import {
   TransitionRoot,
   TransitionChild,
   Dialog,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle
 } from '@headlessui/vue'
 
@@ -49,12 +49,11 @@ watch(open, (newOpen) => {
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="dialog-overlay" />
+          <div class="dialog-overlay" />
         </TransitionChild>
 
         <TransitionChild
-          as="div"
-          class="dialog-content transform"
+          class="transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 scale-95"
           enter-to="opacity-100 scale-100"
@@ -62,31 +61,33 @@ watch(open, (newOpen) => {
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogTitle as="h3" class="sr-only">
-            {{ t('dashboard.details.zoom.title') }}
-          </DialogTitle>
+          <DialogPanel class="dialog-content">
+            <DialogTitle as="h3" class="sr-only">
+              {{ t('dashboard.details.zoom.title') }}
+            </DialogTitle>
 
-          <img
-            :src="coverUrl"
-            alt=""
-            class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
-          />
+            <img
+              :src="coverUrl"
+              alt=""
+              class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
+            />
 
-          <div class="absolute w-10 h-10 -right-12 -top-1">
-            <button
-              type="button"
-              class="close-button"
-              :title="t('dashboard.details.zoom.title')"
-              @click="$emit('close')"
-            >
-              <span aria-hidden="true">
-                <XIcon class="w-6 h-6" />
-              </span>
-              <span class="sr-only">
-                {{ t('dashboard.details.zoom.close') }}
-              </span>
-            </button>
-          </div>
+            <div class="absolute w-10 h-10 -right-12 -top-1">
+              <button
+                type="button"
+                class="close-button"
+                :title="t('dashboard.details.zoom.title')"
+                @click="$emit('close')"
+              >
+                <span aria-hidden="true">
+                  <XIcon class="w-6 h-6" />
+                </span>
+                <span class="sr-only">
+                  {{ t('dashboard.details.zoom.close') }}
+                </span>
+              </button>
+            </div>
+          </DialogPanel>
         </TransitionChild>
       </div>
     </Dialog>

@@ -10,7 +10,7 @@ import slugify from 'slugify'
 
 import {
   Dialog,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle,
   Disclosure,
   DisclosureButton,
@@ -197,7 +197,7 @@ function toggleSort() {
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="dialog-overlay" />
+          <div class="dialog-overlay" />
         </TransitionChild>
         <div
           class="fixed inset-x-0 sm:inset-x-auto sm:inset-y-0 bottom-0 sm:right-0 sm:pl-10 max-w-full flex"
@@ -211,7 +211,7 @@ function toggleSort() {
             leave-from="translate-y-0 sm:translate-x-0"
             leave-to="translate-y-full sm:translate-y-0 sm:translate-x-full"
           >
-            <div class="relative w-screen sm:max-w-md">
+            <DialogPanel class="relative w-screen sm:max-w-md">
               <form
                 class="h-full flex flex-col sm:py-4 bg-white shadow-xl overflow-y-scroll dark:bg-gray-800 rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl ring-1 ring-black/5"
                 @submit.prevent="handleFilter"
@@ -392,7 +392,7 @@ function toggleSort() {
                   </button>
                 </div>
               </form>
-            </div>
+            </DialogPanel>
           </TransitionChild>
         </div>
       </div>

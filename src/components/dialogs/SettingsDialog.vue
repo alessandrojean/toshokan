@@ -9,7 +9,7 @@ import { useSheetStore } from '@/stores/sheet'
 
 import {
   Dialog,
-  DialogOverlay,
+  DialogPanel,
   DialogTitle,
   Switch,
   SwitchLabel,
@@ -192,12 +192,12 @@ function handleDisconnect() {
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <DialogOverlay class="hidden sm:block dialog-overlay" />
+          <div class="hidden sm:block dialog-overlay" />
         </TransitionChild>
 
         <TransitionChild
-          as="div"
-          class="dialog-content transform"
+          as="template"
+          class="transform"
           enter="motion-reduce:transition-none duration-300 ease-out"
           enter-from="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
           enter-to="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
@@ -205,432 +205,458 @@ function handleDisconnect() {
           leave-from="opacity-100 translate-x-0 sm:translate-x-0 sm:scale-100"
           leave-to="opacity-0 translate-x-full sm:translate-x-0 sm:scale-95"
         >
-          <div class="dialog-header">
-            <div class="flex-grow">
-              <DialogTitle as="h2" class="dialog-title">
-                {{ t('dashboard.settings.title') }}
-              </DialogTitle>
+          <DialogPanel class="dialog-content">
+            <div class="dialog-header">
+              <div class="flex-grow">
+                <DialogTitle as="h2" class="dialog-title">
+                  {{ t('dashboard.settings.title') }}
+                </DialogTitle>
+              </div>
+
+              <button class="close-button has-ring-focus" @click="closeDialog">
+                <span aria-hidden="true">
+                  <XIcon class="w-5 h-5" />
+                </span>
+              </button>
+
+              <span aria-hidden="true" class="absolute left-2">
+                <svg
+                  class="text-white opacity-30 block h-48 w-48"
+                  viewBox="0 0 184 184"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                    opacity="0.503"
+                  ></path>
+                </svg>
+              </span>
             </div>
 
-            <button class="close-button has-ring-focus" @click="closeDialog">
-              <span aria-hidden="true">
-                <XIcon class="w-5 h-5" />
-              </span>
-            </button>
-
-            <span aria-hidden="true" class="absolute left-2">
-              <svg
-                class="text-white opacity-30 block h-48 w-48"
-                viewBox="0 0 184 184"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M182 184a2 2 0 110-4 2 2 0 010 4zm-20-20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 0a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm-20 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 40a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 60a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm-20 80a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM22 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 144a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0 20a2 2 0 110-4 2 2 0 010 4zm0-60a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zm0-20a2 2 0 110-4 2 2 0 010 4zM2 4a2 2 0 110-4 2 2 0 010 4z"
-                  fill="currentColor"
-                  fill-rule="evenodd"
-                  opacity="0.503"
-                ></path>
-              </svg>
-            </span>
-          </div>
-
-          <TabGroup>
-            <TabList class="tab-list">
-              <Tab
-                v-for="tab of tabs"
-                :key="tab.key"
-                as="template"
-                :disabled="tab.disabled"
-              >
-                <button class="tab-button has-ring-focus">
-                  {{ tab.title }}
-                </button>
-              </Tab>
-            </TabList>
-
-            <TabPanels as="template">
-              <div class="tab-panels" ref="main">
-                <TabPanel
-                  class="has-ring-focus rounded-md focus-visible:ring-inset"
+            <TabGroup>
+              <TabList class="tab-list">
+                <Tab
+                  v-for="tab of tabs"
+                  :key="tab.key"
+                  as="template"
+                  :disabled="tab.disabled"
                 >
-                  <div class="divide-y dark:divide-gray-700">
-                    <div class="preference">
-                      <div class="preference-description">
-                        <label for="locale">
-                          {{ t('dashboard.settings.appearence.locale.label') }}
-                        </label>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.locale.description'
+                  <button class="tab-button has-ring-focus">
+                    {{ tab.title }}
+                  </button>
+                </Tab>
+              </TabList>
+
+              <TabPanels as="template">
+                <div class="tab-panels" ref="main">
+                  <TabPanel
+                    class="has-ring-focus rounded-md focus-visible:ring-inset"
+                  >
+                    <div class="divide-y dark:divide-gray-700">
+                      <div class="preference">
+                        <div class="preference-description">
+                          <label for="locale">
+                            {{
+                              t('dashboard.settings.appearence.locale.label')
+                            }}
+                          </label>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.locale.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <LocaleSelector
+                          :model-value="settings.appearence.locale"
+                          @update:model-value="
+                            updateSetting('appearence.locale', $event)
+                          "
+                        />
+                      </div>
+                      <div class="preference">
+                        <div class="preference-description">
+                          <label for="theme">
+                            {{ t('dashboard.settings.appearence.theme.label') }}
+                          </label>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.theme.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <select
+                          class="select w-44 h-auto"
+                          id="theme"
+                          @change="
+                            updateSetting(
+                              'appearence.theme',
+                              $event.target.value
                             )
-                          }}
-                        </p>
-                      </div>
-                      <LocaleSelector
-                        :model-value="settings.appearence.locale"
-                        @update:model-value="
-                          updateSetting('appearence.locale', $event)
-                        "
-                      />
-                    </div>
-                    <div class="preference">
-                      <div class="preference-description">
-                        <label for="theme">
-                          {{ t('dashboard.settings.appearence.theme.label') }}
-                        </label>
-                        <p>
-                          {{
-                            t('dashboard.settings.appearence.theme.description')
-                          }}
-                        </p>
-                      </div>
-                      <select
-                        class="select w-44 h-auto"
-                        id="theme"
-                        @change="
-                          updateSetting('appearence.theme', $event.target.value)
-                        "
-                      >
-                        <option
-                          value="system"
-                          :selected="'system' === settings.appearence.theme"
-                        >
-                          {{ t('dashboard.settings.appearence.theme.system') }}
-                        </option>
-                        <option
-                          value="light"
-                          :selected="'light' === settings.appearence.theme"
-                        >
-                          {{ t('dashboard.settings.appearence.theme.light') }}
-                        </option>
-                        <option
-                          value="dark"
-                          :selected="'dark' === settings.appearence.theme"
-                        >
-                          {{ t('dashboard.settings.appearence.theme.dark') }}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="preference">
-                      <div class="preference-description">
-                        <label for="view-mode">
-                          {{
-                            t('dashboard.settings.appearence.viewMode.label')
-                          }}
-                        </label>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.viewMode.description'
-                            )
-                          }}
-                        </p>
-                      </div>
-                      <select
-                        class="select w-36 h-auto"
-                        id="view-mode"
-                        @change="
-                          updateSetting(
-                            'appearence.viewMode',
-                            $event.target.value
-                          )
-                        "
-                      >
-                        <option
-                          value="grid"
-                          :selected="'grid' === settings.appearence.viewMode"
-                        >
-                          {{ t('dashboard.library.filters.viewMode.grid') }}
-                        </option>
-                        <option
-                          value="table"
-                          :selected="'table' === settings.appearence.viewMode"
-                        >
-                          {{ t('dashboard.library.filters.viewMode.table') }}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="preference">
-                      <div class="preference-description">
-                        <label for="grid-mode">
-                          {{
-                            t('dashboard.settings.appearence.gridMode.label')
-                          }}
-                        </label>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.gridMode.description'
-                            )
-                          }}
-                        </p>
-                      </div>
-                      <select
-                        class="select w-36 h-auto"
-                        id="grid-mode"
-                        :disabled="settings.appearence.viewMode !== 'grid'"
-                        @change="
-                          updateSetting(
-                            'appearence.gridMode',
-                            $event.target.value
-                          )
-                        "
-                      >
-                        <option
-                          value="compact"
-                          :selected="'compact' === settings.appearence.gridMode"
-                        >
-                          {{ t('dashboard.library.filters.gridMode.compact') }}
-                        </option>
-                        <option
-                          value="comfortable"
-                          :selected="
-                            'comfortable' === settings.appearence.gridMode
                           "
                         >
-                          {{
-                            t('dashboard.library.filters.gridMode.comfortable')
-                          }}
-                        </option>
-                      </select>
-                    </div>
-                    <SwitchGroup as="div" class="preference">
-                      <div class="preference-description">
-                        <SwitchLabel>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.spoilerModeSynopsis.label'
-                            )
-                          }}
-                        </SwitchLabel>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.spoilerModeSynopsis.description'
-                            )
-                          }}
-                        </p>
+                          <option
+                            value="system"
+                            :selected="'system' === settings.appearence.theme"
+                          >
+                            {{
+                              t('dashboard.settings.appearence.theme.system')
+                            }}
+                          </option>
+                          <option
+                            value="light"
+                            :selected="'light' === settings.appearence.theme"
+                          >
+                            {{ t('dashboard.settings.appearence.theme.light') }}
+                          </option>
+                          <option
+                            value="dark"
+                            :selected="'dark' === settings.appearence.theme"
+                          >
+                            {{ t('dashboard.settings.appearence.theme.dark') }}
+                          </option>
+                        </select>
                       </div>
-                      <Switch
-                        :model-value="settings.appearence.spoilerMode.synopsis"
-                        @update:model-value="
-                          updateSetting(
-                            'appearence.spoilerMode.synopsis',
-                            $event
-                          )
-                        "
-                        :class="
-                          settings.appearence.spoilerMode.synopsis
-                            ? 'bg-primary-600 dark:bg-primary-500'
-                            : 'bg-gray-200 dark:bg-gray-600'
-                        "
-                        class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                      >
-                        <span
-                          aria-hidden="true"
+                      <div class="preference">
+                        <div class="preference-description">
+                          <label for="view-mode">
+                            {{
+                              t('dashboard.settings.appearence.viewMode.label')
+                            }}
+                          </label>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.viewMode.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <select
+                          class="select w-36 h-auto"
+                          id="view-mode"
+                          @change="
+                            updateSetting(
+                              'appearence.viewMode',
+                              $event.target.value
+                            )
+                          "
+                        >
+                          <option
+                            value="grid"
+                            :selected="'grid' === settings.appearence.viewMode"
+                          >
+                            {{ t('dashboard.library.filters.viewMode.grid') }}
+                          </option>
+                          <option
+                            value="table"
+                            :selected="'table' === settings.appearence.viewMode"
+                          >
+                            {{ t('dashboard.library.filters.viewMode.table') }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="preference">
+                        <div class="preference-description">
+                          <label for="grid-mode">
+                            {{
+                              t('dashboard.settings.appearence.gridMode.label')
+                            }}
+                          </label>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.gridMode.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <select
+                          class="select w-36 h-auto"
+                          id="grid-mode"
+                          :disabled="settings.appearence.viewMode !== 'grid'"
+                          @change="
+                            updateSetting(
+                              'appearence.gridMode',
+                              $event.target.value
+                            )
+                          "
+                        >
+                          <option
+                            value="compact"
+                            :selected="
+                              'compact' === settings.appearence.gridMode
+                            "
+                          >
+                            {{
+                              t('dashboard.library.filters.gridMode.compact')
+                            }}
+                          </option>
+                          <option
+                            value="comfortable"
+                            :selected="
+                              'comfortable' === settings.appearence.gridMode
+                            "
+                          >
+                            {{
+                              t(
+                                'dashboard.library.filters.gridMode.comfortable'
+                              )
+                            }}
+                          </option>
+                        </select>
+                      </div>
+                      <SwitchGroup as="div" class="preference">
+                        <div class="preference-description">
+                          <SwitchLabel>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.spoilerModeSynopsis.label'
+                              )
+                            }}
+                          </SwitchLabel>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.spoilerModeSynopsis.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <Switch
+                          :model-value="
+                            settings.appearence.spoilerMode.synopsis
+                          "
+                          @update:model-value="
+                            updateSetting(
+                              'appearence.spoilerMode.synopsis',
+                              $event
+                            )
+                          "
                           :class="
                             settings.appearence.spoilerMode.synopsis
-                              ? 'translate-x-6 dark:bg-white'
-                              : 'translate-x-1 dark:bg-gray-100'
+                              ? 'bg-primary-600 dark:bg-primary-500'
+                              : 'bg-gray-200 dark:bg-gray-600'
                           "
-                          class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
-                        />
-                      </Switch>
-                    </SwitchGroup>
-                    <SwitchGroup as="div" class="preference">
-                      <div class="preference-description">
-                        <SwitchLabel>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.spoilerModeCover.label'
+                          class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                        >
+                          <span
+                            aria-hidden="true"
+                            :class="
+                              settings.appearence.spoilerMode.synopsis
+                                ? 'translate-x-6 dark:bg-white'
+                                : 'translate-x-1 dark:bg-gray-100'
+                            "
+                            class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
+                          />
+                        </Switch>
+                      </SwitchGroup>
+                      <SwitchGroup as="div" class="preference">
+                        <div class="preference-description">
+                          <SwitchLabel>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.spoilerModeCover.label'
+                              )
+                            }}
+                          </SwitchLabel>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.spoilerModeCover.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <Switch
+                          :model-value="settings.appearence.spoilerMode.cover"
+                          @update:model-value="
+                            updateSetting(
+                              'appearence.spoilerMode.cover',
+                              $event
                             )
-                          }}
-                        </SwitchLabel>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.appearence.spoilerModeCover.description'
-                            )
-                          }}
-                        </p>
-                      </div>
-                      <Switch
-                        :model-value="settings.appearence.spoilerMode.cover"
-                        @update:model-value="
-                          updateSetting('appearence.spoilerMode.cover', $event)
-                        "
-                        :class="
-                          settings.appearence.spoilerMode.cover
-                            ? 'bg-primary-600 dark:bg-primary-500'
-                            : 'bg-gray-200 dark:bg-gray-600'
-                        "
-                        class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                      >
-                        <span
-                          aria-hidden="true"
+                          "
                           :class="
                             settings.appearence.spoilerMode.cover
-                              ? 'translate-x-6 dark:bg-white'
-                              : 'translate-x-1 dark:bg-gray-100'
+                              ? 'bg-primary-600 dark:bg-primary-500'
+                              : 'bg-gray-200 dark:bg-gray-600'
                           "
-                          class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
-                        />
-                      </Switch>
-                    </SwitchGroup>
-                    <SwitchGroup as="div" class="preference">
+                          class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                        >
+                          <span
+                            aria-hidden="true"
+                            :class="
+                              settings.appearence.spoilerMode.cover
+                                ? 'translate-x-6 dark:bg-white'
+                                : 'translate-x-1 dark:bg-gray-100'
+                            "
+                            class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
+                          />
+                        </Switch>
+                      </SwitchGroup>
+                      <SwitchGroup as="div" class="preference">
+                        <div class="preference-description">
+                          <SwitchLabel>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.blurNsfwCover.label'
+                              )
+                            }}
+                          </SwitchLabel>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.appearence.blurNsfwCover.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <Switch
+                          :model-value="settings.appearence.blurNsfw"
+                          @update:model-value="
+                            updateSetting('appearence.blurNsfw', $event)
+                          "
+                          v-model="settings.appearence.blurNsfw"
+                          :class="
+                            settings.appearence.blurNsfw
+                              ? 'bg-primary-600 dark:bg-primary-500'
+                              : 'bg-gray-200 dark:bg-gray-600'
+                          "
+                          class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                        >
+                          <span
+                            aria-hidden="true"
+                            :class="
+                              settings.appearence.blurNsfw
+                                ? 'translate-x-6 dark:bg-white'
+                                : 'translate-x-1 dark:bg-gray-100'
+                            "
+                            class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
+                          />
+                        </Switch>
+                      </SwitchGroup>
+                    </div>
+                  </TabPanel>
+                  <TabPanel
+                    class="has-ring-focus rounded-md focus-visible:ring-inset"
+                  >
+                    <div class="preference">
                       <div class="preference-description">
-                        <SwitchLabel>
+                        <label>
                           {{
-                            t(
-                              'dashboard.settings.appearence.blurNsfwCover.label'
-                            )
+                            t('dashboard.settings.privacy.removeAccess.label')
                           }}
-                        </SwitchLabel>
+                        </label>
                         <p>
                           {{
                             t(
-                              'dashboard.settings.appearence.blurNsfwCover.description'
+                              'dashboard.settings.privacy.removeAccess.description'
                             )
                           }}
                         </p>
                       </div>
-                      <Switch
-                        :model-value="settings.appearence.blurNsfw"
-                        @update:model-value="
-                          updateSetting('appearence.blurNsfw', $event)
-                        "
-                        v-model="settings.appearence.blurNsfw"
-                        :class="
-                          settings.appearence.blurNsfw
-                            ? 'bg-primary-600 dark:bg-primary-500'
-                            : 'bg-gray-200 dark:bg-gray-600'
-                        "
-                        class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                      >
-                        <span
-                          aria-hidden="true"
-                          :class="
-                            settings.appearence.blurNsfw
-                              ? 'translate-x-6 dark:bg-white'
-                              : 'translate-x-1 dark:bg-gray-100'
-                          "
-                          class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
-                        />
-                      </Switch>
-                    </SwitchGroup>
-                  </div>
-                </TabPanel>
-                <TabPanel
-                  class="has-ring-focus rounded-md focus-visible:ring-inset"
-                >
-                  <div class="preference">
-                    <div class="preference-description">
-                      <label>
-                        {{ t('dashboard.settings.privacy.removeAccess.label') }}
-                      </label>
-                      <p>
-                        {{
-                          t(
-                            'dashboard.settings.privacy.removeAccess.description'
-                          )
-                        }}
-                      </p>
-                    </div>
-                    <div>
-                      <button
-                        type="button"
-                        class="button is-danger"
-                        @click="handleDisconnect"
-                      >
-                        <span aria-hidden="true">
-                          <ExclamationIcon />
-                        </span>
-                        <span>
-                          {{
-                            t('dashboard.settings.privacy.removeAccess.remove')
-                          }}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </TabPanel>
-                <TabPanel
-                  v-if="isDev"
-                  class="has-ring-focus rounded-md focus-visible:ring-inset"
-                >
-                  <div class="divide-y dark:divide-gray-700">
-                    <SwitchGroup as="div" class="preference">
-                      <div class="preference-description">
-                        <SwitchLabel>
+                      <div>
+                        <button
+                          type="button"
+                          class="button is-danger"
+                          @click="handleDisconnect"
+                        >
                           <span aria-hidden="true">
-                            <ExclamationIcon
-                              class="w-5 h-5 mr-1 text-red-600 dark:text-red-400"
-                            />
+                            <ExclamationIcon />
                           </span>
                           <span>
                             {{
                               t(
-                                'dashboard.settings.development.useDevSheet.label'
+                                'dashboard.settings.privacy.removeAccess.remove'
                               )
                             }}
                           </span>
-                        </SwitchLabel>
-                        <p>
-                          {{
-                            t(
-                              'dashboard.settings.development.useDevSheet.description'
-                            )
-                          }}
-                        </p>
+                        </button>
                       </div>
-                      <Switch
-                        :model-value="settings.development.useDevSheet"
-                        @update:model-value="
-                          updateSetting('development.useDevSheet', $event)
-                        "
-                        :class="
-                          settings.development.useDevSheet
-                            ? 'bg-primary-600 dark:bg-primary-500'
-                            : 'bg-gray-200 dark:bg-gray-600'
-                        "
-                        class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                      >
-                        <span
-                          aria-hidden="true"
+                    </div>
+                  </TabPanel>
+                  <TabPanel
+                    v-if="isDev"
+                    class="has-ring-focus rounded-md focus-visible:ring-inset"
+                  >
+                    <div class="divide-y dark:divide-gray-700">
+                      <SwitchGroup as="div" class="preference">
+                        <div class="preference-description">
+                          <SwitchLabel>
+                            <span aria-hidden="true">
+                              <ExclamationIcon
+                                class="w-5 h-5 mr-1 text-red-600 dark:text-red-400"
+                              />
+                            </span>
+                            <span>
+                              {{
+                                t(
+                                  'dashboard.settings.development.useDevSheet.label'
+                                )
+                              }}
+                            </span>
+                          </SwitchLabel>
+                          <p>
+                            {{
+                              t(
+                                'dashboard.settings.development.useDevSheet.description'
+                              )
+                            }}
+                          </p>
+                        </div>
+                        <Switch
+                          :model-value="settings.development.useDevSheet"
+                          @update:model-value="
+                            updateSetting('development.useDevSheet', $event)
+                          "
                           :class="
                             settings.development.useDevSheet
-                              ? 'translate-x-6 dark:bg-white'
-                              : 'translate-x-1 dark:bg-gray-100'
+                              ? 'bg-primary-600 dark:bg-primary-500'
+                              : 'bg-gray-200 dark:bg-gray-600'
                           "
-                          class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
-                        />
-                      </Switch>
-                    </SwitchGroup>
-                  </div>
-                </TabPanel>
-              </div>
-            </TabPanels>
-          </TabGroup>
+                          class="relative inline-flex items-center h-6 rounded-full w-11 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                        >
+                          <span
+                            aria-hidden="true"
+                            :class="
+                              settings.development.useDevSheet
+                                ? 'translate-x-6 dark:bg-white'
+                                : 'translate-x-1 dark:bg-gray-100'
+                            "
+                            class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full"
+                          />
+                        </Switch>
+                      </SwitchGroup>
+                    </div>
+                  </TabPanel>
+                </div>
+              </TabPanels>
+            </TabGroup>
 
-          <div class="dialog-footer">
-            <button
-              type="button"
-              class="button is-primary ml-2"
-              @click.stop="handleSave"
-            >
-              <CheckIcon aria-hidden="true" />
-              {{ t('dashboard.details.editForm.finish') }}
-            </button>
+            <div class="dialog-footer">
+              <button
+                type="button"
+                class="button is-primary ml-2"
+                @click.stop="handleSave"
+              >
+                <CheckIcon aria-hidden="true" />
+                {{ t('dashboard.details.editForm.finish') }}
+              </button>
 
-            <button
-              type="button"
-              class="button is-ghost"
-              @click.stop="closeDialog"
-            >
-              {{ t('dashboard.details.editForm.cancel') }}
-            </button>
-          </div>
+              <button
+                type="button"
+                class="button is-ghost"
+                @click.stop="closeDialog"
+              >
+                {{ t('dashboard.details.editForm.cancel') }}
+              </button>
+            </div>
+          </DialogPanel>
         </TransitionChild>
       </div>
     </Dialog>
