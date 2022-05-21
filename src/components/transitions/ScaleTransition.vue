@@ -18,6 +18,6 @@ defineProps({
     enter-from-class="opacity-0 scale-95"
     enter-to-class="opacity-100 scale-100"
   >
-    <slot />
+    <slot></slot>
   </transition>
 </template>

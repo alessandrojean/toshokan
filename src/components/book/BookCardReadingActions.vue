@@ -51,7 +51,7 @@ function handleCalendar(close) {
           </span>
         </button>
 
-        <Popover as="template">
+        <Popover>
           <PopoverButton
             class="rounded-full p-1 box-content dark:text-gray-300 hover:text-primary-600 dark:hover:text-gray-100 hover:bg-primary-100 dark:hover:bg-gray-500"
             tabindex="-1"
