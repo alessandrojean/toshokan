@@ -112,32 +112,33 @@ function unselect(url) {
         class="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700 relative overflow-hidden"
       >
         <FadeTransition>
-          <RadioGroup
-            v-if="results?.length > 0"
-            :model-value="coverUrl"
-            @update:model-value="$emit('update:coverUrl', $event)"
-          >
-            <RadioGroupLabel class="sr-only">
-              {{ t('book.coverSelector.label') }}
-            </RadioGroupLabel>
-            <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-              <RadioGroupOption
-                class="focus:outline-none"
-                v-for="result of results"
-                :key="result"
-                :value="result"
-                v-slot="{ active, checked }"
-              >
-                <CoverOption
-                  :active="active"
-                  :checked="checked"
-                  :cover-url="result"
-                  @click="unselect(result)"
-                  @error="handleError(result)"
-                />
-              </RadioGroupOption>
-            </div>
-          </RadioGroup>
+          <div v-if="results?.length > 0">
+            <RadioGroup
+              :model-value="coverUrl"
+              @update:model-value="$emit('update:coverUrl', $event)"
+            >
+              <RadioGroupLabel class="sr-only">
+                {{ t('book.coverSelector.label') }}
+              </RadioGroupLabel>
+              <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                <RadioGroupOption
+                  class="focus:outline-none"
+                  v-for="result of results"
+                  :key="result"
+                  :value="result"
+                  v-slot="{ active, checked }"
+                >
+                  <CoverOption
+                    :active="active"
+                    :checked="checked"
+                    :cover-url="result"
+                    @click="unselect(result)"
+                    @error="handleError(result)"
+                  />
+                </RadioGroupOption>
+              </div>
+            </RadioGroup>
+          </div>
 
           <div v-else class="flex flex-col items-center p-3">
             <EmojiSadIcon

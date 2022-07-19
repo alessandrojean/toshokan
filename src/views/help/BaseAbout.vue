@@ -38,15 +38,16 @@ const { renderMarkdown, frontmatter } = useMarkdown()
 
 const docs = import.meta.glob('/docs/**/*.md', { as: 'raw' })
 
-function getMarkdownContent(locale, file) {
+async function getMarkdownContent(locale, file) {
   const localeFile = `/docs/${locale}/${file}.md`
   const englishFile = `/docs/en-US/${file}.md`
+  const importFn = docs[localeFile] || docs[englishFile]
 
-  return docs[localeFile] || docs[englishFile]
+  return importFn()
 }
 
 watchEffect(async () => {
-  markdownBody.value = getMarkdownContent(locale.value, file.value)
+  markdownBody.value = await getMarkdownContent(locale.value, file.value)
   await nextTick()
   rebuildPageContents(!mounted.value)
   mounted.value = true
