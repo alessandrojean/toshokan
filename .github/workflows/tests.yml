@@ -1,13 +1,13 @@
 on:
   push:
     branches: 
-      - master
+      - main
       - stable
     paths-ignore:
       - '**.md'
   pull_request:
     branches: 
-      - master
+      - main
 
 jobs:
   build:
