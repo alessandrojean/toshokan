@@ -202,9 +202,9 @@ onUnmounted(() => {
         leave-to="opacity-0 scale-95"
       >
         <DialogPanel
-          class="inline-block w-full max-w-2xl lg:max-w-3xl px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
+          class="flex flex-col md:inline-block w-full max-w-2xl lg:max-w-3xl px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
         >
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center flex-shrink-0">
             <DialogTitle
               as="h3"
               class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
@@ -225,12 +225,14 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <div class="w-full md:flex md:items-start md:space-x-6">
+          <div
+            class="flex-grow md:flex-grow-0 overflow-y-auto w-full md:flex md:items-start md:space-x-6"
+          >
             <div
               class="flex md:block flex-shrink-0 justify-center mb-6 md:mb-0"
             >
               <div
-                class="w-5/6 sm:w-1/2 md:w-64 lg:w-80 relative rounded-lg overflow-hidden border border-gray-300 dark:border-0 dark:opacity-90"
+                class="w-full sm:w-1/2 md:w-64 lg:w-80 relative rounded-lg overflow-hidden border border-gray-300 dark:border-0 dark:opacity-90"
               >
                 <div class="aspect-w-1 aspect-h-1">
                   <img
@@ -248,12 +250,12 @@ onUnmounted(() => {
             </div>
 
             <div class="flex-grow">
-              <h2 class="font-display font-medium text-lg md:text-base mb-4">
+              <h2 class="font-display font-medium text-base mb-4">
                 {{ t('dashboard.details.share.qrCodeInstructions.title') }}
               </h2>
 
               <div
-                class="prose md:prose-sm max-w-full min-w-0 dark:prose-invert prose-h4:text-base prose-h4:font-medium prose-h4:pb-2"
+                class="prose prose-sm max-w-full min-w-0 dark:prose-invert prose-h4:text-base prose-h4:font-medium prose-h4:pb-2"
                 v-html="
                   renderMarkdown(
                     t('dashboard.details.share.qrCodeInstructions.body')
@@ -309,7 +311,7 @@ onUnmounted(() => {
           <div
             v-if="fileUrl.length > 0"
             :class="[
-              'w-full flex flex-col md:flex-row pt-2',
+              'w-full flex flex-col md:flex-row pt-2 flex-shrink-0',
               showUrlCopier ? 'md:justify-between' : 'md:justify-end'
             ]"
           >
@@ -325,7 +327,7 @@ onUnmounted(() => {
                 :checked="anonymous"
                 @change="anonymous = $event.target.checked"
               />
-              <label for="anonymous" class="label text-base md:text-sm mb-0">
+              <label for="anonymous" class="label mb-0">
                 {{ t('dashboard.details.share.anonymous') }}
               </label>
             </div>
@@ -334,7 +336,7 @@ onUnmounted(() => {
               <div v-if="showUrlCopier" class="flex space-x-2">
                 <button
                   type="button"
-                  class="md:hidden button flex-1 md:w-auto justify-center md:justify-start text-base md:text-sm"
+                  class="md:hidden button flex-1 md:w-auto justify-center md:justify-start"
                   @click="copyShareUrl"
                 >
                   <span aria-hidden="true">
@@ -349,7 +351,7 @@ onUnmounted(() => {
                 </button>
 
                 <a
-                  class="md:hidden button flex-1 md:w-auto justify-center md:justify-start text-base md:text-sm"
+                  class="md:hidden button flex-1 md:w-auto justify-center md:justify-start"
                   target="_blank"
                   :href="shareUrl"
                 >
@@ -364,7 +366,7 @@ onUnmounted(() => {
 
               <button
                 type="button"
-                class="button w-full md:w-auto justify-center md:justify-start text-base md:text-sm"
+                class="button w-full md:w-auto justify-center md:justify-start"
                 @click="downloadFile"
               >
                 <span aria-hidden="true">
