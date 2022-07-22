@@ -140,7 +140,7 @@ const { t } = useI18n({ useScope: 'global' })
       @update:modelValue="handleDragAndDrop"
     >
       <template #item="{ element: tag, index }">
-        <li :class="['tag', tagClass]">
+        <li :class="['input-tag', tagClass]">
           <span v-if="modelValue.length > 1" class="handle" aria-hidden="true">
             <MenuIcon class="w-3 h-3" />
           </span>
@@ -173,7 +173,7 @@ const { t } = useI18n({ useScope: 'global' })
   @apply text-gray-600 dark:text-gray-300;
 }
 
-.tag {
+.input-tag {
   @apply flex items-center text-sm
     bg-primary-100 dark:bg-gray-700 rounded-md
     text-primary-700 dark:text-gray-200
@@ -181,7 +181,7 @@ const { t } = useI18n({ useScope: 'global' })
     motion-safe:transition-opacity;
 }
 
-.tag.is-uppercase {
+.input-tag.is-uppercase {
   @apply text-xs uppercase font-semibold tracking-wide;
 }
 
