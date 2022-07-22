@@ -1,0 +1,31 @@
+on:
+  push:
+    branches: 
+      - master
+      - stable
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: 
+      - master
+
+jobs:
+  build:
+    name: Run tests and build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn test
+      - name: Run build
+        run: yarn build
