@@ -294,7 +294,7 @@
   }
   
   .button.is-icon-only svg {
-    @apply mx-0;
+    @apply !mx-0;
   }
 
   .button.not-is-icon-only svg {
@@ -441,5 +441,37 @@
       border-l-[7px] border-l-transparent
       border-r-[7px] border-r-transparent
       border-b-[7px] border-b-white;
+  }
+
+  .tag-list {
+    @apply flex flex-wrap -mt-2;
+  }
+
+  .tag {
+    @apply text-xxs uppercase font-bold tracking-wide
+      bg-primary-100 dark:bg-gray-700 rounded-md
+      text-primary-700 dark:text-gray-300
+      px-2.5 py-0.5 inline-flex items-center;
+  }
+
+  .tag:hover,
+  .tag:focus-visible {
+    @apply bg-primary-200 dark:bg-gray-600
+      text-primary-800 dark:text-gray-200;
+  }
+
+  .tag:focus-visible {
+    @apply dark:ring-offset-gray-900;
+  }
+
+  .bullet {
+    @apply bg-primary-300 dark:bg-gray-500
+      w-1.5 h-1.5 mr-2 -ml-0.5
+      inline-block rounded;
+  }
+
+  .tag:hover .bullet,
+  .tag:focus-visible .bullet {
+    @apply bg-primary-400 dark:bg-gray-400;
   }
 }

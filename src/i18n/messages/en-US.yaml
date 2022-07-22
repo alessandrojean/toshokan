@@ -8,6 +8,7 @@ app:
     signIn: Sign in
     error: Critical error
     notFound: Page not found
+    share: Shared book
     about:
       a11y: Accessibility
       about: About the project
@@ -150,6 +151,21 @@ sheet:
   notFound: Sheet not found.
 table:
   selectAll: Select all
+share:
+  errorTitle: Decoding error
+  errorDescription: |
+    An error happened when parsing the book information from the URL.
+
+    This can happen when the URL:
+
+    - was generated with an error; or
+    - is incomplete; or
+    - was edited by other tools.
+
+    To avoid this problem again, always use the **Copy** button
+    when sharing and never edit the generated URL.
+  actionQrCode: QR Code
+  sharingOwner: Shared by {0}
 footer:
   links:
     a11y: Accessibility
@@ -331,7 +347,24 @@ dashboard:
         markAs: 'Mark as {status}'
         addToFavorites: Add to favorites
         removeFromFavorites: Remove from favorites
+        share: Share
         delete: Delete
+    share:
+      title: Share the book
+      qrCodeInstructions: 
+        title: Instructions
+        body: |
+          1. Open **Toshokan** in your phone.
+          1. Tap **Add** in **Library** and choose **Read barcode**.
+          1. Scan the code and tap **Add to library**.
+      actionExport: Save file
+      actionClose: Close
+      actionCopy: Copy
+      actionCopyUrl: Copy the URL
+      actionOpen: Open the link
+      copied: Copied!
+      anonymous: Remove identification
+      link: Direct link
     tabs:
       metadata: Book metadata
       notes: Notes
@@ -581,6 +614,21 @@ dashboard:
         label: Hide the covers of NSFW tagged books
         description: >
           If enabled, the covers will be blurred if the book is tagged as NSFW.
+    export:
+      title: Export (β)
+      android:
+        label: Toshokan Android
+        description: Export your sheet as a Toshokan Android compatible file.
+        export: Exportar
+        instructions: 
+          title: Instructions
+          text: |
+            Follow the steps below to restore the sheet in the app.
+
+            1. Open **Toshokan** in your phone.
+            1. Open the **Settings** (**More** ⟶ **Settings**) and select **Backup and restore**.
+            1. Tap in **Restore from sheet** and choose the file.
+            1. Wait until the restoration is complete.
     privacy:
       title: Privacy
       description: Update your privacy settings.

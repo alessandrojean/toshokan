@@ -3,9 +3,11 @@ import { computed, inject, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQueryClient } from 'vue-query'
 
+import useMarkdown from '@/composables/useMarkdown'
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
+import androidExport from '@/services/export/androidExport'
 
 import {
   Dialog,
@@ -23,8 +25,14 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { CheckIcon, ExclamationIcon, XIcon } from '@heroicons/vue/solid'
+import {
+  CheckIcon,
+  DownloadIcon,
+  ExclamationIcon,
+  XIcon
+} from '@heroicons/vue/solid'
 
+import Alert from '@/components/Alert.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
 
 const props = defineProps({ isOpen: Boolean })
@@ -49,6 +57,10 @@ const tabs = computed(() => {
     {
       key: 'appearence',
       title: t('dashboard.settings.appearence.title')
+    },
+    {
+      key: 'export',
+      title: t('dashboard.settings.export.title')
     },
     {
       key: 'privacy',
@@ -176,6 +188,27 @@ async function handleSave() {
 function handleDisconnect() {
   closeDialog()
   authStore.disconnect()
+}
+
+const exporting = ref(false)
+const { renderMarkdown } = useMarkdown()
+
+const exportInstructions = computed(() => {
+  return renderMarkdown(
+    t('dashboard.settings.export.android.instructions.text')
+  )
+})
+
+async function exportAsAndroid() {
+  exporting.value = true
+
+  try {
+    await androidExport(sheetStore.sheetId)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    exporting.value = false
+  }
 }
 </script>
 
@@ -540,6 +573,54 @@ function handleDisconnect() {
                           />
                         </Switch>
                       </SwitchGroup>
+                    </div>
+                  </TabPanel>
+                  <TabPanel
+                    class="has-ring-focus rounded-md focus-visible:ring-inset"
+                  >
+                    <div class="preference">
+                      <div class="preference-description">
+                        <label>
+                          {{ t('dashboard.settings.export.android.label') }}
+                        </label>
+                        <p>
+                          {{
+                            t('dashboard.settings.export.android.description')
+                          }}
+                        </p>
+                      </div>
+                      <div>
+                        <button
+                          type="button"
+                          class="button"
+                          :disabled="exporting"
+                          @click="exportAsAndroid"
+                        >
+                          <span aria-hidden="true">
+                            <DownloadIcon />
+                          </span>
+                          <span>
+                            {{ t('dashboard.settings.export.android.export') }}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="w-full px-6">
+                      <Alert
+                        :title="
+                          t(
+                            'dashboard.settings.export.android.instructions.title'
+                          )
+                        "
+                        type="info"
+                        show
+                      >
+                        <div
+                          class="prose-sm max-w-none prose-ol:list-decimal"
+                          v-html="exportInstructions"
+                        />
+                      </Alert>
                     </div>
                   </TabPanel>
                   <TabPanel

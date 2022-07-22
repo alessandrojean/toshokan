@@ -156,6 +156,14 @@ const routes = [
     ]
   },
   {
+    path: '/share',
+    name: 'Share',
+    component: () => import('../views/Share.vue'),
+    meta: {
+      title: () => t('app.routes.share')
+    }
+  },
+  {
     path: '/:pathMatch(.*)',
     component: () => import('../views/PageNotFound.vue'),
     meta: {
@@ -181,7 +189,9 @@ const router = createRouter({
  * Replace page title.
  */
 router.afterEach((to) => {
-  document.title = to.meta.title() + ' | ' + t('app.name')
+  const routeTitle = to.meta.title?.()
+  document.title =
+    (routeTitle?.length > 0 ? routeTitle + ' | ' : '') + t('app.name')
   document.body.dataset.route = to.name
 })
 

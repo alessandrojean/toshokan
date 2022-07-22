@@ -287,7 +287,7 @@ function searchByTag(tag, event) {
                       <li v-for="tag in mt.value" :key="tag" class="mr-2 mt-2">
                         <a
                           href="#"
-                          class="tag has-ring-focus"
+                          class="tag has-ring-focus py-0"
                           @click.prevent="searchByTag(tag, $event)"
                         >
                           <span aria-hidden="true" class="bullet"></span>
@@ -336,10 +336,14 @@ function searchByTag(tag, event) {
 
           <!-- Book notes -->
           <TabPanel
-            class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-3xl mx-auto rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
-            v-html="notesRendered"
+            class="rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
             v-if="showBookInfo && book.notes.length > 0"
-          />
+          >
+            <div
+              v-html="notesRendered"
+              class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-3xl mx-auto"
+            />
+          </TabPanel>
 
           <!-- Collection -->
           <TabPanel
@@ -355,38 +359,6 @@ function searchByTag(tag, event) {
 </template>
 
 <style lang="postcss" scoped>
-.tag-list {
-  @apply flex flex-wrap -mt-2;
-}
-
-.tag {
-  @apply text-xxs uppercase font-bold tracking-wide
-    bg-primary-100 dark:bg-gray-700 rounded-md
-    text-primary-700 dark:text-gray-300
-    px-2.5 inline-flex items-center;
-}
-
-.tag:hover,
-.tag:focus-visible {
-  @apply bg-primary-200 dark:bg-gray-600
-    text-primary-800 dark:text-gray-200;
-}
-
-.tag:focus-visible {
-  @apply dark:ring-offset-gray-900;
-}
-
-.bullet {
-  @apply bg-primary-300 dark:bg-gray-500
-    w-1.5 h-1.5 mr-2 -ml-0.5
-    inline-block rounded;
-}
-
-.tag:hover .bullet,
-.tag:focus-visible .bullet {
-  @apply bg-primary-400 dark:bg-gray-400;
-}
-
 .search-link {
   @apply rounded font-medium
     text-gray-800 dark:text-gray-300

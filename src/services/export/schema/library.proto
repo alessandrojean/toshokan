@@ -1,0 +1,59 @@
+syntax = "proto3";
+package toshokan;
+
+message ToshokanSheet {
+  int32 version = 1;
+  int32 sheetVersion = 2;
+  repeated string groups = 3;
+  repeated string tags = 4;
+  repeated string publishers = 5;
+  repeated string stores = 6;
+  repeated string authors = 7;
+  repeated Book library = 8;
+  optional Owner owner = 9;
+}
+
+message Book {
+  string code = 1;
+  string group = 2;
+  string title = 3;
+  repeated string authors = 4;
+  string publisher = 5;
+  Dimension dimensions = 6;
+  Status status = 7;
+  optional string readAt = 8;
+  Price labelPrice = 9;
+  Price paidPrice = 10;
+  string store = 11;
+  optional string coverUrl = 12;
+  optional string boughtAt = 13;
+  bool favorite = 14;
+  optional string synopsis = 15;
+  optional string notes = 16;
+  repeated string tags = 17;
+  string createdAt = 18;
+  string updatedAt = 19;
+  optional int32 sheetVersion = 20;
+  optional Owner owner = 21;
+}
+
+message Dimension {
+  float width = 1;
+  float height = 2;
+}
+
+enum Status {
+  UNREAD = 0;
+  READ = 1;
+  FUTURE = 2;
+}
+
+message Price {
+  string currency = 1;
+  float value = 2;
+}
+
+message Owner {
+  string name = 1;
+  string pictureUrl = 2;
+}

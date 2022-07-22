@@ -6,6 +6,8 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from './stores/auth'
 import { useStore } from '@/stores/main'
 
+import { LibraryIcon } from '@heroicons/vue/solid'
+
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import ReloadDialog from '@/components/dialogs/ReloadDialog.vue'
@@ -63,12 +65,11 @@ const showLoadingIndicator = computed(() => {
       class="z-50 absolute w-full h-full flex flex-col justify-center items-center bg-opacity-90 bg-gray-100 dark:bg-gray-900"
     >
       <span aria-hidden="true">
-        <LoadingSpinIcon
-          class="motion-safe:animate-spin h-10 w-10 mx-auto text-primary-500"
-          aria-hidden="true"
+        <LibraryIcon
+          class="w-20 h-20 text-primary-600 motion-safe:animate-pulse"
         />
       </span>
-      <p class="font-display font-medium sm:text-lg mt-6 dark:text-gray-200">
+      <p class="sr-only">
         {{ t('app.starting') }}
       </p>
     </div>

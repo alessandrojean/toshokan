@@ -134,7 +134,7 @@ export default function useMarkdown(options = { typographer: true }) {
     ])
 
   function renderMarkdown(source) {
-    return markdown.render(source)
+    return source ? markdown.render(source) : null
   }
 
   return {

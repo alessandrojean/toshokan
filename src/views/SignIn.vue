@@ -53,9 +53,14 @@ const links = computed(() => [
 const showOverlay = ref(false)
 
 function handleNotification(notification) {
-  showOverlay.value =
+  const notificationShowing =
     notification.isDisplayMoment() && notification.isDisplayed()
+  showOverlay.value = notificationShowing || !authorized.value
 }
+
+watch(authorized, (isAuthorized) => {
+  showOverlay.value = !isAuthorized
+})
 
 const { darkMode } = useDarkMode()
 </script>

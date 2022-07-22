@@ -8,6 +8,7 @@ app:
     signIn: Autentique-se
     error: Erro crítico
     notFound: Página não encontrada
+    share: Livro compartilhado
     about:
       a11y: Acessibilidade
       about: Sobre o projeto
@@ -150,6 +151,21 @@ sheet:
   notFound: Planilha não encontrada.
 table:
   selectAll: Selecionar todos
+share:
+  errorTitle: Erro de decodificação
+  errorDescription: |
+    Houve um erro ao obter as informações do livro a partir da URL.
+
+    Isto pode acontecer quando a URL:
+
+    - foi gerada incorretamente; ou
+    - está incompleta; ou
+    - foi alterada por outros meios.
+
+    Para evitar este problema futuramente, sempre use a opção
+    de **Copiar** ao compartilhar e nunca altere a URL gerada.
+  actionQrCode: QR Code
+  sharingOwner: Compartilhado por {0}
 footer:
   links:
     a11y: Acessibilidade
@@ -336,7 +352,24 @@ dashboard:
         markAs: 'Marcar como {status}'
         addToFavorites: Adicionar aos favoritos
         removeFromFavorites: Remover dos favoritos
+        share: Compartilhar
         delete: Deletar
+    share:
+      title: Compartilhe o livro
+      qrCodeInstructions: 
+        title: Instruções de uso
+        body: |
+          1. Abra o **Toshokan** no seu celular.
+          1. Toque em **Adicionar** em **Biblioteca** e escolha **Ler código de barras**.
+          1. Escaneie o código e toque em **Adicionar a biblioteca**.
+      actionExport: Salvar o arquivo
+      actionClose: Fechar
+      actionCopy: Copiar
+      actionCopyUrl: Copiar a URL
+      actionOpen: Abrir o link
+      copied: Copiado!
+      anonymous: Remover identificação
+      link: Link direto
     tabs:
       metadata: Metadados do livro
       notes: Observações
@@ -587,6 +620,21 @@ dashboard:
       blurNsfwCover:
         label: Ocultar as capas de livros marcados como NSFW
         description: Se ativado, as capas dos livros marcados como NSFW serão desfocadas.
+    export:
+      title: Exportar (β)
+      android:
+        label: Toshokan Android
+        description: Exporte sua planilha como um arquivo compatível com a versão Android do Toshokan.
+        export: Exportar
+        instructions: 
+          title: Instruções
+          text: |
+            Para restaurar sua planilha no aplicativo, siga o passo a passo abaixo.
+
+            1. Abra o **Toshokan** no seu celular.
+            1. Abra as **Configurações** (**Mais** ⟶ **Configurações**) e selecione **Backup e restauração**.
+            1. Toque em **Restaurar da planilha** e selecione o arquivo.
+            1. Aguarde com que a restauração termine.
     privacy:
       title: Privacidade
       description: Atualize suas configurações de privacidade.

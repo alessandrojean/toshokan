@@ -94,10 +94,25 @@ export const useAuthStore = defineStore('auth', {
      * Try to grant the missing permissions.
      */
     grantPermissions() {
-      this.tokenClient.requestAccessToken({
-        hint: this.profileEmail,
-        prompt: ''
-      })
+      if (document.visibilityState === 'visible') {
+        this.tokenClient.requestAccessToken({
+          hint: this.profileEmail,
+          prompt: ''
+        })
+        return
+      }
+
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          this.tokenClient.requestAccessToken({
+            hint: this.profileEmail,
+            prompt: ''
+          })
+          document.removeEventListener('visibilitychange', handleVisibility)
+        }
+      }
+
+      document.addEventListener('visibilitychange', handleVisibility)
     },
 
     /**

@@ -120,6 +120,9 @@ module.exports = {
             'table tbody': {
               borderBottomWidth: '1px',
               borderBottomColor: 'var(--tw-prose-th-borders)'
+            },
+            ol: {
+              listStyleType: 'decimal'
             }
           }
         },

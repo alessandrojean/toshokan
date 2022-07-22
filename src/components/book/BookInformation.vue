@@ -20,6 +20,7 @@ import {
 import {
   BookmarkIcon as BookmarkOutlineIcon,
   ClockIcon,
+  ShareIcon,
   StarIcon as StarOutlineIcon,
   TrashIcon
 } from '@heroicons/vue/outline'
@@ -39,7 +40,8 @@ defineEmits([
   'click:delete',
   'click:toggleFavorite',
   'click:toggleStatus',
-  'click:updateCover'
+  'click:updateCover',
+  'click:share'
 ])
 
 const { book, loading } = toRefs(props)
@@ -282,6 +284,21 @@ const canEdit = computed(() => sheetStore.canEdit)
               }`
             )
           }}
+        </span>
+      </button>
+
+      <button
+        v-if="showBookInfo"
+        class="button is-icon-only px-2.5"
+        :disabled="disabled"
+        :title="t('dashboard.details.header.options.share')"
+        @click="$emit('click:share', $event)"
+      >
+        <span aria-hidden="true">
+          <ShareIcon />
+        </span>
+        <span class="sr-only">
+          {{ t('dashboard.details.header.options.share') }}
         </span>
       </button>
 

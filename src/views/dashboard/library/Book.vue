@@ -11,12 +11,14 @@ import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useBookQuery from '@/queries/useBookQuery'
 import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
+import useSheetVersionQuery from '@/queries/useSheetVersionQuery'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookCover from '@/components/book/BookCover.vue'
 import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
+import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -42,6 +44,8 @@ const { data: collection } = useBookCollectionQuery(book, {
     )
   })
 })
+
+const { data: sheetVersion } = useSheetVersionQuery({ enabled })
 
 const redirectToHome = () => {
   router.replace({ name: 'DashboardLibrary' })
@@ -127,6 +131,19 @@ const setNavbarTransparent = inject('setNavbarTransparent')
 
 onMounted(() => setNavbarTransparent(true))
 onUnmounted(() => setNavbarTransparent(false))
+
+const shareDialogOpen = ref(false)
+
+function openShareDialog() {
+  shareDialogOpen.value = true
+}
+
+const disableSearchShortcut = inject('disableSearchShortcut')
+const enableSearchShortcut = inject('enableSearchShortcut')
+
+watch(shareDialogOpen, (newOpen) => {
+  newOpen ? disableSearchShortcut() : enableSearchShortcut()
+})
 </script>
 
 <template>
@@ -169,6 +186,7 @@ onUnmounted(() => setNavbarTransparent(false))
               @click:edit="openEditDialog"
               @click:toggleFavorite="toggleFavorite"
               @click:toggleStatus="toggleStatus"
+              @click:share="openShareDialog"
               @click:delete="openDeleteModal"
             />
           </div>
@@ -195,6 +213,12 @@ onUnmounted(() => setNavbarTransparent(false))
       :book="bookToEdit"
       @close="closeEditDialog"
       @edit="handleEdit"
+    />
+
+    <BookShareDialog
+      v-model="shareDialogOpen"
+      :book="book"
+      :version="sheetVersion"
     />
   </div>
 </template>

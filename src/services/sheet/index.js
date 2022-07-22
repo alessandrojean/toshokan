@@ -17,6 +17,8 @@ import getNextReads from './getNextReads'
 import getPublishers from './getPublishers'
 import getSheetData from './getSheetData'
 import getStores from './getStores'
+import getVersion from './getVersion'
+import getWholeLibrary from './getWholeLibrary'
 import insertBook from './insertBook'
 import searchBooks from './searchBooks'
 import updateBook from './updateBook'
@@ -41,6 +43,8 @@ export default {
   getPublishers,
   getSheetData,
   getStores,
+  getVersion,
+  getWholeLibrary,
   insertBook,
   searchBooks,
   updateBook
