@@ -140,6 +140,17 @@ const expenses = computed(() => ({
       }
     }
   },
+  legend: {
+    labels: {
+      colors: darkMode.value
+        ? theme.colors.slate[300]
+        : theme.colors.slate[600],
+      useSeriesColors: false
+    },
+    onItemClick: {
+      toggleDataSeries: false
+    }
+  },
   series: [
     {
       name: t('dashboard.stats.monthlyExpense', { year: pastYear }),
@@ -177,7 +188,7 @@ const expenses = computed(() => ({
               aria-hidden="true"
             />
           </div>
-          <div v-else>
+          <div v-else class="monthly-expense-chart">
             <ApexChart
               width="100%"
               height="100%"
@@ -191,3 +202,12 @@ const expenses = computed(() => ({
     </div>
   </section>
 </template>
+
+<style lang="postcss">
+.monthly-expense-chart
+  .apexcharts-legend
+  .apexcharts-legend-series
+  .apexcharts-legend-text {
+  @apply !text-gray-600 dark:!text-gray-300;
+}
+</style>

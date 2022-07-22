@@ -2650,7 +2650,7 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.4.4.tgz#5d9b63132df54d8909fce1c3f8ca260fdd693e17"
   integrity sha512-ReVR2rLTV1kvtlWFyuot+d1pkpG2Fw/XKE3PDAdj57rbM97ttSp9JZ2UsP+2EHTylra9cUf6JA7tGwW1INzUrA==
 
-"@types/qrcode@^1.4.2":
+"@types/qrcode@1.4.2":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@types/qrcode/-/qrcode-1.4.2.tgz#7d7142d6fa9921f195db342ed08b539181546c74"
   integrity sha512-7uNT9L4WQTNJejHTSTdaJhfBSCN73xtXaHFyBJ8TSwiLhe4PRuTue7Iph0s2nG9R/ifUaSnGhLUOZavlBEqDWQ==
@@ -5895,7 +5895,7 @@ paginator@1.0.0:
   resolved "https://registry.yarnpkg.com/paginator/-/paginator-1.0.0.tgz#7565702af9ab9616dca61fc22c70eba2a4357265"
   integrity sha512-j2Y5AtF/NrXOEU9VVOQBGHnj81NveRQ/cDzySywqsWrAj+cxivMpMCkYJOds3ulQiDU4rQBWc0WoyyXMXOmuMA==
 
-pako@^2.0.4:
+pako@2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pako/-/pako-2.0.4.tgz#6cebc4bbb0b6c73b0d5b8d7e8476e2b2fbea576d"
   integrity sha512-v8tweI900AUkZN6heMU/4Uy4cXRc2AYNRggVmTR+dEncawDJgCdLMximOVA2p4qO57WMynangsfGRb5WD6L1Bg==
@@ -6134,7 +6134,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-protobufjs@^7.0.0:
+protobufjs@7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.0.0.tgz#8c678e1351fd926178fce5a4213913e8d990974f"
   integrity sha512-ffNIEm+quOcYtQvHdW406v1NQmZSuqVklxsXk076BtuFnlYZfigLU+JOMrTD8TUOyqHYbRI/fSVNvgd25YeN3w==
