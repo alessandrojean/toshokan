@@ -10,6 +10,7 @@ import {
 import i18n from '@/i18n'
 import { decimalComma } from '@/util/validators'
 import { getIsbnCountry } from '@/util/isbn'
+import { fixDate, formatDateTimeToSheet, formatDateToSheet } from '@/util/date'
 
 const { n, locale } = i18n.global
 
@@ -314,28 +315,6 @@ export default class Book {
    * @returns {string[]}
    */
   toArray() {
-    function formatDateToSheet(date) {
-      return `=DATE(${date.getUTCFullYear()}, ${
-        date.getUTCMonth() + 1
-      }, ${date.getUTCDate()})`
-    }
-
-    function formatDateTimeToSheet(date) {
-      return (
-        formatDateToSheet(date) +
-        ' + ' +
-        `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
-      )
-    }
-
-    function fixDate(date, timezoneOffset) {
-      if (date) {
-        date.setMinutes(date.getMinutes() - timezoneOffset)
-      }
-
-      return date
-    }
-
     const now = new Date()
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
 

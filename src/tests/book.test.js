@@ -1,5 +1,8 @@
 import Book, { STATUS_READ } from '@/model/Book'
+import { fixDate, formatDateTimeToSheet, formatDateToSheet } from '@/util/date'
 import dedent from 'dedent'
+
+const createdAt = new Date('2022-02-22T21:00:00.000Z')
 
 const testBook = new Book({
   sheetLocation: 'Collection!B5',
@@ -37,12 +40,17 @@ const testBook = new Book({
     'https://pipocaenanquim.com.br/wp-content/uploads/2021/11/A1uvtpMPsfL.jpeg',
   boughtAt: new Date('2022-02-22'),
   readAt: new Date('2022-02-22'),
-  createdAt: new Date('2022-02-22T21:00:00.000Z'),
-  updatedAt: new Date('2022-02-22T21:00:00.000Z')
+  createdAt: new Date(createdAt),
+  updatedAt: new Date(createdAt)
 })
 
 it('Should format to insert in the sheet correctly', () => {
   const bookFormatted = testBook.toArray()
+
+  const now = new Date()
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+
+  const offset = new Date().getTimezoneOffset()
 
   expect(bookFormatted).toHaveLength(23)
   expect(bookFormatted.slice(0, 22)).toStrictEqual([
@@ -55,19 +63,19 @@ it('Should format to insert in the sheet correctly', () => {
     testBook.publisher,
     [testBook.dimensions.width, '×', testBook.dimensions.height].join(' '),
     testBook.status,
-    '=DATE(2022, 2, 21)',
+    formatDateToSheet(fixDate(testBook.boughtAt, offset)),
     testBook.labelPrice.currency,
     '72.90',
     testBook.paidPrice.currency,
     '72.90',
     testBook.store,
     testBook.coverUrl,
-    '=DATE(2022, 2, 21)',
+    formatDateToSheet(fixDate(testBook.readAt, offset)),
     '',
     testBook.synopsis,
     '',
     '',
-    '=DATE(2022, 2, 22) + TIME(18, 0, 0)'
+    formatDateTimeToSheet(fixDate(testBook.createdAt, offset))
   ])
 })
 

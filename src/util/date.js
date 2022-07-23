@@ -22,3 +22,28 @@ export function lastDayOfMonth(year, month) {
 export function isoDate(date) {
   return date.replace(/-(\d)-/, '0$1').replace(/-(\d)$/, '0$1')
 }
+
+export function formatDateToSheet(date) {
+  return `=DATE(${date.getUTCFullYear()}, ${
+    date.getUTCMonth() + 1
+  }, ${date.getUTCDate()})`
+}
+
+export function formatDateTimeToSheet(date) {
+  return (
+    formatDateToSheet(date) +
+    ' + ' +
+    `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
+  )
+}
+
+export function fixDate(date, timezoneOffset) {
+  if (date) {
+    const copy = new Date(date)
+    copy.setMinutes(date.getMinutes() - timezoneOffset)
+
+    return copy
+  }
+
+  return date
+}
