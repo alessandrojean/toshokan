@@ -23,7 +23,7 @@
     "@vueuse/core": "8.9.4",
     "apexcharts": "3.35.3",
     "axios": "0.27.2",
-    "core-js": "3.23.5",
+    "core-js": "3.24.0",
     "dedent": "0.7.0",
     "jwt-decode": "3.1.2",
     "lodash.chunk": "4.2.0",
