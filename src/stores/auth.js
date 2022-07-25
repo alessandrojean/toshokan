@@ -27,6 +27,7 @@ export const useAuthStore = defineStore('auth', {
     profileImageUrl: null,
     refreshing: false,
     started: false,
+    /** @type {google.accounts.oauth2.TokenClient | null} */
     tokenClient: null
   }),
   getters: {
