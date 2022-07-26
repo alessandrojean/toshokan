@@ -53,7 +53,7 @@ const WEBSITES = [
   },
   {
     title: 'Amazon.com.br',
-    url: 'https://amazon.com.br/dp/{isbn10}',
+    url: 'https://amazon.com.br/dp/{isbn10}?m=A1ZZFT5FULY4LN',
     country: 'BR',
     category: Categories.STORE,
     icon: AmazonIcon
@@ -67,7 +67,7 @@ const WEBSITES = [
   },
   {
     title: 'Loja Panini',
-    url: 'https://loja.panini.com.br/panini/solucoes/busca.aspx?t={isbn}',
+    url: 'https://panini.com.br/catalogsearch/result/?q={isbn}',
     country: 'BR',
     category: Categories.STORE,
     check: (book) => book.publisher.includes('Panini'),
