@@ -57,7 +57,7 @@
     "@babel/core": "7.18.10",
     "@babel/eslint-parser": "7.18.9",
     "@babel/preset-env": "7.18.10",
-    "@intlify/vite-plugin-vue-i18n": "5.0.1",
+    "@intlify/vite-plugin-vue-i18n": "6.0.0",
     "@types/dedent": "0.7.0",
     "@types/gapi.client": "1.0.5",
     "@types/gapi.client.drive": "3.0.13",
