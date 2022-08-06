@@ -62,7 +62,7 @@
     "@types/gapi.client": "1.0.5",
     "@types/gapi.client.drive": "3.0.13",
     "@types/gapi.client.sheets": "4.0.20201029",
-    "@types/google.accounts": "^0.0.2",
+    "@types/google.accounts": "0.0.2",
     "@types/google.visualization": "0.0.68",
     "@types/jest": "28.1.6",
     "@types/qrcode": "1.4.2",
