@@ -96,7 +96,7 @@ const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
 const groupsFilter = computed(() => collectionStore.filters.groups)
 
 const queriesEnabled = computed(() => {
-  return !sheetLoading.value && sheetId.value !== null
+  return !sheetLoading.value && sheetId.value !== null && !updating && !deleting
 })
 
 const {
