@@ -34,18 +34,12 @@ function handleChange(newTags) {
   <div>
     <TagField
       required
-      input-class="pl-9"
-      prefix-class="ml-2.5 pointer-events-none"
       tag-class="is-uppercase"
       :label="t('book.properties.tags')"
       :model-value="modelValue.tags"
       :placeholder="t('book.form.addTagPlaceholder')"
       :remove-action="t('book.form.removeTag')"
       @update:model-value="handleChange"
-    >
-      <template #prefix>
-        <TagIcon class="w-5 h-5" />
-      </template>
-    </TagField>
+    />
   </div>
 </template>

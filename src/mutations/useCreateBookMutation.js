@@ -31,6 +31,7 @@ export default function useCreateBookMutation() {
       queryClient.invalidateQueries('next-reads')
       queryClient.invalidateQueries('groups')
       queryClient.invalidateQueries('books')
+      queryClient.invalidateQueries('authors')
       queryClient.invalidateQueries('book-search')
       queryClient.invalidateQueries('statistics')
     }

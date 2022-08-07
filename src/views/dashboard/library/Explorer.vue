@@ -95,8 +95,25 @@ const sheetLoading = computed(() => sheetStore.loading)
 const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
 const groupsFilter = computed(() => collectionStore.filters.groups)
 
+const {
+  mutate: bulkDeleteBooks,
+  isLoading: deleting,
+  isIdle: deletingIdle
+} = useBulkDeleteBookMutation()
+
+const {
+  mutate: bulkUpdateBooks,
+  isLoading: updating,
+  isIdle: updatingIdle
+} = useBulkEditBookMutation()
+
 const queriesEnabled = computed(() => {
-  return !sheetLoading.value && sheetId.value !== null && !updating && !deleting
+  return (
+    !sheetLoading.value &&
+    sheetId.value !== null &&
+    deletingIdle &&
+    updatingIdle
+  )
 })
 
 const {
@@ -334,15 +351,10 @@ const booksToDelete = computed(() => {
 })
 
 const deleteDialogOpen = ref(false)
-const { mutate: bulkDeleteBooks, isLoading: deleting } =
-  useBulkDeleteBookMutation()
 
 function handleDeleteSelection() {
   bulkDeleteBooks(booksToDelete.value)
 }
-
-const { mutate: bulkUpdateBooks, isLoading: updating } =
-  useBulkEditBookMutation()
 
 function handleBulkMarkAs({ booksToEdit, newStatus }) {
   const editedBooks = booksToEdit

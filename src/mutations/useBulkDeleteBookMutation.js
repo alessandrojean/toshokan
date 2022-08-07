@@ -32,6 +32,7 @@ export default function useBulkDeleteBookMutation() {
       queryClient.invalidateQueries('latest-readings')
       queryClient.invalidateQueries('next-reads')
       queryClient.invalidateQueries('groups')
+      queryClient.invalidateQueries('authors')
       queryClient.invalidateQueries('books')
       queryClient.invalidateQueries('book-search')
       queryClient.invalidateQueries('statistics')

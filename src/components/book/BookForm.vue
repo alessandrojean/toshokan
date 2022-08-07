@@ -9,6 +9,7 @@ import cloneDeep from 'lodash.clonedeep'
 
 import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
+import useAuthorsQuery from '@/queries/useAuthorsQuery'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 import usePublishersQuery from '@/queries/usePublishersQuery'
 import useStoresQuery from '@/queries/useStoresQuery'
@@ -151,6 +152,7 @@ const optionsEnabled = computed(() => sheetStore.sheetId !== null)
 const { data: groupData } = useGroupsQuery({ enabled: optionsEnabled })
 const { data: publishersData } = usePublishersQuery({ enabled: optionsEnabled })
 const { data: storesData } = useStoresQuery({ enabled: optionsEnabled })
+const { data: authorsData } = useAuthorsQuery({ enabled: optionsEnabled })
 
 const groupOptions = computed(() => {
   return (groupData.value || [])
@@ -160,6 +162,7 @@ const groupOptions = computed(() => {
 
 const publisherOptions = computed(() => publishersData.value || [])
 const storeOptions = computed(() => storesData.value || [])
+const authorOptions = computed(() => authorsData.value || [])
 
 onMounted(() => {
   if (touchOnMount.value) {
@@ -220,6 +223,7 @@ function toDateInputValue(date) {
       :placeholder="t('book.form.addAuthorPlaceholder')"
       :error="v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : ''"
       :remove-action="t('book.form.removeAuthor')"
+      :suggestions="authorOptions"
       @update:model-value="handleInput('authors', $event)"
     >
       <template #prefix>

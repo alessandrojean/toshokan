@@ -1,8 +1,7 @@
 <script setup>
-import { computed, ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, ref, toRefs, watch } from 'vue'
 
-import { MenuIcon, PlusIcon, XIcon } from '@heroicons/vue/solid'
+import { MenuIcon, XIcon } from '@heroicons/vue/solid'
 
 import Draggable from 'vuedraggable'
 
@@ -32,18 +31,27 @@ const props = defineProps({
     required: true
   },
   required: Boolean,
-  tagClass: String
+  tagClass: String,
+  suggestions: Array
 })
 
 const emit = defineEmits(['update:modelValue'])
 
-const { breakCharacter, error, modelValue, help, list } = toRefs(props)
+const { breakCharacter, error, modelValue, help, suggestions } = toRefs(props)
 
 const hasError = computed(() => error.value && error.value.length > 0)
 const hasHelp = computed(() => help.value && help.value.length > 0)
-const hasList = computed(() => list.value && list.value.length > 0)
+const hasList = computed(
+  () => suggestions.value && suggestions.value.length > 0
+)
 
 const tempTag = ref('')
+const selectedTag = ref(-1)
+const input = ref(null)
+
+watch(tempTag, () => {
+  selectedTag.value = -1
+})
 
 function addTag(onInput) {
   const newTag = onInput === true ? tempTag.value.slice(0, -1) : tempTag.value
@@ -79,7 +87,21 @@ function handleDragAndDrop(newTags) {
   emit('update:modelValue', newTags)
 }
 
-const { t } = useI18n({ useScope: 'global' })
+function handleBackspace(event) {
+  if (tempTag.value.length > 0 || modelValue.value.length === 0) {
+    return
+  }
+
+  const lastIndex = modelValue.value.length - 1
+  event.preventDefault()
+
+  if (selectedTag.value === lastIndex) {
+    removeTag(selectedTag.value)
+    selectedTag.value = -1
+  } else {
+    selectedTag.value = lastIndex
+  }
+}
 </script>
 
 <template>
@@ -90,77 +112,76 @@ const { t } = useI18n({ useScope: 'global' })
     :required="required"
     v-slot="{ inputId, ariaDescribedBy }"
   >
-    <div class="flex space-x-2">
-      <div class="group relative w-full">
-        <div
-          v-if="$slots.prefix"
-          :class="[
-            'prefix absolute inset-y-0 left-0 flex items-center',
-            prefixClass
-          ]"
-        >
-          <slot name="prefix" />
-        </div>
-        <input
-          v-model="tempTag"
-          :class="['input', inputClass]"
-          :id="inputId"
-          :placeholder="placeholder"
-          :aria-describedby="ariaDescribedBy"
-          :aria-invalid="hasError"
-          @keydown.enter.prevent="addTag"
-          @input="flushTag"
-        />
-      </div>
-
-      <button
-        type="button"
-        class="button px-2 sm:px-4 is-icon-only sm:not-is-icon-only"
-        @click="addTag"
+    <div class="input" @click.self="input?.focus?.()">
+      <Draggable
+        tag="ul"
+        class="flex flex-wrap items-center gap-2 select-none"
+        ghost-class="ghost"
+        drag-class="cursor-grabbing"
+        handle=".handle"
+        :modelValue="modelValue"
+        :item-key="(tag) => tag"
+        :disabled="modelValue.length === 1"
+        @click.self="input?.focus?.()"
+        @update:modelValue="handleDragAndDrop"
       >
-        <span aria-hidden="true">
-          <PlusIcon />
-        </span>
-        <span class="sr-only sm:not-sr-only">
-          {{ t('book.form.addAuthor') }}
-        </span>
-      </button>
+        <template #item="{ element: tag, index }">
+          <li
+            :class="['input-tag', tagClass]"
+            :aria-selected="index === selectedTag"
+          >
+            <span
+              v-if="modelValue.length > 1"
+              class="handle"
+              aria-hidden="true"
+            >
+              <MenuIcon class="w-3 h-3" />
+            </span>
+            <span>{{ tag }}</span>
+            <button
+              type="button"
+              :title="removeAction"
+              class="remove-button has-ring-focus"
+              @click="removeTag(index)"
+            >
+              <span class="sr-only">
+                {{ removeAction }}
+              </span>
+              <span aria-hidden="true">
+                <XIcon class="w-3 h-3" />
+              </span>
+            </button>
+          </li>
+        </template>
+        <template #footer>
+          <input
+            v-model="tempTag"
+            ref="input"
+            :class="[
+              'input',
+              inputClass,
+              modelValue.length > 0 ? 'py-1' : 'py-0'
+            ]"
+            :id="inputId"
+            :placeholder="placeholder"
+            :aria-describedby="ariaDescribedBy"
+            :aria-invalid="hasError"
+            :list="hasList ? inputId + '-list' : undefined"
+            @keydown.enter.prevent="addTag"
+            @keydown.backspace="handleBackspace"
+            @input="flushTag"
+          />
+        </template>
+      </Draggable>
     </div>
 
-    <Draggable
-      v-if="modelValue.length > 0"
-      tag="ul"
-      class="flex flex-wrap mt-2 select-none"
-      ghost-class="ghost"
-      drag-class="cursor-grabbing"
-      handle=".handle"
-      :modelValue="modelValue"
-      :item-key="(tag) => tag"
-      :disabled="modelValue.length === 1"
-      @update:modelValue="handleDragAndDrop"
-    >
-      <template #item="{ element: tag, index }">
-        <li :class="['input-tag', tagClass]">
-          <span v-if="modelValue.length > 1" class="handle" aria-hidden="true">
-            <MenuIcon class="w-3 h-3" />
-          </span>
-          <span>{{ tag }}</span>
-          <button
-            type="button"
-            :title="removeAction"
-            class="remove-button has-ring-focus"
-            @click="removeTag(index)"
-          >
-            <span class="sr-only">
-              {{ removeAction }}
-            </span>
-            <span aria-hidden="true">
-              <XIcon class="w-3 h-3" />
-            </span>
-          </button>
-        </li>
-      </template>
-    </Draggable>
+    <template v-if="hasList">
+      <datalist :id="inputId + '-list'">
+        <option v-for="option of suggestions" :key="option" :value="option">
+          {{ option }}
+        </option>
+      </datalist>
+    </template>
   </BaseField>
 </template>
 
@@ -173,12 +194,27 @@ const { t } = useI18n({ useScope: 'global' })
   @apply text-gray-600 dark:text-gray-300;
 }
 
+.tag-field div.input:focus-within {
+  @apply outline-none ring ring-offset-0
+    ring-opacity-30 dark:ring-opacity-50
+    ring-primary-600 dark:ring-primary-500
+    border-primary-500 dark:border-primary-400;
+}
+
+.tag-field input.input {
+  @apply flex-1 min-w-[25%] border-none shadow-none pl-0 focus:ring-0;
+}
+
 .input-tag {
-  @apply flex items-center text-sm
-    bg-primary-100 dark:bg-gray-700 rounded-md
+  @apply inline-flex items-center text-sm h-6
+    bg-primary-100 dark:bg-gray-600 rounded-md
     text-primary-700 dark:text-gray-200
-    px-2 py-0.5 mr-2 mt-2 font-medium
+    px-2 py-0.5 font-medium
     motion-safe:transition-opacity;
+}
+
+.input-tag[aria-selected='true'] {
+  @apply bg-primary-200 dark:bg-gray-500;
 }
 
 .input-tag.is-uppercase {
@@ -187,7 +223,7 @@ const { t } = useI18n({ useScope: 'global' })
 
 .handle {
   @apply hidden md:block p-1 -ml-1 mr-1
-    text-primary-500 dark:text-gray-400;
+    text-primary-500 dark:text-gray-300;
 }
 
 :not(.ghost) .handle {
@@ -196,7 +232,7 @@ const { t } = useI18n({ useScope: 'global' })
 
 .remove-button {
   @apply p-1 ml-1 -mr-1 rounded-md
-    text-primary-400 dark:text-gray-400;
+    text-primary-400 dark:text-gray-300;
 }
 
 .remove-button:hover {
