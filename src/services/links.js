@@ -67,7 +67,12 @@ const WEBSITES = [
   },
   {
     title: 'Loja Panini',
-    url: 'https://panini.com.br/catalogsearch/result/?q={isbn}',
+    url: (book) => {
+      const url = new URL('https://panini.com.br/catalogsearch/result/')
+      url.searchParams.append('q', book.title)
+
+      return url.href
+    },
     country: 'BR',
     category: Categories.STORE,
     check: (book) => book.publisher.includes('Panini'),
@@ -110,10 +115,17 @@ export default function getBookLinks(book, locale) {
     return website.country === country || website.country === ALL_COUNTRIES
   })
     .filter((website) => (website.check ? website.check(book) : true))
-    .map((website) => ({
-      ...website,
-      url: website.url.replace(/\{isbn\}/g, isbn).replace(/\{isbn10\}/g, isbn10)
-    }))
+    .map((website) => {
+      const urlString =
+        typeof website.url === 'function'
+          ? website.url(book)
+          : website.url.toString()
+
+      return {
+        ...website,
+        url: urlString.replace(/\{isbn\}/g, isbn).replace(/\{isbn10\}/g, isbn10)
+      }
+    })
     .sort((a, b) => {
       return a.category - b.category || a.title.localeCompare(b.title, locale)
     })
