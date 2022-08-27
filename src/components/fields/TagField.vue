@@ -112,10 +112,16 @@ function handleBackspace(event) {
     :required="required"
     v-slot="{ inputId, ariaDescribedBy }"
   >
-    <div class="input" @click.self="input?.focus?.()">
+    <div
+      :class="[
+        'input group px-0 pb-0',
+        modelValue.length > 0 ? 'filled' : 'pt-0'
+      ]"
+      @click.self="input?.focus?.()"
+    >
       <Draggable
         tag="ul"
-        class="flex flex-wrap items-center gap-2 select-none"
+        class="flex px-3 flex-wrap items-center gap-2 select-none"
         ghost-class="ghost"
         drag-class="cursor-grabbing"
         handle=".handle"
@@ -153,26 +159,29 @@ function handleBackspace(event) {
             </button>
           </li>
         </template>
-        <template #footer>
-          <input
-            v-model="tempTag"
-            ref="input"
-            :class="[
-              'input',
-              inputClass,
-              modelValue.length > 0 ? 'py-1' : 'py-0'
-            ]"
-            :id="inputId"
-            :placeholder="placeholder"
-            :aria-describedby="ariaDescribedBy"
-            :aria-invalid="hasError"
-            :list="hasList ? inputId + '-list' : undefined"
-            @keydown.enter.prevent="addTag"
-            @keydown.backspace="handleBackspace"
-            @input="flushTag"
-          />
-        </template>
       </Draggable>
+      <div
+        :class="[
+          'px-3 border-t',
+          modelValue.length > 0
+            ? 'mt-2 dark:border-gray-600 group-hover:border-gray-300 dark:group-hover:border-gray-500 group-focus-within:border-dashed group-focus-within:!border-primary-400'
+            : 'border-transparent'
+        ]"
+      >
+        <input
+          v-model="tempTag"
+          ref="input"
+          :class="['input', inputClass]"
+          :id="inputId"
+          :placeholder="placeholder"
+          :aria-describedby="ariaDescribedBy"
+          :aria-invalid="hasError"
+          :list="hasList ? inputId + '-list' : undefined"
+          @keydown.enter.prevent="addTag"
+          @keydown.backspace="handleBackspace"
+          @input="flushTag"
+        />
+      </div>
     </div>
 
     <template v-if="hasList">
@@ -202,7 +211,11 @@ function handleBackspace(event) {
 }
 
 .tag-field input.input {
-  @apply flex-1 min-w-[25%] border-none shadow-none pl-0 focus:ring-0;
+  @apply border-none shadow-none pl-0 focus:ring-0 !mt-0 py-2;
+}
+
+.tag-field .input.filled input {
+  @apply mt-2;
 }
 
 .input-tag {
