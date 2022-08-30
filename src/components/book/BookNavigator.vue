@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
 
-import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/vue/solid'
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   book: Book,
@@ -56,7 +56,7 @@ const { t } = useI18n({ useScope: 'global' })
           :to="{ name: 'BookDetails', params: { bookId: previous.id } }"
         >
           <span aria-hidden="true">
-            <ArrowSmLeftIcon class="w-5 h-5 mr-2" />
+            <ArrowLeftIcon class="w-5 h-5 mr-2" />
           </span>
           <span>{{ t('pagination.previous') }}</span>
         </router-link>
@@ -71,7 +71,7 @@ const { t } = useI18n({ useScope: 'global' })
         >
           <span>{{ t('pagination.next') }}</span>
           <span aria-hidden="true">
-            <ArrowSmRightIcon class="w-5 h-5 ml-2" />
+            <ArrowRightIcon class="w-5 h-5 ml-2" />
           </span>
         </router-link>
       </li>

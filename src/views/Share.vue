@@ -7,8 +7,12 @@ import useImageLoader from '@/composables/useImageLoader'
 import useMarkdown from '@/composables/useMarkdown'
 import { parseFileSingle } from '@/services/export/androidExport'
 
-import { BookOpenIcon, EmojiSadIcon, ShareIcon } from '@heroicons/vue/outline'
-import { LibraryIcon, QrcodeIcon } from '@heroicons/vue/solid'
+import {
+  BookOpenIcon,
+  FaceFrownIcon,
+  ShareIcon
+} from '@heroicons/vue/24/outline'
+import { BuildingLibraryIcon, QrCodeIcon } from '@heroicons/vue/20/solid'
 
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
@@ -110,7 +114,7 @@ const shareDialogOpen = ref(false)
         class="inline-flex items-center rounded-md has-ring-focus dark:focus-visible:ring-offset-gray-800"
       >
         <span aria-hidden="true">
-          <LibraryIcon class="h-9 w-9 text-primary-500" />
+          <BuildingLibraryIcon class="h-9 w-9 text-primary-500" />
         </span>
         <span class="sr-only">{{ t('app.routes.home') }}</span>
         <span
@@ -161,7 +165,7 @@ const shareDialogOpen = ref(false)
               @click="shareDialogOpen = true"
             >
               <span aria-hidden="true">
-                <QrcodeIcon />
+                <QrCodeIcon />
               </span>
               <span>
                 {{ t('share.actionQrCode') }}
@@ -221,7 +225,7 @@ const shareDialogOpen = ref(false)
             aria-hidden="true"
             class="shrink-0 font-semibold font-display text-4xl text-primary-600 dark:text-primary-500"
           >
-            <EmojiSadIcon class="w-10 h-10" />
+            <FaceFrownIcon class="w-10 h-10" />
           </div>
           <div class="flex-1 min-w-0">
             <header

@@ -10,7 +10,7 @@ import {
   DialogTitle
 } from '@headlessui/vue'
 
-import { XIcon } from '@heroicons/vue/solid'
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   coverUrl: {
@@ -80,7 +80,7 @@ watch(open, (newOpen) => {
                 @click="$emit('close')"
               >
                 <span aria-hidden="true">
-                  <XIcon class="w-6 h-6" />
+                  <XMarkIcon class="w-6 h-6" />
                 </span>
                 <span class="sr-only">
                   {{ t('dashboard.details.zoom.close') }}

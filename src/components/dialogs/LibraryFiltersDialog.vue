@@ -22,7 +22,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { ArrowSmUpIcon, ChevronUpIcon, XIcon } from '@heroicons/vue/solid'
+import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({ open: Boolean })
 
@@ -232,7 +232,7 @@ function toggleSort() {
                     <span class="sr-only">{{
                       t('dashboard.library.filters.close')
                     }}</span>
-                    <XIcon class="h-6 w-6" aria-hidden="true" />
+                    <XMarkIcon class="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
                 <div
@@ -347,7 +347,7 @@ function toggleSort() {
                                     v-if="child.sort && checked"
                                     class="ml-1 -mr-1"
                                   >
-                                    <ArrowSmUpIcon
+                                    <ArrowUpIcon
                                       :class="[
                                         'w-4 h-4 motion-safe:transition-transform',
                                         state.sortDirection === 'desc'

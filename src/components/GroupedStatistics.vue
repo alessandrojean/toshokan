@@ -5,7 +5,10 @@ import { useI18n } from 'vue-i18n'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
-import { ArrowUpIcon } from '@heroicons/vue/solid'
+import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon
+} from '@heroicons/vue/20/solid'
 
 const { t, n } = useI18n()
 const sheetStore = useSheetStore()
@@ -122,8 +125,12 @@ const groups = computed(() => [
             ]"
           >
             <span aria-hidden="true">
-              <ArrowUpIcon
-                :class="!group.percentage?.increased ? 'rotate-180' : ''"
+              <ArrowTrendingUpIcon
+                v-if="group.percentage?.increased"
+                class="w-2.5 lg:w-3.5 h-2.5 lg:h-3.5 mr-1"
+              />
+              <ArrowTrendingDownIcon
+                v-else
                 class="w-2.5 lg:w-3.5 h-2.5 lg:h-3.5 mr-1"
               />
             </span>

@@ -8,7 +8,12 @@ import {
   ListboxOption,
   ListboxOptions
 } from '@headlessui/vue'
-import { CheckIcon, SelectorIcon, TranslateIcon } from '@heroicons/vue/solid'
+// TODO: Replace with SelectorIcon
+import {
+  CheckIcon,
+  EllipsisHorizontalIcon,
+  LanguageIcon
+} from '@heroicons/vue/20/solid'
 
 defineProps({
   modelValue: {
@@ -44,7 +49,7 @@ function createFlagUrl(country) {
           class="absolute inset-y-0 left-0 inline-flex items-center justify-center pl-2.5"
           aria-hidden="true"
         >
-          <TranslateIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <LanguageIcon class="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </span>
 
         <select
@@ -89,7 +94,9 @@ function createFlagUrl(country) {
           class="ml-3 absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none"
           aria-hidden="true"
         >
-          <SelectorIcon class="w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <EllipsisHorizontalIcon
+            class="w-5 h-5 text-gray-400 dark:text-gray-500"
+          />
         </span>
       </ListboxButton>
 

@@ -15,7 +15,7 @@ import usePublishersQuery from '@/queries/usePublishersQuery'
 import useStoresQuery from '@/queries/useStoresQuery'
 import { decimalComma, dimension } from '@/util/validators'
 
-import { UserAddIcon } from '@heroicons/vue/solid'
+import { UserPlusIcon } from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
 import DimensionField from '@/components/fields/DimensionField.vue'
@@ -227,7 +227,7 @@ function toDateInputValue(date) {
       @update:model-value="handleInput('authors', $event)"
     >
       <template #prefix>
-        <UserAddIcon class="w-5 h-5" />
+        <UserPlusIcon class="w-5 h-5" />
       </template>
     </TagField>
 

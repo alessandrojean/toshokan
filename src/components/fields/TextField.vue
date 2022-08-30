@@ -1,7 +1,8 @@
 <script setup>
 import { computed, toRefs } from 'vue'
 
-import { SelectorIcon } from '@heroicons/vue/solid'
+// TODO: Replace with SelectorIcon
+import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 
 import BaseField from './BaseField.vue'
 
@@ -92,7 +93,7 @@ const hasList = computed(() => list.value && list.value.length > 0)
           </option>
         </datalist>
         <div class="selector-icon" aria-hidden="true">
-          <SelectorIcon class="w-5 h-5" />
+          <EllipsisHorizontalIcon class="w-5 h-5" />
         </div>
       </template>
       <div

@@ -3,8 +3,8 @@ import { computed, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
-import { PencilAltIcon } from '@heroicons/vue/outline'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid'
+import { PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 
 defineProps({ githubLink: String })
 
@@ -44,7 +44,7 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
       class="flex items-center w-fit text-sm mb-3 font-medium text-primary-600 dark:text-primary-400 rounded has-ring-focus hocus:underline"
     >
       <span aria-hidden="true">
-        <PencilAltIcon class="w-5 h-5 mr-2" />
+        <PencilSquareIcon class="w-5 h-5 mr-2" />
       </span>
       <span>{{ t('about.editThisPage') }}</span>
     </a>

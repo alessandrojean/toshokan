@@ -30,7 +30,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { CheckIcon, XIcon } from '@heroicons/vue/solid'
+import { CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
@@ -177,7 +177,7 @@ const shared = computed(() => sheetStore.shared)
 
               <button class="close-button has-ring-focus" @click="closeDialog">
                 <span aria-hidden="true">
-                  <XIcon class="w-5 h-5" />
+                  <XMarkIcon class="w-5 h-5" />
                 </span>
               </button>
 

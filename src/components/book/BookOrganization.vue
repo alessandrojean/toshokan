@@ -6,7 +6,6 @@ import cloneDeep from 'lodash.clonedeep'
 
 import Book from '@/model/Book'
 
-import { TagIcon } from '@heroicons/vue/solid'
 import TagField from '@/components/fields/TagField.vue'
 
 const props = defineProps({

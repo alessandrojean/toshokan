@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
 
-import { UserGroupIcon } from '@heroicons/vue/solid'
+import { UserGroupIcon } from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
 

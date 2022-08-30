@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
 
-import { ChartBarIcon } from '@heroicons/vue/solid'
+import { ChartBarIcon } from '@heroicons/vue/24/solid'
 
 import FadeTransition from './transitions/FadeTransition.vue'
 

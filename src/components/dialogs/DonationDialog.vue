@@ -9,7 +9,7 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/solid'
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 import PicPayIcon from '@/components/icons/PicPayIcon.vue'
 
@@ -77,7 +77,7 @@ watch(open, (newOpen) => {
               @click="closeDialog"
             >
               <span aria-hidden="true">
-                <XIcon class="w-5 h-5" />
+                <XMarkIcon class="w-5 h-5" />
               </span>
               <span class="sr-only">
                 {{ t('footer.donate.actionClose') }}

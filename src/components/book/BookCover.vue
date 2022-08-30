@@ -6,8 +6,8 @@ import useImageLoader from '@/composables/useImageLoader'
 import Book from '@/model/Book'
 import { useSettingsStore } from '@/stores/settings'
 
-import { BookOpenIcon } from '@heroicons/vue/outline'
-import { ZoomInIcon } from '@heroicons/vue/solid'
+import { BookOpenIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassPlusIcon } from '@heroicons/vue/20/solid'
 
 import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
 import BookNavigator from '@/components/book/BookNavigator.vue'
@@ -119,7 +119,7 @@ const { t } = useI18n({ useScope: 'global' })
             :title="t('dashboard.details.zoom.view')"
           >
             <span aria-hidden="true">
-              <ZoomInIcon class="w-5 h-5" />
+              <MagnifyingGlassPlusIcon class="w-5 h-5" />
             </span>
             <span class="sr-only">
               {{ t('dashboard.details.zoom.view') }}

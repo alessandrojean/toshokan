@@ -6,8 +6,8 @@ import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import Book from '@/model/Book'
 import { useSettingsStore } from '@/stores/settings'
 
-import { BookOpenIcon, EyeOffIcon } from '@heroicons/vue/outline'
-import { BookmarkIcon, ClockIcon } from '@heroicons/vue/solid'
+import { BookOpenIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
@@ -145,7 +145,7 @@ const blurCover = computed(() => {
             v-if="blurCover"
             class="absolute inset-0 flex items-center justify-center cover-eye"
           >
-            <EyeOffIcon class="w-8 h-8 text-gray-800 opacity-60" />
+            <EyeSlashIcon class="w-8 h-8 text-gray-800 opacity-60" />
           </div>
         </div>
       </FadeTransition>
@@ -164,7 +164,7 @@ const blurCover = computed(() => {
           <div
             class="bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 self-end ml-auto"
           >
-            <BookmarkIcon class="w-5 h-5 text-primary-500" />
+            <BookmarkIcon class="w-4 h-4 text-primary-500" />
           </div>
         </template>
         <span v-else-if="!current && book.isFuture" class="future-item">
@@ -203,7 +203,7 @@ const blurCover = computed(() => {
               v-if="!book.isFuture && book.isRead"
               class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-1 sm:ml-2"
             >
-              <BookmarkIcon class="w-4 sm:w-5 h-4 sm:h-5 text-primary-500" />
+              <BookmarkIcon class="w-4 h-4 text-primary-500" />
             </div>
           </div>
         </div>

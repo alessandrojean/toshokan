@@ -6,7 +6,7 @@ import useMarkdown from '@/composables/useMarkdown'
 import useBookExistsQuery from '@/queries/useBookExistsQuery'
 import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
 
-import { SearchIcon } from '@heroicons/vue/solid'
+import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
 import BookSelector from '@/components/book/BookSelector.vue'
@@ -84,7 +84,7 @@ function viewExisting() {
       </label>
       <div class="group relative w-full search-field">
         <div class="search-icon" aria-hidden="true">
-          <SearchIcon class="w-5 h-5" />
+          <MagnifyingGlassIcon class="w-5 h-5" />
         </div>
         <input
           type="search"

@@ -7,7 +7,10 @@ import Book from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
-import { TrendingDownIcon, TrendingUpIcon } from '@heroicons/vue/solid'
+import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon
+} from '@heroicons/vue/20/solid'
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
 import BookGrid from '@/components/book/BookGrid.vue'
@@ -316,11 +319,11 @@ function searchByTag(tag, event) {
                       ]"
                     >
                       <span aria-hidden="true">
-                        <TrendingDownIcon
+                        <ArrowTrendingDownIcon
                           v-if="mt.badge <= 1"
                           class="w-4 h-4"
                         />
-                        <TrendingUpIcon v-else class="w-4 h-4" />
+                        <ArrowTrendingUpIcon v-else class="w-4 h-4" />
                       </span>
                       <span>{{ n(mt.badge, 'percent') }}</span>
                     </div>

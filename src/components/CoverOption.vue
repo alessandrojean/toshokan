@@ -3,7 +3,7 @@ import { computed, onMounted, toRefs, watch } from 'vue'
 
 import useImageLoader from '@/composables/useImageLoader'
 
-import { CheckIcon, PhotographIcon } from '@heroicons/vue/solid'
+import { CheckIcon, PhotoIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
@@ -49,7 +49,7 @@ watch(imageHasError, (hasError) => {
         v-if="imageLoading || imageHasError"
         class="w-full h-full flex justify-center items-center"
       >
-        <PhotographIcon
+        <PhotoIcon
           :class="[
             imageLoading ? 'motion-safe:animate-pulse' : '',
             'w-10 h-10 text-gray-400 dark:text-gray-500'

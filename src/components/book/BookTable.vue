@@ -10,11 +10,12 @@ import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
 import {
-  ArrowSmDownIcon,
-  ArrowSmUpIcon,
-  PhotographIcon
-} from '@heroicons/vue/outline'
-import { DotsHorizontalIcon, StarIcon } from '@heroicons/vue/solid'
+  ArrowDownIcon,
+  ArrowUpIcon,
+  EllipsisHorizontalIcon,
+  StarIcon
+} from '@heroicons/vue/20/solid'
+import { PhotoIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   currentPage: Number,
@@ -536,12 +537,12 @@ defineExpose({ focus, focusOnActiveHeader })
                   {{ t('book.book') }}
                 </span>
                 <template v-if="sortProperty === 'title'">
-                  <ArrowSmUpIcon
+                  <ArrowUpIcon
                     v-if="sortDirection === 'asc'"
                     class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
                     aria-hidden="true"
                   />
-                  <ArrowSmDownIcon
+                  <ArrowDownIcon
                     v-else
                     class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
                     aria-hidden="true"
@@ -621,12 +622,12 @@ defineExpose({ focus, focusOnActiveHeader })
                   {{ column.label }}
                 </span>
                 <template v-if="sortProperty === column.key && !column.hidden">
-                  <ArrowSmUpIcon
+                  <ArrowUpIcon
                     v-if="sortDirection === 'asc'"
                     class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
                     aria-hidden="true"
                   />
-                  <ArrowSmDownIcon
+                  <ArrowDownIcon
                     v-else
                     class="align-text-bottom inline-block h-4 w-4 dark:text-gray-100 ml-1"
                     aria-hidden="true"
@@ -722,7 +723,7 @@ defineExpose({ focus, focusOnActiveHeader })
                       :alt="book.title"
                       loading="lazy"
                     />
-                    <PhotographIcon
+                    <PhotoIcon
                       v-else
                       :class="[
                         'h-6 w-6 motion-safe:transition-colors',
@@ -805,7 +806,7 @@ defineExpose({ focus, focusOnActiveHeader })
                     {{ t('dashboard.library.items.view') }}
                   </span>
                   <span aria-hidden="true">
-                    <DotsHorizontalIcon />
+                    <EllipsisHorizontalIcon />
                   </span>
                 </router-link>
               </td>
@@ -831,9 +832,7 @@ defineExpose({ focus, focusOnActiveHeader })
                   <div
                     class="shrink-0 skeleton h-10 w-10 inline-flex items-center justify-center"
                   >
-                    <PhotographIcon
-                      class="h-6 w-6 text-white dark:text-gray-500"
-                    />
+                    <PhotoIcon class="h-6 w-6 text-white dark:text-gray-500" />
                   </div>
                   <div class="ml-4">
                     <div class="skeleton w-36 h-4" />

@@ -7,7 +7,7 @@ import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
-import { ChartBarIcon } from '@heroicons/vue/solid'
+import { ChartBarIcon } from '@heroicons/vue/24/solid'
 
 import FadeTransition from './transitions/FadeTransition.vue'
 

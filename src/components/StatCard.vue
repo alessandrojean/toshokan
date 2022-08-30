@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { EyeIcon, EyeOffIcon } from '@heroicons/vue/solid'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   alwaysHidden: Boolean,
@@ -96,7 +96,7 @@ const { t } = useI18n({ useScope: 'global' })
         enter-to-class="opacity-100 rotate-0"
       >
         <EyeIcon class="text-gray-500" v-if="!showValue" />
-        <EyeOffIcon class="text-gray-500" v-else />
+        <EyeSlashIcon class="text-gray-500" v-else />
       </transition>
       <span class="sr-only">
         {{

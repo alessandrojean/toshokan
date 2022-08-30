@@ -7,7 +7,7 @@ import useAppInfo from '@/composables/useAppInfo'
 import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 
-import { IdentificationIcon, RefreshIcon } from '@heroicons/vue/solid'
+import { IdentificationIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -87,7 +87,7 @@ watch(hasGrantedScopes, (newValue) => {
               @click="refresh"
             >
               <span aria-hidden="true">
-                <RefreshIcon class="-scale-x-100" />
+                <ArrowPathIcon class="-scale-x-100" />
               </span>
               <span>{{ t('errors.refresh') }}</span>
             </button>

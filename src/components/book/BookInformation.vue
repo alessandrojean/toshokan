@@ -12,18 +12,18 @@ import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 
 import {
   BookmarkIcon as BookmarkSolidIcon,
-  ExternalLinkIcon,
+  ArrowTopRightOnSquareIcon,
   GlobeAltIcon,
   PencilIcon,
   StarIcon as StarSolidIcon
-} from '@heroicons/vue/solid'
+} from '@heroicons/vue/20/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
   ClockIcon,
   ShareIcon,
   StarIcon as StarOutlineIcon,
   TrashIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
@@ -381,7 +381,7 @@ const canEdit = computed(() => sheetStore.canEdit)
               </span>
               <span>{{ link.title }}</span>
               <span aria-hidden="true">
-                <ExternalLinkIcon class="w-3.5 h-3.5 ext-icon" />
+                <ArrowTopRightOnSquareIcon class="w-3.5 h-3.5 ext-icon" />
               </span>
             </a>
           </li>

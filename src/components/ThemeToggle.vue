@@ -16,14 +16,14 @@ import {
   ListboxOption
 } from '@headlessui/vue'
 
-import { MoonIcon, SunIcon } from '@heroicons/vue/outline'
+import { MoonIcon, SunIcon } from '@heroicons/vue/24/outline'
 
 import {
-  DeviceMobileIcon as DeviceMobileIconSolid,
-  DesktopComputerIcon as DesktopComputerIconSolid,
+  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
+  ComputerDesktopIcon as ComputerDesktopIconSolid,
   MoonIcon as MoonIconSolid,
   SunIcon as SunIconSolid
-} from '@heroicons/vue/solid'
+} from '@heroicons/vue/20/solid'
 
 defineProps({ light: Boolean, bottom: Boolean })
 
@@ -41,7 +41,7 @@ const options = computed(() => [
   {
     key: THEME_SYSTEM,
     responsive: true,
-    menuIcon: [DeviceMobileIconSolid, DesktopComputerIconSolid]
+    menuIcon: [DevicePhoneMobileIconSolid, ComputerDesktopIconSolid]
   }
 ])
 

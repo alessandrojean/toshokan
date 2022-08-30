@@ -6,17 +6,17 @@ import { useAuthStore } from '@/stores/auth'
 import { useSheetStore } from '@/stores/sheet'
 
 import {
-  DotsHorizontalIcon,
+  EllipsisHorizontalIcon,
   HomeIcon,
-  LibraryIcon,
+  BuildingLibraryIcon,
   PresentationChartLineIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
 import {
-  CogIcon,
-  LibraryIcon as LibraryIconSolid,
-  LogoutIcon
-} from '@heroicons/vue/solid'
+  Cog8ToothIcon,
+  BuildingLibraryIcon as BuildingLibrarySolidIcon,
+  ArrowRightOnRectangleIcon
+} from '@heroicons/vue/20/solid'
 
 import {
   Popover,
@@ -45,7 +45,7 @@ const items = computed(() => [
   {
     to: 'DashboardLibrary',
     title: t('dashboard.library.title'),
-    icon: LibraryIcon
+    icon: BuildingLibraryIcon
   },
   {
     to: 'DashboardStats',
@@ -100,7 +100,7 @@ function showSettingsDialog(close) {
     aria-label="Navegação principal"
   >
     <div aria-hidden="true" class="hidden sm:block mt-1.5 mb-6">
-      <LibraryIconSolid class="text-primary-500 w-9 h-9" />
+      <BuildingLibrarySolidIcon class="text-primary-500 w-9 h-9" />
     </div>
     <ul
       class="w-full sm:h-full flex items-center sm:justify-start sm:flex-col sm:space-y-2"
@@ -158,7 +158,7 @@ function showSettingsDialog(close) {
             ]"
           >
             <span aria-hidden="true">
-              <DotsHorizontalIcon
+              <EllipsisHorizontalIcon
                 class="w-6 h-6 motion-safe:transition-colors duration-500"
               />
             </span>
@@ -209,7 +209,7 @@ function showSettingsDialog(close) {
                   @click="showSettingsDialog(close)"
                 >
                   <span aria-hidden="true">
-                    <CogIcon
+                    <Cog8ToothIcon
                       class="w-5 h-5 mr-3 text-gray-500 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-300"
                     />
                   </span>
@@ -222,7 +222,7 @@ function showSettingsDialog(close) {
                   @click="signOut(close)"
                 >
                   <span aria-hidden="true">
-                    <LogoutIcon
+                    <ArrowRightOnRectangleIcon
                       class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
                     />
                   </span>

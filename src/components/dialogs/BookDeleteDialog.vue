@@ -2,7 +2,7 @@
 import { inject, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { TrashIcon } from '@heroicons/vue/outline'
+import { TrashIcon } from '@heroicons/vue/24/outline'
 
 import {
   Dialog,

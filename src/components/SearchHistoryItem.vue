@@ -8,7 +8,7 @@ import searchQuery from 'search-query-parser'
 import useMarkdown from '@/composables/useMarkdown'
 import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
-import { XIcon } from '@heroicons/vue/solid'
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   search: {
@@ -85,7 +85,7 @@ const searchText = computed(() => {
         {{ t('dashboard.search.removeFromHistory') }}
       </span>
       <span aria-hidden="true">
-        <XIcon class="w-5 h-5" />
+        <XMarkIcon class="w-5 h-5" />
       </span>
     </button>
   </a>

@@ -9,7 +9,7 @@ import useStatisticsQuery from '@/queries/useStatisticsQuery'
 import {
   ExclamationCircleIcon,
   PresentationChartLineIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
 import BasicBarChart from '@/components/BasicBarChart.vue'
 import GroupedStatistics from '@/components/GroupedStatistics.vue'

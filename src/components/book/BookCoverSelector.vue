@@ -10,8 +10,8 @@ import useCoverQuery from '@/queries/useCoverQuery'
 
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
 
-import { EmojiSadIcon } from '@heroicons/vue/outline'
-import { PlusIcon } from '@heroicons/vue/solid'
+import { FaceFrownIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon } from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
 import CoverOption from '@/components/CoverOption.vue'
@@ -141,7 +141,7 @@ function unselect(url) {
           </div>
 
           <div v-else class="flex flex-col items-center p-3">
-            <EmojiSadIcon
+            <FaceFrownIcon
               class="h-24 w-24 text-gray-300 dark:text-gray-500 mb-3"
               aria-hidden="true"
             />

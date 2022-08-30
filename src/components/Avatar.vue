@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLoader from '@/composables/useImageLoader'
 
-import { UserGroupIcon, UserIcon } from '@heroicons/vue/solid'
+import { UserGroupIcon, UserIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   dark: Boolean,

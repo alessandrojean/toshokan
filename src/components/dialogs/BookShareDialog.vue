@@ -19,12 +19,12 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { DownloadIcon } from '@heroicons/vue/outline'
+import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import {
-  ClipboardCopyIcon,
-  ExternalLinkIcon,
-  XIcon
-} from '@heroicons/vue/solid'
+  ClipboardIcon,
+  ArrowTopRightOnSquareIcon,
+  XMarkIcon
+} from '@heroicons/vue/20/solid'
 
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
@@ -217,7 +217,7 @@ onUnmounted(() => {
               @click="closeDialog"
             >
               <span aria-hidden="true">
-                <XIcon class="w-5 h-5" />
+                <XMarkIcon class="w-5 h-5" />
               </span>
               <span class="sr-only">
                 {{ t('dashboard.details.share.actionClose') }}
@@ -282,7 +282,7 @@ onUnmounted(() => {
                   @click="copyShareUrl"
                 >
                   <span aria-hidden="true">
-                    <ClipboardCopyIcon />
+                    <ClipboardIcon />
                   </span>
                   <span v-if="showCopiedInfo">
                     {{ t('dashboard.details.share.copied') }}
@@ -298,7 +298,7 @@ onUnmounted(() => {
                   class="button is-small is-icon-only flex-shrink-0 ml-0.5"
                 >
                   <span aria-hidden="true">
-                    <ExternalLinkIcon />
+                    <ArrowTopRightOnSquareIcon />
                   </span>
                   <span class="sr-only">
                     {{ t('dashboard.details.share.actionOpen') }}
@@ -340,7 +340,7 @@ onUnmounted(() => {
                   @click="copyShareUrl"
                 >
                   <span aria-hidden="true">
-                    <ClipboardCopyIcon />
+                    <ClipboardIcon />
                   </span>
                   <span v-if="showCopiedInfo">
                     {{ t('dashboard.details.share.copied') }}
@@ -356,7 +356,7 @@ onUnmounted(() => {
                   :href="shareUrl"
                 >
                   <span aria-hidden="true">
-                    <ExternalLinkIcon />
+                    <ArrowTopRightOnSquareIcon />
                   </span>
                   <span>
                     {{ t('dashboard.details.share.actionOpen') }}
@@ -370,7 +370,7 @@ onUnmounted(() => {
                 @click="downloadFile"
               >
                 <span aria-hidden="true">
-                  <DownloadIcon />
+                  <ArrowDownTrayIcon />
                 </span>
                 <span>
                   {{ t('dashboard.details.share.actionExport') }}

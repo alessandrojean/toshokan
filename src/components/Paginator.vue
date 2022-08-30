@@ -7,7 +7,7 @@ import {
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon
-} from '@heroicons/vue/solid'
+} from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   enabled: Boolean,

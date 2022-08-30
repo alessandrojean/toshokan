@@ -11,8 +11,8 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import {
   ChevronRightIcon,
   ClockIcon,
-  PhotographIcon
-} from '@heroicons/vue/outline'
+  PhotoIcon
+} from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   result: {
@@ -91,7 +91,7 @@ const authorsFormatted = computed(() => {
           aria-hidden="true"
         >
           <div class="empty-cover">
-            <PhotographIcon
+            <PhotoIcon
               :class="[
                 imageLoading ? 'motion-safe:animate-pulse' : '',
                 'w-7 h-7 text-gray-500 dark:text-gray-400'

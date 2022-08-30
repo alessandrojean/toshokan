@@ -6,9 +6,9 @@ import useAppInfo from '@/composables/useAppInfo'
 
 import {
   CurrencyDollarIcon,
-  HandIcon,
+  HandRaisedIcon,
   QuestionMarkCircleIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
 import DonationDialog from '@/components/dialogs/DonationDialog.vue'
 import GitHubIcon from '@/components/icons/GitHubIcon.vue'
@@ -49,7 +49,7 @@ const releaseLink = computed(() => {
               {{ t('app.routes.about.a11y') }}
             </span>
             <span aria-hidden="true">
-              <HandIcon class="w-6 h-6" />
+              <HandRaisedIcon class="w-6 h-6" />
             </span>
           </router-link>
 

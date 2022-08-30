@@ -17,16 +17,16 @@ import useGroupsQuery from '@/queries/useGroupsQuery'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  FilterIcon,
+  FunnelIcon,
   PlusIcon
-} from '@heroicons/vue/solid'
+} from '@heroicons/vue/20/solid'
 import {
-  DocumentSearchIcon,
+  DocumentMagnifyingGlassIcon,
   ExclamationCircleIcon,
-  TableIcon,
-  ViewGridAddIcon,
-  ViewGridIcon
-} from '@heroicons/vue/outline'
+  TableCellsIcon,
+  SquaresPlusIcon,
+  Squares2X2Icon
+} from '@heroicons/vue/24/outline'
 
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
 
@@ -464,7 +464,7 @@ const writing = computed(() => deleting.value || updating.value)
                       {{ t('dashboard.library.filters.viewMode.table') }}
                     </span>
                     <span aria-hidden="true">
-                      <TableIcon class="h-5 w-5" />
+                      <TableCellsIcon class="h-5 w-5" />
                     </span>
                   </RadioGroupOption>
                   <RadioGroupOption
@@ -480,7 +480,7 @@ const writing = computed(() => deleting.value || updating.value)
                       }}
                     </span>
                     <span aria-hidden="true">
-                      <ViewGridIcon class="h-5 w-5" />
+                      <Squares2X2Icon class="h-5 w-5" />
                     </span>
                   </RadioGroupOption>
                   <RadioGroupOption
@@ -492,7 +492,7 @@ const writing = computed(() => deleting.value || updating.value)
                       {{ t('dashboard.library.filters.gridMode.compactGrid') }}
                     </span>
                     <span aria-hidden="true">
-                      <ViewGridAddIcon class="h-5 w-5" />
+                      <SquaresPlusIcon class="h-5 w-5" />
                     </span>
                   </RadioGroupOption>
                 </div>
@@ -671,7 +671,7 @@ const writing = computed(() => deleting.value || updating.value)
           class="w-full max-w-lg mx-auto h-full flex items-center justify-center flex-col px-4"
         >
           <span aria-hidden="true">
-            <DocumentSearchIcon
+            <DocumentMagnifyingGlassIcon
               class="h-16 w-16 mb-8 text-gray-400 dark:text-gray-600"
             />
           </span>
@@ -686,7 +686,7 @@ const writing = computed(() => deleting.value || updating.value)
           </p>
           <button class="button text-lg" @click="filterOpen = true">
             <span aria-hidden="true">
-              <FilterIcon />
+              <FunnelIcon />
             </span>
             {{ t('dashboard.library.filter') }}
           </button>

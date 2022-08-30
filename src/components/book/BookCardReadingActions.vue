@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
 
-import { CalendarIcon, CheckIcon } from '@heroicons/vue/outline'
-import { CheckIcon as CheckIconSolid } from '@heroicons/vue/solid'
+import { CalendarIcon, CheckIcon } from '@heroicons/vue/24/outline'
+import { CheckIcon as CheckIconSolid } from '@heroicons/vue/20/solid'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'

@@ -17,12 +17,9 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import {
-  SortAscendingIcon,
-  SortDescendingIcon,
-  XIcon
-} from '@heroicons/vue/solid'
-import { SearchIcon } from '@heroicons/vue/outline'
+// TODO: Replace with sort icons
+import { ArrowUpIcon, ArrowDownIcon, XMarkIcon } from '@heroicons/vue/20/solid'
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 import Avatar from '@/components/Avatar.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
@@ -370,7 +367,7 @@ function focusOnResults() {
               @submit.prevent="handleSearch"
             >
               <span aria-hidden="true" class="w-6 h-6 relative">
-                <SearchIcon
+                <MagnifyingGlassIcon
                   class="absolute w-6 h-6 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800"
                 />
               </span>
@@ -410,7 +407,7 @@ function focusOnResults() {
                   @click="clearSearch(true)"
                 >
                   <span aria-hidden="true">
-                    <XIcon class="w-5 h-5" />
+                    <XMarkIcon class="w-5 h-5" />
                   </span>
                   <span class="sr-only">
                     {{ t('dashboard.search.clear') }}
@@ -503,8 +500,8 @@ function focusOnResults() {
                           }}
                         </span>
                         <span aria-hidden="true">
-                          <SortAscendingIcon v-if="sortDirection === 'asc'" />
-                          <SortDescendingIcon v-else />
+                          <ArrowUpIcon v-if="sortDirection === 'asc'" />
+                          <ArrowDownIcon v-else />
                         </span>
                       </button>
                     </div>

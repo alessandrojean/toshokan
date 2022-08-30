@@ -4,7 +4,10 @@ import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
 
-import { LibraryIcon, SearchIcon } from '@heroicons/vue/solid'
+import {
+  BuildingLibraryIcon,
+  MagnifyingGlassIcon
+} from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
@@ -94,7 +97,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
             class="shrink-0 flex items-center rounded-md hocus:bg-gray-700 group px-2 py-1 -ml-2 has-ring-focus focus-visible:ring-offset-gray-800"
           >
             <span aria-hidden="true" class="sm:hidden md:block">
-              <LibraryIcon
+              <BuildingLibraryIcon
                 :class="[
                   'h-9 w-9 motion-safe:transition-colors md:motion-safe:transition-none',
                   isOnTop
@@ -158,7 +161,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
           >
             <span class="sr-only">{{ t('dashboard.header.search.link') }}</span>
             <span aria-hidden="true">
-              <SearchIcon class="h-6 w-6" />
+              <MagnifyingGlassIcon class="h-6 w-6" />
             </span>
           </button>
 
@@ -170,7 +173,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
               @click="showSearchDialog"
             >
               <span aria-hidden="true">
-                <SearchIcon class="w-4 h-4" />
+                <MagnifyingGlassIcon class="w-4 h-4" />
               </span>
               <span class="text-sm w-56 text-left">
                 {{ t('dashboard.header.search.placeholder') }}

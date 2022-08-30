@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import useAppInfo from '@/composables/useAppInfo'
 import { useAuthStore } from '@/stores/auth'
 
-import { CameraIcon, LibraryIcon } from '@heroicons/vue/solid'
+import { BuildingLibraryIcon, CameraIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
@@ -90,7 +90,7 @@ const { darkMode } = useDarkMode()
               :title="t('app.routes.home')"
             >
               <span aria-hidden="true">
-                <LibraryIcon class="h-9 w-9 mx-auto text-white/90" />
+                <BuildingLibraryIcon class="h-9 w-9 mx-auto text-white/90" />
               </span>
               <span
                 class="text-white/90 font-display font-semibold text-xl ml-3"

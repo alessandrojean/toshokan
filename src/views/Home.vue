@@ -5,12 +5,12 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 
 import {
-  CodeIcon,
-  DatabaseIcon,
-  PhotographIcon,
-  SearchIcon,
+  CodeBracketIcon,
+  CircleStackIcon,
+  PhotoIcon,
+  MagnifyingGlassIcon,
   SparklesIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
 import CreateBookDialogWireframe from '@/components/wireframes/CreateBookDialog.vue'
 import Dashboard from '@/components/wireframes/Dashboard.vue'
@@ -28,12 +28,12 @@ const { t } = useI18n({ useScope: 'global' })
 
 const features = computed(() => [
   {
-    icon: SearchIcon,
+    icon: MagnifyingGlassIcon,
     title: t('home.features.isbn.title'),
     description: t('home.features.isbn.description')
   },
   {
-    icon: PhotographIcon,
+    icon: PhotoIcon,
     title: t('home.features.cover.title'),
     description: t('home.features.cover.description')
   },
@@ -43,7 +43,7 @@ const features = computed(() => [
     description: t('home.features.data.description')
   },
   {
-    icon: CodeIcon,
+    icon: CodeBracketIcon,
     title: t('home.features.openSource.title'),
     description: t('home.features.openSource.description')
   }
@@ -139,7 +139,7 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
 
         <div class="functionality-description">
           <span class="icon" aria-hidden="true">
-            <DatabaseIcon />
+            <CircleStackIcon />
           </span>
           <h2>
             {{ t('home.collection.title') }}

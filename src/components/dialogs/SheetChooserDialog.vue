@@ -23,8 +23,8 @@ import {
   LockOpenIcon,
   StarIcon,
   UserGroupIcon
-} from '@heroicons/vue/outline'
-import { XIcon } from '@heroicons/vue/solid'
+} from '@heroicons/vue/24/outline'
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({ isOpen: Boolean })
 
@@ -111,7 +111,7 @@ watch(isOpen, (newIsOpen) => {
 
               <button class="close-button has-ring-focus" @click="closeDialog">
                 <span aria-hidden="true">
-                  <XIcon class="w-5 h-5" />
+                  <XMarkIcon class="w-5 h-5" />
                 </span>
               </button>
 
@@ -131,7 +131,10 @@ watch(isOpen, (newIsOpen) => {
               </span>
             </div>
 
-            <RadioGroup class="sheet-options" v-model="selected">
+            <RadioGroup
+              class="flex-grow overflow-y-auto p-4 lg:p-6"
+              v-model="selected"
+            >
               <RadioGroupLabel class="sr-only">
                 {{ t('dashboard.sheetChooser.label') }}
               </RadioGroupLabel>
@@ -303,10 +306,6 @@ watch(isOpen, (newIsOpen) => {
 .close-button:focus-visible {
   @apply text-white ring-primary-300
     ring-offset-primary-600 dark:ring-offset-primary-500;
-}
-
-.sheet-options {
-  @apply flex-grow overflow-y-auto p-4 lg:p-6;
 }
 
 .sheet {

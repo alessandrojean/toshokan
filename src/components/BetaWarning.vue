@@ -1,9 +1,8 @@
 <script setup>
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLocalStorage } from '@vueuse/core'
 
-import { SpeakerphoneIcon, XIcon } from '@heroicons/vue/outline'
+import { MegaphoneIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
@@ -30,7 +29,7 @@ const { t } = useI18n({ useScope: 'global' })
         >
           <div class="w-0 flex-1 flex items-center">
             <span class="flex p-2 rounded-lg bg-primary-800">
-              <SpeakerphoneIcon class="h-6 w-6 text-white" aria-hidden="true" />
+              <MegaphoneIcon class="h-6 w-6 text-white" aria-hidden="true" />
             </span>
             <p class="ml-3 font-medium text-white truncate">
               <span class="md:hidden">
@@ -48,7 +47,7 @@ const { t } = useI18n({ useScope: 'global' })
               @click.stop="handleDismiss"
             >
               <span class="sr-only">{{ t('dashboard.home.beta.close') }}</span>
-              <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
+              <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
             </button>
           </div>
         </div>

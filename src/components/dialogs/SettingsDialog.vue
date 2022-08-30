@@ -27,10 +27,10 @@ import {
 
 import {
   CheckIcon,
-  DownloadIcon,
-  ExclamationIcon,
-  XIcon
-} from '@heroicons/vue/solid'
+  ArrowDownTrayIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon
+} from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
@@ -248,7 +248,7 @@ async function exportAsAndroid() {
 
               <button class="close-button has-ring-focus" @click="closeDialog">
                 <span aria-hidden="true">
-                  <XIcon class="w-5 h-5" />
+                  <XMarkIcon class="w-5 h-5" />
                 </span>
               </button>
 
@@ -597,7 +597,7 @@ async function exportAsAndroid() {
                           @click="exportAsAndroid"
                         >
                           <span aria-hidden="true">
-                            <DownloadIcon />
+                            <ArrowDownTrayIcon />
                           </span>
                           <span>
                             {{ t('dashboard.settings.export.android.export') }}
@@ -648,7 +648,7 @@ async function exportAsAndroid() {
                           @click="handleDisconnect"
                         >
                           <span aria-hidden="true">
-                            <ExclamationIcon />
+                            <ExclamationTriangleIcon />
                           </span>
                           <span>
                             {{
@@ -670,7 +670,7 @@ async function exportAsAndroid() {
                         <div class="preference-description">
                           <SwitchLabel>
                             <span aria-hidden="true">
-                              <ExclamationIcon
+                              <ExclamationTriangleIcon
                                 class="w-5 h-5 mr-1 text-red-600 dark:text-red-400"
                               />
                             </span>

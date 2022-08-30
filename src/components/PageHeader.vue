@@ -4,7 +4,10 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { LibraryIcon, LoginIcon } from '@heroicons/vue/solid'
+import {
+  BuildingLibraryIcon,
+  ArrowLeftOnRectangleIcon
+} from '@heroicons/vue/20/solid'
 
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
@@ -28,7 +31,7 @@ const authorized = computed(() => authStore.authorized)
         class="inline-flex shrink-0 items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
       >
         <span aria-hidden="true">
-          <LibraryIcon class="h-9 w-9 text-primary-500" />
+          <BuildingLibraryIcon class="h-9 w-9 text-primary-500" />
         </span>
         <span class="sr-only">{{ t('app.routes.home') }}</span>
         <span
@@ -66,7 +69,7 @@ const authorized = computed(() => authStore.authorized)
           v-if="!authenticated"
         >
           <span aria-hidden="true">
-            <LoginIcon class="w-5 h-5 rotate-180" />
+            <ArrowLeftOnRectangleIcon class="w-5 h-5 rotate-180" />
           </span>
           <span class="sr-only">
             {{ t('home.header.signIn') }}

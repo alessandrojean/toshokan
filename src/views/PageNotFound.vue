@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { ArrowSmLeftIcon } from '@heroicons/vue/solid'
+import { ArrowLeftIcon } from '@heroicons/vue/20/solid'
 
 const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)
@@ -38,11 +38,13 @@ const { t } = useI18n({ useScope: 'global' })
           </div>
           <div class="mt-10 md:ml-6 md:pl-6">
             <router-link
-              :to="{ name: authenticated && authorized ? 'DashboardHome' : 'Home' }"
+              :to="{
+                name: authenticated && authorized ? 'DashboardHome' : 'Home'
+              }"
               class="button is-ghost is-link -ml-3 group"
             >
               <span aria-hidden="true">
-                <ArrowSmLeftIcon
+                <ArrowLeftIcon
                   class="motion-safe:transition-transform group-hover:-translate-x-1"
                 />
               </span>

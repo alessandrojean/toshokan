@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
 
-import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/solid'
+import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
   book: Book,

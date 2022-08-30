@@ -10,7 +10,7 @@ import useLastAddedQuery from '@/queries/useLastAddedQuery'
 import useLatestReadingsQuery from '@/queries/useLatestReadingsQuery'
 import useNextReadsQuery from '@/queries/useNextReadsQuery'
 
-import { ArrowSmRightIcon } from '@heroicons/vue/solid'
+import { ArrowRightIcon } from '@heroicons/vue/20/solid'
 
 import BookCard from '@/components/book/BookCard.vue'
 import BookCardReadingActions from '@/components/book/BookCardReadingActions.vue'
@@ -172,7 +172,7 @@ function handleReadToday(book) {
       >
         {{ buttonText }}
         <span aria-hidden="true">
-          <ArrowSmRightIcon
+          <ArrowRightIcon
             class="is-right motion-safe:transition-transform group-hover:translate-x-1"
           />
         </span>

@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { LibraryIcon, LoginIcon } from '@heroicons/vue/solid'
+import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
+import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
 
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
@@ -22,7 +23,7 @@ const { t } = useI18n({ useScope: 'global' })
       <div class="flex items-center justify-between h-16">
         <h1 class="flex items-center rounded-md">
           <span aria-hidden="true">
-            <LibraryIcon class="h-9 w-9 text-primary-500" />
+            <BuildingLibraryIcon class="h-9 w-9 text-primary-500" />
           </span>
           <span
             class="text-gray-800 dark:text-gray-200 font-display font-semibold text-xl ml-3"
@@ -64,7 +65,7 @@ const { t } = useI18n({ useScope: 'global' })
             v-if="!authenticated"
           >
             <span aria-hidden="true">
-              <LoginIcon class="w-5 h-5 rotate-180" />
+              <ArrowLeftOnRectangleIcon class="w-5 h-5 rotate-180" />
             </span>
             <span class="sr-only">
               {{ t('home.header.signIn') }}

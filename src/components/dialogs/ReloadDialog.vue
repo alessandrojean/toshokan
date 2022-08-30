@@ -16,7 +16,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { SparklesIcon } from '@heroicons/vue/outline'
+import { SparklesIcon } from '@heroicons/vue/24/outline'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW()
 

@@ -11,11 +11,15 @@ import {
   BookOpenIcon,
   BookmarkIcon,
   CurrencyDollarIcon,
-  EmojiHappyIcon,
+  FaceSmileIcon,
   ExclamationCircleIcon
-} from '@heroicons/vue/outline'
+} from '@heroicons/vue/24/outline'
 
-import { CollectionIcon, PlusIcon, RefreshIcon } from '@heroicons/vue/solid'
+import {
+  RectangleStackIcon,
+  PlusIcon,
+  ArrowPathIcon
+} from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
 import BookCarousel from '@/components/book/BookCarousel.vue'
@@ -114,7 +118,7 @@ function closeSheetChooser() {
               :class="loading || isFetching ? 'motion-safe:animate-spin' : ''"
               class="origin-center w-5 h-5 -ml-1 mr-2"
             >
-              <RefreshIcon class="-scale-x-100 !mx-0" />
+              <ArrowPathIcon class="-scale-x-100 !mx-0" />
             </span>
             {{ t('dashboard.home.reload') }}
           </button>
@@ -125,7 +129,7 @@ function closeSheetChooser() {
             :disabled="loading || isFetching"
           >
             <span aria-hidden="true">
-              <CollectionIcon />
+              <RectangleStackIcon />
             </span>
             {{ t('dashboard.sheetChooser.actionSelectSheet') }}
           </button>
@@ -211,7 +215,7 @@ function closeSheetChooser() {
               sensitive
             >
               <template v-slot:icon="{ cssClass }">
-                <EmojiHappyIcon :class="cssClass" />
+                <FaceSmileIcon :class="cssClass" />
               </template>
             </StatCard>
           </div>

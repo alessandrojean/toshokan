@@ -7,12 +7,13 @@ import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
 import {
-  ArchiveIcon,
-  FilterIcon,
+  ArchiveBoxIcon,
+  FunnelIcon,
   PlusIcon,
-  SortAscendingIcon,
-  SortDescendingIcon
-} from '@heroicons/vue/solid'
+  // TODO: Replace with SortAscendingIcon and SortDescendingIcon
+  ArrowUpIcon,
+  ArrowDownIcon
+} from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
 
@@ -117,7 +118,7 @@ const owner = computed(() => ({
                 @click="$emit('click:filter')"
               >
                 <span aria-hidden="true">
-                  <ArchiveIcon
+                  <ArchiveBoxIcon
                     class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
                   />
                 </span>
@@ -135,11 +136,7 @@ const owner = computed(() => ({
                 <span aria-hidden="true">
                   <component
                     class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
-                    :is="
-                      sortDirection === 'asc'
-                        ? SortAscendingIcon
-                        : SortDescendingIcon
-                    "
+                    :is="sortDirection === 'asc' ? ArrowUpIcon : ArrowDownIcon"
                   />
                 </span>
                 <span class="sr-only">
@@ -169,7 +166,7 @@ const owner = computed(() => ({
             :disabled="loading || writing"
           >
             <span aria-hidden="true">
-              <FilterIcon aria-hidden="true" />
+              <FunnelIcon aria-hidden="true" />
             </span>
             {{ t('dashboard.library.filter') }}
           </button>

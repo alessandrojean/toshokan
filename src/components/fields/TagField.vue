@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, toRefs, watch } from 'vue'
 
-import { MenuIcon, XIcon } from '@heroicons/vue/solid'
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 import Draggable from 'vuedraggable'
 
@@ -141,7 +141,7 @@ function handleBackspace(event) {
               class="handle"
               aria-hidden="true"
             >
-              <MenuIcon class="w-3 h-3" />
+              <Bars3Icon class="w-3 h-3" />
             </span>
             <span>{{ tag }}</span>
             <button
@@ -154,7 +154,7 @@ function handleBackspace(event) {
                 {{ removeAction }}
               </span>
               <span aria-hidden="true">
-                <XIcon class="w-3 h-3" />
+                <XMarkIcon class="w-3 h-3" />
               </span>
             </button>
           </li>

@@ -30,11 +30,11 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { ArrowSmRightIcon, CheckIcon, XIcon } from '@heroicons/vue/solid'
+import { ArrowRightIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import {
   CheckIcon as CheckOutlineIcon,
-  PhotographIcon
-} from '@heroicons/vue/outline'
+  PhotoIcon
+} from '@heroicons/vue/24/outline'
 
 import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
@@ -431,7 +431,7 @@ const bookInfo = computed(() => {
 
             <button class="close-button has-ring-focus" @click="closeDialog">
               <span aria-hidden="true">
-                <XIcon class="w-5 h-5" />
+                <XMarkIcon class="w-5 h-5" />
               </span>
             </button>
 
@@ -547,7 +547,7 @@ const bookInfo = computed(() => {
                         <div
                           class="flex justify-center items-center w-full h-full"
                         >
-                          <PhotographIcon
+                          <PhotoIcon
                             :class="
                               imageLoading ? 'motion-safe:animate-pulse' : ''
                             "
@@ -620,7 +620,7 @@ const bookInfo = computed(() => {
             >
               {{ nextStepText }}
               <span aria-hidden="true">
-                <ArrowSmRightIcon class="is-right" aria-hidden="true" />
+                <ArrowRightIcon class="is-right" aria-hidden="true" />
               </span>
             </button>
 

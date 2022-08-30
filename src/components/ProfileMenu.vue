@@ -6,7 +6,11 @@ import { useAuthStore } from '@/stores/auth'
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 
-import { CogIcon, ChevronDownIcon, LogoutIcon } from '@heroicons/vue/solid'
+import {
+  Cog8ToothIcon,
+  ChevronDownIcon,
+  ArrowLeftOnRectangleIcon
+} from '@heroicons/vue/20/solid'
 
 import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
 
@@ -83,7 +87,7 @@ const showSettingsDialog = !props.hideSettings
               @click="showSettingsDialog"
             >
               <span aria-hidden="true">
-                <CogIcon
+                <Cog8ToothIcon
                   :class="[
                     !disabled
                       ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300'
@@ -107,7 +111,7 @@ const showSettingsDialog = !props.hideSettings
               @click.stop="signOut"
             >
               <span aria-hidden="true">
-                <LogoutIcon
+                <ArrowLeftOnRectangleIcon
                   class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
                 />
               </span>

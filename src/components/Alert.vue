@@ -2,10 +2,10 @@
 import { computed, toRefs } from 'vue'
 
 import {
-  ExclamationIcon,
+  ExclamationTriangleIcon,
   InformationCircleIcon,
   XCircleIcon
-} from '@heroicons/vue/solid'
+} from '@heroicons/vue/20/solid'
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
@@ -88,7 +88,7 @@ const borderColor = computed(() => {
           class="h-5 w-5 text-blue-500 dark:text-blue-400"
           aria-hidden="true"
         />
-        <ExclamationIcon
+        <ExclamationTriangleIcon
           v-else
           class="h-5 w-5 text-amber-400 dark:text-amber-500"
           aria-hidden="true"
