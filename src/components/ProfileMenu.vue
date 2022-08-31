@@ -9,7 +9,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import {
   Cog8ToothIcon,
   ChevronDownIcon,
-  ArrowLeftOnRectangleIcon
+  ArrowLeftOnRectangleIcon,
+  QuestionMarkCircleIcon
 } from '@heroicons/vue/20/solid'
 
 import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
@@ -98,6 +99,29 @@ const showSettingsDialog = !props.hideSettings
               </span>
               {{ t('dashboard.header.menu.settings') }}
             </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <RouterLink
+              :to="{ name: 'Instructions' }"
+              :class="[
+                active
+                  ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
+                  : '',
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+              ]"
+            >
+              <span aria-hidden="true">
+                <QuestionMarkCircleIcon
+                  :class="[
+                    !disabled
+                      ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300'
+                      : '',
+                    'w-5 h-5 mr-3 text-gray-500 dark:text-gray-400 '
+                  ]"
+                />
+              </span>
+              {{ t('dashboard.header.menu.help') }}
+            </RouterLink>
           </MenuItem>
         </div>
         <div class="pt-1">

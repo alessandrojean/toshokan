@@ -323,6 +323,7 @@ dashboard:
       more: More
       open: Open user menu
       settings: Settings
+      help: Help
       signOut: Sign out
   details:
     zoom:

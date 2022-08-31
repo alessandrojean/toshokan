@@ -328,6 +328,7 @@ dashboard:
       more: Mais
       open: Abrir menu de usuário
       settings: Configurações
+      help: Ajuda
       signOut: Sair
   details:
     zoom:
