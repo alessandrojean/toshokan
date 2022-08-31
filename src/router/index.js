@@ -86,7 +86,8 @@ const routes = [
           title: () => t('app.routes.about.instructions'),
           category: 'guide'
         },
-        props: { file: 'instructions' }
+        props: { file: 'instructions' },
+        alias: ['']
       },
       {
         path: 'guides/searching',
