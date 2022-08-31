@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from './stores/auth'
 import { useStore } from '@/stores/main'
 
-import { BuildingLibraryIcon } from '@heroicons/vue/24/solid'
+import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ReloadDialog from '@/components/dialogs/ReloadDialog.vue'

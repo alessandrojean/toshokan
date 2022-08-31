@@ -17,8 +17,11 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-// TODO: Replace with sort icons
-import { ArrowUpIcon, ArrowDownIcon, XMarkIcon } from '@heroicons/vue/20/solid'
+import {
+  BarsArrowUpIcon,
+  BarsArrowDownIcon,
+  XMarkIcon
+} from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 import Avatar from '@/components/Avatar.vue'
@@ -500,8 +503,8 @@ function focusOnResults() {
                           }}
                         </span>
                         <span aria-hidden="true">
-                          <ArrowUpIcon v-if="sortDirection === 'asc'" />
-                          <ArrowDownIcon v-else />
+                          <BarsArrowUpIcon v-if="sortDirection === 'asc'" />
+                          <BarsArrowDownIcon v-else />
                         </span>
                       </button>
                     </div>

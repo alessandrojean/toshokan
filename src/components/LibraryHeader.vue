@@ -10,9 +10,8 @@ import {
   ArchiveBoxIcon,
   FunnelIcon,
   PlusIcon,
-  // TODO: Replace with SortAscendingIcon and SortDescendingIcon
-  ArrowUpIcon,
-  ArrowDownIcon
+  BarsArrowUpIcon,
+  BarsArrowDownIcon
 } from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
@@ -136,7 +135,11 @@ const owner = computed(() => ({
                 <span aria-hidden="true">
                   <component
                     class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
-                    :is="sortDirection === 'asc' ? ArrowUpIcon : ArrowDownIcon"
+                    :is="
+                      sortDirection === 'asc'
+                        ? BarsArrowUpIcon
+                        : BarsArrowDownIcon
+                    "
                   />
                 </span>
                 <span class="sr-only">

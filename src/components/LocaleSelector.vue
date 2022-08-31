@@ -8,10 +8,9 @@ import {
   ListboxOption,
   ListboxOptions
 } from '@headlessui/vue'
-// TODO: Replace with SelectorIcon
 import {
   CheckIcon,
-  EllipsisHorizontalIcon,
+  ChevronUpDownIcon,
   LanguageIcon
 } from '@heroicons/vue/20/solid'
 
@@ -94,9 +93,7 @@ function createFlagUrl(country) {
           class="ml-3 absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none"
           aria-hidden="true"
         >
-          <EllipsisHorizontalIcon
-            class="w-5 h-5 text-gray-400 dark:text-gray-500"
-          />
+          <ChevronUpDownIcon class="w-5 h-5 text-gray-400 dark:text-gray-500" />
         </span>
       </ListboxButton>
 
