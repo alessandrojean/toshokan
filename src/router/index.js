@@ -190,7 +190,7 @@ const router = createRouter({
  * Replace page title.
  */
 router.afterEach((to) => {
-  const routeTitle = to.meta.title?.()
+  const routeTitle = to.meta?.title?.()
   document.title =
     (routeTitle?.length > 0 ? routeTitle + ' | ' : '') + t('app.name')
   document.body.dataset.route = to.name
