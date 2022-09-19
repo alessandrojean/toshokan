@@ -112,12 +112,7 @@ const showSettingsDialog = !props.hideSettings
             >
               <span aria-hidden="true">
                 <QuestionMarkCircleIcon
-                  :class="[
-                    !disabled
-                      ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300'
-                      : '',
-                    'w-5 h-5 mr-3 text-gray-500 dark:text-gray-400 '
-                  ]"
+                  class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400"
                 />
               </span>
               {{ t('dashboard.header.menu.help') }}
