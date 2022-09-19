@@ -1,11 +1,13 @@
+import { beforeEach, vi, describe, it, expect, afterEach } from 'vitest'
+
 import { Axios } from 'axios'
 
 import Cbl from '@/services/lookup/Cbl'
 import GoogleBooks from '@/services/lookup/GoogleBooks'
 import OpenLibrary from '@/services/lookup/OpenLibrary'
 
-const axiosGet = jest.spyOn(Axios.prototype, 'get')
-const axiosPost = jest.spyOn(Axios.prototype, 'post')
+const axiosGet = vi.spyOn(Axios.prototype, 'get')
+const axiosPost = vi.spyOn(Axios.prototype, 'post')
 
 beforeEach(() => {
   axiosGet.mockClear()
@@ -70,7 +72,7 @@ describe('CBL', () => {
 
   it('Should fail if the ISBN is invalid', async () => {
     const cbl = new Cbl()
-    const search = jest.spyOn(cbl, 'search')
+    const search = vi.spyOn(cbl, 'search')
 
     await expect(cbl.search('9788545702871')).rejects.toThrowError(
       'The informed ISBN is invalid.'
@@ -83,7 +85,7 @@ describe('CBL', () => {
     delete process.env.VITE_APP_CBL_QUERY_KEY
 
     const cbl = new Cbl()
-    jest.spyOn(cbl, 'search')
+    vi.spyOn(cbl, 'search')
 
     await expect(cbl.search('9788545702870')).rejects.toThrowError(
       'Authorization key missing.'
@@ -145,7 +147,7 @@ describe('Google Books', () => {
 
   it('Should fail if the ISBN is invalid', async () => {
     const googleBooks = new GoogleBooks()
-    const search = jest.spyOn(googleBooks, 'search')
+    const search = vi.spyOn(googleBooks, 'search')
 
     await expect(googleBooks.search('9788545702871')).rejects.toThrowError(
       'The informed ISBN is invalid.'
@@ -206,7 +208,7 @@ describe('Open Library', () => {
 
   it('Should fail if the ISBN is invalid', async () => {
     const openLibrary = new OpenLibrary()
-    const search = jest.spyOn(openLibrary, 'search')
+    const search = vi.spyOn(openLibrary, 'search')
 
     await expect(openLibrary.search('9788545702871')).rejects.toThrowError(
       'The informed ISBN is invalid.'

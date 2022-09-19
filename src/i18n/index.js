@@ -2,7 +2,7 @@ import { createI18n } from 'vue-i18n'
 
 import messages from '@intlify/vite-plugin-vue-i18n/messages'
 
-const isTest = process.env.NODE_ENV === 'test'
+const isTest = !!import.meta.vitest
 
 const datetimeModules = import.meta.globEager('./datetime/*.js')
 const numberModules = import.meta.globEager('./number/*.js')

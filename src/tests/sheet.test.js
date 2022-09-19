@@ -1,3 +1,5 @@
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest'
+
 import QueryBuilder from '@/data/QueryBuilder'
 import Book, {
   CollectionColumns,
@@ -10,17 +12,17 @@ import SheetService from '@/services/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
 
 describe('Sheet service', () => {
-  const setQueryMock = jest.fn()
-  const queryToString = jest.spyOn(QueryBuilder.prototype, 'toString')
+  const setQueryMock = vi.fn()
+  const queryToString = vi.spyOn(QueryBuilder.prototype, 'toString')
 
-  const queryMock = jest.fn().mockReturnValue({
+  const queryMock = vi.fn().mockReturnValue({
     send: (resultFn) =>
       resultFn({
-        getDataTable: jest.fn().mockReturnValue({
-          getNumberOfColumns: jest.fn().mockReturnValue(0),
-          getNumberOfRows: jest.fn().mockReturnValue(0)
+        getDataTable: vi.fn().mockReturnValue({
+          getNumberOfColumns: vi.fn().mockReturnValue(0),
+          getNumberOfRows: vi.fn().mockReturnValue(0)
         }),
-        isError: jest.fn().mockReturnValue(false)
+        isError: vi.fn().mockReturnValue(false)
       }),
     setQuery: setQueryMock
   })

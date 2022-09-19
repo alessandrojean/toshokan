@@ -1,3 +1,5 @@
+import { beforeEach, vi, it, expect } from 'vitest'
+
 import axios from 'axios'
 
 import Book from '@/model/Book'
@@ -5,8 +7,8 @@ import { findCovers } from '@/services/cover'
 import UrlReplacerFinder from '@/services/cover/UrlReplacerFinder'
 import WordPressFinder from '@/services/cover/WordPressFinder'
 
-const axiosGet = jest.spyOn(axios, 'get')
-const axiosPost = jest.spyOn(axios, 'post')
+const axiosGet = vi.spyOn(axios, 'get')
+const axiosPost = vi.spyOn(axios, 'post')
 
 beforeEach(() => {
   axiosGet.mockClear()

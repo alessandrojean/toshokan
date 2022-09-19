@@ -115,5 +115,8 @@ export default defineConfig({
     watch: {
       ignored: ['**/src/tests/**']
     }
+  },
+  test: {
+    environment: 'jsdom'
   }
 })

@@ -1,4 +1,6 @@
-const { convertIsbn13ToIsbn10, getIsbnCountry } = require('@/util/isbn')
+import { it, expect } from 'vitest'
+
+import { convertIsbn13ToIsbn10, getIsbnCountry } from '@/util/isbn'
 
 it('Should convert an ISBN-13 to ISBN-10 correctly', () => {
   expect(convertIsbn13ToIsbn10('9788545702320')).toBe('8545702329')

@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest'
+
 import { decimalComma, ean, isbn, isoDate, issn } from '@/util/validators'
 
 describe('Decimal number', () => {

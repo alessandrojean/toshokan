@@ -1,10 +1,9 @@
 module.exports = {
   root: true,
-  plugins: ['jest', 'prettier'],
+  plugins: ['prettier'],
   env: {
     browser: true,
-    node: true,
-    'jest/globals': true
+    node: true
   },
   extends: ['plugin:vue/vue3-essential', 'prettier'],
   parser: 'vue-eslint-parser',
