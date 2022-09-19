@@ -250,7 +250,7 @@ abbr[title].no-underline {
 
 .fake-search-input {
   @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
-    bg-gray-700 rounded-md space-x-2
+    bg-gray-700 rounded-lg space-x-2
     text-gray-300/80;
 }
 

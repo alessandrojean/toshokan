@@ -74,7 +74,7 @@ const blurCover = computed(() => {
 
 <template>
   <div v-if="loading">
-    <div class="skeleton shadow rounded-md aspect-w-2 aspect-h-3">
+    <div class="skeleton shadow rounded-xl aspect-w-2 aspect-h-3">
       <div class="w-full h-full flex justify-center items-center">
         <BookOpenIcon
           class="w-10 h-10 text-gray-50 dark:text-gray-500"
@@ -235,7 +235,7 @@ const blurCover = computed(() => {
 <style lang="postcss" scoped>
 .book-card {
   will-change: transform, box-shadow;
-  @apply relative shadow rounded-md overflow-hidden block
+  @apply relative shadow rounded-xl overflow-hidden block
     bg-gray-200 dark:bg-gray-700
     aspect-w-2 aspect-h-3
     motion-safe:transition-all;

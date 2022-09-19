@@ -126,7 +126,7 @@ const plot = computed(() => ({
 </script>
 
 <template>
-  <section class="bg-white dark:bg-gray-800 md:rounded-md shadow">
+  <section class="bg-white dark:bg-gray-800 md:rounded-2xl shadow">
     <div class="px-4 sm:px-6 py-3 border-b dark:border-b-gray-700">
       <div v-if="loading" class="skeleton h-6 w-40" />
       <h2

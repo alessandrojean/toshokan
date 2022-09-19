@@ -81,7 +81,7 @@ const groups = computed(() => [
 
 <template>
   <section
-    class="grid grid-cols-2 md:grid-cols-4 bg-white dark:bg-gray-800 md:rounded-md shadow divide-x dark:divide-gray-700"
+    class="grid grid-cols-2 md:grid-cols-4 bg-white dark:bg-gray-800 md:rounded-2xl shadow divide-x dark:divide-gray-700"
   >
     <template v-if="!loading">
       <div

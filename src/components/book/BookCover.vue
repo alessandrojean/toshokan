@@ -80,17 +80,17 @@ const { t } = useI18n({ useScope: 'global' })
 
 <template>
   <figure
-    class="group aspect-w-2 aspect-h-[2.5] sm:aspect-h-2 md:aspect-w-1 md:aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-lg relative"
+    class="group aspect-w-2 aspect-h-[2.5] sm:aspect-h-2 md:aspect-w-1 md:aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-2xl relative"
   >
     <FadeTransition>
       <div
         v-if="showBookCover"
-        class="absolute inset-0 w-full h-full md:rounded-lg overflow-hidden motion-safe:transition-all"
+        class="absolute inset-0 w-full h-full md:rounded-2xl overflow-hidden motion-safe:transition-all"
       >
         <img
           :src="coverUrl"
           alt=""
-          class="w-full h-full object-cover opacity-30 md:dark:opacity-40 blur-lg scale-105"
+          class="w-full h-full object-cover opacity-20 md:dark:opacity-40 blur-lg scale-105"
         />
       </div>
     </FadeTransition>
@@ -138,7 +138,7 @@ const { t } = useI18n({ useScope: 'global' })
               : ''
           "
           :alt="book.title"
-          class="max-w-xs md:max-w-full max-h-full shadow-lg rounded"
+          class="max-w-xs md:max-w-full max-h-full shadow-lg rounded-md"
         />
         <span v-else aria-hidden="true">
           <BookOpenIcon

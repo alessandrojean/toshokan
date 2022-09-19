@@ -422,7 +422,7 @@ const writing = computed(() => deleting.value || updating.value)
           </h2>
 
           <div
-            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 -mx-4 sm:-mx-6 md:mx-0 shadow md:rounded-md flex flex-row justify-between items-center"
+            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 -mx-4 sm:-mx-6 md:mx-0 shadow md:rounded-xl flex flex-row justify-between items-center"
           >
             <div
               v-if="
@@ -534,7 +534,7 @@ const writing = computed(() => deleting.value || updating.value)
 
           <div
             v-if="paginationInfo.total_pages > 1"
-            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow md:rounded-md flex -mx-4 sm:-mx-6 md:mx-0 flex-col md:flex-row md:justify-between items-center"
+            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow md:rounded-xl flex -mx-4 sm:-mx-6 md:mx-0 flex-col md:flex-row md:justify-between items-center"
           >
             <div
               v-if="

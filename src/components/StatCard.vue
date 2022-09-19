@@ -27,12 +27,12 @@ const { t } = useI18n({ useScope: 'global' })
 
 <template>
   <div
-    class="bg-gray-50 sm:shadow sm:rounded-md dark:bg-gray-800"
+    class="bg-gray-50 sm:shadow sm:rounded-2xl dark:bg-gray-800"
     v-if="loading"
   >
     <div class="flex items-center p-4">
       <div
-        class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-md"
+        class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 mr-3 md:mr-4 rounded-xl"
       />
       <div class="flex-1 space-y-2">
         <div class="skeleton h-3 w-24"></div>
@@ -41,11 +41,11 @@ const { t } = useI18n({ useScope: 'global' })
     </div>
   </div>
   <div
-    class="flex items-center justify-center bg-white dark:bg-gray-800 p-4 sm:rounded-md sm:shadow sm:hover:shadow-md motion-safe:transition-shadow"
+    class="flex items-center justify-center bg-white dark:bg-gray-800 p-4 sm:rounded-2xl sm:shadow sm:hover:shadow-md motion-safe:transition-shadow"
     v-else
   >
     <div
-      class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-md bg-primary-100 dark:bg-gray-800"
+      class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 mr-3 md:mr-4 items-center justify-center rounded-xl bg-primary-100 dark:bg-gray-800"
       aria-hidden="true"
     >
       <slot

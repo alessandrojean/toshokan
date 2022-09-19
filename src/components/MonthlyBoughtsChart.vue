@@ -175,7 +175,7 @@ const itemsBought = computed(() => ({
 
 <template>
   <section
-    class="bg-white dark:bg-gray-800 md:rounded-md shadow"
+    class="bg-white dark:bg-gray-800 md:rounded-2xl shadow"
     :aria-labelledby="!loading ? 'monthly-boughts-title' : ''"
   >
     <div class="px-4 sm:px-6 py-3 border-b dark:border-b-gray-700">
