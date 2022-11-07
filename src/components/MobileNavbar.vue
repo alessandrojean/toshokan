@@ -1,9 +1,11 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
 import { useSheetStore } from '@/stores/sheet'
+import { ShowSearchDialogKey, ShowSettingsDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   EllipsisHorizontalIcon,
@@ -59,7 +61,7 @@ const profileEmail = computed(() => authStore.profileEmail)
 const profileImageUrl = computed(() => authStore.profileImageUrl)
 const profileName = computed(() => authStore.profileName)
 
-async function signOut(close) {
+async function signOut(close: () => void) {
   await authStore.signOut()
   close()
 }
@@ -86,9 +88,9 @@ function handleScroll() {
 onMounted(() => window.addEventListener('scroll', handleScroll))
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
-const showSettingsDialogFn = inject('showSettingsDialog')
+const showSettingsDialogFn = injectStrict(ShowSearchDialogKey)
 
-function showSettingsDialog(close) {
+function showSettingsDialog(close: () => void) {
   close()
   showSettingsDialogFn()
 }
@@ -113,7 +115,6 @@ function showSettingsDialog(close) {
             v-slot="{ href, navigate, isActive, isExactActive }"
           >
             <a
-              :lang="item.lang"
               :href="href"
               :aria-current="isExactActive ? 'page' : undefined"
               :class="[

@@ -1,11 +1,13 @@
-<script setup>
-import { computed, inject, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
 
 import useMarkdown from '@/composables/useMarkdown'
-import Book from '@/model/Book'
+import { useI18n } from '@/i18n'
+import Book, { MonetaryValue } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+import { ShowSearchDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   ArrowTrendingDownIcon,
@@ -16,10 +18,16 @@ import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 import BookGrid from '@/components/book/BookGrid.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
-const props = defineProps({
-  book: Book,
-  collection: Array,
-  loading: Boolean
+export interface BookTabsProps {
+  book: Book | null | undefined
+  collection?: Book[]
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<BookTabsProps>(), {
+  book: undefined,
+  collection: undefined,
+  loading: false
 })
 
 const { t, d, n, locale } = useI18n({ useScope: 'global' })
@@ -37,7 +45,7 @@ const notesRendered = computed(() => {
     return ''
   }
 
-  return renderMarkdown(book.value.notes)
+  return renderMarkdown(book.value!.notes ?? '')
 })
 
 const filteredCollection = computed(() => {
@@ -52,11 +60,16 @@ const filteredCollection = computed(() => {
   return collection.value
 })
 
+interface Tab {
+  title: string
+  count?: number
+}
+
 const tabs = computed(() => {
-  const items = [{ title: t('dashboard.details.tabs.metadata') }]
+  const items: Tab[] = [{ title: t('dashboard.details.tabs.metadata') }]
 
   if (showBookInfo.value) {
-    if (book.value.notes.length > 0) {
+    if (book.value!.notes!.length > 0) {
       items.push({ title: t('dashboard.details.tabs.notes') })
     }
 
@@ -71,13 +84,14 @@ const tabs = computed(() => {
   return items
 })
 
-function formatPrice(price) {
+function formatPrice(price: MonetaryValue | null | undefined) {
   if (!price) {
     return null
   }
 
   const { value, currency } = price
 
+  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
@@ -85,16 +99,18 @@ const { data: timeZone } = useTimeZoneQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-function formatDate(date, format = 'short') {
+function formatDate(date: Date | string, format = 'short') {
   if (typeof date === 'string' && date.length > 0) {
     return d(
-      new Date(`${date}T00:00:00.000${timeZone.value.offsetStr}`),
+      new Date(`${date}T00:00:00.000${timeZone.value!.offsetStr}`),
       format,
+      // @ts-ignore
       { timeZone: timeZone.value.name }
     )
   }
 
   if (date instanceof Date) {
+    // @ts-ignore
     return d(date, format, { timeZone: timeZone.value.name })
   }
 
@@ -111,7 +127,7 @@ const language = computed(() => {
   const languageNames = new Intl.DisplayNames([locale.value], {
     type: 'language'
   })
-  const localizedName = languageNames.of(country.value.locale)
+  const localizedName = languageNames.of(country.value.locale)!
 
   return (
     localizedName.charAt(0).toLocaleUpperCase(locale.value) +
@@ -163,9 +179,13 @@ const metadata = computed(() => {
       title: t('book.properties.paidPrice'),
       value: formatPrice(book.value?.paidPrice),
       badge: sameCurrency
-        ? book.value?.paidPrice?.value > book.value?.labelPrice?.value
-          ? book.value?.paidPrice?.value / book.value?.labelPrice.value
-          : 1 - book.value?.paidPrice?.value / book.value?.labelPrice.value
+        ? (book.value?.paidPrice?.value ?? 0) >
+          (book.value?.labelPrice?.value ?? 0)
+          ? (book.value?.paidPrice?.value ?? 1) /
+            (book.value?.labelPrice?.value ?? 1)
+          : 1 -
+            (book.value?.paidPrice?.value ?? 1) /
+              (book.value?.labelPrice?.value ?? 1)
         : null,
       samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
     },
@@ -193,9 +213,9 @@ const metadata = computed(() => {
   ]
 })
 
-const showSearchDialog = inject('showSearchDialog')
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
 
-function searchBy(key, value, event) {
+function searchBy(key: string, value: string, event: MouseEvent) {
   event.preventDefault()
 
   const queryKeyword = t('dashboard.search.keywords.' + key)
@@ -203,7 +223,7 @@ function searchBy(key, value, event) {
   showSearchDialog(queryString)
 }
 
-function searchByTag(tag, event) {
+function searchByTag(tag: string, event: MouseEvent) {
   searchBy('tags', tag.toLowerCase(), event)
 }
 </script>
@@ -283,8 +303,8 @@ function searchByTag(tag, event) {
                       class="inline-block w-5 h-5 mr-2.5"
                     />
 
-                    <time v-if="mt.time" :datetime="mt.value.toISOString()">
-                      {{ formatDate(mt.value) }}
+                    <time v-if="mt.time" :datetime="mt.value!.toISOString()">
+                      {{ formatDate(mt.value!) }}
                     </time>
                     <ul v-else-if="mt.tags" class="tag-list">
                       <li v-for="tag in mt.value" :key="tag" class="mr-2 mt-2">
@@ -303,7 +323,7 @@ function searchByTag(tag, event) {
                       href="#"
                       class="search-link has-ring-focus"
                       :title="t('dashboard.search.searchBy', [mt.value])"
-                      @click.prevent="searchBy(mt.key, mt.value, $event)"
+                      @click.prevent="searchBy(mt.key, mt.value!, $event)"
                     >
                       {{ mt.value }}
                     </a>
@@ -340,7 +360,7 @@ function searchByTag(tag, event) {
           <!-- Book notes -->
           <TabPanel
             class="rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
-            v-if="showBookInfo && book.notes.length > 0"
+            v-if="showBookInfo && book!.notes!.length > 0"
           >
             <div
               v-html="notesRendered"
@@ -353,7 +373,7 @@ function searchByTag(tag, event) {
             v-if="showBookInfo && filteredCollection.length > 0"
             class="has-ring-focus dark:focus-visible:ring-offset-gray-900 rounded-md"
           >
-            <BookGrid :items="filteredCollection" :current="book.id" />
+            <BookGrid :items="filteredCollection" :current="book!.id!" />
           </TabPanel>
         </TabPanels>
       </TabGroup>

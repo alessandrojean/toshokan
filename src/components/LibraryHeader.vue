@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -29,7 +29,7 @@ const { t } = useI18n({ useScope: 'global' })
 
 const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 
-const sortPropertyNames = computed(() => ({
+const sortPropertyNames = computed<Record<string, string>>(() => ({
   title: t('book.properties.title'),
   publisher: t('book.properties.publisher'),
   status: t('book.properties.status'),
@@ -97,8 +97,8 @@ const owner = computed(() => ({
         </template>
         <div v-else class="flex flex-row-reverse md:flex-row items-center">
           <Avatar
-            class="shrink-0 mr-4 scale-[140%] md:scale-100"
             v-if="shared"
+            class="shrink-0 mr-4 scale-[140%] md:scale-100"
             :picture-url="owner.pictureUrl"
             :shared="shared"
           />

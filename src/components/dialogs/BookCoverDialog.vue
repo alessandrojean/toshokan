@@ -1,6 +1,9 @@
-<script setup>
-import { inject, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { toRefs, watch } from 'vue'
+
+import { useI18n } from '@/i18n'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   TransitionRoot,
@@ -12,24 +15,21 @@ import {
 
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  coverUrl: {
-    type: String,
-    required: true
-  },
-  open: {
-    type: Boolean
-  }
-})
+export interface BookCoverDialogProps {
+  coverUrl: string
+  open?: boolean
+}
 
-defineEmits(['close'])
+const props = withDefaults(defineProps<BookCoverDialogProps>(), { open: false })
+
+defineEmits<{ (e: 'close'): void }>()
 
 const { t } = useI18n({ useScope: 'global' })
 
 const { open } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(open, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()

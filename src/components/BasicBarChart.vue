@@ -1,9 +1,10 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, defineAsyncComponent, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
+import type { ApexOptions } from 'apexcharts'
 
 import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
+import { type Locale, useI18n } from '@/i18n'
 
 import { ChartBarIcon } from '@heroicons/vue/24/solid'
 
@@ -14,22 +15,22 @@ import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
 
 const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 
-const apexLocales = {
+const apexLocales: Record<Locale, ApexLocale> = {
   'en-US': apexEnUs,
   'pt-BR': apexPtBr
 }
 
-const props = defineProps({
-  loading: Boolean,
-  series: Array,
-  seriesName: String,
-  title: String
-})
+const props = defineProps<{
+  loading?: boolean
+  series: any[]
+  seriesName: string
+  title: string
+}>()
 
 const { locale } = useI18n({ useScope: 'global' })
 
 const { darkMode } = useDarkMode()
-const { theme } = useTailwindTheme()
+const { color, fontFamily } = useTailwindTheme()
 
 const localeStr = computed(() => {
   return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
@@ -38,22 +39,20 @@ const localeStr = computed(() => {
 const { series, seriesName } = toRefs(props)
 
 const plot = computed(() => ({
-  options: {
+  options: <ApexOptions>{
     chart: {
       animations: { enabled: false },
-      fontFamily: theme.fontFamily.sans.join(', '),
+      fontFamily: fontFamily('sans')!.join(', '),
       locales: [apexLocales[locale.value]],
       defaultLocale: localeStr.value,
       selection: { enabled: false },
       toolbar: { show: false },
       zoom: { enabled: false }
     },
-    colors: [theme.colors.primary[500]],
+    colors: [color('primary', 500)!],
     fill: { opacity: 1.0 },
     grid: {
-      borderColor: darkMode.value
-        ? theme.colors.slate[600]
-        : theme.colors.slate[200],
+      borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!,
       xaxis: { lines: { show: true } },
       yaxis: { lines: { show: false } }
     },
@@ -66,30 +65,24 @@ const plot = computed(() => ({
     xaxis: {
       categories: series.value.map((s) => s.name),
       labels: {
-        formatter: (val) => val.toFixed(0),
+        formatter: (val) => Number(val).toFixed(0),
         hideOverlappingLabels: false,
         showDuplicates: true,
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
         }
       }
     },
     yaxis: {
       labels: {
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
         }
       }
     },
     legend: {
       labels: {
-        colors: darkMode.value
-          ? theme.colors.slate[300]
-          : theme.colors.slate[600],
+        colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!,
         useSeriesColors: false
       },
       onItemClick: {

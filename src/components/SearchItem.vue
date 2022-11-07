@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -14,20 +14,17 @@ import {
   PhotoIcon
 } from '@heroicons/vue/24/outline'
 
-const props = defineProps({
-  result: {
-    type: Book,
-    required: true
-  }
-})
+const props = defineProps<{ result: Book }>()
 
 const { result } = toRefs(props)
 
 const thumbnailUrl = computed(() => {
-  return result.value ? result.value.coverUrl.replace('_SL700_', '_SL300_') : ''
+  return result.value
+    ? result.value.coverUrl?.replace('_SL700_', '_SL300_') ?? ''
+    : ''
 })
 
-const searchItem = ref(null)
+const searchItem = ref<HTMLAnchorElement>()
 
 const { imageHasError, imageLoading, setupObserver, observerCreated } =
   useImageLazyLoader(thumbnailUrl, searchItem)
@@ -100,7 +97,7 @@ const authorsFormatted = computed(() => {
           </div>
         </div>
         <div v-else :class="['result-cover', blurCover ? 'is-hidden' : '']">
-          <img :src="thumbnailUrl" :alt="result.title" />
+          <img :src="thumbnailUrl" :alt="result.title!" />
         </div>
       </FadeTransition>
     </div>

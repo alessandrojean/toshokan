@@ -1,12 +1,12 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
 import cloneDeep from 'lodash.clonedeep'
 
+import { useI18n } from '@/i18n'
 import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useAuthorsQuery from '@/queries/useAuthorsQuery'
@@ -24,25 +24,30 @@ import MonetaryField from '@/components/fields/MonetaryField.vue'
 import TagField from '@/components/fields/TagField.vue'
 import TextField from '@/components/fields/TextField.vue'
 
-const props = defineProps({
-  editing: Boolean,
-  modelValue: {
-    type: Book,
-    required: true
-  },
-  touchOnMount: Boolean
+export interface BookFormProps {
+  editing?: boolean
+  modelValue: Book
+  touchOnMount?: boolean
+}
+
+const props = withDefaults(defineProps<BookFormProps>(), {
+  editing: false,
+  touchOnMount: false
 })
 
-const emit = defineEmits(['error', 'update:modelValue'])
+const emit = defineEmits<{
+  (e: 'error', error: any): void
+  (e: 'update:modelValue', modelValue: Book): void
+}>()
 
 const { modelValue: book, touchOnMount } = toRefs(props)
 const { t, locale } = useI18n({ useScope: 'global' })
 
-const bookState = reactive(cloneDeep(book.value))
+const bookState = reactive(cloneDeep(toRaw(book.value)))
 const addNotes = ref(book.value.notes ? book.value.notes.length > 0 : false)
 
 function forceUpdateBook() {
-  Object.assign(bookState, cloneDeep(book.value))
+  Object.assign(bookState, cloneDeep(toRaw(book.value)))
 }
 
 const decimalCommaValidator = decimalComma(2)
@@ -64,7 +69,7 @@ const messageDecimalComma = helpers.withMessage(
 const rules = {
   code: { messageRequired },
   title: { messageRequired },
-  authorsStr: { messageRequired },
+  authors: { messageRequired },
   publisher: { messageRequired },
   group: { messageRequired },
   labelPrice: {
@@ -82,10 +87,10 @@ const rules = {
   store: { messageRequired }
 }
 
-const propertyNames = computed(() => ({
+const propertyNames = computed<Record<string, string>>(() => ({
   code: t('book.properties.id'),
   title: t('book.properties.title'),
-  authorsStr: t('book.properties.authors'),
+  authors: t('book.properties.authors'),
   publisher: t('book.properties.publisher'),
   group: t('book.properties.group'),
   'labelPrice.currency': t('book.properties.labelPriceCurrency'),
@@ -101,13 +106,17 @@ const propertyNames = computed(() => ({
 
 const v$ = useVuelidate(rules, bookState)
 
-function handleInput(property, value) {
+function handleInput(
+  property: keyof typeof bookState | 'boughtAtStr',
+  value: any
+) {
   if (property === 'boughtAtStr') {
     bookState.boughtAt = value.length === 10 ? new Date(value) : null
     bookState.boughtAt?.setMinutes(
       bookState.boughtAt.getMinutes() + bookState.boughtAt.getTimezoneOffset()
     )
   } else {
+    // @ts-ignore
     bookState[property] = value
   }
 
@@ -119,17 +128,18 @@ function handleInput(property, value) {
   emit('update:modelValue', cloneDeep(toRaw(bookState)))
 }
 
-function handleNotInCollection(value) {
-  handleInput('status', value ? STATUS_FUTURE : STATUS_UNREAD)
-  handleInput('boughtAtStr', value ? '' : toDateInputValue(new Date()))
+function handleNotInCollection(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked
+
+  handleInput('status', checked ? STATUS_FUTURE : STATUS_UNREAD)
+  handleInput('boughtAtStr', checked ? '' : toDateInputValue(new Date()))
   handleInput('readAt', null)
 }
 
-/** @param {Book} book */
-function touch(book) {
+function touch(book?: Book) {
   if (book) {
-    Object.assign(bookState, cloneDeep(book))
-    addNotes.value = book.notes.length > 0
+    Object.assign(bookState, cloneDeep(toRaw(book)))
+    addNotes.value = book.notes!.length > 0
   }
 
   v$.value.$touch()
@@ -157,7 +167,7 @@ const { data: authorsData } = useAuthorsQuery({ enabled: optionsEnabled })
 const groupOptions = computed(() => {
   return (groupData.value || [])
     .slice()
-    .sort((a, b) => a.name.localeCompare(b, locale.value))
+    .sort((a, b) => a.name.localeCompare(b.name, locale.value))
 })
 
 const publisherOptions = computed(() => publishersData.value || [])
@@ -175,7 +185,7 @@ watch(addNotes, () => {
   handleInput('notes', '')
 })
 
-function toDateInputValue(date) {
+function toDateInputValue(date: Date) {
   if (!date) {
     return ''
   }
@@ -221,7 +231,7 @@ function toDateInputValue(date) {
       :label="t('book.properties.authors')"
       :model-value="modelValue.authors"
       :placeholder="t('book.form.addAuthorPlaceholder')"
-      :error="v$.authorsStr.$error ? v$.authorsStr.$errors[0].$message : ''"
+      :error="v$.authors.$error ? v$.authors.$errors[0].$message : ''"
       :remove-action="t('book.form.removeAuthor')"
       :suggestions="authorOptions"
       @update:model-value="handleInput('authors', $event)"
@@ -309,7 +319,7 @@ function toDateInputValue(date) {
           t('book.form.example.placeholder', [t('book.form.example.paidPrice')])
         "
         :error="v$.paidPrice.$error ? v$.paidPrice.$errors[0].$message : ''"
-        :base="modelValue.labelPrice.value"
+        :base="modelValue.labelPrice!.value"
         @update:model-value="handleInput('paidPrice', $event)"
       />
     </div>
@@ -352,7 +362,7 @@ function toDateInputValue(date) {
           name="not-in-collection"
           id="not-in-collection"
           :checked="modelValue.isFuture"
-          @change="handleNotInCollection($event.target.checked)"
+          @change="handleNotInCollection"
         />
         <label for="not-in-collection" class="label mb-0">
           {{ t('book.form.notInCollection') }}
@@ -393,9 +403,9 @@ function toDateInputValue(date) {
     >
       <ul class="list-disc list-inside space-y-1">
         <li v-for="error of v$.$errors" :key="error.$uid">
-          <span class="font-medium"
-            >{{ propertyNames[error.$propertyPath] }}:</span
-          >
+          <span class="font-medium">
+            {{ propertyNames[error.$propertyPath] }}:
+          </span>
           {{ error.$message }}
         </li>
       </ul>

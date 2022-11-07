@@ -1,11 +1,12 @@
-<script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 import useImageLoader from '@/composables/useImageLoader'
 import useMarkdown from '@/composables/useMarkdown'
+import { useI18n } from '@/i18n'
 import { parseFileSingle } from '@/services/export/androidExport'
+import type { ToshokanBook } from '@/services/export/schema/library'
 
 import {
   BookOpenIcon,
@@ -32,7 +33,7 @@ onMounted(() => {
   parseDataQuery()
 })
 
-function base64toUint8Array(base64String) {
+function base64toUint8Array(base64String: string) {
   // const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   // const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
 
@@ -47,9 +48,9 @@ function base64toUint8Array(base64String) {
 }
 
 const loading = ref(true)
-const data = ref(null)
-const book = ref(null)
-const error = ref(null)
+const data = ref<Uint8Array>()
+const book = ref<ToshokanBook>()
+const error = ref<any>()
 
 const listFormatter = computed(() => {
   return new Intl.ListFormat(locale.value, {
@@ -58,7 +59,7 @@ const listFormatter = computed(() => {
   })
 })
 
-const bookCoverUrl = computed(() => book.value?.coverUrl)
+const bookCoverUrl = computed(() => book.value?.coverUrl!)
 const bookAuthors = computed(() => {
   if (!book.value?.authors || book.value.authors.length === 0) {
     return null
@@ -66,13 +67,13 @@ const bookAuthors = computed(() => {
 
   return listFormatter.value.format(book.value.authors)
 })
-const bookSynopsis = computed(() => renderMarkdown(book.value?.synopsis))
+const bookSynopsis = computed(() => renderMarkdown(book.value?.synopsis ?? ''))
 const bookMetadata = computed(() => {
   const metadata = [book.value?.publisher, book.value?.group, book.value?.code]
 
   return metadata
     .filter(Boolean)
-    .filter((mt) => mt.length > 0)
+    .filter((mt) => mt!.length > 0)
     .join(' · ')
 })
 
@@ -83,13 +84,13 @@ function parseDataQuery() {
   loading.value = true
 
   try {
-    data.value = base64toUint8Array(route.query.d)
+    data.value = base64toUint8Array(route.query.d as string)
     book.value = parseFileSingle(data.value)
 
     if (!book.value) {
       throw Error('Invalid data')
     }
-  } catch (e) {
+  } catch (e: any) {
     error.value = e.message
     console.error(e)
   } finally {

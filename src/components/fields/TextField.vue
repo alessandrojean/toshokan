@@ -1,42 +1,43 @@
-<script setup>
-import { computed, toRefs } from 'vue'
+<script lang="ts" setup>
+import { computed, type HTMLAttributes, toRefs, unref } from 'vue'
 
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
-import BaseField from './BaseField.vue'
+import BaseField, { type BaseFieldProps } from './BaseField.vue'
 
-const props = defineProps({
-  error: String,
-  help: String,
-  inputClass: String,
-  inputMode: String,
-  inputType: {
-    type: String,
-    default: 'text'
-  },
-  label: String,
-  list: Array,
-  listText: Function,
-  listValue: Function,
-  max: String,
-  modelValue: {
-    type: String,
-    required: true
-  },
-  multiline: Boolean,
-  placeholder: String,
-  prefixClass: String,
-  required: Boolean,
-  suffixClass: String
+export interface TextFieldProps extends BaseFieldProps {
+  inputClass?: string
+  inputMode?: HTMLAttributes['inputmode']
+  inputType?: HTMLInputElement['type']
+  list?: any[]
+  listText?: (value: any) => string
+  listValue?: (value: any) => string
+  max?: HTMLInputElement['max']
+  modelValue?: string | null
+  multiline?: boolean
+  placeholder?: string
+  prefixClass?: string
+  suffixClass?: string
+}
+
+const props = withDefaults(defineProps<TextFieldProps>(), {
+  inputType: 'text',
+  listText: (value: any) => String(value),
+  listValue: (value: any) => String(value),
+  multiline: false,
+  required: false
 })
 
-defineEmits(['update:modelValue'])
+defineEmits<{
+  (e: 'update:modelValue', modelValue: string): void
+}>()
 
-const { error, help, list } = toRefs(props)
+const { error, help, list, label, required } = toRefs(props)
 
-const hasError = computed(() => error.value && error.value.length > 0)
-const hasHelp = computed(() => help.value && help.value.length > 0)
-const hasList = computed(() => list.value && list.value.length > 0)
+const hasError = computed(() => {
+  return error?.value ? (unref(error.value)?.length ?? 0) > 0 : false
+})
+const hasList = computed(() => list?.value && list.value.length > 0)
 </script>
 
 <template>
@@ -59,12 +60,17 @@ const hasList = computed(() => list.value && list.value.length > 0)
         rows="5"
         :id="inputId"
         :class="['input', inputClass]"
-        :value="modelValue"
+        :value="modelValue ?? ''"
         :placeholder="placeholder"
         :aria-describedby="ariaDescribedBy"
         :aria-invalid="hasError"
         :required="required"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="
+          $emit(
+            'update:modelValue',
+            ($event.target! as HTMLTextAreaElement).value
+          )
+        "
       />
       <input
         v-else
@@ -79,7 +85,9 @@ const hasList = computed(() => list.value && list.value.length > 0)
         :list="hasList ? inputId + '-list' : undefined"
         :inputmode="inputMode"
         :max="max"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="
+          $emit('update:modelValue', ($event.target! as HTMLInputElement).value)
+        "
       />
       <template v-if="hasList">
         <datalist :id="inputId + '-list'">

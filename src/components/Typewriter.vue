@@ -1,35 +1,32 @@
-<script setup>
+<script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 
-const props = defineProps({
-  textClass: String,
-  speed: {
-    type: Number,
-    default: 500
-  },
-  deleteSpeed: {
-    type: Number,
-    default: 166
-  },
-  nextWordInterval: {
-    type: Number,
-    default: 1200
-  },
-  words: {
-    type: Array,
-    default: () => []
-  }
+export interface TypewriterProps {
+  textClass?: string
+  speed?: number
+  deleteSpeed?: number
+  nextWordInterval?: number
+  words?: string[]
+}
+
+const props = withDefaults(defineProps<TypewriterProps>(), {
+  speed: 500,
+  deleteSpeed: 166,
+  nextWordInterval: 1200,
+  words: () => []
 })
 
 const { speed, deleteSpeed, nextWordInterval, words } = toRefs(props)
 
-const currentWord = ref('')
+type Timeout = ReturnType<typeof setTimeout>
+
+const currentWord = ref<string[]>([])
 const displayText = ref(words.value[0].split(''))
 const wordIdx = ref(0)
-const animate = ref(null)
+const animate = ref<Timeout>()
 const isWaitingNextWord = ref(true)
 
-const timeoutSpeed = ref(null)
+const timeoutSpeed = ref<number>()
 
 function start() {
   if (words.value && words.value.length > 0) {
@@ -41,7 +38,7 @@ function start() {
 
 function type() {
   if (currentWord.value.length > 0) {
-    displayText.value.push(currentWord.value.shift())
+    displayText.value.push(currentWord.value.shift()!)
   } else if (
     !isWaitingNextWord.value &&
     currentWord.value.length === 0 &&
@@ -62,7 +59,7 @@ function type() {
     timeoutSpeed.value = speed.value
     isWaitingNextWord.value = false
     currentWord.value = words.value[wordIdx.value].split('')
-    displayText.value.push(currentWord.value.shift())
+    displayText.value.push(currentWord.value.shift()!)
   }
 
   animate.value = setTimeout(type, timeoutSpeed.value)

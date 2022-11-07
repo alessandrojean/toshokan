@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -12,19 +12,24 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
 
-defineProps({
-  book: Book,
-  disabled: Boolean,
-  editing: Boolean
-})
+export interface BookCardReadingActionsProps {
+  book: Book
+  disabled?: boolean
+  editing?: boolean
+}
 
-defineEmits(['click:check', 'click:calendar'])
+defineProps<BookCardReadingActionsProps>()
+
+const emit = defineEmits<{
+  (e: 'click:check', event: MouseEvent): void
+  (e: 'click:calendar', date: Date): void
+}>()
 
 const { t } = useI18n()
 
 const readAt = ref(new Date().toISOString().substring(0, 10))
 
-function handleCalendar(close) {
+function handleCalendar(close: () => void) {
   const date = new Date(readAt.value)
   date.setMinutes(date.getMinutes() + date.getTimezoneOffset())
 
@@ -44,7 +49,7 @@ function handleCalendar(close) {
           tabindex="-1"
           :title="t('book.card.markAsReadToday')"
           :disabled="disabled"
-          @click.prevent="$emit('click:check')"
+          @click.prevent="$emit('click:check', $event)"
         >
           <span aria-hidden="true">
             <CheckIcon class="w-5 h-5" />

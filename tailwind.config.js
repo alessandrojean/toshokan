@@ -1,11 +1,14 @@
-const colors = require('tailwindcss/colors')
-const defaultTheme = require('tailwindcss/defaultTheme')
-const {
-  default: flattenColorPalette
-} = require('tailwindcss/lib/util/flattenColorPalette')
+import colors from 'tailwindcss/colors'
+import defaultTheme from 'tailwindcss/defaultTheme'
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
 
-module.exports = {
-  content: ['./index.html', './src/**/*.vue', './src/**/*.js'],
+import typographyPlugin from '@tailwindcss/typography'
+import formsPlugin from '@tailwindcss/forms'
+import aspectRatioPlugin from '@tailwindcss/aspect-ratio'
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.vue', './src/**/*.js', './src/**/*.ts'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     fontFamily: {
@@ -179,9 +182,9 @@ module.exports = {
     'disabled'
   ],
   plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
+    typographyPlugin,
+    formsPlugin,
+    aspectRatioPlugin,
     function ({ addVariant }) {
       addVariant(
         'supports-backdrop-blur',

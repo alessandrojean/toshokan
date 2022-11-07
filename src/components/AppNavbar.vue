@@ -1,8 +1,10 @@
-<script setup>
-import { computed, inject, onMounted, onUnmounted, ref, toRefs } from 'vue'
+<script lang="ts" setup>
+import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
+import { ShowSearchDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   BuildingLibraryIcon,
@@ -13,7 +15,9 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
-const props = defineProps({ transparent: Boolean })
+const props = withDefaults(defineProps<{ transparent: boolean }>(), {
+  transparent: false
+})
 
 const sheetStore = useSheetStore()
 
@@ -24,7 +28,16 @@ const { transparent } = toRefs(props)
 const shared = computed(() => sheetStore.shared)
 const loading = computed(() => sheetStore.loading)
 
-const navigation = computed(() => [
+type NavigationItem = {
+  name: string
+  title: string
+  exact?: boolean
+  mobileOnly?: boolean
+  lang?: string
+  hidden?: boolean
+}
+
+const navigation = computed<NavigationItem[]>(() => [
   {
     name: 'DashboardHome',
     title: t('dashboard.header.links.dashboard'),
@@ -46,12 +59,14 @@ const desktopNavigation = computed(() => {
 })
 
 const isMac = ref(
+  // @ts-ignore
   navigator.userAgentData
-    ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+    ? // @ts-ignore
+      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
     : navigator.platform.toLowerCase().indexOf('mac') > -1
 )
 
-const showSearchDialog = inject('showSearchDialog')
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
 
 const currentScrollPosition = ref(0)
 const lastScrollPosition = ref(0)
@@ -156,7 +171,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
           <!-- Search link -->
           <button
             v-if="!loading"
-            @click="showSearchDialog"
+            @click="showSearchDialog()"
             class="lg:hidden p-1 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
           >
             <span class="sr-only">{{ t('dashboard.header.search.link') }}</span>
@@ -170,7 +185,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
             <button
               class="fake-search-input has-ring-focus group"
               v-if="!loading"
-              @click="showSearchDialog"
+              @click="showSearchDialog()"
             >
               <span aria-hidden="true">
                 <MagnifyingGlassIcon class="w-4 h-4" />

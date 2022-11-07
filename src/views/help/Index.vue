@@ -1,7 +1,8 @@
-<script setup>
+<script lang="ts" setup>
 import { nextTick, onMounted, provide, ref, watch } from 'vue'
 
 import { useAuthStore } from '@/stores/auth'
+import { CategoryOrderKey, RebuildPageContentsKey } from '@/symbols'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import PageAside from '@/components/PageAside.vue'
@@ -29,7 +30,7 @@ async function handleHash() {
 
 const pageContents = ref(null)
 
-function rebuildPageContents(resetPosition) {
+function rebuildPageContents(resetPosition?: boolean) {
   if (resetPosition) {
     handleHash()
   }
@@ -37,8 +38,8 @@ function rebuildPageContents(resetPosition) {
   pageContents.value?.buildPageContents(resetPosition)
 }
 
-provide('rebuildPageContents', rebuildPageContents)
-provide('categoryOrder', ref(['guide', 'general']))
+provide(RebuildPageContentsKey, rebuildPageContents)
+provide(CategoryOrderKey, ref(['guide', 'general']))
 </script>
 
 <template>

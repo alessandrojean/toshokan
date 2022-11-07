@@ -1,55 +1,49 @@
-<script setup>
-import { computed, ref, toRefs } from 'vue'
+<script lang="ts" setup>
+import { computed, type HTMLAttributes, ref, toRefs, unref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import useMarkdown from '@/composables/useMarkdown'
+import useMarkdown, { type UseMarkdownOptions } from '@/composables/useMarkdown'
 
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
 
-import BaseField from './BaseField.vue'
+import BaseField, { type BaseFieldProps } from './BaseField.vue'
 
-const props = defineProps({
-  error: String,
-  inputClass: String,
-  inputMode: String,
-  inputType: {
-    type: String,
-    default: 'text'
-  },
-  label: String,
-  markdownOptions: {
-    type: Object,
-    default: () => ({})
-  },
-  modelValue: {
-    type: String,
-    required: true
-  },
-  placeholder: String,
-  required: Boolean
+export interface MarkdownFieldProps extends BaseFieldProps {
+  inputClass?: string
+  inputMode?: HTMLAttributes['inputmode']
+  inputType?: HTMLInputElement['type']
+  markdownOptions?: UseMarkdownOptions
+  modelValue?: string | null
+  placeholder?: string
+}
+
+const props = withDefaults(defineProps<MarkdownFieldProps>(), {
+  inputType: 'text',
+  markdownOptions: () => ({}),
+  required: false
 })
 
 defineEmits(['update:modelValue'])
 
-const { error, help, list, markdownOptions, modelValue } = toRefs(props)
+const { error, markdownOptions, modelValue, label, required } = toRefs(props)
 
-const hasError = computed(() => error.value && error.value.length > 0)
-const hasHelp = computed(() => help.value && help.value.length > 0)
-const hasList = computed(() => list.value && list.value.length > 0)
+const hasError = computed(() => {
+  return error?.value ? (unref(error.value)?.length ?? 0) > 0 : false
+})
 
-const characterCount = computed(() => modelValue.value.length)
+const characterCount = computed(() => modelValue!.value!.length)
 
 const { renderMarkdown } = useMarkdown(markdownOptions.value)
 
-const markdownContent = ref(renderMarkdown(modelValue.value))
+const markdownContent = ref(renderMarkdown(modelValue!.value!))
 
 const currentTab = ref(0)
 
-function changedTab(index) {
+function tabChanged(index: number) {
   currentTab.value = index
 
   if (index === 1) {
-    markdownContent.value = renderMarkdown(modelValue.value)
+    markdownContent.value = renderMarkdown(modelValue!.value!)
   }
 }
 
@@ -72,18 +66,23 @@ const { t } = useI18n({ useScope: 'global' })
         currentTab === 1 ? 'view-mode' : ''
       ]"
     >
-      <TabGroup @change="changedTab" as="div">
+      <TabGroup @change="tabChanged" as="div">
         <TabPanels as="div" class="relative z-0">
           <TabPanel class="tab-panel">
             <textarea
               :id="inputId"
               :class="['textarea', inputClass]"
-              :value="modelValue"
+              :value="modelValue ?? ''"
               :placeholder="placeholder"
               :aria-describedby="ariaDescribedBy"
               :aria-invalid="hasError"
               :required="required"
-              @input="$emit('update:modelValue', $event.target.value)"
+              @input="
+                $emit(
+                  'update:modelValue',
+                  ($event.target! as HTMLTextAreaElement).value
+                )
+              "
               @focus="hasFocus = true"
               @blur="hasFocus = false"
             />

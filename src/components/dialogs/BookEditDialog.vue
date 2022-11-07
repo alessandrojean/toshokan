@@ -1,20 +1,13 @@
-<script setup>
-import {
-  computed,
-  inject,
-  nextTick,
-  reactive,
-  ref,
-  toRaw,
-  toRefs,
-  watch
-} from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
 
 import cloneDeep from 'lodash.clonedeep'
 
+import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   Dialog,
@@ -38,12 +31,19 @@ import BookForm from '@/components/book/BookForm.vue'
 import BookOrganization from '@/components/book/BookOrganization.vue'
 import BookReading from '@/components/book/BookReading.vue'
 
-const props = defineProps({
-  book: Book,
-  isOpen: Boolean
+export interface BookEditDialogProps {
+  book?: Book
+  isOpen?: boolean
+}
+
+const props = withDefaults(defineProps<BookEditDialogProps>(), {
+  isOpen: false
 })
 
-const emit = defineEmits(['close', 'edit'])
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'edit', book: Book): void
+}>()
 
 const { t, n } = useI18n({ useScope: 'global' })
 
@@ -54,34 +54,31 @@ function closeDialog() {
 
 const { isOpen, book } = toRefs(props)
 
-const editingBook = reactive(book.value || new Book())
+const editingBook = reactive(book?.value ?? new Book())
 const editFormInvalid = ref(false)
 
-function setEditFormInvalid(value) {
+function setEditFormInvalid(value: boolean) {
   editFormInvalid.value = value
 }
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
-/**
- * @param {BeforeUnloadEvent} event
- */
-function preventUnload(event) {
+function preventUnload(event: BeforeUnloadEvent) {
   event.preventDefault()
   event.returnValue = ''
 }
 
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
-    Object.assign(editingBook, cloneDeep(book.value), {
+    Object.assign(editingBook, cloneDeep(toRaw(book!.value)), {
       labelPrice: {
-        ...book.value.labelPrice,
-        valueStr: n(book.value.labelPrice.value, 'decimal')
+        ...book!.value!.labelPrice,
+        valueStr: n(book!.value!.labelPrice!.value, 'decimal')
       },
       paidPrice: {
-        ...book.value.paidPrice,
-        valueStr: n(book.value.paidPrice.value, 'decimal')
+        ...book!.value!.paidPrice,
+        valueStr: n(book!.value!.paidPrice!.value, 'decimal')
       }
     })
 
@@ -93,23 +90,23 @@ watch(isOpen, (newIsOpen) => {
   }
 })
 
-const editForm = ref(null)
+const editForm = ref<InstanceType<typeof BookForm>>()
 
 async function handleEdit() {
   if (!editFormInvalid.value) {
     emit('edit', cloneDeep(toRaw(editingBook)))
-    closeDialog()
+    emit('close')
   } else {
     nextTick(() => {
-      main.value.scroll({
-        top: main.value.scrollHeight,
+      main.value!.scroll({
+        top: main.value!.scrollHeight,
         behavior: 'smooth'
       })
     })
   }
 }
 
-const main = ref(null)
+const main = ref<HTMLDivElement>()
 
 const tabs = computed(() => [
   {
@@ -127,6 +124,13 @@ const tabs = computed(() => [
 const sheetStore = useSheetStore()
 const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
 const shared = computed(() => sheetStore.shared)
+
+const coverUrl = computed({
+  get: () => editingBook.coverUrl ?? undefined,
+  set: (value) => {
+    editingBook.coverUrl = value ?? null
+  }
+})
 </script>
 
 <template>
@@ -231,7 +235,7 @@ const shared = computed(() => sheetStore.shared)
                     <BookCoverSelector
                       custom
                       hide-custom-title
-                      v-model:cover-url="editingBook.coverUrl"
+                      v-model:cover-url="coverUrl"
                       :book="editingBook"
                     />
                   </TabPanel>

@@ -1,20 +1,26 @@
-<script setup>
+<script lang="ts" setup>
 import { nextTick, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBreakpoints } from '@vueuse/core'
 
+import Book from '@/model/Book'
 import useTailwindTheme from '@/composables/useTailwindTheme'
 
 import BookCard from '@/components/book/BookCard.vue'
 
-const props = defineProps({
-  currentPage: Number,
-  current: String,
-  items: Array,
-  loading: Boolean,
-  skeletonItems: Number,
-  sortDirection: String,
-  sortProperty: String
+export interface BookGridProps {
+  currentPage?: number
+  current?: String
+  items?: Book[]
+  loading?: boolean
+  skeletonItems?: number
+  sortDirection?: 'asc' | 'desc'
+  sortProperty?: string
+}
+
+const props = withDefaults(defineProps<BookGridProps>(), {
+  items: () => [],
+  loading: false
 })
 
 const { t } = useI18n({ useScope: 'global' })
@@ -23,7 +29,7 @@ const { breakpoints: themeBreakpoints } = useTailwindTheme()
 const breakpoints = useBreakpoints(themeBreakpoints)
 
 const focused = ref(0)
-const grid = ref(null)
+const grid = ref<HTMLUListElement>()
 const { items, loading, currentPage, sortDirection, sortProperty } =
   toRefs(props)
 
@@ -43,10 +49,7 @@ function getColumnSize() {
   return 2
 }
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleKeydown(event) {
+function handleKeydown(event: KeyboardEvent) {
   const allowedKeys = [
     'ArrowLeft',
     'ArrowRight',
@@ -112,7 +115,7 @@ watch([loading, currentPage, sortDirection, sortProperty], () => {
 function focus() {
   nextTick(() => {
     const li = grid.value?.children?.[focused.value]
-    const card = li?.children?.[0]
+    const card = li?.children?.[0] as HTMLAnchorElement | undefined
 
     card?.focus()
   })
@@ -138,7 +141,7 @@ defineExpose({ focus })
       class="mb-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2.5 sm:gap-4"
       ref="grid"
     >
-      <li v-for="(book, bookIdx) in items" :key="book.id">
+      <li v-for="(book, bookIdx) in items" :key="book.id!">
         <BookCard
           class="scroll-mt-20"
           :book="book"

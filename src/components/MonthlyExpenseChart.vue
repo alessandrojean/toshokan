@@ -1,9 +1,10 @@
-<script setup>
-import { computed, defineAsyncComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, type UnwrapRef } from 'vue'
+import type { ApexOptions } from 'apexcharts'
 
 import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
+import { useI18n, type Locale } from '@/i18n'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
@@ -14,7 +15,7 @@ import FadeTransition from './transitions/FadeTransition.vue'
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
 
-const apexLocales = {
+const apexLocales: Record<Locale, ApexLocale> = {
   'en-US': apexEnUs,
   'pt-BR': apexPtBr
 }
@@ -22,7 +23,7 @@ const apexLocales = {
 const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 
 const sheetStore = useSheetStore()
-const { theme } = useTailwindTheme()
+const { color, fontFamily } = useTailwindTheme()
 
 const {
   data: stats,
@@ -45,7 +46,9 @@ const { darkMode } = useDarkMode()
 const currentYear = new Date().getFullYear()
 const pastYear = currentYear - 1
 
-function fillMissingMonths(values, year) {
+type MonthlyValues = NonNullable<UnwrapRef<typeof stats>>['monthly']
+
+function fillMissingMonths(values: MonthlyValues, year: number) {
   const newValues = []
 
   for (const m of values) {
@@ -84,10 +87,10 @@ const pastYearValues = computed(() => {
 })
 
 const expenses = computed(() => ({
-  options: {
+  options: <ApexOptions>{
     chart: {
       animations: { enabled: false },
-      fontFamily: theme.fontFamily.sans.join(', '),
+      fontFamily: fontFamily('sans')!.join(', '),
       id: 'monthly-expenses',
       locales: [apexLocales[locale.value]],
       defaultLocale: localeStr.value,
@@ -95,12 +98,10 @@ const expenses = computed(() => ({
       toolbar: { show: false },
       zoom: { enabled: false }
     },
-    colors: [theme.colors.cyan[500], theme.colors.primary[500]],
+    colors: [color('cyan', 500)!, color('primary', 500)!],
     dataLabels: { enabled: false },
     grid: {
-      borderColor: darkMode.value
-        ? theme.colors.slate[600]
-        : theme.colors.slate[200]
+      borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!
     },
     stroke: { curve: 'smooth' },
     tooltip: {
@@ -118,9 +119,7 @@ const expenses = computed(() => ({
           return value ? d(new Date(value), 'month') : value
         },
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
         }
       },
       tooltip: { enabled: false }
@@ -128,23 +127,20 @@ const expenses = computed(() => ({
     yaxis: {
       labels: {
         formatter: (value) => {
+          // @ts-ignore
           return n(value, 'currency', {
-            currency: stats.value.money?.currency || 'USD'
+            currency: stats.value!.money?.currency ?? 'USD'
           })
         },
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
         }
       }
     }
   },
   legend: {
     labels: {
-      colors: darkMode.value
-        ? theme.colors.slate[300]
-        : theme.colors.slate[600],
+      colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!,
       useSeriesColors: false
     },
     onItemClick: {

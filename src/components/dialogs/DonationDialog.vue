@@ -1,6 +1,9 @@
-<script setup>
-import { inject, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { toRefs, watch } from 'vue'
+
+import { useI18n } from '@/i18n'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   Dialog,
@@ -13,9 +16,11 @@ import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 import PicPayIcon from '@/components/icons/PicPayIcon.vue'
 
-const props = defineProps({ modelValue: Boolean })
+const props = defineProps<{ modelValue: boolean }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: boolean): void
+}>()
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -25,8 +30,8 @@ function closeDialog() {
 
 const { modelValue: open } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(open, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()

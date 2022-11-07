@@ -1,6 +1,5 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import {
   RadioGroup,
@@ -9,9 +8,16 @@ import {
   RadioGroupOption
 } from '@headlessui/vue'
 
-defineProps({ options: Array })
+import { useI18n } from '@/i18n'
+import Book from '@/model/Book'
 
-const emit = defineEmits(['select'])
+export interface BookSelectorProps {
+  options?: Book[]
+}
+
+withDefaults(defineProps<BookSelectorProps>(), { options: undefined })
+
+const emit = defineEmits<{ (e: 'select', selected: Book): void }>()
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -19,8 +25,8 @@ const separator = computed(() => {
   return t('dashboard.details.header.authorSeparator')
 })
 
-function formatAuthors(authors) {
-  let formattedAuthors = (authors || []).join(separator)
+function formatAuthors(authors: string[]) {
+  let formattedAuthors = (authors || []).join(separator.value)
 
   if (authors && authors.length >= 2) {
     const firstAuthors = (authors || []).slice(0, -1).join(separator.value)
@@ -34,9 +40,9 @@ function formatAuthors(authors) {
   return formattedAuthors
 }
 
-const selected = ref(null)
+const selected = ref<Book | null>(null)
 
-function setSelected(newValue) {
+function setSelected(newValue: Book) {
   selected.value = newValue
   emit('select', newValue)
 }
@@ -46,13 +52,13 @@ function setSelected(newValue) {
   <RadioGroup
     class="flex flex-col space-y-2"
     v-if="options"
-    :modelValue="selected"
+    :modelValue="selected as Record<string, any>"
     @update:modelValue="setSelected"
   >
     <RadioGroupOption
       as="template"
       v-for="book in options"
-      :key="book.code"
+      :key="book.code!"
       :value="book"
       v-slot="{ checked }"
     >

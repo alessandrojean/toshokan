@@ -1,21 +1,26 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
+import { useI18n } from '@/i18n'
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  book: Book,
-  collection: Array
+export interface BookNavigatorProps {
+  book: Book | null | undefined
+  collection?: Book[]
+}
+
+const props = withDefaults(defineProps<BookNavigatorProps>(), {
+  book: undefined,
+  collection: undefined
 })
 
 const { book, collection } = toRefs(props)
 
 const bookIdx = computed(() => {
-  return (collection.value || []).findIndex(
-    (colItem) => colItem.id === book.value.id
+  return (collection.value ?? []).findIndex(
+    (colItem) => colItem.id === book.value!.id
   )
 })
 

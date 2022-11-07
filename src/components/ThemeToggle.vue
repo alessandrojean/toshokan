@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -25,7 +25,7 @@ import {
   SunIcon as SunIconSolid
 } from '@heroicons/vue/20/solid'
 
-defineProps({ light: Boolean, bottom: Boolean })
+defineProps<{ light?: boolean; bottom?: boolean }>()
 
 const { t } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()
@@ -73,7 +73,11 @@ const currentOption = computed(() => {
             class="w-6 h-6 hidden dark:block system"
           />
         </template>
-        <component v-else :is="currentOption.icon" class="w-6 h-6 not-system" />
+        <component
+          v-else
+          :is="currentOption!.icon"
+          class="w-6 h-6 not-system"
+        />
       </span>
       <span class="sr-only">
         {{ t('dashboard.settings.appearence.theme.label') }}

@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import {
   computed,
   nextTick,
@@ -9,26 +9,29 @@ import {
   watch
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { useBreakpoints } from '@vueuse/core'
 
 import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
+import { useI18n } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 
-const props = defineProps({
-  prompt: {
-    type: Boolean,
-    default: true
-  },
-  type: {
-    type: String,
-    validator: (value) => ['icon', 'standard'].includes(value)
-  }
+export interface SignInWithGoogleButtonProps {
+  prompt?: boolean
+  type: 'icon' | 'standard'
+}
+
+const props = withDefaults(defineProps<SignInWithGoogleButtonProps>(), {
+  prompt: true
 })
 const { prompt, type } = toRefs(props)
 
-const emit = defineEmits(['notification'])
+const emit = defineEmits<{
+  (
+    e: 'notification',
+    notification: google.accounts.id.PromptMomentNotification
+  ): void
+}>()
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -40,7 +43,9 @@ const authorized = computed(() => authStore.authorized)
 const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
 const redirectToDashboard = () => {
-  router.replace(route.query.redirect || { name: 'DashboardHome' })
+  router.replace(
+    (route.query.redirect as string | undefined) ?? { name: 'DashboardHome' }
+  )
 }
 
 watch(shouldRedirect, async (newValue) => {

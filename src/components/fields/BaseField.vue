@@ -1,22 +1,28 @@
-<script setup>
-import { computed, ref, toRefs } from 'vue'
+<script lang="ts" setup>
+import { computed, Ref, ref, toRefs, unref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { nanoid } from 'nanoid'
 
-const props = defineProps({
-  error: String,
-  help: String,
-  label: String,
-  required: Boolean
+export interface BaseFieldProps {
+  error?: string | Ref<string>
+  help?: string
+  label?: string
+  required?: boolean
+}
+
+const props = withDefaults(defineProps<BaseFieldProps>(), {
+  required: false
 })
 
 const inputId = ref(nanoid())
 
 const { error, help } = toRefs(props)
 
-const hasError = computed(() => error.value && error.value.length > 0)
-const hasHelp = computed(() => help.value && help.value.length > 0)
+const hasError = computed(() => {
+  return error?.value ? (unref(error.value)?.length ?? 0) > 0 : false
+})
+const hasHelp = computed(() => help?.value && help.value.length > 0)
 
 const ariaDescribedBy = computed(() => {
   const helps = [inputId.value + '-error']

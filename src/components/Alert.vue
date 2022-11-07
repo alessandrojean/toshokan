@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 
 import {
@@ -9,17 +9,11 @@ import {
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
-const props = defineProps({
-  show: Boolean,
-  title: String,
-  type: {
-    type: String,
-    required: true,
-    validator: (value) => {
-      return ['info', 'error', 'warning'].indexOf(value) !== -1
-    }
-  }
-})
+const props = defineProps<{
+  show?: boolean
+  title?: string
+  type: 'info' | 'error' | 'warning'
+}>()
 
 const { type } = toRefs(props)
 

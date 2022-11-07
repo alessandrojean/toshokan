@@ -1,9 +1,10 @@
-<script setup>
-import { computed, ref, toRefs } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, toRaw, toRefs } from 'vue'
+import type { RouteLocationRaw } from 'vue-router'
 
 import cloneDeep from 'lodash.clonedeep'
 
-import { STATUS_READ } from '@/model/Book'
+import Book, { STATUS_READ } from '@/model/Book'
 import useEditBookMutation from '@/mutations/useEditBookMutation'
 import { useSheetStore } from '@/stores/sheet'
 import useLastAddedQuery from '@/queries/useLastAddedQuery'
@@ -15,22 +16,12 @@ import { ArrowRightIcon } from '@heroicons/vue/20/solid'
 import BookCard from '@/components/book/BookCard.vue'
 import BookCardReadingActions from '@/components/book/BookCardReadingActions.vue'
 
-const props = defineProps({
-  collection: {
-    type: String,
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  buttonText: {
-    type: String
-  },
-  buttonLink: {
-    type: Object
-  }
-})
+const props = defineProps<{
+  collection: 'last-added' | 'latest-readings' | 'next-reads'
+  title: string
+  buttonText?: string
+  buttonLink?: RouteLocationRaw
+}>()
 
 const { collection } = toRefs(props)
 const sheetStore = useSheetStore()
@@ -51,13 +42,10 @@ const {
   data: collectionItems
 } = collectionMapping[collection.value]({ enabled })
 
-const carousel = ref(null)
+const carousel = ref<HTMLUListElement>()
 const focused = ref(0)
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleKeydown(event) {
+function handleKeydown(event: KeyboardEvent) {
   const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
   const { key } = event
 
@@ -73,8 +61,8 @@ function handleKeydown(event) {
   }
 
   // https://stackoverflow.com/a/21696585
-  const visibleItems = Array.from(carousel.value.children).filter(
-    (el) => el.offsetParent !== null
+  const visibleItems = Array.from(carousel.value!.children).filter(
+    (el) => (el as HTMLLIElement).offsetParent !== null
   )
   const totalItems = visibleItems.length
 
@@ -99,29 +87,28 @@ function handleKeydown(event) {
   }
 
   const li = carousel.value?.children?.[focused.value]
-  let card = li?.children?.[0]
+  let card = li?.children?.[0] as HTMLAnchorElement | undefined
 
   if (collection.value === 'next-reads') {
-    card = card?.children?.[0]
+    card = card?.children?.[0] as HTMLAnchorElement | undefined
   }
 
   card?.focus()
 }
 
 const { isLoading: editing, mutate: edit } = useEditBookMutation()
-const editingBookId = ref(null)
+const editingBookId = ref<string | null>(null)
 
-function handleRead(book, readAt) {
+function handleRead(book: Book, readAt: Date) {
   if (editing.value) {
     return
   }
 
-  /** @type {import('@/model/Book').default} */
-  const newBook = cloneDeep(book)
+  const newBook = cloneDeep(toRaw(book))
   newBook.status = STATUS_READ
   newBook.readAt = readAt
 
-  editingBookId.value = newBook.id
+  editingBookId.value = newBook.id!
 
   edit(newBook, {
     onSuccess() {
@@ -130,7 +117,7 @@ function handleRead(book, readAt) {
   })
 }
 
-function handleReadToday(book) {
+function handleReadToday(book: Book) {
   handleRead(book, new Date())
 }
 </script>
@@ -154,7 +141,7 @@ function handleReadToday(book) {
   </div>
 
   <section
-    v-else-if="collectionItems?.length > 0"
+    v-else-if="(collectionItems?.length ?? 0) > 0"
     :aria-labelledby="collection + '-title'"
   >
     <div class="flex justify-between items-center w-full mt-8 mb-2">
@@ -181,7 +168,7 @@ function handleReadToday(book) {
 
     <ul
       :class="[
-        collectionItems.length < 3
+        collectionItems!.length < 3
           ? 'grid grid-cols-2'
           : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
         'md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
@@ -190,9 +177,9 @@ function handleReadToday(book) {
     >
       <li
         v-for="(book, bookIdx) in collectionItems"
-        :key="book.id"
+        :key="book.id!"
         :class="[
-          collectionItems.length > 2
+          collectionItems!.length > 2
             ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto snap-start md:snap-none scroll-ml-5 md:scroll-ml-0'
             : '',
           bookIdx === 5 ? 'md:hidden lg:block' : ''

@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -25,7 +25,7 @@ const loading = computed(() => isLoading.value || isIdle.value)
 
 const currency = computed(() => stats.value?.money.currency)
 
-function percentageIncrease(final, starting) {
+function percentageIncrease(final?: number, starting?: number) {
   if (!final || !starting) {
     return null
   }
@@ -112,11 +112,11 @@ const groups = computed(() => [
               v-if="!group.currency"
               class="ml-2 text-xs lg:text-sm font-medium text-gray-600 dark:text-gray-400"
             >
-              {{ t('dashboard.stats.book', group.current) }}
+              {{ t('dashboard.stats.book', group.current ?? 0) }}
             </span>
           </p>
           <span
-            v-if="(group.percentage?.percentage || 0) !== 0"
+            v-if="(group.percentage?.percentage ?? 0) !== 0"
             :class="[
               'flex items-center text-xxs lg:text-xs font-semibold tracking-wide uppercase px-2 py-0.5 lg:py-1 rounded-full shrink-0',
               group.percentage?.increased !== !!group.inverted
@@ -134,7 +134,7 @@ const groups = computed(() => [
                 class="w-2.5 lg:w-3.5 h-2.5 lg:h-3.5 mr-1"
               />
             </span>
-            {{ n(group.percentage.absPercentage, 'percent') }}
+            {{ n(group.percentage!.absPercentage, 'percent') }}
           </span>
         </div>
       </div>

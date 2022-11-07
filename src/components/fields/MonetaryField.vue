@@ -1,28 +1,37 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 
+import { useI18n } from '@/i18n'
 import { decimalComma } from '@/util/validators'
 
-import BaseField from '@/components/fields/BaseField.vue'
+import BaseField, {
+  type BaseFieldProps
+} from '@/components/fields/BaseField.vue'
+import type { EmptyMonetaryValue } from '@/model/Book'
 
-const props = defineProps({
-  base: Number,
-  error: String,
-  help: String,
-  label: String,
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  placeholder: String,
-  required: Boolean
+export interface MonetaryFieldProps extends BaseFieldProps {
+  base?: number
+  modelValue?: EmptyMonetaryValue | null
+  placeholder?: string
+}
+
+const props = withDefaults(defineProps<MonetaryFieldProps>(), {
+  required: false
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: EmptyMonetaryValue): void
+}>()
 
 const { t, n, locale } = useI18n({ useScope: 'global' })
-const { base, modelValue: monetaryValue } = toRefs(props)
+const {
+  base,
+  modelValue: monetaryValue,
+  label,
+  error,
+  required,
+  help
+} = toRefs(props)
 
 const DEFAULT_CURRENCIES = ['BRL', 'EUR', 'JPY', 'USD']
 
@@ -36,10 +45,10 @@ const currencies = computed(() => {
   return options.sort((a, b) => a.localeCompare(b, locale.value))
 })
 
-const currency = ref(monetaryValue.value?.currency || 'BRL')
+const currency = ref(monetaryValue!.value?.currency || 'BRL')
 const value = ref(
-  typeof monetaryValue.value?.value === 'number'
-    ? n(monetaryValue.value.value, 'decimal')
+  typeof monetaryValue!.value?.value === 'number'
+    ? n(monetaryValue!.value.value, 'decimal')
     : ''
 )
 
@@ -58,7 +67,7 @@ function emitValues() {
 watch(currency, () => emitValues())
 watch(value, () => emitValues())
 
-function currencyName(currencyCode) {
+function currencyName(currencyCode: string) {
   const displayNames = new Intl.DisplayNames([locale.value], {
     type: 'currency'
   })
@@ -82,7 +91,7 @@ const currencySymbol = computed(() => {
 })
 
 function handlePercent() {
-  if (!base.value || isNaN(base.value) || !validator(value.value)) {
+  if (!base?.value || isNaN(base.value) || !validator(value.value)) {
     return
   }
 
@@ -90,7 +99,7 @@ function handlePercent() {
   value.value = n(base.value - (base.value * percent) / 100.0, 'decimal')
 }
 
-const currencyInput = ref(null)
+const currencyInput = ref<HTMLInputElement>()
 
 function focusCurrency() {
   currencyInput.value?.focus()

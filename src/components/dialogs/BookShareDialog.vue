@@ -1,9 +1,10 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onUnmounted, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import QrCode from 'qrcode'
 
 import useMarkdown from '@/composables/useMarkdown'
+import { useI18n } from '@/i18n'
+import Book from '@/model/Book'
 import {
   downloadUrl,
   generateFile,
@@ -27,22 +28,25 @@ import {
 } from '@heroicons/vue/20/solid'
 
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import { ToshokanOwner } from '@/services/export/schema/library'
 
-const props = defineProps({
-  modelValue: Boolean,
-  book: Object,
-  data: Uint8Array,
-  version: {
-    type: Number,
-    required: true
-  },
-  showUrlCopier: {
-    type: Boolean,
-    default: true
-  }
+export interface BookShareDialogProps {
+  modelValue: boolean
+  book: Book | null | undefined
+  data?: Uint8Array
+  version: number
+  showUrlCopier?: boolean
+}
+
+const props = withDefaults(defineProps<BookShareDialogProps>(), {
+  book: undefined,
+  data: undefined,
+  showUrlCopier: true
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: boolean): void
+}>()
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -65,7 +69,7 @@ const owner = computed(() => {
     return null
   }
 
-  return {
+  return <ToshokanOwner>{
     name: authStore.profileName,
     pictureUrl: authStore.profileImageUrl
   }
@@ -89,7 +93,7 @@ watch(open, (isOpen) => {
 })
 
 watch([open, anonymous], async () => {
-  if (!book || !open.value) {
+  if (!book.value || !open.value) {
     return
   }
 
@@ -104,7 +108,7 @@ watch([open, anonymous], async () => {
   const bookOwner = anonymous.value ? null : bookSingle.owner
 
   const file = generateFile(
-    [bookSingle],
+    [new Book(bookSingle as unknown as Partial<Book>)],
     version.value,
     bookOwner ?? owner.value
   )
@@ -120,9 +124,9 @@ watch([open, anonymous], async () => {
   )
 
   if (showUrlCopier.value) {
-    const fileBase64 = await new Promise((resolve) => {
+    const fileBase64 = await new Promise<string>((resolve) => {
       const reader = new FileReader()
-      reader.onload = () => resolve(reader.result.split(',', 2)[1])
+      reader.onload = () => resolve((reader.result! as string).split(',', 2)[1])
       reader.readAsDataURL(blobSingle)
     })
 
@@ -139,7 +143,7 @@ function downloadFile() {
   downloadUrl(fileUrl.value, `toshokan-book-${identifier}.proto.gz`)
 }
 
-const shareUrlInput = ref(null)
+const shareUrlInput = ref<HTMLInputElement>()
 const showCopiedInfo = ref(false)
 
 function copyShareUrl() {
@@ -149,8 +153,8 @@ function copyShareUrl() {
     showCopied()
   }
 
-  shareUrlInput.value.focus()
-  shareUrlInput.value.select()
+  shareUrlInput.value?.focus()
+  shareUrlInput.value?.select()
 
   try {
     document.execCommand('copy')
@@ -171,6 +175,18 @@ onUnmounted(() => {
     URL.revokeObjectURL(fileUrl.value)
   }
 })
+
+function select(event: Event) {
+  const input = event.target as HTMLInputElement
+
+  input.select()
+}
+
+function handleAnonymousChange(event: Event) {
+  const input = event.target as HTMLInputElement
+
+  anonymous.value = input.checked
+}
 </script>
 
 <template>
@@ -273,7 +289,7 @@ onUnmounted(() => {
                   readonly
                   ref="shareUrlInput"
                   :value="shareUrl"
-                  @focus="$event.target.select()"
+                  @focus="select"
                 />
 
                 <button
@@ -325,7 +341,7 @@ onUnmounted(() => {
                 name="anonymous"
                 id="anonymous"
                 :checked="anonymous"
-                @change="anonymous = $event.target.checked"
+                @change="handleAnonymousChange"
               />
               <label for="anonymous" class="label mb-0">
                 {{ t('dashboard.details.share.anonymous') }}

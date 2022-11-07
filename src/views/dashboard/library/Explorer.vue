@@ -1,5 +1,5 @@
-<script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, nextTick, onMounted, ref, toRaw, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -7,10 +7,14 @@ import cloneDeep from 'lodash.clonedeep'
 
 import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
 import useBulkEditBookMutation from '@/mutations/useBulkEditBookMutation'
-import { useCollectionStore } from '@/stores/collection'
-import { useSettingsStore } from '@/stores/settings'
+import { Sort, useCollectionStore } from '@/stores/collection'
+import {
+  useSettingsStore,
+  type GridMode,
+  type ViewMode
+} from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
-import { STATUS_READ } from '@/model/Book'
+import Book, { STATUS_READ } from '@/model/Book'
 import useBooksQuery from '@/queries/useBooksQuery'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
@@ -33,9 +37,15 @@ import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
 import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookGrid from '@/components/book/BookGrid.vue'
-import BookTable from '@/components/book/BookTable.vue'
+import BookTable, {
+  MarkAsEvent,
+  SortEvent,
+  ToggleFavoriteEvent
+} from '@/components/book/BookTable.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LibraryFiltersDialog from '@/components/dialogs/LibraryFiltersDialog.vue'
+import LibraryFiltersDialog, {
+  type FilterState
+} from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
 import Paginator from '@/components/Paginator.vue'
 
@@ -64,17 +74,17 @@ const viewMode = computed({
   set(value) {
     const [viewMode, gridMode] = value.split(',')
 
-    settingsStore.updateViewMode(viewMode)
+    settingsStore.updateViewMode(viewMode as ViewMode)
 
     if (gridMode) {
-      settingsStore.updateGridMode(gridMode)
+      settingsStore.updateGridMode(gridMode as GridMode)
     }
 
     selection.value = []
   }
 })
 
-const sortPropertyNames = computed(() => ({
+const sortPropertyNames = computed<Record<string, string>>(() => ({
   title: t('book.properties.title'),
   publisher: t('book.properties.publisher'),
   status: t('book.properties.status'),
@@ -84,10 +94,6 @@ const sortPropertyNames = computed(() => ({
   createdAt: t('book.properties.createdAt'),
   updatedAt: t('book.properties.updatedAt')
 }))
-
-const sortPropertyName = computed(() => {
-  return sortPropertyNames.value[sortProperty.value]
-})
 
 const route = useRoute()
 const sheetId = computed(() => sheetStore.sheetId)
@@ -111,8 +117,8 @@ const queriesEnabled = computed(() => {
   return (
     !sheetLoading.value &&
     sheetId.value !== null &&
-    deletingIdle &&
-    updatingIdle
+    deletingIdle.value &&
+    updatingIdle.value
   )
 })
 
@@ -157,8 +163,9 @@ watch(groupsData, (newGroups) => {
   }
 
   // Remove the inexistent groups from selection.
-  const fixedGroups = collectionStore.filters.groups.filter((selGroup) =>
-    groupsData.value.includes(selGroup)
+  const fixedGroups = collectionStore.filters.groups.filter(
+    (selGroup) =>
+      groupsData.value!.find((grp) => grp.name === selGroup) !== undefined
   )
 
   collectionStore.updateGroups(fixedGroups)
@@ -175,7 +182,7 @@ watch(
 )
 
 function updateGroupFromQuery() {
-  const newGroup = route.query.group
+  const newGroup = route.query.group as string
 
   if (sheetLoading.value || loading.value) {
     return false
@@ -183,8 +190,9 @@ function updateGroupFromQuery() {
 
   if (!newGroup) {
     // Remove inexistent groups from selection.
-    const fixedGroups = collectionStore.filters.groups.filter((selGroup) =>
-      groupsData.value.includes(selGroup)
+    const fixedGroups = collectionStore.filters.groups.filter(
+      (selGroup) =>
+        groupsData.value!.find((grp) => grp.name === selGroup) !== undefined
     )
 
     collectionStore.updateGroups(fixedGroups)
@@ -204,7 +212,7 @@ function updateGroupFromQuery() {
 }
 
 function updateSortPropertyFromQuery() {
-  const newSortProperty = route.query.sortProperty
+  const newSortProperty = route.query.sortProperty as string
 
   if (sheetLoading.value || !newSortProperty) {
     return false
@@ -249,17 +257,22 @@ onMounted(() => {
   }
 })
 
-const table = ref(null)
-const grid = ref(null)
+const table = ref<InstanceType<typeof BookTable>>()
+const grid = ref<InstanceType<typeof BookGrid>>()
 const currentView = computed(() => {
   return viewMode.value === 'table' ? table.value : grid.value
 })
 
-const lastFocus = ref(null)
+type FocusableElement = Element & {
+  blur: () => void
+  focus: () => void
+}
+
+const lastFocus = ref<FocusableElement>()
 
 watch(booksFetching, (value) => {
   if (value) {
-    lastFocus.value = document.activeElement
+    lastFocus.value = document.activeElement as FocusableElement
     lastFocus.value?.blur()
   }
 })
@@ -283,7 +296,7 @@ watch(booksLoading, async (newValue) => {
   }
 })
 
-async function handlePage(page) {
+async function handlePage(page: number) {
   window.scroll({
     top: 0,
     left: 0,
@@ -294,7 +307,7 @@ async function handlePage(page) {
   collectionStore.updateCurrentPage({ page, totalResults })
 }
 
-async function handleFilter(filters) {
+async function handleFilter(filters: FilterState) {
   selection.value = []
 
   if (
@@ -320,7 +333,7 @@ async function handleFilter(filters) {
   }
 }
 
-async function handleTableSort({ property, direction }) {
+async function handleTableSort({ property, direction }: SortEvent) {
   const totalResults = collectionStore.paginationInfo.total_results
   collectionStore.updateCurrentPage({
     page: 1,
@@ -345,7 +358,7 @@ function closeCreateDialog() {
 
 const canEdit = computed(() => sheetStore.canEdit)
 
-const selection = ref([])
+const selection = ref([] as number[])
 const booksToDelete = computed(() => {
   return selection.value.map((idx) => books.value[idx])
 })
@@ -356,12 +369,11 @@ function handleDeleteSelection() {
   bulkDeleteBooks(booksToDelete.value)
 }
 
-function handleBulkMarkAs({ booksToEdit, newStatus }) {
+function handleBulkMarkAs({ booksToEdit, newStatus }: MarkAsEvent) {
   const editedBooks = booksToEdit
     .filter((book) => book.status !== newStatus)
     .map((book) => {
-      /** @type {import('@/model/Book').default} */
-      const clone = cloneDeep(book)
+      const clone = cloneDeep(toRaw(book))
       clone.status = newStatus
       clone.readAt = newStatus === STATUS_READ ? new Date() : null
       return clone
@@ -370,11 +382,14 @@ function handleBulkMarkAs({ booksToEdit, newStatus }) {
   bulkUpdateBooks(editedBooks)
 }
 
-function handleBulkToggleFavorite({ booksToEdit, newFavorite }) {
+function handleBulkToggleFavorite({
+  booksToEdit,
+  newFavorite
+}: ToggleFavoriteEvent) {
   const editedBooks = booksToEdit
     .filter((book) => book.favorite !== newFavorite)
     .map((book) => {
-      const clone = cloneDeep(book)
+      const clone = cloneDeep(toRaw(book))
       clone.favorite = newFavorite
       return clone
     })
@@ -412,6 +427,7 @@ const writing = computed(() => deleting.value || updating.value)
             aria-hidden="true"
           >
             {{
+              // @ts-ignore
               t('dashboard.library.items.current', groupsFilter.length, {
                 count:
                   groupsFilter.length === 1

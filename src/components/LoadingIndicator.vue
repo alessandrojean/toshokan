@@ -1,26 +1,20 @@
-<script setup>
+<script lang="ts" setup>
 import FadeTransition from './transitions/FadeTransition.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 
-defineProps({
-  animation: {
-    type: String,
-    default: 'spin'
-  },
-  blur: {
-    type: Boolean,
-    default: true
-  },
-  loading: Boolean,
-  position: {
-    type: String,
-    default: 'absolute'
-  },
-  small: Boolean,
-  zIndex: {
-    type: String,
-    default: ''
-  }
+export interface LoadingIndicatorProps {
+  blur?: boolean
+  loading?: boolean
+  position?: 'absolute' | 'fixed'
+  small?: boolean
+  zIndex?: string
+}
+
+withDefaults(defineProps<LoadingIndicatorProps>(), {
+  blur: true,
+  position: 'absolute',
+  small: false,
+  zIndex: ''
 })
 </script>
 
@@ -38,7 +32,7 @@ defineProps({
     >
       <LoadingSpinIcon
         :class="[
-          `motion-safe:animate-${animation}`,
+          `motion-safe:animate-spin`,
           small ? 'h-8 w-8' : 'h-10 w-18',
           'mx-auto text-primary-500'
         ]"

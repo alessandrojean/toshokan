@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -10,12 +10,7 @@ import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  search: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{ search: string }>()
 
 defineEmits(['click', 'click:remove'])
 
@@ -35,8 +30,8 @@ const searchText = computed(() => {
 
   let withTags = search.value
 
-  for (const offset of result.offsets.reverse()) {
-    if (offset.text) {
+  for (const offset of result.offsets!.reverse()) {
+    if ('text' in offset) {
       withTags =
         withTags.substring(0, offset.offsetStart) +
         escapeHtml(

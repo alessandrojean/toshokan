@@ -1,6 +1,9 @@
-<script setup>
-import { inject, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { toRefs, watch } from 'vue'
+import { useI18n } from '@/i18n'
+
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import { TrashIcon } from '@heroicons/vue/24/outline'
 
@@ -12,17 +15,22 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-const props = defineProps({
-  open: Boolean,
-  quantity: {
-    type: Number,
-    default: 1
-  }
+export interface BookDeleteDialogProps {
+  open?: boolean
+  quantity?: number
+}
+
+const props = withDefaults(defineProps<BookDeleteDialogProps>(), {
+  open: false,
+  quantity: 1
 })
 
-const emit = defineEmits(['update:open', 'click:delete'])
+const emit = defineEmits<{
+  (e: 'update:open', open: boolean): void
+  (e: 'click:delete', event: MouseEvent): void
+}>()
 
-function handleDelete(event) {
+function handleDelete(event: MouseEvent) {
   emit('update:open', false)
   emit('click:delete', event)
 }
@@ -31,8 +39,8 @@ const { t } = useI18n({ useScope: 'global' })
 
 const { open } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(open, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()

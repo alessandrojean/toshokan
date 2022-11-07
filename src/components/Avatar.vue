@@ -1,16 +1,23 @@
-<script setup>
-import { onMounted, toRefs } from 'vue'
+<script lang="ts" setup>
+import { onMounted, toRefs, type HTMLAttributes } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import useImageLoader from '@/composables/useImageLoader'
 
 import { UserGroupIcon, UserIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  dark: Boolean,
-  pictureUrl: String,
-  shared: Boolean,
-  small: Boolean
+export interface AvatarProps extends HTMLAttributes {
+  dark?: boolean
+  pictureUrl?: string
+  shared?: boolean
+  small?: boolean
+}
+
+const props = withDefaults(defineProps<AvatarProps>(), {
+  dark: false,
+  shared: false,
+  small: false,
+  pictureUrl: undefined
 })
 
 const { pictureUrl } = toRefs(props)

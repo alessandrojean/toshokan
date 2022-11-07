@@ -1,9 +1,9 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
-import { useAuthStore } from './stores/auth'
+import { useI18n } from '@/i18n'
+import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 
 import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
@@ -19,7 +19,7 @@ const authStarted = computed(() => authStore.started)
 const hasCriticalError = computed(() => mainStore.hasCriticalError)
 
 const route = useRoute()
-const jumpToMain = ref(null)
+const jumpToMain = ref<HTMLAnchorElement>()
 const navigationHelpText = ref('')
 const appStarted = ref(false)
 
@@ -30,7 +30,7 @@ function focusOnJumpLink() {
   }
 }
 
-function changeNavigationHelpText(pageTitle) {
+function changeNavigationHelpText(pageTitle: string) {
   navigationHelpText.value = t('a11y.pageChanged', { pageTitle })
 }
 

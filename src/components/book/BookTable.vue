@@ -1,11 +1,16 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { useBreakpoints } from '@vueuse/core'
 
 import useTailwindTheme from '@/composables/useTailwindTheme'
-import { STATUS_FUTURE, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import { useI18n } from '@/i18n'
+import Book, {
+  Status,
+  STATUS_FUTURE,
+  STATUS_READ,
+  STATUS_UNREAD
+} from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
@@ -16,24 +21,49 @@ import {
   StarIcon
 } from '@heroicons/vue/20/solid'
 import { PhotoIcon } from '@heroicons/vue/24/outline'
+import type { Sort } from '@/stores/collection'
 
-const props = defineProps({
-  currentPage: Number,
-  items: Array,
-  loading: Boolean,
-  selectable: Boolean,
-  skeleton: Boolean,
-  sortProperty: String,
-  sortDirection: String
+export interface BookTable {
+  currentPage?: number
+  items?: Book[]
+  loading?: boolean
+  selectable?: boolean
+  skeleton?: boolean
+  sortProperty?: string
+  sortDirection?: 'asc' | 'desc'
+}
+
+export type SortEvent = {
+  property: string
+  direction: Sort
+}
+
+export type MarkAsEvent = {
+  booksToEdit: Book[]
+  newStatus: Status
+}
+
+export type ToggleFavoriteEvent = {
+  booksToEdit: Book[]
+  newFavorite: boolean
+}
+
+const props = withDefaults(defineProps<BookTable>(), {
+  items: undefined,
+  loading: false,
+  selectable: false,
+  skeleton: false,
+  sortDirection: undefined,
+  sortProperty: undefined
 })
 
-const emit = defineEmits([
-  'click:deleteSelection',
-  'click:markAs',
-  'click:toggleFavorite',
-  'select',
-  'sort'
-])
+const emit = defineEmits<{
+  (e: 'click:deleteSelection', selection?: Book[]): void
+  (e: 'click:markAs', event: MarkAsEvent): void
+  (e: 'click:toggleFavorite', event: ToggleFavoriteEvent): void
+  (e: 'select', selected: number[]): void
+  (e: 'sort', sort: SortEvent): void
+}>()
 
 const { t, d, n, locale, getNumberFormat } = useI18n({ useScope: 'global' })
 const sheetStore = useSheetStore()
@@ -43,40 +73,41 @@ const { data: timeZone } = useTimeZoneQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-function formatDate(date) {
+function formatDate(date: Date) {
+  // @ts-ignore
   return d(date, 'long', { timeZone: timeZone.value.name })
 }
 
-function formatPrice(currency, value) {
+function formatPrice(currency: string, value?: number) {
   const formatter = new Intl.NumberFormat(locale.value, {
     ...getNumberFormat(locale.value).currency,
     currency: currency
   })
 
-  return formatter.formatToParts(value !== undefined ? value : 0)
+  return formatter.formatToParts(value ?? 0)
 }
 
-function currency(currency) {
+function currency(currency: string) {
   const part = formatPrice(currency).find((p) => p.type === 'currency')
 
   return part?.value || '$'
 }
 
-function value(currencyValue, value) {
+function value(currencyValue: string, value: number) {
   const currencySymbol = currency(currencyValue)
 
+  // @ts-ignore
   return n(value, 'currency', { currency: currencyValue })
     .replace(currencySymbol, '')
     .trim()
 }
 
-function volumeText(item) {
+function volumeText(item: Book) {
   const isSingle = item.titleParts.number === null
 
-  return t(
-    isSingle ? 'book.single' : 'book.volume',
-    isSingle ? undefined : { number: item.titleParts.number }
-  )
+  return isSingle
+    ? t('book.single')
+    : t('book.volume', { number: item.titleParts.number! })
 }
 
 const { skeleton, loading } = toRefs(props)
@@ -112,18 +143,22 @@ const columns = computed(() => [
 
 const { items, selectable } = toRefs(props)
 
-const selection = ref([])
+const selection = ref([] as number[])
 const current = ref(0)
-const topCheckbox = ref(null)
-const tableBody = ref(null)
+const topCheckbox = ref<HTMLInputElement>()
+const tableBody = ref<HTMLTableElement>()
 
 const isMac = ref(
+  // @ts-ignore
   navigator.userAgentData
-    ? navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+    ? // @ts-ignore
+      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
     : navigator.platform.toLowerCase().indexOf('mac') > -1
 )
 
-function handleTopCheckbox(checked) {
+function handleTopCheckbox(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked
+
   if (!selectable.value || !isMdBreakpoint.value) {
     return
   }
@@ -140,7 +175,7 @@ function handleTopCheckbox(checked) {
   emit('select', selection.value)
 }
 
-function rangeArray(startIdx, endIdx) {
+function rangeArray(startIdx: number, endIdx: number) {
   if (startIdx === endIdx) {
     return [startIdx]
   }
@@ -157,13 +192,11 @@ const isMdBreakpoint = useBreakpoints(breakpoints).greater('md')
 /**
  * Try to mimic the Windows behavior on selecting items
  * using the mouse + Shift + Ctrl + Command + checkboxes.
- *
- * @param {boolean} checked
- * @param {number} idx
- * @param {MouseEvent} event
  */
-function handleCheckbox(checked, idx, event) {
-  if (event.target.tagName === 'A') {
+function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
+  const target = event.target as Element
+
+  if (target.tagName === 'A') {
     return
   }
 
@@ -181,9 +214,9 @@ function handleCheckbox(checked, idx, event) {
 
   const controlKey = isMac.value ? event.metaKey : event.ctrlKey
 
-  const individual = controlKey || event.target.tagName === 'INPUT'
+  const individual = controlKey || target.tagName === 'INPUT'
 
-  if (event.target.tagName === 'LABEL') {
+  if (target.tagName === 'LABEL') {
     event.preventDefault()
   }
 
@@ -215,11 +248,7 @@ function handleCheckbox(checked, idx, event) {
   emit('select', selection.value)
 }
 
-/**
- * @param {KeyboardEvent} event
- * @param {number} idx
- */
-function handleKeyboard(event, idx) {
+function handleKeyboard(event: KeyboardEvent, idx: number) {
   const allowedKeys = [
     'ArrowDown',
     'ArrowUp',
@@ -257,7 +286,11 @@ function handleKeyboard(event, idx) {
       current.value = Math.max(idx - 1, 0)
     }
 
-    nextTick(() => tableBody.value?.children[current.value].focus())
+    const tableRow = tableBody.value?.children[current.value] as
+      | HTMLTableRowElement
+      | undefined
+
+    nextTick(() => tableRow?.focus())
 
     return
   }
@@ -396,7 +429,7 @@ function handleDeleteSelection() {
   emit('click:deleteSelection', booksToDelete)
 }
 
-function ariaSorted(property) {
+function ariaSorted(property: string) {
   if (sortProperty.value !== property) {
     return 'none'
   }
@@ -404,7 +437,7 @@ function ariaSorted(property) {
   return sortDirection.value === 'asc' ? 'ascending' : 'descending'
 }
 
-function handleSort(property) {
+function handleSort(property: string) {
   if (property !== sortProperty.value) {
     emit('sort', {
       property,
@@ -418,22 +451,20 @@ function handleSort(property) {
   }
 }
 
-/**
- * @param {number[]} array
- * @param {string} key
- */
-function countBy(array, key) {
+function countBy(array: number[], key: keyof Book) {
   const counting = array
     .map((idx) => items.value[idx])
     .reduce((acm, crr) => {
-      if (acm[crr[key]] !== undefined) {
-        acm[crr[key]]++
+      const acmKey = acm[crr[key] as string]
+
+      if (acm[acmKey] !== undefined) {
+        acm[acmKey]++
       } else {
-        acm[crr[key]] = 1
+        acm[acmKey] = 1
       }
 
       return acm
-    }, {})
+    }, {} as Record<string, number>)
 
   return Object.entries(counting)
     .sort((a, b) => b[1] - a[1])
@@ -477,11 +508,19 @@ function handleToggleFavorite() {
 }
 
 function focus() {
-  tableBody.value?.children[current.value].focus()
+  const tableRow = tableBody.value?.children[current.value] as
+    | HTMLTableRowElement
+    | undefined
+
+  tableRow?.focus()
 }
 
 function focusOnActiveHeader() {
-  document.querySelector('th[aria-sort]:not([aria-sort=none]) button')?.focus()
+  document
+    .querySelector<HTMLButtonElement>(
+      'th[aria-sort]:not([aria-sort=none]) button'
+    )
+    ?.focus()
 }
 
 defineExpose({ focus, focusOnActiveHeader })
@@ -512,7 +551,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 id="select-all"
                 :checked="selection.length === items.length && !skeleton"
                 :disabled="loading || skeleton"
-                @change="handleTopCheckbox($event.target.checked)"
+                @change="handleTopCheckbox"
               />
             </th>
             <th
@@ -618,7 +657,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 :disabled="loading"
                 @click="handleSort(column.key)"
               >
-                <span :class="column.textClass">
+                <span>
                   {{ column.label }}
                 </span>
                 <template v-if="sortProperty === column.key && !column.hidden">
@@ -634,10 +673,7 @@ defineExpose({ focus, focusOnActiveHeader })
                   />
                 </template>
               </button>
-              <span
-                v-else-if="!skeleton"
-                :class="['sr-only', column.textClass]"
-              >
+              <span v-else-if="!skeleton" class="sr-only">
                 {{ column.label }}
               </span>
               <div
@@ -662,14 +698,14 @@ defineExpose({ focus, focusOnActiveHeader })
           <template v-if="!skeleton">
             <tr
               v-for="(book, bookIdx) in items"
-              :key="book.id"
+              :key="book.id!"
               :class="[
                 selection.includes(bookIdx)
                   ? 'bg-primary-100/25 dark:bg-gray-700/60 hover:bg-primary-100/50 dark:hover:bg-gray-700/80'
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700/20',
                 'motion-safe:transition-colors group has-ring-focus focus-visible:ring-inset focus-visible:!ring-offset-2'
               ]"
-              :tabindex="bookIdx === current ? '0' : null"
+              :tabindex="bookIdx === current ? '0' : undefined"
               :aria-labelledby="'book-label-' + book.id"
               @click="
                 handleCheckbox(!selection.includes(bookIdx), bookIdx, $event)
@@ -712,15 +748,15 @@ defineExpose({ focus, focusOnActiveHeader })
                     ]"
                   >
                     <img
-                      v-if="book.coverUrl.length > 0"
+                      v-if="(book.coverUrl?.length ?? 0) > 0"
                       :class="[
                         'h-10 w-10 rounded object-cover motion-safe:transition',
                         selection.includes(bookIdx)
                           ? 'ring-2 ring-primary-200/60 dark:ring-gray-500/40'
                           : ''
                       ]"
-                      :src="book.coverUrl"
-                      :alt="book.title"
+                      :src="book.coverUrl!"
+                      :alt="book.title!"
                       loading="lazy"
                     />
                     <PhotoIcon
@@ -771,8 +807,8 @@ defineExpose({ focus, focusOnActiveHeader })
               <td
                 class="pr-3 py-4 md:whitespace-nowrap hidden md:table-cell text-right"
               >
-                <span :class="'is-' + book.status.toLowerCase()" class="badge">
-                  {{ t(`book.${book.status.toLowerCase()}`) }}
+                <span :class="'is-' + book.status!.toLowerCase()" class="badge">
+                  {{ t(`book.${book.status!.toLowerCase()}`) }}
                 </span>
               </td>
               <td
@@ -780,10 +816,10 @@ defineExpose({ focus, focusOnActiveHeader })
               >
                 <div class="tabular-nums px-8">
                   <span>
-                    {{ currency(book.paidPrice.currency) }}
+                    {{ currency(book.paidPrice!.currency) }}
                   </span>
                   <span class="float-right">
-                    {{ value(book.paidPrice.currency, book.paidPrice.value) }}
+                    {{ value(book.paidPrice!.currency, book.paidPrice!.value) }}
                   </span>
                 </div>
               </td>
@@ -791,7 +827,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 class="w-[20ch] px-3 py-4 md:whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 hidden md:table-cell"
               >
                 <span class="tabular-nums">
-                  {{ formatDate(book.createdAt) }}
+                  {{ formatDate(book.createdAt!) }}
                 </span>
               </td>
               <td

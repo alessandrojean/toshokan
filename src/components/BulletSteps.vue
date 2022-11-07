@@ -1,17 +1,11 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    required: true
-  },
-  steps: {
-    type: Array,
-    required: true
-  }
-})
+const props = defineProps<{
+  modelValue: number
+  steps: string[]
+}>()
 
 const { t } = useI18n({ useScope: 'global' })
 const { modelValue: step, steps } = toRefs(props)

@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteUpdate } from 'vue-router'
@@ -6,23 +6,31 @@ import { useBreakpoints } from '@vueuse/core'
 
 import useTailwindTheme from '@/composables/useTailwindTheme'
 
-const { t, locale } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 const { breakpoints } = useTailwindTheme()
 
 const isVisible = useBreakpoints(breakpoints).greater('xl')
 
-const pageContents = ref([])
+interface Content {
+  id: string
+  title: string
+  index: number
+}
+
+const pageContents = ref<Content[]>([])
 const active = ref(-1)
 const previousActive = ref(-1)
 
-function buildPageContents(resetPosition) {
+function buildPageContents(resetPosition?: boolean) {
   const contents = Array.from(
-    document.querySelectorAll('.table-of-contents ol > li > a')
+    document.querySelectorAll<HTMLAnchorElement>(
+      '.table-of-contents ol > li > a'
+    )
   )
 
   pageContents.value = contents.map((el, index) => ({
     id: el.hash,
-    title: el.textContent,
+    title: el.textContent!,
     index
   }))
 
@@ -67,8 +75,8 @@ function setActiveLink() {
   }
 }
 
-function getAnchorTop(anchor) {
-  const heading = document.querySelector(anchor.id)
+function getAnchorTop(anchor: Content) {
+  const heading = document.querySelector<HTMLHeadingElement>(anchor.id)
 
   if (!heading) {
     return 0
@@ -77,7 +85,11 @@ function getAnchorTop(anchor) {
   return heading.offsetTop - 200
 }
 
-function isAnchorActive(index, anchor, nextAnchor) {
+function isAnchorActive(
+  index: number,
+  anchor: Content,
+  nextAnchor: Content
+): [boolean, number] {
   const scrollTop = window.scrollY
 
   if (index === 0 && scrollTop === 0) {
@@ -95,8 +107,8 @@ function isAnchorActive(index, anchor, nextAnchor) {
   return [false, -1]
 }
 
-function throttleAndDebounce(fn, delay) {
-  let timeout
+function throttleAndDebounce(fn: Function, delay: number) {
+  let timeout: number
   let called = false
 
   return () => {
@@ -135,7 +147,7 @@ onBeforeRouteUpdate((to, from) => {
 
 defineExpose({ buildPageContents })
 
-const list = ref(null)
+const list = ref<HTMLUListElement>()
 const indicator = reactive({
   top: 0,
   height: 17
@@ -143,7 +155,7 @@ const indicator = reactive({
 
 function updateIndicator() {
   if (active.value !== -1 && list.value) {
-    const li = list.value.children[active.value]
+    const li = list.value.children[active.value] as HTMLLIElement
     indicator.top = li.offsetTop
     indicator.height = li.offsetHeight
   } else {
@@ -152,12 +164,9 @@ function updateIndicator() {
   }
 }
 
-/**
- * @param {Event} event
- */
-function handleClick(event) {
-  const id = '#' + event.target.href.split('#')[1]
-  const heading = document.querySelector(id)
+function handleClick(event: MouseEvent) {
+  const id = '#' + (event.target as HTMLAnchorElement).href.split('#')[1]
+  const heading = document.querySelector<HTMLHeadingElement>(id)
 
   heading?.focus()
 }

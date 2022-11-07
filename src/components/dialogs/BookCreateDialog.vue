@@ -1,26 +1,18 @@
-<script setup>
-import {
-  computed,
-  inject,
-  nextTick,
-  reactive,
-  ref,
-  toRaw,
-  toRefs,
-  watch
-} from 'vue'
-
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import cloneDeep from 'lodash.clonedeep'
 
 import useMarkdown from '@/composables/useMarkdown'
 import useImageLoader from '@/composables/useImageLoader'
-import Book, { STATUS_UNREAD } from '@/model/Book'
+import { useI18n } from '@/i18n'
+import Book, { FilledBook, MonetaryValue, STATUS_UNREAD } from '@/model/Book'
 import useCreateBookMutation from '@/mutations/useCreateBookMutation'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import {
   Dialog,
@@ -41,19 +33,26 @@ import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
 import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import BulletSteps from '@/components/BulletSteps.vue'
-import DescriptionList from '@/components/DescriptionList.vue'
+import DescriptionList, {
+  type InfoLine
+} from '@/components/DescriptionList.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
-const props = defineProps({ isOpen: Boolean })
+const props = withDefaults(defineProps<{ isOpen?: boolean }>(), {
+  isOpen: false
+})
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'new', book: Book): void
+}>()
 
 const { t, d, n } = useI18n({ useScope: 'global' })
 
 function resetSteps() {
   step.value = 1
-  bookCreatedId.value = null
+  bookCreatedId.value = undefined
   bookInvalid.value = false
   searchBookSelected.value = null
   Object.assign(book, bookInitialState)
@@ -81,28 +80,28 @@ const bookInitialState = new Book({
   group: '',
   coverUrl: '',
   dimensions: {
-    width: null,
-    height: null
+    width: 0,
+    height: 0
   },
   publisher: '',
   labelPrice: {
     currency: 'BRL',
-    value: null,
-    valueStr: ''
+    value: 0,
+    valueStr: '0'
   },
   paidPrice: {
     currency: 'BRL',
-    value: null,
-    valueStr: ''
+    value: 0,
+    valueStr: '0'
   },
   notes: '',
   status: STATUS_UNREAD,
   store: '',
   synopsis: '',
   title: ''
-})
+}) as FilledBook
 
-const book = reactive(cloneDeep(bookInitialState))
+const book = reactive(cloneDeep(toRaw(bookInitialState)))
 const step = ref(1)
 
 const steps = computed(() => [
@@ -115,7 +114,7 @@ const steps = computed(() => [
 function previousStep() {
   if (step.value === 2) {
     searchBookSelected.value = null
-    Object.assign(book, cloneDeep(bookInitialState))
+    Object.assign(book, cloneDeep(toRaw(bookInitialState)))
   }
 
   step.value--
@@ -123,17 +122,17 @@ function previousStep() {
 
 function nextStep() {
   if (step.value === 1 && searchBookSelected.value) {
-    const selected = Object.entries(cloneDeep(searchBookSelected.value)).filter(
-      ([, value]) => value !== null
-    )
+    const selected = Object.entries(
+      cloneDeep(toRaw(searchBookSelected.value))
+    ).filter(([, value]) => value !== null)
     Object.assign(book, Object.fromEntries(selected))
   } else if (step.value === 2) {
-    const { error } = form.value.touch()
+    const { error } = form.value!.touch()
 
     if (error) {
       nextTick(() => {
-        main.value.scroll({
-          top: main.value.scrollHeight,
+        main.value!.scroll({
+          top: main.value!.scrollHeight,
           behavior: 'smooth'
         })
       })
@@ -143,7 +142,7 @@ function nextStep() {
     loadImage()
   }
 
-  main.value.scroll({ top: 0, behavior: 'smooth' })
+  main.value!.scroll({ top: 0, behavior: 'smooth' })
   step.value++
 }
 
@@ -161,24 +160,21 @@ const nextStepText = computed(() => {
 
 const bookInvalid = ref(false)
 
-function setBookInvalid(value) {
+function setBookInvalid(value: boolean) {
   bookInvalid.value = value
 }
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
-/**
- * @param {BeforeUnloadEvent} event
- */
-function preventUnload(event) {
+function preventUnload(event: BeforeUnloadEvent) {
   event.preventDefault()
   event.returnValue = ''
 }
 
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
-    Object.assign(book, cloneDeep(bookInitialState))
+    Object.assign(book, cloneDeep(toRaw(bookInitialState)))
     window.addEventListener('beforeunload', preventUnload)
     disableSearchShortcut()
     nextTick(() => isbnSearchInput.value?.focus())
@@ -188,9 +184,9 @@ watch(isOpen, (newIsOpen) => {
   }
 })
 
-const searchBookSelected = ref(null)
+const searchBookSelected = ref<Book | null>(null)
 
-function handleSearchSelect(searchBook) {
+function handleSearchSelect(searchBook: Book) {
   searchBookSelected.value = searchBook
 }
 
@@ -201,24 +197,24 @@ async function handleNew() {
   }
 }
 
-const form = ref(null)
-const main = ref(null)
+const form = ref<InstanceType<typeof BookForm>>()
+const main = ref<HTMLDivElement>()
 
 const loading = ref(false)
 
-function setLoading(newValue) {
+function setLoading(newValue: boolean) {
   loading.value = newValue
 }
 
 const { renderMarkdown } = useMarkdown()
 
-const bookCoverUrl = computed(() => book.coverUrl)
+const bookCoverUrl = computed(() => book.coverUrl!)
 
 const { imageHasError, imageLoading, loadImage } = useImageLoader(bookCoverUrl)
 
 const router = useRouter()
 const { mutate: insertBook, isLoading: inserting } = useCreateBookMutation()
-const bookCreatedId = ref(null)
+const bookCreatedId = ref<string>()
 
 function handleInsertBook() {
   insertBook(book, {
@@ -228,8 +224,8 @@ function handleInsertBook() {
   })
 }
 
-function viewBook(bookId) {
-  bookId = bookId || bookCreatedId.value
+function viewBook(bookId?: string) {
+  bookId = bookId ?? bookCreatedId.value
 
   closeDialog()
 
@@ -241,10 +237,12 @@ function viewBook(bookId) {
   }, 400)
 }
 
-const bookProviderSearch = ref(null)
+const bookProviderSearch = ref<InstanceType<typeof BookProviderSearch>>()
 
 const isbnSearchInput = computed(() => {
-  return bookProviderSearch.value?.$el.querySelector('#book-isbn')
+  return bookProviderSearch.value?.$el.querySelector('#book-isbn') as
+    | HTMLInputElement
+    | undefined
 })
 
 const sheetStore = useSheetStore()
@@ -255,7 +253,8 @@ const { data: timeZone } = useTimeZoneQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-function formatPrice({ value, currency }) {
+function formatPrice({ value, currency }: MonetaryValue) {
+  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
@@ -265,6 +264,7 @@ const boughtAt = computed(() => {
       // new Date(`${book.boughtAt}T00:00:00.000${timeZone.value.offsetStr}`),
       book.boughtAt,
       'short',
+      // @ts-ignore
       { timeZone: timeZone.value.name }
     )
   }
@@ -274,21 +274,21 @@ const boughtAt = computed(() => {
 
 const formattedLabelPrice = computed(() => {
   return formatPrice({
-    value: book.labelPrice.value,
-    currency: book.labelPrice.currency
+    value: book.labelPrice!.value,
+    currency: book.labelPrice!.currency
   })
 })
 
 const formattedPaidPrice = computed(() => {
   return formatPrice({
-    value: book.paidPrice.value,
-    currency: book.paidPrice.currency
+    value: book.paidPrice!.value,
+    currency: book.paidPrice!.currency
   })
 })
 
 const bookInfo = computed(() => {
   const separator = t('dashboard.details.header.authorSeparator')
-  let authors = (book.authors || []).join(separator)
+  let authors = (book.authors ?? []).join(separator)
 
   if (book.authors && book.authors.length >= 2) {
     const firstAuthors = book.authors.slice(0, -1).join(separator)
@@ -299,7 +299,7 @@ const bookInfo = computed(() => {
     })
   }
 
-  const properties = [
+  const properties: InfoLine[] = [
     {
       title: t('book.properties.id'),
       value: book.code,
@@ -311,7 +311,7 @@ const bookInfo = computed(() => {
       property: 'title'
     },
     {
-      title: t('book.properties.author', book.authors.length),
+      title: t('book.properties.author', book.authors!.length),
       value: authors,
       property: 'authors'
     },
@@ -330,9 +330,9 @@ const bookInfo = computed(() => {
     {
       title: t('book.properties.dimensions'),
       value:
-        n(book.dimensions.width, 'dimensions') +
+        n(book.dimensions!.width, 'dimensions') +
         ' × ' +
-        n(book.dimensions.height, 'dimensions') +
+        n(book.dimensions!.height, 'dimensions') +
         ' cm',
       property: 'dimensions'
     },
@@ -379,6 +379,13 @@ const bookInfo = computed(() => {
   }
 
   return properties
+})
+
+const coverUrl = computed({
+  get: () => book.coverUrl ?? undefined,
+  set: (value) => {
+    book.coverUrl = value ?? null
+  }
 })
 </script>
 
@@ -526,7 +533,7 @@ const bookInfo = computed(() => {
                 class="max-w-xl mx-auto"
                 custom
                 hide-custom-title
-                v-model:cover-url="book.coverUrl"
+                v-model:cover-url="coverUrl"
                 :book="book"
               />
               <div
@@ -534,7 +541,7 @@ const bookInfo = computed(() => {
                 class="grid grid-cols-1 sm:grid-cols-3 sm:gap-4 md:gap-6 lg:gap-8 w-full"
               >
                 <div
-                  v-if="book.coverUrl.length > 0"
+                  v-if="(coverUrl?.length ?? 0) > 0"
                   class="w-48 sm:w-auto max-w-full sm:max-w-none mb-8 sm:mb-0 mt-3 sm:mt-0"
                 >
                   <div class="sm:sticky sm:top-0">
@@ -557,8 +564,8 @@ const bookInfo = computed(() => {
                       </div>
                       <img
                         v-else
-                        :src="book.coverUrl"
-                        :alt="book.title"
+                        :src="coverUrl!"
+                        :alt="book.title!"
                         class="w-full rounded-md shadow"
                       />
                     </FadeTransition>
@@ -566,12 +573,14 @@ const bookInfo = computed(() => {
                 </div>
                 <div
                   :class="
-                    book.coverUrl.length > 0 ? 'col-span-2' : 'col-span-3'
+                    (coverUrl?.length ?? 0) > 0 ? 'col-span-2' : 'col-span-3'
                   "
                 >
                   <DescriptionList
                     :class="
-                      book.coverUrl.length > 0 ? 'w-full' : 'max-w-xl mx-auto'
+                      (coverUrl?.length ?? 0) > 0
+                        ? 'w-full'
+                        : 'max-w-xl mx-auto'
                     "
                     :info="bookInfo"
                   >

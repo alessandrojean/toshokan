@@ -1,5 +1,5 @@
-<script setup>
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -12,6 +12,12 @@ import { useSheetStore } from '@/stores/sheet'
 import useBookQuery from '@/queries/useBookQuery'
 import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
 import useSheetVersionQuery from '@/queries/useSheetVersionQuery'
+import {
+  DisableSearchShortcutKey,
+  EnableSearchShortcutKey,
+  SetNavbarTransparentKey
+} from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookCover from '@/components/book/BookCover.vue'
@@ -26,7 +32,7 @@ const router = useRouter()
 const route = useRoute()
 const sheetStore = useSheetStore()
 
-const bookId = computed(() => route.params.bookId)
+const bookId = computed(() => route.params.bookId as string)
 const loading = computed(() => sheetStore.loading)
 
 const enabled = computed(() => {
@@ -69,10 +75,10 @@ const showBookInfo = computed(() => {
 const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
 
 const editDialogOpen = ref(false)
-const bookToEdit = ref(null)
+const bookToEdit = ref<Book>()
 
 function openEditDialog() {
-  bookToEdit.value = cloneDeep(book.value)
+  bookToEdit.value = cloneDeep(toRaw(book!.value!))
   editDialogOpen.value = true
 }
 
@@ -80,11 +86,11 @@ function closeEditDialog() {
   editDialogOpen.value = false
 }
 
-function handleEdit(editedBook) {
+function handleEdit(editedBook: Book) {
   updateBook(editedBook)
 }
 
-function toDateInputValue(date) {
+function toDateInputValue(date: Date) {
   const local = new Date(date)
   local.setMinutes(date.getMinutes() - date.getTimezoneOffset())
 
@@ -92,12 +98,11 @@ function toDateInputValue(date) {
 }
 
 function toggleStatus() {
-  if (book.value.isFuture) {
+  if (book.value?.isFuture) {
     return
   }
 
-  /** @type {Book} */
-  const updatedBook = cloneDeep(book.value)
+  const updatedBook = cloneDeep(toRaw(book!.value!))
   updatedBook.status = updatedBook.isRead ? STATUS_UNREAD : STATUS_READ
   updatedBook.readAt = updatedBook.isRead ? toDateInputValue(new Date()) : null
 
@@ -105,8 +110,7 @@ function toggleStatus() {
 }
 
 function toggleFavorite() {
-  /** @type {Book} */
-  const updatedBook = cloneDeep(book.value)
+  const updatedBook = cloneDeep(toRaw(book!.value!))
   updatedBook.favorite = !updatedBook.favorite
 
   updateBook(updatedBook)
@@ -116,7 +120,7 @@ const deleteModalOpen = ref(false)
 const { mutate: deleteBook, isLoading: deleting } = useDeleteBookMutation()
 
 function handleDelete() {
-  deleteBook(book.value)
+  deleteBook(book.value!)
 }
 
 function openDeleteModal() {
@@ -127,7 +131,7 @@ function openDeleteModal() {
 
 const writing = computed(() => editing.value || deleting.value)
 
-const setNavbarTransparent = inject('setNavbarTransparent')
+const setNavbarTransparent = injectStrict(SetNavbarTransparentKey)
 
 onMounted(() => setNavbarTransparent(true))
 onUnmounted(() => setNavbarTransparent(false))
@@ -138,8 +142,8 @@ function openShareDialog() {
   shareDialogOpen.value = true
 }
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(shareDialogOpen, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()
@@ -218,7 +222,7 @@ watch(shareDialogOpen, (newOpen) => {
     <BookShareDialog
       v-model="shareDialogOpen"
       :book="book"
-      :version="sheetVersion"
+      :version="sheetVersion ?? 1"
     />
   </div>
 </template>

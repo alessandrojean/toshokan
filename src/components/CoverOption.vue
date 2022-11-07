@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, toRefs, watch } from 'vue'
 
 import useImageLoader from '@/composables/useImageLoader'
@@ -7,14 +7,11 @@ import { CheckIcon, PhotoIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
-const props = defineProps({
-  active: Boolean,
-  checked: Boolean,
-  coverUrl: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{
+  active: boolean | undefined
+  checked: boolean | undefined
+  coverUrl: string
+}>()
 
 const emit = defineEmits(['error'])
 

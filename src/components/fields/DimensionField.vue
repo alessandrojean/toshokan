@@ -1,32 +1,33 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import BaseField from '@/components/fields/BaseField.vue'
+import BaseField, {
+  type BaseFieldProps
+} from '@/components/fields/BaseField.vue'
+import type { Dimension } from '@/model/Book'
 
-const VALIDATOR = /^\d+((,|\.)\d{1,2})?$/
+export interface DimensionFieldProps extends BaseFieldProps {
+  modelValue?: Dimension | null
+}
 
-const props = defineProps({
-  error: String,
-  help: String,
-  label: String,
-  modelValue: {
-    type: Object,
-    required: true
-  },
-  required: Boolean
+const props = withDefaults(defineProps<DimensionFieldProps>(), {
+  required: false
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: Dimension): void
+}>()
+const VALIDATOR = /^\d+((,|\.)\d{1,2})?$/
 
 const { n } = useI18n({ useScope: 'global' })
-const { modelValue: dimensions } = toRefs(props)
+const { modelValue: dimensions, label, error, required, help } = toRefs(props)
 
 const width = ref(
-  dimensions.value?.width ? n(dimensions.value.width, 'dimensions') : ''
+  dimensions!.value?.width ? n(dimensions!.value.width, 'dimensions') : ''
 )
 const height = ref(
-  dimensions.value?.height ? n(dimensions.value.height, 'dimensions') : ''
+  dimensions!.value?.height ? n(dimensions!.value.height, 'dimensions') : ''
 )
 
 const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
@@ -42,7 +43,7 @@ watch(dimensionsStr, () => {
   })
 })
 
-const heightInput = ref(null)
+const heightInput = ref<HTMLInputElement>()
 
 function focusHeight() {
   heightInput.value?.select()

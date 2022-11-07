@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -13,10 +13,16 @@ import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
 import BookNavigator from '@/components/book/BookNavigator.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
-const props = defineProps({
-  book: Book,
-  collection: Array,
-  loading: Boolean
+export interface BookCoverProps {
+  book: Book | null | undefined
+  collection?: Book[]
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<BookCoverProps>(), {
+  book: undefined,
+  collection: undefined,
+  loading: false
 })
 
 const { book, loading } = toRefs(props)
@@ -60,8 +66,8 @@ const blurNsfw = computed(() => settingsStore.blurNsfw)
 
 const blurCover = computed(() => {
   return (
-    (spoilerMode.value.cover && !book.value.isRead) ||
-    (blurNsfw.value && book.value.isNsfw)
+    (spoilerMode.value.cover && !book.value!.isRead) ||
+    (blurNsfw.value && book.value!.isNsfw)
   )
 })
 
@@ -137,7 +143,7 @@ const { t } = useI18n({ useScope: 'global' })
               ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out'
               : ''
           "
-          :alt="book.title"
+          :alt="book!.title!"
           class="max-w-xs md:max-w-full max-h-full shadow-lg rounded-md"
         />
         <span v-else aria-hidden="true">

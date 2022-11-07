@@ -1,5 +1,5 @@
-<script setup>
-import { ref, toRefs, watch } from 'vue'
+<script lang="ts" setup>
+import { ref, toRaw, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import cloneDeep from 'lodash.clonedeep'
@@ -9,14 +9,11 @@ import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 import Alert from '@/components/Alert.vue'
 import TextField from '@/components/fields/TextField.vue'
 
-const props = defineProps({
-  modelValue: {
-    type: Book,
-    required: true
-  }
-})
+const props = defineProps<{ modelValue: Book }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: Book): void
+}>()
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -26,7 +23,7 @@ const { modelValue: book } = toRefs(props)
 // when saving in the spreadsheet by the Book.toArray() method.
 const today = new Date()
 
-function isToday(date) {
+function isToday(date: Date) {
   return (
     today.getUTCFullYear() === date.getUTCFullYear() &&
     today.getUTCMonth() === date.getUTCMonth() &&
@@ -48,15 +45,15 @@ watch(book, (newBook) => {
   newReadDate.value = today.toISOString().substring(0, 10)
 
   if (newBook.readAt) {
-    const { readAt } = book
+    const { readAt } = newBook
 
-    state.value = 'read-' + (isToday(readAt.getTime()) ? 'today' : 'other')
+    state.value = 'read-' + (isToday(readAt) ? 'today' : 'other')
     newReadDate.value = readAt.toISOString().substring(0, 10)
   }
 })
 
 watch(state, (newState) => {
-  const bookCopy = cloneDeep(book.value)
+  const bookCopy = cloneDeep(toRaw(book.value))
 
   if (newState === 'unread') {
     bookCopy.status = STATUS_UNREAD
@@ -70,7 +67,7 @@ watch(state, (newState) => {
 })
 
 watch(newReadDate, (newValue) => {
-  const bookCopy = cloneDeep(book.value)
+  const bookCopy = cloneDeep(toRaw(book.value))
   bookCopy.readAt = newValue.length === 10 ? new Date(newValue) : null
   bookCopy.readAt?.setMinutes(
     bookCopy.readAt.getMinutes() + bookCopy.readAt.getTimezoneOffset()

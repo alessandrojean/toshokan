@@ -1,15 +1,17 @@
-<script setup>
-defineProps({
-  mode: {
-    type: String,
-    default: 'out-in'
-  },
-  simultaneous: Boolean
+<script lang="ts" setup>
+export interface ScaleTransitionProps {
+  mode?: 'in-out' | 'out-in' | null
+  simultaneous?: boolean
+}
+
+withDefaults(defineProps<ScaleTransitionProps>(), {
+  mode: 'out-in',
+  simultaneous: false
 })
 </script>
 
 <template>
-  <transition
+  <Transition
     :mode="!simultaneous ? mode : null"
     leave-active-class="transition motion-reduce:transition-none motion-reduce:transform-none duration-200 ease-in"
     leave-from-class="opacity-100 scale-100"
@@ -19,5 +21,5 @@ defineProps({
     enter-to-class="opacity-100 scale-100"
   >
     <slot></slot>
-  </transition>
+  </Transition>
 </template>

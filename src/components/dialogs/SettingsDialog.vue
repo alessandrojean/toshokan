@@ -1,13 +1,15 @@
-<script setup>
-import { computed, inject, reactive, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, reactive, ref, toRefs, watch } from 'vue'
 import { useQueryClient } from 'vue-query'
 
 import useMarkdown from '@/composables/useMarkdown'
+import { useI18n } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import androidExport from '@/services/export/androidExport'
+import { injectStrict } from '@/utils'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 
 import {
   Dialog,
@@ -35,9 +37,9 @@ import {
 import Alert from '@/components/Alert.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
 
-const props = defineProps({ isOpen: Boolean })
+const props = defineProps<{ isOpen: boolean }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
@@ -47,8 +49,8 @@ function closeDialog() {
 
 const { isOpen } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 const isDev = ref(import.meta.env.DEV)
 
@@ -97,6 +99,16 @@ const settings = reactive({
   }
 })
 
+type Key =
+  | 'appearence.locale'
+  | 'appearence.theme'
+  | 'appearence.viewMode'
+  | 'appearence.gridMode'
+  | 'appearence.spoilerMode.cover'
+  | 'appearence.spoilerMode.synopsis'
+  | 'appearence.blurNsfw'
+  | 'development.useDevSheet'
+
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
     Object.assign(settings, {
@@ -127,13 +139,13 @@ watch(theme, (newTheme) => {
   }
 })
 
-function updateSetting(key, newValue) {
-  const path = key.split('.')
+function updateSetting(key: Key, newValue: any) {
+  const [section, preference, inner] = key.split('.')
 
-  if (path[2]) {
-    settings[path[0]][path[1]][path[2]] = newValue
+  if (inner) {
+    ;(settings as Record<string, any>)[section][preference][inner] = newValue
   } else {
-    settings[path[0]][path[1]] = newValue
+    ;(settings as Record<string, any>)[section][preference] = newValue
   }
 
   if (key === 'appearence.locale') {
@@ -203,7 +215,7 @@ async function exportAsAndroid() {
   exporting.value = true
 
   try {
-    await androidExport(sheetStore.sheetId)
+    await androidExport()
   } catch (e) {
     console.error(e)
   } finally {
@@ -270,12 +282,7 @@ async function exportAsAndroid() {
 
             <TabGroup>
               <TabList class="tab-list">
-                <Tab
-                  v-for="tab of tabs"
-                  :key="tab.key"
-                  as="template"
-                  :disabled="tab.disabled"
-                >
+                <Tab v-for="tab of tabs" :key="tab.key" as="template">
                   <button class="tab-button has-ring-focus">
                     {{ tab.title }}
                   </button>
@@ -329,7 +336,7 @@ async function exportAsAndroid() {
                           @change="
                             updateSetting(
                               'appearence.theme',
-                              $event.target.value
+                              ($event.target! as HTMLSelectElement).value
                             )
                           "
                         >
@@ -376,7 +383,7 @@ async function exportAsAndroid() {
                           @change="
                             updateSetting(
                               'appearence.viewMode',
-                              $event.target.value
+                              ($event.target! as HTMLSelectElement).value
                             )
                           "
                         >
@@ -416,7 +423,7 @@ async function exportAsAndroid() {
                           @change="
                             updateSetting(
                               'appearence.gridMode',
-                              $event.target.value
+                              ($event.target! as HTMLSelectElement).value
                             )
                           "
                         >
@@ -554,7 +561,6 @@ async function exportAsAndroid() {
                           @update:model-value="
                             updateSetting('appearence.blurNsfw', $event)
                           "
-                          v-model="settings.appearence.blurNsfw"
                           :class="
                             settings.appearence.blurNsfw
                               ? 'bg-primary-600 dark:bg-primary-500'

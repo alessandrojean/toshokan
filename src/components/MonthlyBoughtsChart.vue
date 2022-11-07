@@ -1,9 +1,10 @@
-<script setup>
-import { computed, defineAsyncComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, defineAsyncComponent, type UnwrapRef } from 'vue'
+import type { ApexOptions } from 'apexcharts'
 
 import useDarkMode from '@/composables/useDarkMode'
 import useTailwindTheme from '@/composables/useTailwindTheme'
+import { useI18n, type Locale } from '@/i18n'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
@@ -14,7 +15,7 @@ import FadeTransition from './transitions/FadeTransition.vue'
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
 
-const apexLocales = {
+const apexLocales: Record<Locale, ApexLocale> = {
   'en-US': apexEnUs,
   'pt-BR': apexPtBr
 }
@@ -22,7 +23,7 @@ const apexLocales = {
 const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 
 const sheetStore = useSheetStore()
-const { theme } = useTailwindTheme()
+const { color, fontFamily } = useTailwindTheme()
 
 const {
   data: stats,
@@ -44,7 +45,9 @@ const localeStr = computed(() => {
 
 const currentYear = new Date().getFullYear()
 
-function fillMissingMonths(values, year) {
+type MonthlyValues = NonNullable<UnwrapRef<typeof stats>>['monthly']
+
+function fillMissingMonths(values: MonthlyValues, year: number) {
   const newValues = []
 
   for (const m of values) {
@@ -66,7 +69,7 @@ function fillMissingMonths(values, year) {
 }
 
 const currentYearValues = computed(() => {
-  const values = (stats.value?.monthly || []).filter(
+  const values = (stats.value?.monthly ?? []).filter(
     (m) => m.month.getFullYear() === currentYear
   )
 
@@ -74,10 +77,10 @@ const currentYearValues = computed(() => {
 })
 
 const itemsBought = computed(() => ({
-  options: {
+  options: <ApexOptions>{
     chart: {
       animations: { enabled: false },
-      fontFamily: theme.fontFamily.sans.join(', '),
+      fontFamily: fontFamily('sans')!.join(', '),
       id: 'monthly-boughts',
       locales: [apexLocales[locale.value]],
       defaultLocale: localeStr.value,
@@ -88,26 +91,22 @@ const itemsBought = computed(() => ({
     states: {
       active: { filter: { type: 'none' } }
     },
-    colors: [theme.colors.primary[500], theme.colors.cyan[500]],
+    colors: [color('primary', 500)!, color('cyan', 500)!],
     fill: { opacity: 1.0 },
     grid: {
-      borderColor: darkMode.value
-        ? theme.colors.slate[600]
-        : theme.colors.slate[200]
+      borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!
     },
     tooltip: { enabled: false },
     xaxis: {
       categories: currentYearValues.value.map((m) => m.month.toISOString()),
       labels: {
         formatter: (_, timestamp) => {
-          return d(new Date(timestamp), 'month')
+          return d(new Date(timestamp!), 'month')
         },
         hideOverlappingLabels: false,
         showDuplicates: true,
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
         }
       }
     },
@@ -115,9 +114,7 @@ const itemsBought = computed(() => ({
       labels: {
         formatter: (val) => val.toFixed(0),
         style: {
-          colors: darkMode.value
-            ? theme.colors.slate[300]
-            : theme.colors.slate[600]
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
         }
       },
       max: (max) => max + 1,
@@ -125,9 +122,7 @@ const itemsBought = computed(() => ({
     },
     legend: {
       labels: {
-        colors: darkMode.value
-          ? theme.colors.slate[300]
-          : theme.colors.slate[600],
+        colors: darkMode.value ? color('slate', 300) : color('slate', 600),
         useSeriesColors: false
       },
       onItemClick: {
@@ -138,9 +133,7 @@ const itemsBought = computed(() => ({
       enabled: true,
       offsetY: -20,
       style: {
-        colors: [
-          darkMode.value ? theme.colors.slate[100] : theme.colors.slate[700]
-        ]
+        colors: [darkMode.value ? color('slate', 100) : color('slate', 700)]
       }
     },
     stroke: {

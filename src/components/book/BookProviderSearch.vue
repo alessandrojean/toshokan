@@ -1,8 +1,9 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import useMarkdown from '@/composables/useMarkdown'
+import { useI18n } from '@/i18n'
+import Book from '@/model/Book'
 import useBookExistsQuery from '@/queries/useBookExistsQuery'
 import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
 
@@ -12,12 +13,16 @@ import Alert from '@/components/Alert.vue'
 import BookSelector from '@/components/book/BookSelector.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
-const emit = defineEmits(['search', 'select', 'click:viewExisting'])
+const emit = defineEmits<{
+  (e: 'search', searching: boolean): void
+  (e: 'select', result: Book): void
+  (e: 'click:viewExisting', id: string): void
+}>()
 
 const { t } = useI18n({ useScope: 'global' })
 
 const isbnQuery = ref('')
-const searchInput = ref(null)
+const searchInput = ref<HTMLInputElement>()
 
 const {
   error: searchError,
@@ -29,7 +34,7 @@ const {
 
 const noResultsFound = computed(() => searchResults.value?.length === 0)
 
-function handleSearchSelect(selectedBook) {
+function handleSearchSelect(selectedBook: Book) {
   emit('select', selectedBook)
 }
 
@@ -57,7 +62,7 @@ const { data: existingIds, refetch: checkIfExists } = useBookExistsQuery(
 )
 
 const proceedAnyway = ref(false)
-const existInSheet = computed(() => existingIds.value?.length > 0)
+const existInSheet = computed(() => (existingIds.value?.length ?? 0) > 0)
 
 async function searchInSheet() {
   await checkIfExists.value()
@@ -67,7 +72,7 @@ async function searchInSheet() {
 const { renderMarkdown } = useMarkdown()
 
 function viewExisting() {
-  emit('click:viewExisting', existingIds.value[0].id)
+  emit('click:viewExisting', existingIds.value![0].id!)
 }
 </script>
 

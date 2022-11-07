@@ -1,9 +1,11 @@
-<script setup>
-import { computed, inject, ref, toRefs, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQueryClient } from 'vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
+import { injectStrict } from '@/utils'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 
 import {
   Dialog,
@@ -26,9 +28,9 @@ import {
 } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({ isOpen: Boolean })
+const props = defineProps<{ isOpen: boolean }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { t, d } = useI18n({ useScope: 'global' })
 
@@ -39,7 +41,7 @@ function closeDialog() {
   emit('close')
 }
 
-const selected = ref(sheetStore.sheetId)
+const selected = ref(sheetStore.sheetId!)
 const options = computed(() => sheetStore.options)
 
 const selectedSheet = computed(() => {
@@ -51,7 +53,7 @@ function selectCurrent() {
 
   if (selected.value !== sheetStore.sheetId) {
     sheetStore.updateSheetId(selected.value)
-    sheetStore.updateSelected(selectedSheet.value)
+    sheetStore.updateSelected(selectedSheet.value!)
 
     queryClient.resetQueries()
     queryClient.refetchQueries()
@@ -60,12 +62,12 @@ function selectCurrent() {
 
 const { isOpen } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
-    selected.value = sheetStore.sheetId
+    selected.value = sheetStore.sheetId!
   }
 
   newIsOpen ? disableSearchShortcut() : enableSearchShortcut()
@@ -155,9 +157,9 @@ watch(isOpen, (newIsOpen) => {
                         </p>
                         <time
                           class="sheet-modified"
-                          :datetime="option.modifiedTime"
+                          :datetime="option.modifiedTime!"
                         >
-                          {{ d(option.modifiedTime, 'long') }}
+                          {{ d(new Date(option.modifiedTime!), 'long') }}
                         </time>
                       </RadioGroupLabel>
                     </div>
@@ -166,19 +168,19 @@ watch(isOpen, (newIsOpen) => {
                       <div class="sheet-owner">
                         <img
                           class="owner-picture"
-                          :alt="option.owners[0].displayName"
-                          :src="option.owners[0].photoLink"
+                          :alt="option.owners![0].displayName"
+                          :src="option.owners![0].photoLink"
                         />
                         <div class="owner-info">
                           <p class="owner-name">
-                            {{ option.owners[0].displayName }}
+                            {{ option.owners![0].displayName }}
 
                             <span v-if="option.ownedByMe" class="owner-self">
                               {{ t('dashboard.sheetChooser.you') }}
                             </span>
                           </p>
                           <span class="owner-email">
-                            {{ option.owners[0].emailAddress }}
+                            {{ option.owners![0].emailAddress }}
                           </span>
                         </div>
                       </div>
@@ -210,21 +212,21 @@ watch(isOpen, (newIsOpen) => {
                         <p
                           class="sheet-readonly"
                           :title="
-                            option.capabilities.canEdit
+                            option.capabilities!.canEdit
                               ? t('dashboard.sheetChooser.readAndEdit')
                               : t('dashboard.sheetChooser.readOnly')
                           "
                         >
                           <span aria-hidden="true">
                             <LockOpenIcon
-                              v-if="option.capabilities.canEdit"
+                              v-if="option.capabilities!.canEdit"
                               class="w-5 h-5"
                             />
                             <LockClosedIcon v-else class="w-5 h-5" />
                           </span>
                           <span class="sr-only">
                             {{
-                              option.capabilities.canEdit
+                              option.capabilities!.canEdit
                                 ? t('dashboard.sheetChooser.readAndEdit')
                                 : t('dashboard.sheetChooser.readOnly')
                             }}

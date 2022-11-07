@@ -1,11 +1,12 @@
-<script setup>
-defineProps({
-  loading: Boolean,
-  subtitle: String,
-  title: {
-    type: String,
-    required: true
-  }
+<script lang="ts" setup>
+export interface SimpleHeaderProps {
+  loading?: boolean
+  subtitle?: string
+  title: string
+}
+
+withDefaults(defineProps<SimpleHeaderProps>(), {
+  loading: false
 })
 </script>
 

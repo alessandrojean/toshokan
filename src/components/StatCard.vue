@@ -1,23 +1,20 @@
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  alwaysHidden: Boolean,
-  loading: {
-    type: Boolean,
-    required: true
-  },
-  sensitive: Boolean,
-  title: {
-    type: String,
-    required: true
-  },
-  value: {
-    type: [String, Number]
-  }
+export interface StatCardProps {
+  alwaysHidden?: boolean
+  loading: boolean
+  sensitive?: boolean
+  title: string
+  value: string | number
+}
+
+const props = withDefaults(defineProps<StatCardProps>(), {
+  alwaysHidden: false,
+  sensitive: false
 })
 
 const showValue = ref(!props.sensitive)

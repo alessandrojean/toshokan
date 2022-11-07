@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -52,10 +52,12 @@ const links = computed(() => [
 
 const showOverlay = ref(false)
 
-function handleNotification(notification) {
+function handleNotification(
+  notification: google.accounts.id.PromptMomentNotification
+) {
   const notificationShowing =
     notification.isDisplayMoment() && notification.isDisplayed()
-  showOverlay.value = notificationShowing || !authorized.value
+  showOverlay.value = notificationShowing // || !authorized.value
 }
 
 watch(authorized, (isAuthorized) => {

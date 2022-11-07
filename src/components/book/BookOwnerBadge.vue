@@ -1,7 +1,7 @@
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 
+import { useI18n } from '@/i18n'
 import { useSheetStore } from '@/stores/sheet'
 
 import { UserGroupIcon } from '@heroicons/vue/20/solid'

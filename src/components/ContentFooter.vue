@@ -1,7 +1,10 @@
-<script setup>
-import { computed, inject } from 'vue'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { type RouteRecordRaw, useRoute } from 'vue-router'
+
+import { CategoryOrderKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
@@ -9,21 +12,23 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 defineProps({ githubLink: String })
 
 const { t } = useI18n({ useScope: 'global' })
-const categories = inject('categoryOrder')
+const categories = injectStrict(CategoryOrderKey)
 
 const route = useRoute()
 const aboutRoute = computed(() => route.matched[0])
-const groups = computed(() =>
-  aboutRoute.value.children.reduce((groups, route) => {
-    if (groups[route.meta.category]) {
-      groups[route.meta.category].push(route)
+const groups = computed(() => {
+  return aboutRoute.value.children.reduce((groups, route) => {
+    const category = route.meta!.category as string
+
+    if (groups[category]) {
+      groups[category].push(route)
     } else {
-      groups[route.meta.category] = [route]
+      groups[category] = [route]
     }
 
     return groups
-  }, {})
-)
+  }, {} as Record<string, RouteRecordRaw[]>)
+})
 
 const aboutRoutes = computed(() => {
   return categories.value.flatMap((group) => groups.value[group])
@@ -60,7 +65,7 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
           <ChevronLeftIcon class="w-4 h-4 inline-block -ml-1 mr-0.5" />
           <span>{{ t('about.previous') }}</span>
         </div>
-        <span class="title">{{ previous.meta.title() }}</span>
+        <span class="title">{{ previous.meta!.title() }}</span>
       </RouterLink>
       <RouterLink
         v-if="next"
@@ -71,7 +76,7 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
           <span>{{ t('about.next') }}</span>
           <ChevronRightIcon class="w-4 h-4 inline-block ml-0.5 -mr-1" />
         </div>
-        <span class="title">{{ next.meta.title() }}</span>
+        <span class="title">{{ next.meta!.title() }}</span>
       </RouterLink>
     </div>
   </footer>

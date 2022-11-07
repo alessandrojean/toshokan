@@ -1,9 +1,8 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import PaginatorUtil from 'paginator'
 
+import { useI18n } from '@/i18n'
 import { useSearchStore } from '@/stores/search'
 import { useSheetStore } from '@/stores/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
@@ -31,9 +30,9 @@ import Paginator from '@/components/Paginator.vue'
 import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
 
-const props = defineProps({ isOpen: Boolean })
+const props = defineProps<{ isOpen: boolean }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const { isOpen } = toRefs(props)
@@ -47,7 +46,7 @@ const searchedTerm = ref('')
 const searchHistory = computed(() => searchStore.history)
 const searchPagination = computed(() => searchStore.pagination)
 
-const searchInput = ref(null)
+const searchInput = ref<HTMLInputElement>()
 const results = ref(null)
 const dialogContent = ref(null)
 
@@ -105,7 +104,7 @@ watch(searchData, (newData) => {
   }
 })
 
-async function clearSearch(focusOnInput) {
+async function clearSearch(focusOnInput?: boolean) {
   remove.value()
 
   searchQuery.value = ''
@@ -124,18 +123,23 @@ function closeDialog() {
   emit('close')
 }
 
-function search(query) {
+function search(query: string) {
   searchQuery.value = query
   searchStore.updateQuery(query)
 }
 
 defineExpose({ search })
 
-const lastFocus = ref(null)
+type FocusableElement = Element & {
+  blur: () => void
+  focus: () => void
+}
+
+const lastFocus = ref<FocusableElement | null>(null)
 
 watch(isFetching, async (newIsFetching) => {
   if (newIsFetching) {
-    lastFocus.value = document.activeElement
+    lastFocus.value = document.activeElement as FocusableElement
     lastFocus.value?.blur()
 
     return
@@ -156,13 +160,13 @@ watch(isFetching, async (newIsFetching) => {
 })
 
 function createDebounce() {
-  let timeout = null
+  let timeout: ReturnType<typeof setTimeout>
 
-  return function (fn, delayMs) {
+  return function (fn: Function, delayMs?: number) {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
       fn()
-    }, delayMs || 1000)
+    }, delayMs ?? 1000)
   }
 }
 
@@ -194,13 +198,13 @@ const sortProperties = computed(() => {
   return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
 })
 
-function removeHistoryItem(item) {
+function removeHistoryItem(item: string) {
   const newHistory = searchHistory.value.filter((s) => s !== item)
 
   searchStore.updateHistory(newHistory)
 }
 
-async function handlePageChange(page) {
+async function handlePageChange(page: number) {
   searchStore.updatePage(page)
 }
 
@@ -210,15 +214,12 @@ const owner = computed(() => ({
   pictureUrl: sheetStore.ownerPictureUrl
 }))
 
-const resultsList = ref(null)
-const historyList = ref(null)
+const resultsList = ref<HTMLUListElement>()
+const historyList = ref<HTMLUListElement>()
 const searchItemFocused = ref(0)
 const historyItemFocused = ref(0)
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleSearchItemKeydown(event) {
+function handleSearchItemKeydown(event: KeyboardEvent) {
   if (!resultsList.value || searchLoading.value) {
     return
   }
@@ -226,7 +227,7 @@ function handleSearchItemKeydown(event) {
   const nextValue = handleItemKeydown(
     event,
     searchItemFocused.value,
-    searchResults.value.length
+    searchResults.value!.length
   )
 
   if (nextValue === null) {
@@ -238,10 +239,7 @@ function handleSearchItemKeydown(event) {
   focusOnElement(resultsList.value, searchItemFocused.value)
 }
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleHistoryItemKeydown(event) {
+function handleHistoryItemKeydown(event: KeyboardEvent) {
   if (!historyList.value || searchLoading.value) {
     return
   }
@@ -269,14 +267,15 @@ function handleHistoryItemKeydown(event) {
   }
 
   nextTick(() => {
-    focusOnElement(historyList.value, historyItemFocused.value)
+    focusOnElement(historyList.value!, historyItemFocused.value)
   })
 }
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleItemKeydown(event, focused, totalItems) {
+function handleItemKeydown(
+  event: KeyboardEvent,
+  focused: number,
+  totalItems: number
+) {
   const allowedKeys = ['ArrowUp', 'ArrowDown', 'Home', 'End']
   const { key } = event
 
@@ -305,9 +304,9 @@ function handleItemKeydown(event, focused, totalItems) {
   }
 }
 
-function focusOnElement(container, i) {
+function focusOnElement(container: Element, i: number) {
   const li = container?.children?.[i]
-  const element = li?.children?.[0]
+  const element = li?.children?.[0] as FocusableElement | undefined
 
   element?.focus()
 }
@@ -316,11 +315,11 @@ function focusOnResults() {
   if (
     !searchLoading.value &&
     searchedTerm.value.length > 0 &&
-    searchResults.value.length > 0
+    searchResults.value!.length > 0
   ) {
-    focusOnElement(resultsList.value, searchItemFocused.value)
+    focusOnElement(resultsList.value!, searchItemFocused.value)
   } else if (searchHistory.value.length > 0) {
-    focusOnElement(historyList.value, historyItemFocused.value)
+    focusOnElement(historyList.value!, historyItemFocused.value)
   }
 }
 </script>
@@ -367,7 +366,6 @@ function focusOnResults() {
                 'py-4 px-5 flex items-center space-x-3 md:space-x-4 shrink-0',
                 'border-b border-gray-300 dark:border-gray-600 relative overflow-y-hidden'
               ]"
-              @submit.prevent="handleSearch"
             >
               <span aria-hidden="true" class="w-6 h-6 relative">
                 <MagnifyingGlassIcon
@@ -394,10 +392,12 @@ function focusOnResults() {
                   :disabled="searchLoading || !isOpen"
                   @input="
                     debounce(() => {
-                      searchQuery = $event.target.value
+                      searchQuery = ($event.target as HTMLInputElement).value
                     })
                   "
-                  @keyup.enter.prevent="search($event.target.value)"
+                  @keyup.enter.prevent="
+                    search(($event.target as HTMLInputElement).value)
+                  "
                   @keyup.arrow-down.exact.prevent="focusOnResults"
                 />
               </div>
@@ -455,7 +455,9 @@ function focusOnResults() {
               </div>
 
               <div
-                v-else-if="searchResults?.length > 0 && searchQuery.length > 0"
+                v-else-if="
+                  (searchResults?.length ?? 0) > 0 && searchQuery.length > 0
+                "
                 tabindex="-1"
                 ref="results"
                 class="results"
@@ -519,7 +521,7 @@ function focusOnResults() {
                   >
                     <li
                       v-for="(result, resultIdx) in searchResults"
-                      :key="result.id"
+                      :key="result.id!"
                       role="option"
                       :aria-selected="
                         resultIdx === searchItemFocused && !searchLoading
@@ -543,7 +545,7 @@ function focusOnResults() {
 
                 <FadeTransition>
                   <div
-                    v-if="searchResults.length > 0"
+                    v-if="(searchResults?.length ?? 0) > 0"
                     class="search-footer"
                     :data-total-pages="searchPagination?.total_pages"
                   >

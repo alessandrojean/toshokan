@@ -1,6 +1,7 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { PaginationInfo } from 'paginator'
 
 import {
   ChevronDoubleLeftIcon,
@@ -9,12 +10,16 @@ import {
   ChevronRightIcon
 } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  enabled: Boolean,
-  paginationInfo: Object
-})
+export interface PaginatorProps {
+  enabled: boolean
+  paginationInfo: PaginationInfo
+}
 
-const emit = defineEmits(['page'])
+const props = withDefaults(defineProps<PaginatorProps>(), { enabled: true })
+
+const emit = defineEmits<{
+  (e: 'page', page: number): void
+}>()
 
 const { paginationInfo } = toRefs(props)
 
@@ -24,23 +29,23 @@ const links = computed(() => {
 
 const { t } = useI18n({ useScope: 'global' })
 
-function isCurrent(idx) {
+function isCurrent(idx: number) {
   return (
     paginationInfo.value.current_page ===
     paginationInfo.value.first_page + idx - 1
   )
 }
 
-function changePage(page) {
+function changePage(page: number) {
   if (page !== paginationInfo.value.current_page) {
     emit('page', page)
   }
 }
 
-const paginator = ref(null)
-const focused = ref((paginationInfo.value?.current_page || 1) + 1)
+const paginator = ref<HTMLUListElement>()
+const focused = ref((paginationInfo.value?.current_page ?? 1) + 1)
 
-function tabIndex(idx) {
+function tabIndex(idx: number) {
   return idx === focused.value ? '0' : '-1'
 }
 
@@ -49,11 +54,7 @@ watch(paginationInfo, (newPagination) => {
   focused.value = currentPage - firstPage + 2
 })
 
-/**
- * @param {KeyboardEvent} event
- * @param {number} idx
- */
-function handleKeydown(event, idx) {
+function handleKeydown(event: KeyboardEvent, idx: number) {
   const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
   const { key } = event
   const {
@@ -101,7 +102,7 @@ function handleKeydown(event, idx) {
   }
 
   const li = paginator.value?.children?.[focused.value]
-  const button = li?.children?.[0]
+  const button = li?.children?.[0] as HTMLButtonElement | undefined
 
   button?.focus()
 }
@@ -149,7 +150,7 @@ function handleKeydown(event, idx) {
             isCurrent(pageIdx) ? 'is-current' : '',
             'pag-button is-number has-ring-focus'
           ]"
-          :aria-current="isCurrent(pageIdx) ? 'page' : ''"
+          :aria-current="isCurrent(pageIdx) ? 'page' : undefined"
           :disabled="!enabled"
           :tabindex="tabIndex(pageIdx + 1)"
           @click.stop="changePage(paginationInfo.first_page + pageIdx - 1)"

@@ -1,12 +1,18 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
-import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import { useStore } from '@/stores/main'
+import {
+  DisableSearchShortcutKey,
+  EnableSearchShortcutKey,
+  SetNavbarTransparentKey,
+  ShowSearchDialogKey,
+  ShowSettingsDialogKey
+} from '@/symbols'
 
 import AppNavbar from '@/components/AppNavbar.vue'
 import BetaWarning from '@/components/BetaWarning.vue'
@@ -19,7 +25,6 @@ import SettingsDialog from '@/components/dialogs/SettingsDialog.vue'
 const authStore = useAuthStore()
 const mainStore = useStore()
 const sheetStore = useSheetStore()
-const settingsStore = useSettingsStore()
 const router = useRouter()
 
 const authenticated = computed(() => authStore.authenticated)
@@ -51,12 +56,12 @@ watch(authenticated, (newValue) => {
 const { t } = useI18n({ useScope: 'global' })
 
 const showSearch = computed(() => !sheetStore.loading)
-const searchDialog = ref(null)
+const searchDialog = ref<InstanceType<typeof SearchDialog>>()
 const searchDialogIsOpen = ref(false)
 
 const searchShortcutDisabled = ref(false)
 
-function showSearchDialog(query) {
+function showSearchDialog(query?: string) {
   if (!searchShortcutDisabled.value) {
     searchDialogIsOpen.value = true
 
@@ -78,22 +83,19 @@ function enableSearchShortcut() {
   searchShortcutDisabled.value = false
 }
 
-provide('showSearchDialog', showSearchDialog)
-provide('disableSearchShortcut', disableSearchShortcut)
-provide('enableSearchShortcut', enableSearchShortcut)
+provide(ShowSearchDialogKey, showSearchDialog)
+provide(DisableSearchShortcutKey, disableSearchShortcut)
+provide(EnableSearchShortcutKey, enableSearchShortcut)
 
 const navbarTransparent = ref(false)
 
-function setNavbarTransparent(value) {
+function setNavbarTransparent(value: boolean) {
   navbarTransparent.value = value
 }
 
-provide('setNavbarTransparent', setNavbarTransparent)
+provide(SetNavbarTransparentKey, setNavbarTransparent)
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleKeyDown(event) {
+function handleKeyDown(event: KeyboardEvent) {
   if (
     (event.ctrlKey || event.metaKey) &&
     event.key === 'k' &&
@@ -127,7 +129,7 @@ function closeSettingsDialog() {
   settingsDialogIsOpen.value = false
 }
 
-provide('showSettingsDialog', showSettingsDialog)
+provide(ShowSettingsDialogKey, showSettingsDialog)
 </script>
 
 <template>

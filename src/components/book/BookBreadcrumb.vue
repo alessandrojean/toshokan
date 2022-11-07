@@ -1,27 +1,35 @@
-<script setup>
-import { inject, toRefs } from 'vue'
+<script lang="ts" setup>
+import { toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
+import { ShowSearchDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({
-  book: Book,
-  loading: Boolean,
-  hideHome: Boolean
+export interface BookBreadcrumbProps {
+  book: Book | null | undefined
+  loading?: boolean
+  hideHome?: boolean
+}
+
+const props = withDefaults(defineProps<BookBreadcrumbProps>(), {
+  book: undefined,
+  loading: false,
+  hideHome: false
 })
 
 const { t } = useI18n({ useScope: 'global' })
 const { book } = toRefs(props)
 
-const showSearchDialog = inject('showSearchDialog')
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
 
 function showCollection() {
   const keywords = {
-    [t('dashboard.search.keywords.title')]: book.value.titleParts.title + ' #',
-    [t('dashboard.search.keywords.publisher')]: book.value.publisher,
-    [t('dashboard.search.keywords.group')]: book.value.group
+    [t('dashboard.search.keywords.title')]: book.value!.titleParts.title + ' #',
+    [t('dashboard.search.keywords.publisher')]: book.value!.publisher,
+    [t('dashboard.search.keywords.group')]: book.value!.group
   }
 
   const queryString = Object.entries(keywords)
@@ -68,26 +76,26 @@ function showCollection() {
       </li>
       <li class="shrink-0">
         <router-link
-          :to="{ name: 'DashboardLibrary', query: { group: book.group } }"
+          :to="{ name: 'DashboardLibrary', query: { group: book!.group } }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
         >
-          {{ book.group }}
+          {{ book!.group }}
         </router-link>
       </li>
       <li
         aria-hidden="true"
-        v-if="book.titleParts.number && !hideHome"
+        v-if="book!.titleParts.number && !hideHome"
         class="shrink-0"
       >
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
-      <li v-if="book.titleParts.number && !hideHome" class="grow">
+      <li v-if="book!.titleParts.number && !hideHome" class="grow">
         <a
           href="#"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
           @click.prevent="showCollection"
         >
-          {{ book.titleParts.title }}
+          {{ book!.titleParts.title }}
         </a>
       </li>
     </ul>

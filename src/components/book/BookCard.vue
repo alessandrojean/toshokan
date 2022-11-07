@@ -1,6 +1,7 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import Book from '@/model/Book'
@@ -11,25 +12,31 @@ import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
-const props = defineProps({
-  book: Book,
-  current: Boolean,
-  imageOnly: Boolean,
-  loading: {
-    type: Boolean,
-    required: true
-  },
-  tabindex: String
+export interface BookCardProps {
+  book?: Book
+  current?: boolean
+  imageOnly?: boolean
+  loading: boolean
+  tabindex?: string
+}
+
+const props = withDefaults(defineProps<BookCardProps>(), {
+  book: undefined,
+  current: false,
+  imageOnly: false,
+  tabindex: undefined
 })
 
 const { book, loading } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
 
 const thumbnailUrl = computed(() => {
-  return book.value ? book.value.coverUrl.replace('_SL700_', '_SL300_') : ''
+  return book.value
+    ? book.value.coverUrl?.replace('_SL700_', '_SL300_') ?? ''
+    : ''
 })
 
-const loadedCard = ref(null)
+const loadedCard = ref<HTMLDivElement | typeof RouterLink>()
 
 const { imageHasError, imageLoading, setupObserver, observerCreated } =
   useImageLazyLoader(thumbnailUrl, loadedCard)
@@ -41,10 +48,9 @@ const volume = computed(() => {
 
   const isSingle = book.value.titleParts.number === null
 
-  return t(
-    isSingle ? 'book.single' : 'book.volume',
-    isSingle ? undefined : { number: book.value.titleParts.number }
-  )
+  return isSingle
+    ? t('book.single')
+    : t('book.volume', { number: book.value.titleParts.number })
 })
 
 onMounted(() => {
@@ -96,7 +102,7 @@ const blurCover = computed(() => {
   </div>
   <component
     v-else
-    :is="imageOnly ? 'div' : 'RouterLink'"
+    :is="imageOnly ? 'div' : RouterLink"
     :to="
       !imageOnly
         ? { name: 'BookDetails', params: { bookId: book.id } }

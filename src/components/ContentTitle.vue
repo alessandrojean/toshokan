@@ -1,9 +1,9 @@
-<script setup>
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { useI18n } from '@/i18n'
 
-defineProps({ date: String })
+defineProps<{ date?: string | null }>()
 
-const { t, d } = useI18n()
+const { t, d } = useI18n({ useScope: 'global' })
 </script>
 
 <template>

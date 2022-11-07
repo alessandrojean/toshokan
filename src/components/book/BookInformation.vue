@@ -1,7 +1,7 @@
-<script setup>
-import { computed, inject, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
 
+import { useI18n } from '@/i18n'
 import useMarkdown from '@/composables/useMarkdown'
 import Book from '@/model/Book'
 import getBookLinks from '@/services/links'
@@ -9,6 +9,8 @@ import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
+import { injectStrict } from '@/utils'
+import { ShowSearchDialogKey } from '@/symbols'
 
 import {
   BookmarkIcon as BookmarkSolidIcon,
@@ -29,20 +31,26 @@ import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
-const props = defineProps({
-  book: Book,
-  disabled: Boolean,
-  loading: Boolean
+export interface BookInformationProps {
+  book: Book | null | undefined
+  disabled?: boolean
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<BookInformationProps>(), {
+  book: undefined,
+  disabled: false,
+  loading: false
 })
 
-defineEmits([
-  'click:edit',
-  'click:delete',
-  'click:toggleFavorite',
-  'click:toggleStatus',
-  'click:updateCover',
-  'click:share'
-])
+defineEmits<{
+  (e: 'click:edit', event: MouseEvent): void
+  (e: 'click:delete', event: MouseEvent): void
+  (e: 'click:toggleFavorite', event: MouseEvent): void
+  (e: 'click:toggleStatus', event: MouseEvent): void
+  (e: 'click:updateCover', event: MouseEvent): void
+  (e: 'click:share', event: MouseEvent): void
+}>()
 
 const { book, loading } = toRefs(props)
 const { t, d, locale } = useI18n({ useScope: 'global' })
@@ -60,19 +68,20 @@ const synopsisRendered = computed(() => {
     return ''
   }
 
-  if (book.value.synopsis.length === 0) {
+  if (book.value!.synopsis!.length === 0) {
     return `<em>${t('book.emptySynopsis')}</em>`
   }
 
-  return renderMarkdown(book.value.synopsis)
+  return renderMarkdown(book.value!.synopsis!)
 })
 
 const { data: timeZone } = useTimeZoneQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-function formatDate(date, format = 'short') {
+function formatDate(date: Date, format = 'short') {
   if (date instanceof Date) {
+    // @ts-ignore
     return d(date, format, { timeZone: timeZone.value.name })
   }
 
@@ -80,20 +89,20 @@ function formatDate(date, format = 'short') {
 }
 
 const readAt = computed(() => {
-  return showBookInfo.value && book.value.readAt
-    ? formatDate(book.value.readAt)
+  return showBookInfo.value && book.value!.readAt
+    ? formatDate(book.value!.readAt)
     : t('dashboard.details.info.dateUnknown')
 })
 
 const createdAt = computed(() => {
-  return showBookInfo.value && book.value.createdAt
-    ? formatDate(book.value.createdAt, 'long')
+  return showBookInfo.value && book.value!.createdAt
+    ? formatDate(book.value!.createdAt, 'long')
     : ''
 })
 
 const updatedAt = computed(() => {
-  return showBookInfo.value && book.value.updatedAt
-    ? formatDate(book.value.updatedAt, 'long')
+  return showBookInfo.value && book.value!.updatedAt
+    ? formatDate(book.value!.updatedAt, 'long')
     : ''
 })
 
@@ -106,15 +115,15 @@ const country = computed(() => {
 })
 
 const isbn10 = computed(() => {
-  if (!showBookInfo.value || !book.value.codeType.includes('ISBN')) {
+  if (!showBookInfo.value || !book.value!.codeType.includes('ISBN')) {
     return null
   }
 
-  if (book.value.codeType === 'ISBN-10') {
-    return book.value.code
+  if (book.value!.codeType === 'ISBN-10') {
+    return book.value!.code
   }
 
-  return convertIsbn13ToIsbn10(book.value.code)
+  return convertIsbn13ToIsbn10(book.value!.code!)
 })
 
 const spoilerMode = computed(() => settingsStore.spoilerMode)
@@ -123,13 +132,13 @@ const blurSynopsis = computed(() => {
   return (
     showBookInfo.value &&
     spoilerMode.value.synopsis &&
-    !book.value.isRead &&
-    book.value.synopsis.length > 0
+    !book.value!.isRead &&
+    book.value!.synopsis!.length > 0
   )
 })
 
 const externalLinks = computed(() => {
-  return getBookLinks(book.value, locale.value)
+  return getBookLinks(book.value!, locale.value)
 })
 
 const separator = computed(() => {
@@ -140,9 +149,9 @@ const lastSeparator = computed(() => {
   return t('dashboard.details.header.authorLastSeparator')
 })
 
-const showSearchDialog = inject('showSearchDialog')
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
 
-function searchByAuthor(author, event) {
+function searchByAuthor(author: string, event: MouseEvent) {
   event.preventDefault()
 
   const query = `${t('dashboard.search.keywords.author')}:"${author}"`
@@ -165,26 +174,26 @@ const canEdit = computed(() => sheetStore.canEdit)
 
       <!-- Book title -->
       <h2 v-if="showBookInfo" class="book-title">
-        <span aria-hidden="true" v-if="book.isFuture">
+        <span aria-hidden="true" v-if="book!.isFuture">
           <ClockIcon
             class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500"
           />
         </span>
-        {{ book.titleParts.main }}
+        {{ book!.titleParts.main }}
       </h2>
       <div v-else class="skeleton w-72 h-8 mb-2"></div>
 
       <!-- Book subtitle -->
       <p
-        v-if="showBookInfo && book.titleParts.subtitle"
+        v-if="showBookInfo && book!.titleParts.subtitle"
         class="italic font-medium font-display text-md md:text-xl text-gray-700 dark:text-gray-300 -mt-1 mb-2"
       >
-        {{ book.titleParts.subtitle }}
+        {{ book!.titleParts.subtitle }}
       </p>
 
       <!-- Book authors -->
       <p v-if="showBookInfo" class="author-list">
-        <template v-for="(author, idx) of book.authors" :key="idx">
+        <template v-for="(author, idx) of book!.authors" :key="idx">
           <a
             href="#"
             class="author has-ring-focus"
@@ -192,8 +201,10 @@ const canEdit = computed(() => sheetStore.canEdit)
           >
             {{ author }}
           </a>
-          <span v-if="book.authors.length > 1 && idx < book.authors.length - 1">
-            {{ idx === book.authors.length - 2 ? lastSeparator : separator }}
+          <span
+            v-if="book!.authors!.length > 1 && idx < book!.authors!.length - 1"
+          >
+            {{ idx === book!.authors!.length - 2 ? lastSeparator : separator }}
           </span>
         </template>
       </p>
@@ -236,24 +247,26 @@ const canEdit = computed(() => sheetStore.canEdit)
       <div v-else class="skeleton flex-1 md:flex-initial md:w-28 h-11"></div>
 
       <button
-        v-if="showBookInfo && !book.isFuture"
+        v-if="showBookInfo && !book!.isFuture"
         class="button is-icon-only px-2.5"
         :disabled="disabled"
         :title="
           t('dashboard.details.header.options.markAs', {
-            status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase()
+            status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase()
           })
         "
         @click="$emit('click:toggleStatus', $event)"
       >
         <span aria-hidden="true">
-          <BookmarkSolidIcon v-if="book.isRead" />
+          <BookmarkSolidIcon v-if="book!.isRead" />
           <BookmarkOutlineIcon v-else />
         </span>
         <span class="sr-only">
           {{
             t('dashboard.details.header.options.markAs', {
-              status: t(book.isRead ? 'book.unread' : 'book.read').toLowerCase()
+              status: t(
+                book!.isRead ? 'book.unread' : 'book.read'
+              ).toLowerCase()
             })
           }}
         </span>
@@ -266,21 +279,21 @@ const canEdit = computed(() => sheetStore.canEdit)
         :title="
           t(
             `dashboard.details.header.options.${
-              book.favorite ? 'removeFromFavorites' : 'addToFavorites'
+              book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
             }`
           )
         "
         @click="$emit('click:toggleFavorite', $event)"
       >
         <span aria-hidden="true">
-          <StarSolidIcon v-if="book.favorite" />
+          <StarSolidIcon v-if="book!.favorite" />
           <StarOutlineIcon v-else />
         </span>
         <span class="sr-only">
           {{
             t(
               `dashboard.details.header.options.${
-                book.favorite ? 'removeFromFavorites' : 'addToFavorites'
+                book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
               }`
             )
           }}
@@ -323,13 +336,13 @@ const canEdit = computed(() => sheetStore.canEdit)
       class="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600 text-xs md:text-sm text-gray-600 dark:text-gray-300"
     >
       <dl v-if="showBookInfo" class="space-y-1">
-        <div v-if="book.codeType !== 'N/A'" class="flex">
+        <div v-if="book!.codeType !== 'N/A'" class="flex">
           <dt
             class="shrink sm:shrink-0 sm:w-48 text-gray-500 dark:text-gray-400"
           >
-            {{ book.codeType }}
+            {{ book!.codeType }}
           </dt>
-          <dd class="grow text-right sm:text-left">{{ book.code }}</dd>
+          <dd class="grow text-right sm:text-left">{{ book!.code }}</dd>
         </div>
         <div class="flex">
           <dt
@@ -338,7 +351,7 @@ const canEdit = computed(() => sheetStore.canEdit)
             {{ t('book.properties.createdAt') }}
           </dt>
           <dd class="tabular-nums grow text-right sm:text-left">
-            <time :datetime="book.createdAt.toISOString()">
+            <time :datetime="book!.createdAt!.toISOString()">
               {{ createdAt }}
             </time>
           </dd>
@@ -350,7 +363,7 @@ const canEdit = computed(() => sheetStore.canEdit)
             {{ t('book.properties.updatedAt') }}
           </dt>
           <dd class="tabular-nums grow text-right sm:text-left">
-            <time :datetime="book.updatedAt.toISOString()">
+            <time :datetime="book!.updatedAt!.toISOString()">
               {{ updatedAt }}
             </time>
           </dd>

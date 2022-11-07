@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 </script>
 

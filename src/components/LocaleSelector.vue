@@ -1,5 +1,5 @@
-<script setup>
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { type Locale, useI18n } from '@/i18n'
 
 import {
   Listbox,
@@ -14,24 +14,27 @@ import {
   LanguageIcon
 } from '@heroicons/vue/20/solid'
 
-defineProps({
-  modelValue: {
-    type: String,
-    required: true
-  },
-  top: Boolean
+export interface LocaleSelectorProps {
+  modelValue: Locale
+  top?: boolean
+}
+
+withDefaults(defineProps<LocaleSelectorProps>(), {
+  top: false
 })
 
-defineEmits(['update:modelValue'])
+defineEmits<{
+  (e: 'update:modelValue', modelValue: Locale): void
+}>()
 
 const { t, availableLocales } = useI18n({ useScope: 'global' })
 
-const localeFlags = {
+const localeFlags: Record<Locale, string> = {
   'pt-BR': 'BR',
   'en-US': 'US'
 }
 
-function createFlagUrl(country) {
+function createFlagUrl(country: string) {
   return `https://hatscripts.github.io/circle-flags/flags/${country.toLowerCase()}.svg`
 }
 </script>
@@ -54,7 +57,12 @@ function createFlagUrl(country) {
         <select
           id="locale"
           class="select pl-9"
-          @change="$emit('update:modelValue', $event.target.value)"
+          @change="
+            $emit(
+              'update:modelValue',
+              ($event.target! as HTMLSelectElement).value
+            )
+          "
         >
           <option
             v-for="loc in availableLocales"
@@ -62,7 +70,7 @@ function createFlagUrl(country) {
             :value="loc"
             :selected="loc === modelValue"
           >
-            {{ t('app.localeName', null, { locale: loc }) }}
+            {{ t('app.localeName', {}, { locale: loc }) }}
           </option>
         </select>
       </div>
@@ -86,7 +94,7 @@ function createFlagUrl(country) {
             class="shrink-0 h-5 w-5 rounded-full"
           />
           <span class="ml-2.5 block truncate">
-            {{ t('app.localeName', null, { locale: modelValue }) }}
+            {{ t('app.localeName', {}, { locale: modelValue }) }}
           </span>
         </span>
         <span
@@ -123,7 +131,7 @@ function createFlagUrl(country) {
             >
               <div class="flex items-center">
                 <img
-                  :src="createFlagUrl(localeFlags[loc])"
+                  :src="createFlagUrl(localeFlags[loc as Locale])"
                   aria-hidden="true"
                   class="shrink-0 h-5 w-5 rounded-full"
                 />
@@ -133,7 +141,7 @@ function createFlagUrl(country) {
                     'ml-3 block truncate'
                   ]"
                 >
-                  {{ t('app.localeName', null, { locale: loc }) }}
+                  {{ t('app.localeName', {}, { locale: loc }) }}
                 </span>
               </div>
 

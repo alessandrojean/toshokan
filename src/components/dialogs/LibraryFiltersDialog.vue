@@ -1,10 +1,19 @@
-<script setup>
-import { computed, inject, reactive, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, reactive, toRefs, watch } from 'vue'
 
-import { useCollectionStore, HIDE, INDIFERENT, ONLY } from '@/stores/collection'
+import { useI18n } from '@/i18n'
+import {
+  useCollectionStore,
+  HIDE,
+  INDIFERENT,
+  ONLY,
+  TriState,
+  Sort
+} from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
-import useGroupsQuery from '@/queries/useGroupsQuery'
+import useGroupsQuery, { type GroupData } from '@/queries/useGroupsQuery'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import slugify from 'slugify'
 
@@ -24,12 +33,23 @@ import {
 
 import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
-const props = defineProps({ open: Boolean })
+export interface FilterState {
+  favorites: TriState
+  futureItems: TriState
+  groups: string[]
+  sortDirection: Sort
+  sortProperty: string
+}
 
-const emit = defineEmits(['update:open', 'filter'])
+const props = defineProps<{ open: boolean }>()
+
+const emit = defineEmits<{
+  (e: 'update:open', open: boolean): void
+  (e: 'filter', filter: FilterState): void
+}>()
 
 const collectionStore = useCollectionStore()
-const { t, n, locale } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 
 const sortProperties = computed(() => {
   const properties = [
@@ -52,7 +72,7 @@ const groupsEnabled = computed(() => sheetStore.sheetId !== null)
 
 const { data: groupsData } = useGroupsQuery({ enabled: groupsEnabled })
 
-const groups = computed(() => {
+const groups = computed<GroupData[]>(() => {
   const values = groupsData.value?.slice() || []
 
   if (state.futureItems === HIDE) {
@@ -66,8 +86,8 @@ const groups = computed(() => {
 
 const { open } = toRefs(props)
 
-const disableSearchShortcut = inject('disableSearchShortcut')
-const enableSearchShortcut = inject('enableSearchShortcut')
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 
 watch(open, (newOpen) => {
   if (newOpen) {
@@ -88,11 +108,11 @@ function handleFilter() {
   emit('filter', state)
 }
 
-function checked(key, value) {
+function checked(key: keyof typeof state, value: string) {
   return state[key].includes(value)
 }
 
-const state = reactive({
+const state = reactive<FilterState>({
   favorites: collectionStore.favorites,
   futureItems: collectionStore.futureItems,
   groups: collectionStore.filters.groups,
@@ -100,78 +120,104 @@ const state = reactive({
   sortProperty: collectionStore.sortBy
 })
 
-const countProperty = {
+const countProperty: Record<TriState, keyof GroupData> = {
   [INDIFERENT]: 'totalCount',
   [ONLY]: 'futureCount',
   [HIDE]: 'count'
 }
 
-const filters = computed(() => [
-  {
-    title: t('dashboard.library.filters.books'),
-    open: true,
-    children: [
+interface FilterGroup {
+  title: string
+  open: boolean
+  children: Filter[]
+}
+
+type Filter = {
+  key: keyof typeof state
+  label: string
+  multiple?: boolean
+  sort?: boolean
+  hidden?: boolean
+  options: {
+    key: string
+    value: string
+    label: string
+    count?: number
+  }[]
+} & {
+  multiple: true
+  key: 'groups'
+}
+
+const filters = computed(
+  () =>
+    [
       {
-        key: 'groups',
-        label: t('dashboard.library.filters.groups'),
-        multiple: true,
-        options: groups.value.map((grp) => ({
-          key: grp.name,
-          value: grp.name,
-          label: grp.name,
-          count: grp[countProperty[state.futureItems]]
-        }))
-      },
-      {
-        key: 'favorites',
-        label: t('dashboard.library.filters.favorites.label'),
-        options: [
+        title: t('dashboard.library.filters.books'),
+        open: true,
+        children: [
           {
-            key: INDIFERENT,
-            value: INDIFERENT,
-            label: t('dashboard.library.filters.favorites.indiferent')
+            key: 'groups',
+            label: t('dashboard.library.filters.groups'),
+            multiple: true,
+            options: groups.value.map((grp) => ({
+              key: grp.name,
+              value: grp.name,
+              label: grp.name,
+              count: grp[countProperty[state.futureItems]]
+            }))
           },
           {
-            key: ONLY,
-            value: ONLY,
-            label: t('dashboard.library.filters.favorites.only')
+            key: 'favorites',
+            label: t('dashboard.library.filters.favorites.label'),
+            options: [
+              {
+                key: INDIFERENT,
+                value: INDIFERENT,
+                label: t('dashboard.library.filters.favorites.indiferent')
+              },
+              {
+                key: ONLY,
+                value: ONLY,
+                label: t('dashboard.library.filters.favorites.only')
+              }
+            ]
+          },
+          {
+            key: 'futureItems',
+            label: t('dashboard.library.filters.futureItems.label'),
+            options: [
+              {
+                key: INDIFERENT,
+                value: INDIFERENT,
+                label: t('dashboard.library.filters.futureItems.indiferent')
+              },
+              {
+                key: ONLY,
+                value: ONLY,
+                label: t('dashboard.library.filters.futureItems.only')
+              },
+              {
+                key: HIDE,
+                value: HIDE,
+                label: t('dashboard.library.filters.futureItems.hide')
+              }
+            ]
+          },
+          {
+            key: 'sortProperty',
+            label: t('dashboard.library.filters.sortBy'),
+            sort: true,
+            options: sortProperties.value.map((property) => ({
+              key: property.attr,
+              value: property.attr,
+              label: property.title
+            }))
           }
         ]
-      },
-      {
-        key: 'futureItems',
-        label: t('dashboard.library.filters.futureItems.label'),
-        options: [
-          {
-            key: INDIFERENT,
-            value: INDIFERENT,
-            label: t('dashboard.library.filters.futureItems.indiferent')
-          },
-          {
-            key: ONLY,
-            value: ONLY,
-            label: t('dashboard.library.filters.futureItems.only')
-          },
-          {
-            key: HIDE,
-            value: HIDE,
-            label: t('dashboard.library.filters.futureItems.hide')
-          }
-        ]
-      },
-      {
-        key: 'sortProperty',
-        label: t('dashboard.library.filters.sortBy'),
-        sort: true,
-        options: sortProperties.value.map((property) => ({
-          key: property.attr,
-          value: property.attr,
-          label: property.title
-        }))
       }
-    ]
-  }
-])
+    ] as FilterGroup[]
+)
 
 function toggleSort() {
   state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
@@ -335,11 +381,7 @@ function toggleSort() {
                                     'chip is-square',
                                     checked ? 'is-active' : ''
                                   ]"
-                                  @click="
-                                    checked &&
-                                      child.sort &&
-                                      toggleSort(option.value)
-                                  "
+                                  @click="checked && child.sort && toggleSort()"
                                 >
                                   {{ option.label }}
                                   <span

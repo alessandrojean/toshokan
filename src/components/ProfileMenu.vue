@@ -1,8 +1,10 @@
-<script setup>
-import { computed, inject } from 'vue'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
+import { ShowSettingsDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 
@@ -30,7 +32,7 @@ function signOut() {
 }
 
 const showSettingsDialog = !props.hideSettings
-  ? inject('showSettingsDialog')
+  ? injectStrict(ShowSettingsDialogKey)
   : () => {}
 </script>
 
@@ -85,7 +87,7 @@ const showSettingsDialog = !props.hideSettings
                   : 'dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200',
                 'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
               ]"
-              @click="showSettingsDialog"
+              @click="showSettingsDialog()"
             >
               <span aria-hidden="true">
                 <Cog8ToothIcon

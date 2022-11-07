@@ -1,16 +1,10 @@
-<script setup>
-import {
-  computed,
-  inject,
-  nextTick,
-  ref,
-  toRefs,
-  watch,
-  watchEffect
-} from 'vue'
-import { useI18n } from 'vue-i18n'
+<script lang="ts" setup>
+import { computed, nextTick, ref, toRefs, watch, watchEffect } from 'vue'
 
 import useMarkdown from '@/composables/useMarkdown'
+import { useI18n } from '@/i18n'
+import { RebuildPageContentsKey } from '@/symbols'
+import { injectStrict } from '@/utils'
 
 import Alert from '@/components/Alert.vue'
 import Content from '@/components/Content.vue'
@@ -32,13 +26,13 @@ const { t, locale } = useI18n({ useScope: 'global' })
 const markdownBody = ref('')
 const markdownLocale = ref(locale.value)
 const mounted = ref(false)
-const rebuildPageContents = inject('rebuildPageContents')
+const rebuildPageContents = injectStrict(RebuildPageContentsKey)
 
 const { renderMarkdown, frontmatter } = useMarkdown()
 
 const docs = import.meta.glob('/docs/**/*.md', { as: 'raw' })
 
-async function getMarkdownContent(locale, file) {
+async function getMarkdownContent(locale: string, file: string) {
   const localeFile = `/docs/${locale}/${file}.md`
   const englishFile = `/docs/en-US/${file}.md`
   const importFn = docs[localeFile] || docs[englishFile]
@@ -57,7 +51,7 @@ watch(locale, (newLocale) => {
   markdownLocale.value = newLocale
 })
 
-function getImageUrl(name) {
+function getImageUrl(name: string) {
   return new URL(`../../assets/about/${name}.jpg`, import.meta.url).href
 }
 
@@ -67,7 +61,7 @@ const body = computed(() => {
     (_, assetImage) => getImageUrl(assetImage)
   )
 
-  return renderMarkdown(markdownWithAssets)
+  return renderMarkdown(markdownWithAssets) ?? ''
 })
 
 const gitHubLink = computed(
@@ -94,6 +88,7 @@ const gitHubLink = computed(
         </a>
       </template>
     </Alert>
+    <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
     <ContentBody v-html="body" />
     <ContentFooter :github-link="gitHubLink" />
   </Content>

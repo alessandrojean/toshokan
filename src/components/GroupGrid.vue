@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBreakpoints } from '@vueuse/core'
@@ -22,7 +22,7 @@ const { isLoading: loading, data: groups } = useGroupsQuery({
 
 const { t, n } = useI18n({ useScope: 'global' })
 
-const container = ref(null)
+const container = ref<HTMLDivElement>()
 const focused = ref(0)
 
 function getColumnSize() {
@@ -37,10 +37,7 @@ function getColumnSize() {
   return 2
 }
 
-/**
- * @param {KeyboardEvent} event
- */
-function handleKeydown(event) {
+function handleKeydown(event: KeyboardEvent) {
   const allowedKeys = [
     'ArrowRight',
     'ArrowLeft',
@@ -62,7 +59,7 @@ function handleKeydown(event) {
     return
   }
 
-  const totalItems = groups.value.length
+  const totalItems = groups.value!.length
   const columns = getColumnSize()
   const lines = Math.ceil(totalItems / columns)
   const row = Math.floor(focused.value / columns) + 1
@@ -103,7 +100,9 @@ function handleKeydown(event) {
     focused.value = totalItems - 1
   }
 
-  const group = container.value?.children?.[focused.value]
+  const group = container.value?.children?.[focused.value] as
+    | HTMLAnchorElement
+    | undefined
 
   group?.focus()
 }
@@ -111,7 +110,7 @@ function handleKeydown(event) {
 
 <template>
   <section
-    v-if="sheetLoading || loading || groups.length > 0"
+    v-if="sheetLoading || loading || (groups?.length ?? 0) > 0"
     aria-labelledby="groups-title"
     class="w-full mb-3 mt-8"
   >

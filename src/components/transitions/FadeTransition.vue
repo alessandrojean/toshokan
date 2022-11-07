@@ -1,15 +1,17 @@
-<script setup>
-defineProps({
-  mode: {
-    type: String,
-    default: 'out-in'
-  },
-  simultaneous: Boolean
+<script lang="ts" setup>
+export interface FadeTransitionProps {
+  mode?: 'in-out' | 'out-in' | null
+  simultaneous?: boolean
+}
+
+withDefaults(defineProps<FadeTransitionProps>(), {
+  mode: 'out-in',
+  simultaneous: false
 })
 </script>
 
 <template>
-  <transition
+  <Transition
     :mode="!simultaneous ? mode : null"
     leave-active-class="transition motion-reduce:transition-none duration-200 ease-in"
     leave-from-class="opacity-100"
@@ -19,5 +21,5 @@ defineProps({
     enter-to-class="opacity-100"
   >
     <slot></slot>
-  </transition>
+  </Transition>
 </template>

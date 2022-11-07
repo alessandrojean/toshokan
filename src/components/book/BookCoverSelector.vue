@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, reactive, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -18,17 +18,23 @@ import CoverOption from '@/components/CoverOption.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
-const props = defineProps({
-  book: Book,
-  coverUrl: {
-    type: String,
-    required: true
-  },
-  custom: Boolean,
-  hideCustomTitle: Boolean
+export interface BookCoverSelectorProps {
+  book: Book
+  coverUrl?: string
+  custom?: boolean
+  hideCustomTitle?: boolean
+}
+
+const props = withDefaults(defineProps<BookCoverSelectorProps>(), {
+  coverUrl: undefined,
+  custom: false,
+  hideCustomTitle: false
 })
 
-const emit = defineEmits(['update:coverUrl', 'update:finding'])
+const emit = defineEmits<{
+  (e: 'update:coverUrl', coverUrl: string): void
+  (e: 'update:finding', finding: boolean): void
+}>()
 
 const { book, coverUrl } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
@@ -43,7 +49,7 @@ const state = reactive({
   customUrl: ''
 })
 
-const customs = ref(coverUrl.value.length > 0 ? [coverUrl.value] : [])
+const customs = ref((coverUrl.value?.length ?? 0) > 0 ? [coverUrl.value!] : [])
 
 const rules = {
   customUrl: {
@@ -68,7 +74,7 @@ function addNewImage() {
 }
 
 const results = computed(() => {
-  const allImages = (coverResults.value || [])
+  const allImages = (coverResults.value ?? [])
     .concat(customs.value)
     .filter((url) => errors.value.indexOf(url) === -1)
 
@@ -84,9 +90,9 @@ watch(
   }
 )
 
-const errors = ref([])
+const errors = ref<string[]>([])
 
-function handleError(url) {
+function handleError(url: string) {
   if (errors.value.indexOf(url) === -1) {
     errors.value.push(url)
   }
@@ -96,7 +102,7 @@ function handleError(url) {
   }
 }
 
-function unselect(url) {
+function unselect(url: string) {
   if (coverUrl.value === url) {
     setTimeout(() => {
       emit('update:coverUrl', '')

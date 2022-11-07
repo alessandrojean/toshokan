@@ -1,74 +1,69 @@
-<script setup>
-import { computed, ref, toRefs, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, type HTMLAttributes, ref, toRefs, watch, unref } from 'vue'
 
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 import Draggable from 'vuedraggable'
 
-import BaseField from './BaseField.vue'
+import BaseField, { type BaseFieldProps } from './BaseField.vue'
 
-const props = defineProps({
-  breakCharacter: {
-    type: String,
-    default: ','
-  },
-  error: String,
-  inputClass: String,
-  inputMode: String,
-  inputType: {
-    type: String,
-    default: 'text'
-  },
-  label: String,
-  modelValue: {
-    type: Array,
-    required: true
-  },
-  placeholder: String,
-  prefixClass: String,
-  removeAction: {
-    type: String,
-    required: true
-  },
-  required: Boolean,
-  tagClass: String,
-  suggestions: Array
+export interface TagFieldProps extends BaseFieldProps {
+  breakCharacter?: string
+  inputClass?: string
+  inputMode?: HTMLAttributes['inputmode']
+  inputType?: HTMLInputElement['type']
+  modelValue?: string[] | null
+  placeholder?: string
+  removeAction: string
+  tagClass?: string
+  suggestions?: string[]
+}
+
+const props = withDefaults(defineProps<TagFieldProps>(), {
+  breakCharacter: ',',
+  inputType: 'text',
+  required: false
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: string[]): void
+}>()
 
-const { breakCharacter, error, modelValue, help, suggestions } = toRefs(props)
+const { breakCharacter, error, modelValue, suggestions, label, required } =
+  toRefs(props)
 
-const hasError = computed(() => error.value && error.value.length > 0)
-const hasHelp = computed(() => help.value && help.value.length > 0)
+const hasError = computed(() => {
+  return error?.value ? (unref(error.value)?.length ?? 0) > 0 : false
+})
 const hasList = computed(
-  () => suggestions.value && suggestions.value.length > 0
+  () => suggestions?.value && suggestions.value.length > 0
 )
 
 const tempTag = ref('')
 const selectedTag = ref(-1)
-const input = ref(null)
+const input = ref<HTMLInputElement>()
 
 watch(tempTag, () => {
   selectedTag.value = -1
 })
 
-function addTag(onInput) {
+function addTag(onInput?: boolean) {
   const newTag = onInput === true ? tempTag.value.slice(0, -1) : tempTag.value
 
   if (
     newTag.length > 0 &&
     newTag.trim().length > 0 &&
-    !modelValue.value.includes(newTag.trim())
+    !modelValue!.value!.includes(newTag.trim())
   ) {
-    emit('update:modelValue', modelValue.value.concat([newTag.trim()]))
+    emit('update:modelValue', modelValue!.value!.concat([newTag.trim()]))
   }
 
   tempTag.value = ''
 }
 
-function flushTag(event) {
-  const lastCharacter = event.target.value.slice(-1)
+function flushTag(event: Event) {
+  const target = event.target as HTMLInputElement
+  const lastCharacter = target.value.slice(-1)
 
   if (lastCharacter === breakCharacter.value) {
     event.preventDefault()
@@ -76,23 +71,23 @@ function flushTag(event) {
   }
 }
 
-function removeTag(i) {
-  const newModelValue = modelValue.value.slice()
+function removeTag(i: number) {
+  const newModelValue = modelValue!.value!.slice()
   newModelValue.splice(i, 1)
 
   emit('update:modelValue', newModelValue)
 }
 
-function handleDragAndDrop(newTags) {
+function handleDragAndDrop(newTags: string[]) {
   emit('update:modelValue', newTags)
 }
 
-function handleBackspace(event) {
-  if (tempTag.value.length > 0 || modelValue.value.length === 0) {
+function handleBackspace(event: KeyboardEvent) {
+  if (tempTag.value.length > 0 || modelValue!.value!.length === 0) {
     return
   }
 
-  const lastIndex = modelValue.value.length - 1
+  const lastIndex = modelValue!.value!.length - 1
   event.preventDefault()
 
   if (selectedTag.value === lastIndex) {
@@ -115,7 +110,7 @@ function handleBackspace(event) {
     <div
       :class="[
         'input group px-0 pb-0',
-        modelValue.length > 0 ? 'filled' : 'pt-0'
+        modelValue!.length > 0 ? 'filled' : 'pt-0'
       ]"
       @click.self="input?.focus?.()"
     >
@@ -125,9 +120,9 @@ function handleBackspace(event) {
         ghost-class="ghost"
         drag-class="cursor-grabbing"
         handle=".handle"
-        :modelValue="modelValue"
-        :item-key="(tag) => tag"
-        :disabled="modelValue.length === 1"
+        :modelValue="modelValue ?? []"
+        :item-key="(tag: string) => tag"
+        :disabled="modelValue!.length === 1"
         @click.self="input?.focus?.()"
         @update:modelValue="handleDragAndDrop"
       >
@@ -137,7 +132,7 @@ function handleBackspace(event) {
             :aria-selected="index === selectedTag"
           >
             <span
-              v-if="modelValue.length > 1"
+              v-if="modelValue!.length > 1"
               class="handle"
               aria-hidden="true"
             >
@@ -163,7 +158,7 @@ function handleBackspace(event) {
       <div
         :class="[
           'px-3 border-t',
-          modelValue.length > 0
+          modelValue!.length > 0
             ? 'mt-2 dark:border-gray-600 group-hover:border-gray-300 dark:group-hover:border-gray-500 group-focus-within:border-dashed group-focus-within:!border-primary-400'
             : 'border-transparent'
         ]"
@@ -177,7 +172,7 @@ function handleBackspace(event) {
           :aria-describedby="ariaDescribedBy"
           :aria-invalid="hasError"
           :list="hasList ? inputId + '-list' : undefined"
-          @keydown.enter.prevent="addTag"
+          @keydown.enter.prevent="addTag()"
           @keydown.backspace="handleBackspace"
           @input="flushTag"
         />

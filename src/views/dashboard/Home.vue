@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIsFetching, useQueryClient } from 'vue-query'
@@ -111,7 +111,7 @@ function closeSheetChooser() {
           <button
             class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
-            :disabled="loading || isFetching"
+            :disabled="loading || isFetching > 0"
           >
             <span
               aria-hidden="true"
@@ -126,7 +126,7 @@ function closeSheetChooser() {
             v-if="canChange"
             class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openSheetChooser"
-            :disabled="loading || isFetching"
+            :disabled="loading || isFetching > 0"
           >
             <span aria-hidden="true">
               <RectangleStackIcon />
