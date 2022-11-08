@@ -8,6 +8,7 @@ import cloneDeep from 'lodash.clonedeep'
 import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
 import useEditBookMutation from '@/mutations/useEditBookMutation'
 import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useBookQuery from '@/queries/useBookQuery'
 import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
@@ -30,6 +31,7 @@ import BookTabs from '@/components/book/BookTabs.vue'
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
+const settingsStore = useSettingsStore()
 const sheetStore = useSheetStore()
 
 const bookId = computed(() => route.params.bookId as string)
@@ -148,6 +150,10 @@ const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 watch(shareDialogOpen, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()
 })
+
+const gridMode = computed(() => settingsStore.gridMode)
+const blurNsfw = computed(() => settingsStore.blurNsfw)
+const spoilerMode = computed(() => settingsStore.spoilerMode)
 </script>
 
 <template>
@@ -176,6 +182,8 @@ watch(shareDialogOpen, (newOpen) => {
               :loading="!showBookInfo"
               :book="book"
               :collection="collection"
+              :blur-nsfw="blurNsfw"
+              :spoiler-mode="spoilerMode"
             />
           </div>
 
@@ -202,6 +210,9 @@ watch(shareDialogOpen, (newOpen) => {
             :loading="!showBookInfo"
             :book="book"
             :collection="collection"
+            :blur-nsfw="blurNsfw"
+            :spoiler-mode="spoilerMode"
+            :mode="gridMode"
           />
         </section>
       </div>

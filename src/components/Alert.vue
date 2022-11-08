@@ -9,11 +9,13 @@ import {
 
 import FadeTransition from './transitions/FadeTransition.vue'
 
-const props = defineProps<{
+export interface AlertProps {
   show?: boolean
   title?: string
   type: 'info' | 'error' | 'warning'
-}>()
+}
+
+const props = defineProps<AlertProps>()
 
 const { type } = toRefs(props)
 

@@ -1,29 +1,37 @@
 <script lang="ts" setup>
 import { nextTick, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useBreakpoints } from '@vueuse/core'
 
 import Book from '@/model/Book'
 import useTailwindTheme from '@/composables/useTailwindTheme'
+import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 import BookCard from '@/components/book/BookCard.vue'
 
 export interface BookGridProps {
+  blurNsfw?: boolean
   currentPage?: number
   current?: String
   items?: Book[]
   loading?: boolean
+  mode?: GridMode
   skeletonItems?: number
   sortDirection?: 'asc' | 'desc'
   sortProperty?: string
+  spoilerMode?: SpoilerMode
 }
 
 const props = withDefaults(defineProps<BookGridProps>(), {
+  blurNsfw: false,
   items: () => [],
-  loading: false
+  loading: false,
+  mode: 'comfortable',
+  spoilerMode: () => ({
+    cover: false,
+    synopsis: false
+  })
 })
 
-const { t } = useI18n({ useScope: 'global' })
 const { breakpoints: themeBreakpoints } = useTailwindTheme()
 
 const breakpoints = useBreakpoints(themeBreakpoints)
@@ -133,7 +141,10 @@ defineExpose({ focus })
       <BookCard
         v-for="tempBook in skeletonItems"
         :key="tempBook"
-        :loading="true"
+        loading
+        :mode="mode"
+        :spoiler-mode="spoilerMode"
+        :blur-nsfw="blurNsfw"
       />
     </div>
     <ul
@@ -148,6 +159,9 @@ defineExpose({ focus })
           :loading="loading"
           :current="book.id === current"
           :tabindex="bookIdx === focused ? '0' : '-1'"
+          :mode="mode"
+          :spoiler-mode="spoilerMode"
+          :blur-nsfw="blurNsfw"
           @keydown="handleKeydown"
         />
       </li>

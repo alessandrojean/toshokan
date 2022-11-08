@@ -6,6 +6,7 @@ import cloneDeep from 'lodash.clonedeep'
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
+import useCoverQuery from '@/queries/useCoverQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/utils'
 
@@ -131,6 +132,11 @@ const coverUrl = computed({
     editingBook.coverUrl = value ?? null
   }
 })
+
+const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
+  computed(() => editingBook),
+  { enabled: true }
+)
 </script>
 
 <template>
@@ -235,8 +241,9 @@ const coverUrl = computed({
                     <BookCoverSelector
                       custom
                       hide-custom-title
-                      v-model:cover-url="coverUrl"
-                      :book="editingBook"
+                      v-model="coverUrl"
+                      :loading="findingCovers"
+                      :options="coverResults"
                     />
                   </TabPanel>
                   <TabPanel class="has-ring-focus rounded-md">

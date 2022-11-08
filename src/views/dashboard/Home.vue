@@ -3,7 +3,9 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useIsFetching, useQueryClient } from 'vue-query'
 
+import useEditBookMutation from '@/mutations/useEditBookMutation'
 import { useAuthStore } from '@/stores/auth'
+import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
@@ -16,6 +18,7 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import {
+  ArrowRightIcon,
   RectangleStackIcon,
   PlusIcon,
   ArrowPathIcon
@@ -27,8 +30,13 @@ import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
 import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
 import StatCard from '@/components/StatCard.vue'
+import useLastAddedQuery from '@/queries/useLastAddedQuery'
+import useLatestReadingsQuery from '@/queries/useLatestReadingsQuery'
+import useNextReadsQuery from '@/queries/useNextReadsQuery'
+import Book from '@/model/Book'
 
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
 const sheetStore = useSheetStore()
 const { n, t } = useI18n({ useScope: 'global' })
 
@@ -39,14 +47,24 @@ const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
 const profileName = computed(() => authStore.profileName)
 const loading = computed(() => sheetStore.loading)
 const shared = computed(() => sheetStore.shared)
+const enabled = computed(() => sheetStore.sheetId !== null)
 
 const {
   data: stats,
   isLoading: statsLoading,
   isSuccess: statsSuccess
-} = useStatisticsQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
-})
+} = useStatisticsQuery({ enabled })
+
+// eslint-disable-next-line prettier/prettier
+const { isLoading: lastAddedLoading, data: lastAddedItems } =
+  useLastAddedQuery({ enabled })
+
+const { isLoading: latestReadingsLoading, data: latestReadingsItems } =
+  useLatestReadingsQuery({ enabled })
+
+// eslint-disable-next-line prettier/prettier
+const { isLoading: nextReadsLoading, data: nextReadsItems } =
+  useNextReadsQuery({ enabled })
 
 const isDev = ref(import.meta.env.DEV)
 const queryClient = useQueryClient()
@@ -78,6 +96,34 @@ function openSheetChooser() {
 
 function closeSheetChooser() {
   sheetChooserOpen.value = false
+}
+
+const gridMode = computed(() => settingsStore.gridMode)
+const blurNsfw = computed(() => settingsStore.blurNsfw)
+const spoilerMode = computed(() => settingsStore.spoilerMode)
+
+const { mutate: edit } = useEditBookMutation()
+const editingIds = ref([] as string[])
+
+function removeFromEditing(id: string) {
+  const index = editingIds.value.indexOf(id)
+
+  if (index >= 0) {
+    editingIds.value.splice(index, 1)
+  }
+}
+
+function handleMarkAsRead(book: Book) {
+  if (book.id! in editingIds.value) {
+    return
+  }
+
+  editingIds.value.push(book.id!)
+
+  edit(book, {
+    onSuccess: () => removeFromEditing(book.id!),
+    onError: () => removeFromEditing(book.id!)
+  })
 }
 </script>
 
@@ -224,35 +270,91 @@ function closeSheetChooser() {
         <!-- Next reads -->
         <BookCarousel
           :title="t('dashboard.home.nextReads')"
-          collection="next-reads"
-          :button-text="t('dashboard.search.history')"
-          :button-link="{
-            name: 'DashboardLibrary',
-            query: { sortProperty: 'readAt' }
-          }"
-        />
+          :mode="gridMode"
+          :blur-nsfw="blurNsfw"
+          :spoiler-mode="spoilerMode"
+          :loading="loading || nextReadsLoading"
+          :items="nextReadsItems"
+          :editing-ids="editingIds"
+          show-reading-actions
+          @mark-as-read="handleMarkAsRead"
+        >
+          <template #actions>
+            <RouterLink
+              class="button is-ghost -mr-3 hidden md:flex group"
+              :to="{
+                name: 'DashboardLibrary',
+                query: { sortProperty: 'readAt' }
+              }"
+            >
+              {{ t('dashboard.search.history') }}
+              <span aria-hidden="true">
+                <ArrowRightIcon
+                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                />
+              </span>
+            </RouterLink>
+          </template>
+        </BookCarousel>
 
         <!-- Last added books -->
         <BookCarousel
           :title="t('dashboard.home.lastAdded')"
-          collection="last-added"
-          :button-text="t('dashboard.home.viewAll')"
-          :button-link="{
-            name: 'DashboardLibrary',
-            query: { sortProperty: 'createdAt' }
-          }"
-        />
+          :mode="gridMode"
+          :blur-nsfw="blurNsfw"
+          :spoiler-mode="spoilerMode"
+          :loading="loading || lastAddedLoading"
+          :items="lastAddedItems"
+        >
+          <template #actions>
+            <RouterLink
+              class="button is-ghost -mr-3 hidden md:flex group"
+              :to="{
+                name: 'DashboardLibrary',
+                query: { sortProperty: 'createdAt' }
+              }"
+            >
+              {{ t('dashboard.home.viewAll') }}
+              <span aria-hidden="true">
+                <ArrowRightIcon
+                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                />
+              </span>
+            </RouterLink>
+          </template>
+        </BookCarousel>
 
         <!-- Latest readings -->
         <BookCarousel
           :title="t('dashboard.home.latestReadings')"
-          collection="latest-readings"
           :button-text="t('dashboard.search.history')"
           :button-link="{
             name: 'DashboardLibrary',
             query: { sortProperty: 'readAt' }
           }"
-        />
+          :mode="gridMode"
+          :blur-nsfw="blurNsfw"
+          :spoiler-mode="spoilerMode"
+          :loading="loading || latestReadingsLoading"
+          :items="latestReadingsItems"
+        >
+          <template #actions>
+            <RouterLink
+              class="button is-ghost -mr-3 hidden md:flex group"
+              :to="{
+                name: 'DashboardLibrary',
+                query: { sortProperty: 'readAt' }
+              }"
+            >
+              {{ t('dashboard.search.history') }}
+              <span aria-hidden="true">
+                <ArrowRightIcon
+                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                />
+              </span>
+            </RouterLink>
+          </template>
+        </BookCarousel>
 
         <!-- Groups -->
         <GroupGrid />

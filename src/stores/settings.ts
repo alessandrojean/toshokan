@@ -58,7 +58,7 @@ window
 
 const isDevEnvironment = !!import.meta.env.DEV
 
-type SpoilerMode = {
+export type SpoilerMode = {
   cover: boolean
   synopsis: boolean
 }

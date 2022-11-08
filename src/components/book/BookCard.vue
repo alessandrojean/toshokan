@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
+import type { _RouterLinkI } from 'vue-router'
 
 import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import Book from '@/model/Book'
-import { useSettingsStore } from '@/stores/settings'
+import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 import { BookOpenIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
@@ -13,21 +13,31 @@ import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCardProps {
+  blurNsfw?: boolean
   book?: Book
   current?: boolean
   imageOnly?: boolean
-  loading: boolean
+  loading?: boolean
+  mode?: GridMode
+  spoilerMode?: SpoilerMode
   tabindex?: string
 }
 
 const props = withDefaults(defineProps<BookCardProps>(), {
+  blurNsfw: false,
   book: undefined,
   current: false,
   imageOnly: false,
+  loading: false,
+  mode: 'comfortable',
+  spoilerMode: () => ({
+    cover: false,
+    synopsis: false
+  }),
   tabindex: undefined
 })
 
-const { book, loading } = toRefs(props)
+const { book, loading, mode, spoilerMode, blurNsfw } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
 
 const thumbnailUrl = computed(() => {
@@ -36,7 +46,7 @@ const thumbnailUrl = computed(() => {
     : ''
 })
 
-const loadedCard = ref<HTMLDivElement | typeof RouterLink>()
+const loadedCard = ref<HTMLDivElement | InstanceType<_RouterLinkI>>()
 
 const { imageHasError, imageLoading, setupObserver, observerCreated } =
   useImageLazyLoader(thumbnailUrl, loadedCard)
@@ -64,11 +74,6 @@ watch(loading, (newValue) => {
     setupObserver()
   }
 })
-
-const settingsStore = useSettingsStore()
-const mode = computed(() => settingsStore.gridMode)
-const spoilerMode = computed(() => settingsStore.spoilerMode)
-const blurNsfw = computed(() => settingsStore.blurNsfw)
 
 const blurCover = computed(() => {
   return (
@@ -102,7 +107,7 @@ const blurCover = computed(() => {
   </div>
   <component
     v-else
-    :is="imageOnly ? 'div' : RouterLink"
+    :is="imageOnly ? 'div' : 'router-link'"
     :to="
       !imageOnly
         ? { name: 'BookDetails', params: { bookId: book.id } }
@@ -115,7 +120,7 @@ const blurCover = computed(() => {
     :tabindex="!imageOnly ? tabindex : undefined"
   >
     <component
-      :is="imageOnly ? 'RouterLink' : 'div'"
+      :is="imageOnly ? 'router-link' : 'div'"
       :class="blurCover ? 'blurred' : ''"
       :to="
         imageOnly

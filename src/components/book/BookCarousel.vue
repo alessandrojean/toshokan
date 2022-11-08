@@ -1,46 +1,51 @@
 <script lang="ts" setup>
-import { computed, ref, toRaw, toRefs } from 'vue'
-import type { RouteLocationRaw } from 'vue-router'
+import { ref, toRaw, toRefs } from 'vue'
 
 import cloneDeep from 'lodash.clonedeep'
 
 import Book, { STATUS_READ } from '@/model/Book'
-import useEditBookMutation from '@/mutations/useEditBookMutation'
-import { useSheetStore } from '@/stores/sheet'
-import useLastAddedQuery from '@/queries/useLastAddedQuery'
-import useLatestReadingsQuery from '@/queries/useLatestReadingsQuery'
-import useNextReadsQuery from '@/queries/useNextReadsQuery'
-
-import { ArrowRightIcon } from '@heroicons/vue/20/solid'
+import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 import BookCard from '@/components/book/BookCard.vue'
 import BookCardReadingActions from '@/components/book/BookCardReadingActions.vue'
 
-const props = defineProps<{
-  collection: 'last-added' | 'latest-readings' | 'next-reads'
+export interface BookCarouselProps {
+  blurNsfw?: boolean
+  editingIds?: string[]
+  items?: Book[]
+  loading?: boolean
+  mode?: GridMode
+  showReadingActions?: boolean
+  spoilerMode?: SpoilerMode
   title: string
-  buttonText?: string
-  buttonLink?: RouteLocationRaw
-}>()
-
-const { collection } = toRefs(props)
-const sheetStore = useSheetStore()
-
-const sheetLoading = computed(() => sheetStore.loading)
-const sheetId = computed(() => sheetStore.sheetId)
-const enabled = computed(() => sheetId.value !== null)
-
-const collectionMapping = {
-  'last-added': useLastAddedQuery,
-  'latest-readings': useLatestReadingsQuery,
-  'next-reads': useNextReadsQuery
 }
 
-// eslint-disable-next-line prettier/prettier
+const props = withDefaults(defineProps<BookCarouselProps>(), {
+  blurNsfw: false,
+  editingIds: () => [],
+  items: undefined,
+  loading: false,
+  mode: 'comfortable',
+  showReadingActions: false,
+  spoilerMode: () => ({
+    cover: false,
+    synopsis: false
+  })
+})
+
+const emit = defineEmits<{
+  (e: 'markAsRead', book: Book): void
+}>()
+
 const {
-  isLoading: loading,
-  data: collectionItems
-} = collectionMapping[collection.value]({ enabled })
+  blurNsfw,
+  mode,
+  spoilerMode,
+  items,
+  loading,
+  showReadingActions,
+  editingIds
+} = toRefs(props)
 
 const carousel = ref<HTMLUListElement>()
 const focused = ref(0)
@@ -56,7 +61,7 @@ function handleKeydown(event: KeyboardEvent) {
     return
   }
 
-  if (!allowedKeys.includes(key) || editing.value) {
+  if (!allowedKeys.includes(key) || editingIds.value.length > 0) {
     return
   }
 
@@ -89,18 +94,15 @@ function handleKeydown(event: KeyboardEvent) {
   const li = carousel.value?.children?.[focused.value]
   let card = li?.children?.[0] as HTMLAnchorElement | undefined
 
-  if (collection.value === 'next-reads') {
+  if (showReadingActions.value) {
     card = card?.children?.[0] as HTMLAnchorElement | undefined
   }
 
   card?.focus()
 }
 
-const { isLoading: editing, mutate: edit } = useEditBookMutation()
-const editingBookId = ref<string | null>(null)
-
 function handleRead(book: Book, readAt: Date) {
-  if (editing.value) {
+  if (editingIds.value.length > 0) {
     return
   }
 
@@ -108,13 +110,7 @@ function handleRead(book: Book, readAt: Date) {
   newBook.status = STATUS_READ
   newBook.readAt = readAt
 
-  editingBookId.value = newBook.id!
-
-  edit(newBook, {
-    onSuccess() {
-      editingBookId.value = null
-    }
-  })
+  emit('markAsRead', newBook)
 }
 
 function handleReadToday(book: Book) {
@@ -123,7 +119,7 @@ function handleReadToday(book: Book) {
 </script>
 
 <template>
-  <div v-if="sheetLoading || loading">
+  <div v-if="loading">
     <div class="skeleton h-6 w-48 mt-8 mb-3"></div>
 
     <div
@@ -135,40 +131,29 @@ function handleReadToday(book: Book) {
         :class="idx === 5 ? 'md:hidden lg:block' : ''"
         class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
       >
-        <BookCard loading :image-only="collection === 'next-reads'" />
+        <BookCard
+          loading
+          :image-only="showReadingActions"
+          :mode="mode"
+          :spoiler-mode="spoilerMode"
+          :blur-nsfw="blurNsfw"
+        />
       </div>
     </div>
   </div>
 
-  <section
-    v-else-if="(collectionItems?.length ?? 0) > 0"
-    :aria-labelledby="collection + '-title'"
-  >
+  <section v-else-if="(items?.length ?? 0) > 0">
     <div class="flex justify-between items-center w-full mt-8 mb-2">
-      <h2
-        :id="collection + '-title'"
-        class="font-medium font-display text-lg dark:text-gray-200"
-      >
+      <h2 class="font-medium font-display text-lg dark:text-gray-200">
         {{ title }}
       </h2>
 
-      <router-link
-        v-if="buttonText && buttonLink"
-        class="button is-ghost -mr-3 hidden md:flex group"
-        :to="buttonLink"
-      >
-        {{ buttonText }}
-        <span aria-hidden="true">
-          <ArrowRightIcon
-            class="is-right motion-safe:transition-transform group-hover:translate-x-1"
-          />
-        </span>
-      </router-link>
+      <slot name="actions" />
     </div>
 
     <ul
       :class="[
-        collectionItems!.length < 3
+        items!.length < 3
           ? 'grid grid-cols-2'
           : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
         'md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
@@ -176,10 +161,10 @@ function handleReadToday(book: Book) {
       ref="carousel"
     >
       <li
-        v-for="(book, bookIdx) in collectionItems"
+        v-for="(book, bookIdx) in items"
         :key="book.id!"
         :class="[
-          collectionItems!.length > 2
+          items!.length > 2
             ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto snap-start md:snap-none scroll-ml-5 md:scroll-ml-0'
             : '',
           bookIdx === 5 ? 'md:hidden lg:block' : ''
@@ -189,14 +174,17 @@ function handleReadToday(book: Book) {
           :book="book"
           :loading="loading"
           :tabindex="focused === bookIdx ? '0' : '-1'"
-          :image-only="collection === 'next-reads'"
+          :image-only="showReadingActions"
+          :mode="mode"
+          :spoiler-mode="spoilerMode"
+          :blur-nsfw="blurNsfw"
           @keydown="handleKeydown"
         >
-          <template #actions v-if="collection === 'next-reads'">
+          <template #actions v-if="showReadingActions">
             <BookCardReadingActions
               :book="book"
-              :disabled="editing"
-              :editing="editingBookId === book.id"
+              :disabled="editingIds.length > 0"
+              :editing="editingIds.includes(book.id!)"
               @click:check="handleReadToday(book)"
               @click:calendar="handleRead(book, $event)"
             />

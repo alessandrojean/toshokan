@@ -16,8 +16,7 @@ export interface AvatarProps extends HTMLAttributes {
 const props = withDefaults(defineProps<AvatarProps>(), {
   dark: false,
   shared: false,
-  small: false,
-  pictureUrl: undefined
+  small: false
 })
 
 const { pictureUrl } = toRefs(props)

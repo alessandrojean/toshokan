@@ -28,8 +28,8 @@ const { t } = useI18n({ useScope: 'global' })
 
 const { open } = toRefs(props)
 
-const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
-const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
+const disableSearchShortcut = injectStrict(DisableSearchShortcutKey, () => {})
+const enableSearchShortcut = injectStrict(EnableSearchShortcutKey, () => {})
 
 watch(open, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()

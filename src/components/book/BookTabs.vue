@@ -4,6 +4,7 @@ import { computed, toRefs } from 'vue'
 import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
 import Book, { MonetaryValue } from '@/model/Book'
+import type { GridMode, SpoilerMode } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { ShowSearchDialogKey } from '@/symbols'
@@ -19,20 +20,29 @@ import BookGrid from '@/components/book/BookGrid.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookTabsProps {
+  blurNsfw?: boolean
   book: Book | null | undefined
   collection?: Book[]
   loading?: boolean
+  mode?: GridMode
+  spoilerMode?: SpoilerMode
 }
 
 const props = withDefaults(defineProps<BookTabsProps>(), {
+  blurNsfw: false,
   book: undefined,
   collection: undefined,
-  loading: false
+  loading: false,
+  mode: 'comfortable',
+  spoilerMode: () => ({
+    cover: false,
+    synopsis: false
+  })
 })
 
 const { t, d, n, locale } = useI18n({ useScope: 'global' })
 const sheetStore = useSheetStore()
-const { book, loading, collection } = toRefs(props)
+const { book, loading, collection, blurNsfw, mode, spoilerMode } = toRefs(props)
 
 const showBookInfo = computed(() => {
   return !loading.value && book.value
@@ -373,7 +383,13 @@ function searchByTag(tag: string, event: MouseEvent) {
             v-if="showBookInfo && filteredCollection.length > 0"
             class="has-ring-focus dark:focus-visible:ring-offset-gray-900 rounded-md"
           >
-            <BookGrid :items="filteredCollection" :current="book!.id!" />
+            <BookGrid
+              :items="filteredCollection"
+              :current="book!.id!"
+              :blur-nsfw="blurNsfw"
+              :spoiler-mode="spoilerMode"
+              :mode="mode"
+            />
           </TabPanel>
         </TabPanels>
       </TabGroup>

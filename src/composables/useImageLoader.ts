@@ -1,7 +1,7 @@
 import { readonly, ref, watch } from 'vue'
 import type { Ref } from 'vue'
 
-export default function useImageLoader(imageUrl: Ref<string | undefined>) {
+export default function useImageLoader(imageUrl?: Ref<string | undefined>) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
   const imageWidth = ref(0)
@@ -28,7 +28,7 @@ export default function useImageLoader(imageUrl: Ref<string | undefined>) {
   }
 
   const loadImage = () => {
-    if (imageUrl.value && imageUrl.value.length > 0) {
+    if (imageUrl?.value && imageUrl.value.length > 0) {
       image.src = imageUrl.value
     } else {
       imageLoading.value = false
@@ -36,11 +36,14 @@ export default function useImageLoader(imageUrl: Ref<string | undefined>) {
     }
   }
 
-  watch(imageUrl, () => {
-    imageHasError.value = false
-    imageLoading.value = true
-    loadImage()
-  })
+  watch(
+    () => imageUrl?.value,
+    () => {
+      imageHasError.value = false
+      imageLoading.value = true
+      loadImage()
+    }
+  )
 
   return {
     imageHasError: readonly(imageHasError),

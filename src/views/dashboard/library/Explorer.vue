@@ -7,14 +7,14 @@ import cloneDeep from 'lodash.clonedeep'
 
 import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
 import useBulkEditBookMutation from '@/mutations/useBulkEditBookMutation'
-import { Sort, useCollectionStore } from '@/stores/collection'
+import { useCollectionStore } from '@/stores/collection'
 import {
   useSettingsStore,
   type GridMode,
   type ViewMode
 } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
-import Book, { STATUS_READ } from '@/model/Book'
+import { STATUS_READ } from '@/model/Book'
 import useBooksQuery from '@/queries/useBooksQuery'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
@@ -398,6 +398,9 @@ function handleBulkToggleFavorite({
 }
 
 const writing = computed(() => deleting.value || updating.value)
+const gridMode = computed(() => settingsStore.gridMode)
+const blurNsfw = computed(() => settingsStore.blurNsfw)
+const spoilerMode = computed(() => settingsStore.spoilerMode)
 </script>
 
 <template>
@@ -544,6 +547,9 @@ const writing = computed(() => deleting.value || updating.value)
                 :current-page="currentPage"
                 :loading="loading || writing"
                 :skeleton-items="18"
+                :mode="gridMode"
+                :blur-nsfw="blurNsfw"
+                :spoiler-mode="spoilerMode"
               />
             </FadeTransition>
           </div>

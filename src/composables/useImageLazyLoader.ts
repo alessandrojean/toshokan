@@ -1,10 +1,12 @@
 import { computed, onUnmounted, readonly, ref, watch } from 'vue'
 import type { ComponentPublicInstance, Ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import type { _RouterLinkI } from 'vue-router'
 
 export default function useImageLazyLoader(
   imageUrl: Ref<string | undefined>,
-  elRef: Ref<ComponentPublicInstance | Element | typeof RouterLink | undefined>
+  elRef: Ref<
+    ComponentPublicInstance | InstanceType<_RouterLinkI> | Element | undefined
+  >
 ) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
@@ -52,9 +54,12 @@ export default function useImageLazyLoader(
       }
     })
 
-    const element = '$el' in elRef.value ? elRef.value.$el : elRef.value
+    const element: Element =
+      '$el' in elRef.value ? elRef.value.$el : elRef.value
 
-    observer.value.observe(element)
+    if (element.tagName) {
+      observer.value.observe(element)
+    }
   }
 
   function disconnectObserver() {

@@ -18,7 +18,10 @@ export interface BookCardReadingActionsProps {
   editing?: boolean
 }
 
-defineProps<BookCardReadingActionsProps>()
+withDefaults(defineProps<BookCardReadingActionsProps>(), {
+  disabled: false,
+  editing: false
+})
 
 const emit = defineEmits<{
   (e: 'click:check', event: MouseEvent): void

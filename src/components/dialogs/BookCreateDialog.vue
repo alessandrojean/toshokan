@@ -38,6 +38,7 @@ import DescriptionList, {
 } from '@/components/DescriptionList.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import useCoverQuery from '@/queries/useCoverQuery'
 
 const props = withDefaults(defineProps<{ isOpen?: boolean }>(), {
   isOpen: false
@@ -387,6 +388,11 @@ const coverUrl = computed({
     book.coverUrl = value ?? null
   }
 })
+
+const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
+  computed(() => book),
+  { enabled: true }
+)
 </script>
 
 <template>
@@ -533,8 +539,9 @@ const coverUrl = computed({
                 class="max-w-xl mx-auto"
                 custom
                 hide-custom-title
-                v-model:cover-url="coverUrl"
-                :book="book"
+                v-model="coverUrl"
+                :loading="findingCovers"
+                :options="coverResults"
               />
               <div
                 v-else

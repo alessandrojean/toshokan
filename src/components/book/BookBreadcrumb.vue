@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<BookBreadcrumbProps>(), {
 const { t } = useI18n({ useScope: 'global' })
 const { book } = toRefs(props)
 
-const showSearchDialog = injectStrict(ShowSearchDialogKey)
+const showSearchDialog = injectStrict(ShowSearchDialogKey, (q) => {})
 
 function showCollection() {
   const keywords = {

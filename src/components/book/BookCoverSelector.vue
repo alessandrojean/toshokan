@@ -5,9 +5,6 @@ import { useI18n } from 'vue-i18n'
 import useVuelidate from '@vuelidate/core'
 import { helpers, required, url } from '@vuelidate/validators'
 
-import Book from '@/model/Book'
-import useCoverQuery from '@/queries/useCoverQuery'
-
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
 
 import { FaceFrownIcon } from '@heroicons/vue/24/outline'
@@ -19,37 +16,39 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export interface BookCoverSelectorProps {
-  book: Book
-  coverUrl?: string
   custom?: boolean
   hideCustomTitle?: boolean
+  loading?: boolean
+  modelValue?: string
+  options?: string[] | null
 }
 
 const props = withDefaults(defineProps<BookCoverSelectorProps>(), {
-  coverUrl: undefined,
   custom: false,
-  hideCustomTitle: false
+  hideCustomTitle: false,
+  loading: false,
+  modelValue: undefined,
+  options: () => []
 })
 
 const emit = defineEmits<{
-  (e: 'update:coverUrl', coverUrl: string): void
-  (e: 'update:finding', finding: boolean): void
+  (e: 'update:modelValue', coverUrl: string): void
 }>()
 
-const { book, coverUrl } = toRefs(props)
+const {
+  modelValue: coverUrl,
+  loading: finding,
+  options: coverResults
+} = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
-
-const { isLoading: finding, data: coverResults } = useCoverQuery(book, {
-  enabled: true
-})
-
-watch(finding, (newValue) => emit('update:finding', newValue))
 
 const state = reactive({
   customUrl: ''
 })
 
-const customs = ref((coverUrl.value?.length ?? 0) > 0 ? [coverUrl.value!] : [])
+const customs = ref(
+  (coverUrl!.value?.length ?? 0) > 0 ? [coverUrl!.value!] : []
+)
 
 const rules = {
   customUrl: {
@@ -98,14 +97,14 @@ function handleError(url: string) {
   }
 
   if (state.customUrl === url) {
-    emit('update:coverUrl', '')
+    emit('update:modelValue', '')
   }
 }
 
 function unselect(url: string) {
-  if (coverUrl.value === url) {
+  if (coverUrl!.value === url) {
     setTimeout(() => {
-      emit('update:coverUrl', '')
+      emit('update:modelValue', '')
     })
   }
 }
@@ -121,7 +120,7 @@ function unselect(url: string) {
           <div v-if="results?.length > 0">
             <RadioGroup
               :model-value="coverUrl"
-              @update:model-value="$emit('update:coverUrl', $event)"
+              @update:model-value="$emit('update:modelValue', $event)"
             >
               <RadioGroupLabel class="sr-only">
                 {{ t('book.coverSelector.label') }}

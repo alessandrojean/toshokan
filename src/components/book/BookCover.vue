@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import useImageLoader from '@/composables/useImageLoader'
 import Book from '@/model/Book'
-import { useSettingsStore } from '@/stores/settings'
+import type { SpoilerMode } from '@/stores/settings'
 
 import { BookOpenIcon } from '@heroicons/vue/24/outline'
 import { MagnifyingGlassPlusIcon } from '@heroicons/vue/20/solid'
@@ -14,18 +14,25 @@ import BookNavigator from '@/components/book/BookNavigator.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCoverProps {
+  blurNsfw?: boolean
   book: Book | null | undefined
   collection?: Book[]
   loading?: boolean
+  spoilerMode?: SpoilerMode
 }
 
 const props = withDefaults(defineProps<BookCoverProps>(), {
+  blurNsfw: false,
   book: undefined,
   collection: undefined,
-  loading: false
+  loading: false,
+  spoilerMode: () => ({
+    cover: false,
+    synopsis: false
+  })
 })
 
-const { book, loading } = toRefs(props)
+const { book, loading, spoilerMode, blurNsfw } = toRefs(props)
 
 const coverUrl = computed(() => {
   if (!book.value) {
@@ -56,13 +63,6 @@ onMounted(() => {
     loadImage()
   }
 })
-
-const country = computed(() => book.value?.isbnData)
-
-const settingsStore = useSettingsStore()
-
-const spoilerMode = computed(() => settingsStore.spoilerMode)
-const blurNsfw = computed(() => settingsStore.blurNsfw)
 
 const blurCover = computed(() => {
   return (
