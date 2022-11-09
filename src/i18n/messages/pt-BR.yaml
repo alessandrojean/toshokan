@@ -99,6 +99,8 @@ book:
     required: Obrigatório
     optional: Opcional
     markdown: O Markdown é suportado neste campo.
+    editor: Editor
+    visualization: Visualização
     notInCollection: Este livro ainda não está na coleção
     addNotes: Adicionar observações sobre este livro
     addAuthor: Adicionar

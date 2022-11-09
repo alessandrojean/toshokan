@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, type HTMLAttributes, ref, toRefs, unref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from '@/i18n'
 
 import useMarkdown, { type UseMarkdownOptions } from '@/composables/useMarkdown'
 
@@ -116,8 +116,12 @@ const { t } = useI18n({ useScope: 'global' })
               {{ t('book.form.markdown') }}
             </span>
           </a>
-          <Tab class="tab has-ring-focus shrink-0">Editor</Tab>
-          <Tab class="tab has-ring-focus shrink-0">Visualização</Tab>
+          <Tab class="tab has-ring-focus shrink-0">
+            {{ t('book.form.editor') }}
+          </Tab>
+          <Tab class="tab has-ring-focus shrink-0">
+            {{ t('book.form.visualization') }}
+          </Tab>
           <span v-if="characterCount > 0" class="characters flex-grow">
             {{ characterCount }}
           </span>

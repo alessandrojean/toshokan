@@ -99,6 +99,8 @@ book:
     required: Required
     optional: Optional
     markdown: This field supports Markdown.
+    editor: Editor
+    visualization: Visualization
     notInCollection: This book is not on the collection yet
     addNotes: Add notes about this book
     addAuthor: Add
