@@ -6,17 +6,18 @@ import useImageLoader from '@/composables/useImageLoader'
 import Book from '@/model/Book'
 import type { SpoilerMode } from '@/stores/settings'
 
-import { BookOpenIcon } from '@heroicons/vue/24/outline'
-import { MagnifyingGlassPlusIcon } from '@heroicons/vue/20/solid'
+import {
+  EyeIcon,
+  MagnifyingGlassPlusIcon,
+  PhotoIcon
+} from '@heroicons/vue/24/outline'
 
 import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
-import BookNavigator from '@/components/book/BookNavigator.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCoverProps {
   blurNsfw?: boolean
   book: Book | null | undefined
-  collection?: Book[]
   loading?: boolean
   spoilerMode?: SpoilerMode
 }
@@ -42,7 +43,8 @@ const coverUrl = computed(() => {
   return book.value.coverUrl || ''
 })
 
-const { imageHasError, imageLoading, loadImage } = useImageLoader(coverUrl)
+const { imageHasError, imageLoading, imageAspectRatio, loadImage } =
+  useImageLoader(coverUrl)
 
 const showBookCover = computed(() => {
   return !imageHasError.value && !imageLoading.value && showBookInfo.value
@@ -86,74 +88,36 @@ const { t } = useI18n({ useScope: 'global' })
 
 <template>
   <figure
-    class="group aspect-w-2 aspect-h-[2.5] sm:aspect-h-2 md:aspect-w-1 md:aspect-h-1 bg-gray-800 dark:bg-gray-700 md:bg-gray-50 dark:bg-transparent md:dark:bg-transparent md:border md:border-gray-200 md:dark:border-gray-600 md:rounded-2xl relative"
+    class="group aspect-[var(--aspect)] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800 relative shadow-md"
+    :style="{ aspectRatio: imageAspectRatio }"
   >
     <FadeTransition>
-      <div
+      <img
         v-if="showBookCover"
-        class="absolute inset-0 w-full h-full md:rounded-2xl overflow-hidden motion-safe:transition-all"
-      >
-        <img
-          :src="coverUrl"
-          alt=""
-          class="w-full h-full object-cover opacity-20 md:dark:opacity-40 blur-lg scale-105"
+        :src="coverUrl"
+        :alt="book?.title ?? undefined"
+        :class="['w-full h-full', blurCover ? ' filter blur-sm' : '']"
+      />
+      <div v-else class="w-full h-full flex items-center justify-center">
+        <PhotoIcon
+          :class="[
+            'w-10 h-10 text-gray-500 dark:text-gray-600',
+            imageLoading || loading ? 'motion-safe:animate-pulse' : ''
+          ]"
         />
       </div>
     </FadeTransition>
 
-    <div
-      class="px-9 pt-28 sm:pt-24 pb-20 md:px-9 md:py-9 flex items-center justify-center"
+    <button
+      v-if="showBookCover"
+      class="bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 motion-safe:transition-opacity"
+      type="button"
+      :title="t('dashboard.details.zoom.view')"
+      @click="openDialog"
     >
-      <FadeTransition>
-        <div
-          v-if="showBookInfo && collection"
-          class="absolute bottom-0 hidden md:flex justify-center translate-y-1/2"
-          aria-hidden="true"
-        >
-          <BookNavigator :book="book" :collection="collection" />
-        </div>
-      </FadeTransition>
-
-      <FadeTransition>
-        <div
-          v-if="showBookCover && showBookInfo"
-          class="absolute right-2 top-2 hidden md:block"
-        >
-          <button
-            class="flex items-center justify-center rounded-md p-1.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500"
-            @click="openDialog"
-            :title="t('dashboard.details.zoom.view')"
-          >
-            <span aria-hidden="true">
-              <MagnifyingGlassPlusIcon class="w-5 h-5" />
-            </span>
-            <span class="sr-only">
-              {{ t('dashboard.details.zoom.view') }}
-            </span>
-          </button>
-        </div>
-      </FadeTransition>
-
-      <FadeTransition>
-        <img
-          v-if="showBookCover"
-          :src="coverUrl"
-          :class="
-            blurCover
-              ? 'md:filter md:blur-sm md:hover:blur-none motion-safe:transition-all duration-200 ease-in-out'
-              : ''
-          "
-          :alt="book!.title!"
-          class="max-w-xs md:max-w-full max-h-full shadow-lg rounded-md"
-        />
-        <span v-else aria-hidden="true">
-          <BookOpenIcon
-            :class="loading || imageLoading ? 'motion-safe:animate-pulse' : ''"
-            class="w-12 h-12 text-gray-500/80 dark:text-gray-400/90"
-          />
-        </span>
-      </FadeTransition>
-    </div>
+      <EyeIcon v-if="blurCover" class="w-8 h-8 text-white" />
+      <MagnifyingGlassPlusIcon v-else class="w-8 h-8 text-white" />
+    </button>
 
     <BookCoverDialog
       v-if="showBookCover && showBookInfo"

@@ -18,7 +18,6 @@ export default {
   args: {
     blurNsfw: false,
     book: new Book(bookDemo),
-    collection: undefined,
     loading: false,
     spoilerMode: {
       cover: false,
@@ -29,16 +28,13 @@ export default {
     book: {
       control: { type: null }
     },
-    collection: {
-      control: { type: null }
-    },
     spoilerMode: {
       control: { type: null }
     }
   },
   decorators: [
     () => ({
-      template: '<div class="md:p-6 md:w-3/5 max-w-xl"><story/></div>'
+      template: '<div class="md:p-6 w-64 max-w-xl"><story/></div>'
     })
   ]
 } as Meta<typeof BookCover>
@@ -60,6 +56,15 @@ export const Loading: StoryObj<typeof BookCover> = {
   args: { loading: true }
 }
 
+export const Empty: StoryObj<typeof BookCover> = {
+  render: (args) => ({
+    components: { BookCover },
+    setup: () => ({ args }),
+    template: '<BookCover v-bind="args" v-on="args" />'
+  }),
+  args: { book: new Book({ ...bookDemo, coverUrl: '' }) }
+}
+
 export const NSFW: StoryObj<typeof BookCover> = {
   render: (args) => ({
     components: { BookCover },
@@ -67,18 +72,4 @@ export const NSFW: StoryObj<typeof BookCover> = {
     template: '<BookCover v-bind="args" v-on="args" />'
   }),
   args: { blurNsfw: true }
-}
-
-export const Collection: StoryObj<typeof BookCover> = {
-  render: (args) => ({
-    components: { BookCover },
-    setup: () => ({ args }),
-    template: '<BookCover v-bind="args" v-on="args" />'
-  }),
-  args: {
-    book: new Book({ ...bookDemo, id: '2' }),
-    collection: [...Array.from({ length: 3 }).keys()].map(
-      (i) => new Book({ ...bookDemo, id: String(i + 1) })
-    )
-  }
 }
