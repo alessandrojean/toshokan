@@ -28,7 +28,6 @@ import Avatar from '@/components/Avatar.vue'
 import BookCarousel from '@/components/book/BookCarousel.vue'
 import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
 import Button from '@/components/form/Button.vue'
-import GroupGrid from '@/components/GroupGrid.vue'
 import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
 import StatCard from '@/components/StatCard.vue'
 import useLastAddedQuery from '@/queries/useLastAddedQuery'
@@ -375,9 +374,6 @@ function handleMarkAsRead(book: Book) {
             </Button>
           </template>
         </BookCarousel>
-
-        <!-- Groups -->
-        <GroupGrid />
 
         <!-- Empty collection -->
         <section
