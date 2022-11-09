@@ -123,12 +123,12 @@ function handleReadToday(book: Book) {
     <div class="skeleton h-6 w-48 mt-8 mb-3"></div>
 
     <div
-      class="-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid md:grid-cols-5 lg:grid-cols-6 gap-5"
+      class="-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid md:grid-cols-5 xl:grid-cols-6 gap-5"
     >
       <div
         v-for="idx in 6"
         :key="idx"
-        :class="idx === 5 ? 'md:hidden lg:block' : ''"
+        :class="idx === 5 ? 'md:hidden xl:block' : ''"
         class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
       >
         <BookCard
