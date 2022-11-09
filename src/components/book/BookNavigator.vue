@@ -53,7 +53,7 @@ const { t } = useI18n({ useScope: 'global' })
       class="font-medium text-sm flex divide-x dark:divide-gray-700 dark:text-gray-300"
     >
       <li v-if="previous">
-        <router-link
+        <RouterLink
           :class="[
             !next ? 'rounded-full pr-5' : 'rounded-l-full pr-2.5',
             'bg-white dark:bg-gray-800 group shadow-md flex items-center py-1.5 pl-2.5 navigation-link previous has-ring-focus'
@@ -64,10 +64,10 @@ const { t } = useI18n({ useScope: 'global' })
             <ArrowLeftIcon class="w-5 h-5 mr-2" />
           </span>
           <span>{{ t('pagination.previous') }}</span>
-        </router-link>
+        </RouterLink>
       </li>
       <li v-if="next">
-        <router-link
+        <RouterLink
           :class="[
             !previous ? 'rounded-full pl-5' : 'rounded-r-full pl-2.5',
             'bg-white dark:bg-gray-800 group shadow-md flex items-center py-1.5 pr-2.5 navigation-link next has-ring-focus'
@@ -78,7 +78,7 @@ const { t } = useI18n({ useScope: 'global' })
           <span aria-hidden="true">
             <ArrowRightIcon class="w-5 h-5 ml-2" />
           </span>
-        </router-link>
+        </RouterLink>
       </li>
     </ul>
   </nav>

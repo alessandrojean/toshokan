@@ -7,6 +7,8 @@ import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
+import Button from '@/components/form/Button.vue'
+
 const sheetStore = useSheetStore()
 const { breakpoints: themeBreakpoints } = useTailwindTheme()
 
@@ -134,10 +136,11 @@ function handleKeydown(event: KeyboardEvent) {
       class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
       ref="container"
     >
-      <router-link
+      <Button
         v-for="(group, idx) in groups"
         :key="group.name"
-        class="button justify-between py-2.5"
+        as="RouterLink"
+        class="justify-between"
         :to="{ name: 'DashboardLibrary', query: { group: group.name } }"
         :tabindex="focused === idx ? '0' : '-1'"
         @keydown="handleKeydown"
@@ -151,7 +154,7 @@ function handleKeydown(event: KeyboardEvent) {
         >
           {{ n(group.count, 'integer') }}
         </span>
-      </router-link>
+      </Button>
     </div>
   </section>
 </template>

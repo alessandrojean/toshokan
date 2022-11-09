@@ -8,6 +8,7 @@ import { CalendarIcon, CheckIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon as CheckIconSolid } from '@heroicons/vue/20/solid'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 
+import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
 import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
@@ -94,19 +95,18 @@ function handleCalendar(close: () => void) {
                   />
                 </div>
 
-                <button
+                <Button
                   type="submit"
-                  class="button is-ghost is-icon-only p-1"
+                  kind="ghost"
+                  icon-only
+                  class="!p-1"
+                  rounded
                   :disabled="disabled"
                   :title="t('dashboard.details.editForm.finish')"
+                  v-slot="{ iconClass }"
                 >
-                  <span aria-hidden="true">
-                    <CheckIconSolid class="w-4 h-4" />
-                  </span>
-                  <span class="sr-only">
-                    {{ t('dashboard.details.editForm.finish') }}
-                  </span>
-                </button>
+                  <CheckIconSolid :class="iconClass" />
+                </Button>
               </form>
             </PopoverPanel>
           </ScaleTransition>

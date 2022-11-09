@@ -23,9 +23,9 @@ const links = computed(() => [
     <nav>
       <ul>
         <li v-for="link in links" :key="link.route">
-          <router-link :to="{ name: link.route }">
+          <RouterLink :to="{ name: link.route }">
             {{ link.text }}
-          </router-link>
+          </RouterLink>
         </li>
       </ul>
     </nav>

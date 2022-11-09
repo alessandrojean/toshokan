@@ -107,7 +107,7 @@ const blurCover = computed(() => {
   </div>
   <component
     v-else
-    :is="imageOnly ? 'div' : 'router-link'"
+    :is="imageOnly ? 'div' : 'RouterLink'"
     :to="
       !imageOnly
         ? { name: 'BookDetails', params: { bookId: book.id } }
@@ -120,7 +120,7 @@ const blurCover = computed(() => {
     :tabindex="!imageOnly ? tabindex : undefined"
   >
     <component
-      :is="imageOnly ? 'router-link' : 'div'"
+      :is="imageOnly ? 'RouterLink' : 'div'"
       :class="blurCover ? 'blurred' : ''"
       :to="
         imageOnly

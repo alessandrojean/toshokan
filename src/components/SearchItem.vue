@@ -75,7 +75,7 @@ const authorsFormatted = computed(() => {
 </script>
 
 <template>
-  <router-link
+  <RouterLink
     :to="{ name: 'BookDetails', params: { bookId: result.id } }"
     class="result group has-ring-focus focus-visible:ring-inset dark:focus-visible:ring-offset-gray-800"
     ref="searchItem"
@@ -125,7 +125,7 @@ const authorsFormatted = computed(() => {
     <span aria-hidden="true" class="shrink-0 hidden sm:block">
       <ChevronRightIcon class="chevron" />
     </span>
-  </router-link>
+  </RouterLink>
 </template>
 
 <style lang="postcss" scoped>

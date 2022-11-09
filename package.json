@@ -60,6 +60,7 @@
     "@babel/eslint-parser": "7.19.1",
     "@babel/preset-env": "7.20.2",
     "@intlify/vite-plugin-vue-i18n": "6.0.3",
+    "@storybook/addon-a11y": "^7.0.0-alpha.48",
     "@storybook/addon-actions": "^7.0.0-alpha.48",
     "@storybook/addon-essentials": "^7.0.0-alpha.48",
     "@storybook/addon-interactions": "^7.0.0-alpha.48",

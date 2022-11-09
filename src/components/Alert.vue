@@ -90,7 +90,9 @@ const borderColor = computed(() => {
           aria-hidden="true"
         />
       </div>
-      <div class="space-y-2 dark:text-gray-200">
+      <div
+        class="space-y-2 dark:text-gray-200 [&_a]:underline [&_a]:font-medium"
+      >
         <p
           v-if="title && title.length > 0"
           :class="[

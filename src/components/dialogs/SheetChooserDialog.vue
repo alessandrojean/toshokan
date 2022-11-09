@@ -28,6 +28,8 @@ import {
 } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
+import Button from '@/components/form/Button.vue'
+
 const props = defineProps<{ isOpen: boolean }>()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -240,21 +242,13 @@ watch(isOpen, (newIsOpen) => {
             </RadioGroup>
 
             <div class="dialog-footer">
-              <button
-                type="button"
-                class="button is-primary ml-2"
-                @click.stop="selectCurrent"
-              >
+              <Button kind="primary" class="ml-2" @click.stop="selectCurrent">
                 {{ t('dashboard.sheetChooser.actionSelect') }}
-              </button>
+              </Button>
 
-              <button
-                type="button"
-                class="button is-ghost"
-                @click.stop="closeDialog"
-              >
+              <Button kind="ghost" @click.stop="closeDialog">
                 {{ t('dashboard.sheetChooser.actionCancel') }}
-              </button>
+              </Button>
             </div>
           </DialogPanel>
         </TransitionChild>

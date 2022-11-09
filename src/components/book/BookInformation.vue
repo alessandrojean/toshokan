@@ -29,6 +29,7 @@ import {
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
 import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
+import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookInformationProps {
@@ -233,22 +234,25 @@ const canEdit = computed(() => sheetStore.canEdit)
 
     <!-- Book actions -->
     <div class="flex space-x-2" v-if="canEdit">
-      <button
+      <Button
         v-if="showBookInfo"
-        class="button text-base is-primary justify-center md:justify-start flex-1 md:flex-initial"
+        kind="primary"
+        size="large"
+        class="justify-center md:justify-start flex-1 md:flex-initial"
         @click="$emit('click:edit', $event)"
         :disabled="disabled"
       >
-        <span aria-hidden="true">
-          <PencilIcon class="w-5 h-5" />
-        </span>
-        {{ t('dashboard.details.header.edit') }}
-      </button>
+        <template #left="{ iconClass }">
+          <PencilIcon :class="iconClass" />
+        </template>
+        <span>{{ t('dashboard.details.header.edit') }}</span>
+      </Button>
       <div v-else class="skeleton flex-1 md:flex-initial md:w-28 h-11"></div>
 
-      <button
+      <Button
         v-if="showBookInfo && !book!.isFuture"
-        class="button is-icon-only px-2.5"
+        size="large"
+        icon-only
         :disabled="disabled"
         :title="
           t('dashboard.details.header.options.markAs', {
@@ -256,25 +260,16 @@ const canEdit = computed(() => sheetStore.canEdit)
           })
         "
         @click="$emit('click:toggleStatus', $event)"
+        v-slot="{ iconClass }"
       >
-        <span aria-hidden="true">
-          <BookmarkSolidIcon v-if="book!.isRead" />
-          <BookmarkOutlineIcon v-else />
-        </span>
-        <span class="sr-only">
-          {{
-            t('dashboard.details.header.options.markAs', {
-              status: t(
-                book!.isRead ? 'book.unread' : 'book.read'
-              ).toLowerCase()
-            })
-          }}
-        </span>
-      </button>
+        <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
+        <BookmarkOutlineIcon v-else :class="iconClass" />
+      </Button>
 
-      <button
+      <Button
         v-if="showBookInfo"
-        class="button is-icon-only px-2.5"
+        size="large"
+        icon-only
         :disabled="disabled"
         :title="
           t(
@@ -284,51 +279,35 @@ const canEdit = computed(() => sheetStore.canEdit)
           )
         "
         @click="$emit('click:toggleFavorite', $event)"
+        v-slot="{ iconClass }"
       >
-        <span aria-hidden="true">
-          <StarSolidIcon v-if="book!.favorite" />
-          <StarOutlineIcon v-else />
-        </span>
-        <span class="sr-only">
-          {{
-            t(
-              `dashboard.details.header.options.${
-                book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
-              }`
-            )
-          }}
-        </span>
-      </button>
+        <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
+        <StarOutlineIcon v-else :class="iconClass" />
+      </Button>
 
-      <button
+      <Button
         v-if="showBookInfo"
-        class="button is-icon-only px-2.5"
+        size="large"
+        icon-only
         :disabled="disabled"
         :title="t('dashboard.details.header.options.share')"
         @click="$emit('click:share', $event)"
+        v-slot="{ iconClass }"
       >
-        <span aria-hidden="true">
-          <ShareIcon />
-        </span>
-        <span class="sr-only">
-          {{ t('dashboard.details.header.options.share') }}
-        </span>
-      </button>
+        <ShareIcon :class="iconClass" />
+      </Button>
 
-      <button
+      <Button
         v-if="showBookInfo"
-        class="button is-icon-only px-2.5"
+        size="large"
+        icon-only
         :disabled="disabled"
         :title="t('dashboard.details.header.options.delete')"
         @click="$emit('click:delete', $event)"
+        v-slot="{ iconClass }"
       >
-        <span aria-hidden="true">
-          <TrashIcon />
-        </span>
-        <span class="sr-only">
-          {{ t('dashboard.details.header.options.delete') }}
-        </span>
-      </button>
+        <TrashIcon :class="iconClass" />
+      </Button>
     </div>
 
     <!-- Book metadata -->

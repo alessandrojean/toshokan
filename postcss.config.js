@@ -1,7 +1,8 @@
 import tailwind from 'tailwindcss'
+import nesting from 'tailwindcss/nesting'
 import autoprefixer from 'autoprefixer'
 import tailwindConfig from './tailwind.config'
 
 export default {
-  plugins: [tailwind(tailwindConfig), autoprefixer]
+  plugins: [nesting, tailwind(tailwindConfig), autoprefixer]
 }

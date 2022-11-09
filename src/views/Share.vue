@@ -16,6 +16,7 @@ import {
 import { BuildingLibraryIcon, QrCodeIcon } from '@heroicons/vue/20/solid'
 
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
+import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
@@ -110,7 +111,7 @@ const shareDialogOpen = ref(false)
     <LoadingIndicator :loading="loading" />
 
     <div class="max-w-2xl w-full space-y-8 flex flex-col items-center md:block">
-      <router-link
+      <RouterLink
         :to="{ name: 'Home' }"
         class="inline-flex items-center rounded-md has-ring-focus dark:focus-visible:ring-offset-gray-800"
       >
@@ -130,7 +131,7 @@ const shareDialogOpen = ref(false)
         >
           BETA
         </sup>
-      </router-link>
+      </RouterLink>
       <FadeTransition>
         <div
           v-if="book"
@@ -160,18 +161,17 @@ const shareDialogOpen = ref(false)
                 />
               </FadeTransition>
             </div>
-            <button
-              type="button"
-              class="button w-full justify-center mt-4"
+            <Button
+              class="w-full justify-center mt-4"
               @click="shareDialogOpen = true"
             >
-              <span aria-hidden="true">
-                <QrCodeIcon />
-              </span>
+              <template #left="{ iconClass }">
+                <QrCodeIcon :class="iconClass" />
+              </template>
               <span>
                 {{ t('share.actionQrCode') }}
               </span>
-            </button>
+            </Button>
           </div>
           <div class="flex-grow px-4 md:px-0">
             <p

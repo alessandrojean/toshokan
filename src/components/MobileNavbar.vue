@@ -109,7 +109,7 @@ function showSettingsDialog(close: () => void) {
     >
       <template v-for="item in items" :key="item.to">
         <li v-if="!item.hidden" class="flex-1 sm:flex-initial">
-          <router-link
+          <RouterLink
             custom
             :to="{ name: item.to }"
             v-slot="{ href, navigate, isActive, isExactActive }"
@@ -145,7 +145,7 @@ function showSettingsDialog(close: () => void) {
                 {{ item.title }}
               </span>
             </a>
-          </router-link>
+          </RouterLink>
         </li>
       </template>
 

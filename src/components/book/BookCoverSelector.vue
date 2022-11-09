@@ -11,6 +11,7 @@ import { FaceFrownIcon } from '@heroicons/vue/24/outline'
 import { PlusIcon } from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
+import Button from '@/components/form/Button.vue'
 import CoverOption from '@/components/CoverOption.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
@@ -197,18 +198,21 @@ function unselect(url: string) {
             v-model="state.customUrl"
             :placeholder="t('book.coverSelector.custom.placeholder')"
           />
-          <button
-            type="button"
-            class="button is-icon-only md:not-is-icon-only px-2 md:px-4"
+          <Button
+            icon-only
+            class="md:!hidden"
+            :title="t('book.coverSelector.custom.add')"
             @click="addNewImage"
+            v-slot="{ iconClass }"
           >
-            <span aria-hidden="true">
-              <PlusIcon class="w-5 h-5" />
-            </span>
-            <span class="sr-only md:not-sr-only">
-              {{ t('book.coverSelector.custom.add') }}
-            </span>
-          </button>
+            <PlusIcon :class="iconClass" />
+          </Button>
+          <Button icon-only class="hidden md:flex !px-4" @click="addNewImage">
+            <template #left="{ iconClass }">
+              <PlusIcon :class="iconClass" />
+            </template>
+            <span>{{ t('book.coverSelector.custom.add') }}</span>
+          </Button>
         </div>
       </div>
 

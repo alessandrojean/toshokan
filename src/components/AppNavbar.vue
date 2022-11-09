@@ -106,7 +106,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="relative flex items-center justify-between h-16">
         <div class="flex-1 flex items-center justify-start">
-          <router-link
+          <RouterLink
             :to="{ name: 'Home' }"
             :class="isOnTop ? 'opacity-95' : ''"
             class="shrink-0 flex items-center rounded-md hocus:bg-gray-700 group px-2 py-1 -ml-2 has-ring-focus focus-visible:ring-offset-gray-800"
@@ -135,7 +135,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
             >
               BETA
             </sup>
-          </router-link>
+          </RouterLink>
 
           <div
             class="hidden md:block md:ml-2 h-fit"
@@ -150,7 +150,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
                   :lang="item.lang || ''"
                   class="self-stretch"
                 >
-                  <router-link
+                  <RouterLink
                     :exact="item.exact"
                     :exact-active-class="item.exact ? 'is-active' : undefined"
                     :active-class="!item.exact ? 'is-active' : undefined"
@@ -158,7 +158,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
                     class="block nav-link text-gray-300 hocus:bg-gray-700 hocus:text-white px-3 py-2 rounded-md text-sm font-medium has-ring-focus focus-visible:ring-offset-gray-800"
                   >
                     {{ item.title }}
-                  </router-link>
+                  </RouterLink>
                 </li>
               </template>
             </ul>

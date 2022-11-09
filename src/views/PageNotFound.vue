@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 
 import { ArrowLeftIcon } from '@heroicons/vue/20/solid'
+import Button from '@/components/form/Button.vue'
 
 const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)
@@ -37,25 +38,33 @@ const { t } = useI18n({ useScope: 'global' })
             </p>
           </div>
           <div class="mt-10 md:ml-6 md:pl-6">
-            <router-link
+            <Button
+              as="RouterLink"
+              kind="ghost"
+              link
               :to="{
                 name: authenticated && authorized ? 'DashboardHome' : 'Home'
               }"
-              class="button is-ghost is-link -ml-3 group"
+              class="-ml-3 group"
             >
-              <span aria-hidden="true">
+              <template #left="{ iconClass }">
                 <ArrowLeftIcon
-                  class="motion-safe:transition-transform group-hover:-translate-x-1"
+                  :class="[
+                    iconClass,
+                    'motion-safe:transition-transform group-hover:-translate-x-1'
+                  ]"
                 />
+              </template>
+              <span>
+                {{
+                  t(
+                    authenticated && authorized
+                      ? 'pageNotFound.goBackDashboard'
+                      : 'pageNotFound.goBack'
+                  )
+                }}
               </span>
-              {{
-                t(
-                  authenticated && authorized
-                    ? 'pageNotFound.goBackDashboard'
-                    : 'pageNotFound.goBack'
-                )
-              }}
-            </router-link>
+            </Button>
           </div>
         </div>
       </header>

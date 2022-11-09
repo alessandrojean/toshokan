@@ -15,6 +15,8 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
+import Button from '@/components/form/Button.vue'
+
 export interface BookDeleteDialogProps {
   open?: boolean
   quantity?: number
@@ -122,20 +124,19 @@ watch(open, (newOpen) => {
             <div
               class="bg-gray-50 dark:bg-gray-800 dark:border-t dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
             >
-              <button
-                type="button"
-                class="button is-danger sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
+              <Button
+                kind="danger"
+                class="sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
                 @click="handleDelete"
               >
                 {{ t('book.deleteModal.delete') }}
-              </button>
-              <button
-                type="button"
-                class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start"
+              </Button>
+              <Button
+                class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start"
                 @click="$emit('update:open', false)"
               >
                 {{ t('book.deleteModal.cancel') }}
-              </button>
+              </Button>
             </div>
           </DialogPanel>
         </TransitionChild>

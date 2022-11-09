@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/20/solid'
+import Button from '@/components/form/Button.vue'
 
 export interface StatCardProps {
   alwaysHidden?: boolean
@@ -77,13 +78,21 @@ const { t } = useI18n({ useScope: 'global' })
         </transition>
       </div>
     </div>
-    <button
+    <Button
       v-if="sensitive && !alwaysHidden"
-      type="button"
-      class="button is-ghost is-icon-only -mr-2 p-2"
+      kind="ghost"
+      icon-only
+      rounded
+      class="-mr-2"
+      :title="
+        t(`dashboard.home.overview.${!showValue ? 'showValue' : 'hideValue'}`, {
+          title
+        })
+      "
       @click.stop="showValue = !showValue"
+      v-slot="{ iconClass }"
     >
-      <transition
+      <Transition
         mode="out-in"
         leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
         leave-from-class="opacity-100 rotate-0"
@@ -92,17 +101,9 @@ const { t } = useI18n({ useScope: 'global' })
         enter-from-class="opacity-0 -rotate-180"
         enter-to-class="opacity-100 rotate-0"
       >
-        <EyeIcon class="text-gray-500" v-if="!showValue" />
-        <EyeSlashIcon class="text-gray-500" v-else />
-      </transition>
-      <span class="sr-only">
-        {{
-          t(
-            `dashboard.home.overview.${!showValue ? 'showValue' : 'hideValue'}`,
-            { title }
-          )
-        }}
-      </span>
-    </button>
+        <EyeIcon :class="iconClass" v-if="!showValue" />
+        <EyeSlashIcon :class="iconClass" v-else />
+      </Transition>
+    </Button>
   </div>
 </template>

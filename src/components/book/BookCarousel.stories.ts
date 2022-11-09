@@ -1,4 +1,5 @@
 import BookCarousel from './BookCarousel.vue'
+import Button from '../form/Button.vue'
 
 import { Meta, StoryObj } from '@storybook/vue3'
 import Book from '@/model/Book'
@@ -80,12 +81,12 @@ export const Loading: StoryObj<typeof BookCarousel> = {
 
 export const WithAction: StoryObj<typeof BookCarousel> = {
   render: (args) => ({
-    components: { BookCarousel },
+    components: { BookCarousel, Button },
     setup: () => ({ args }),
     template: `
       <BookCarousel v-bind="args" v-on="args">
         <template #actions>
-          <button class="button is-ghost">Button</button>
+          <Button kind="ghost">Action button</Button>
         </template>
       </BookCarousel>
     `

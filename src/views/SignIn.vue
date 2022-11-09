@@ -194,12 +194,12 @@ const { darkMode } = useDarkMode()
           >
             <ul class="flex flex-wrap pr-8">
               <li v-for="link in links" :key="link.route">
-                <router-link
+                <RouterLink
                   :to="{ name: link.route }"
                   class="utility-link mr-2 mb-2"
                 >
                   {{ link.text }}
-                </router-link>
+                </RouterLink>
               </li>
             </ul>
             <ThemeToggle class="shrink-0 -mr-1" bottom :light="!darkMode" />

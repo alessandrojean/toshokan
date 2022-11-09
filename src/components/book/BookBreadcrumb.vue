@@ -47,7 +47,7 @@ function showCollection() {
   >
     <ul class="flex space-x-1 md:space-x-3 items-center">
       <li v-if="!hideHome" class="shrink-0">
-        <router-link
+        <RouterLink
           :to="{ name: 'DashboardHome' }"
           :title="t('app.routes.dashboard.home')"
           class="w-5 h-5 block hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus dark:focus-visible:ring-offset-gray-800 rounded"
@@ -58,29 +58,29 @@ function showCollection() {
           <span class="sr-only">
             {{ t('app.routes.dashboard.home') }}
           </span>
-        </router-link>
+        </RouterLink>
       </li>
       <li aria-hidden="true" v-if="!hideHome" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
       <li class="shrink-0">
-        <router-link
+        <RouterLink
           :to="{ name: 'DashboardLibrary' }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
         >
           {{ t('dashboard.details.header.library') }}
-        </router-link>
+        </RouterLink>
       </li>
       <li aria-hidden="true" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
       <li class="shrink-0">
-        <router-link
+        <RouterLink
           :to="{ name: 'DashboardLibrary', query: { group: book!.group } }"
           class="hover:text-gray-700 dark:hover:text-gray-100 focus-visible:text-gray-700 dark:focus-visible:text-gray-100 has-ring-focus rounded dark:focus-visible:ring-offset-gray-900"
         >
           {{ book!.group }}
-        </router-link>
+        </RouterLink>
       </li>
       <li
         aria-hidden="true"

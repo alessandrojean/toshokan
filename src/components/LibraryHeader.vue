@@ -15,6 +15,7 @@ import {
 } from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
+import Button from '@/components/form/Button.vue'
 
 defineProps({
   loading: Boolean,
@@ -79,7 +80,7 @@ const owner = computed(() => ({
 <template>
   <header class="bg-white shadow dark:bg-gray-800">
     <div
-      class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8"
+      class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8"
     >
       <div class="flex-1 items-center">
         <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
@@ -104,7 +105,7 @@ const owner = computed(() => ({
           />
           <div class="grow min-w-0">
             <h1
-              class="text-xl font-display font-semibold text-gray-900 dark:text-gray-100"
+              class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
             >
               {{ t('dashboard.library.title') }}
             </h1>
@@ -161,30 +162,29 @@ const owner = computed(() => ({
           ></div>
         </template>
         <template v-else>
-          <button
-            type="button"
-            class="button flex-1 md:flex-initial justify-center md:justify-start"
+          <Button
+            class="flex-1 md:flex-initial justify-center md:justify-start"
             @click.stop="$emit('click:filter')"
             v-if="!sheetIsEmpty"
             :disabled="loading || writing"
           >
-            <span aria-hidden="true">
-              <FunnelIcon aria-hidden="true" />
-            </span>
-            {{ t('dashboard.library.filter') }}
-          </button>
-          <button
+            <template #left="{ iconClass }">
+              <FunnelIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.library.filter') }}</span>
+          </Button>
+          <Button
             v-if="canEdit"
-            type="button"
+            kind="primary"
             @click="$emit('click:new')"
-            class="button is-primary flex-1 md:flex-initial justify-center md:justify-start"
+            class="flex-1 md:flex-initial justify-center md:justify-start"
             :disabled="loading || writing"
           >
-            <span aria-hidden="true">
-              <PlusIcon aria-hidden="true" />
-            </span>
-            {{ t('dashboard.library.newBook') }}
-          </button>
+            <template #left="{ iconClass }">
+              <PlusIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.library.newBook') }}</span>
+          </Button>
         </template>
       </div>
     </div>

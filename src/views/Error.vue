@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 
 import { IdentificationIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
+import Button from '@/components/form/Button.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -81,27 +82,27 @@ watch(hasGrantedScopes, (newValue) => {
             </div>
           </div>
           <div class="mt-10 md:pl-12 flex justify-between items-center w-full">
-            <button
+            <Button
               v-if="criticalError?.cause?.refresh"
-              class="button is-primary"
+              kind="primary"
               @click="refresh"
             >
-              <span aria-hidden="true">
-                <ArrowPathIcon class="-scale-x-100" />
-              </span>
+              <template #left="{ iconClass }">
+                <ArrowPathIcon :class="[iconClass, '-scale-x-100']" />
+              </template>
               <span>{{ t('errors.refresh') }}</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               v-if="!hasGrantedScopes"
-              class="button is-primary"
+              kind="primary"
               @click="grantPermissions"
             >
-              <span aria-hidden="true">
-                <IdentificationIcon />
-              </span>
+              <template #left="{ iconClass }">
+                <IdentificationIcon :class="iconClass" />
+              </template>
               <span>{{ t('errors.grantPermissions') }}</span>
-            </button>
+            </Button>
 
             <p class="text-gray-400 text-xs hidden md:block">
               {{ t('footer.version', { version: appVersion }) }}

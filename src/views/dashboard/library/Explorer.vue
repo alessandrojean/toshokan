@@ -42,6 +42,7 @@ import BookTable, {
   SortEvent,
   ToggleFavoriteEvent
 } from '@/components/book/BookTable.vue'
+import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LibraryFiltersDialog, {
   type FilterState
@@ -597,20 +598,18 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
                     "
                     class="skeleton h-9 w-28"
                   />
-                  <button
+                  <Button
                     v-else
-                    type="button"
-                    class="button"
                     :disabled="
                       !paginationInfo.has_previous_page || loading || writing
                     "
                     @click.stop="handlePage(paginationInfo.current_page - 1)"
                   >
-                    <span aria-hidden="true">
-                      <ChevronLeftIcon aria-hidden="true" />
-                    </span>
-                    {{ t('pagination.previous') }}
-                  </button>
+                    <template #left="{ iconClass }">
+                      <ChevronLeftIcon :class="iconClass" />
+                    </template>
+                    <span>{{ t('pagination.previous') }}</span>
+                  </Button>
                 </li>
 
                 <li>
@@ -621,20 +620,18 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
                     "
                     class="skeleton h-9 w-28"
                   />
-                  <button
+                  <Button
                     v-else
-                    type="button"
-                    class="button"
                     :disabled="
                       !paginationInfo.has_next_page || loading || writing
                     "
                     @click.stop="handlePage(paginationInfo.current_page + 1)"
                   >
-                    {{ t('pagination.next') }}
-                    <span aria-hidden="true">
-                      <ChevronRightIcon class="is-right" aria-hidden="true" />
-                    </span>
-                  </button>
+                    <span>{{ t('pagination.next') }}</span>
+                    <template #right="{ iconClass }">
+                      <ChevronRightIcon :class="iconClass" />
+                    </template>
+                  </Button>
                 </li>
               </ul>
             </nav>
@@ -675,16 +672,17 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
           <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
             {{ t('dashboard.library.empty.description') }}
           </p>
-          <button
+          <Button
             v-if="canEdit"
-            class="button is-primary text-lg"
+            kind="primary"
+            size="large"
             @click="openCreateDialog"
           >
-            <span aria-hidden="true">
-              <PlusIcon aria-hidden="true" />
-            </span>
-            {{ t('dashboard.library.newBook') }}
-          </button>
+            <template #left="{ iconClass }">
+              <PlusIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.library.newBook') }}</span>
+          </Button>
         </section>
 
         <section
@@ -706,12 +704,12 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
           <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
             {{ t('dashboard.library.noResults.description') }}
           </p>
-          <button class="button text-lg" @click="filterOpen = true">
-            <span aria-hidden="true">
-              <FunnelIcon />
-            </span>
-            {{ t('dashboard.library.filter') }}
-          </button>
+          <Button size="large" @click="filterOpen = true">
+            <template #left="{ iconClass }">
+              <FunnelIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.library.filter') }}</span>
+          </Button>
         </section>
       </FadeTransition>
     </div>

@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/auth'
 import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
 
+import Button from '@/components/form/Button.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
@@ -39,38 +40,45 @@ const { t } = useI18n({ useScope: 'global' })
           </sup>
         </h1>
         <div class="flex-1 hidden md:block md:ml-6">
-          <router-link :to="{ name: 'Instructions' }" class="button is-ghost">
+          <Button as="RouterLink" kind="ghost" :to="{ name: 'Instructions' }">
             {{ t('home.header.instructions') }}
-          </router-link>
+          </Button>
         </div>
         <div class="flex items-center">
-          <router-link
+          <Button
+            as="RouterLink"
+            kind="primary"
             :to="{ name: 'DashboardHome' }"
-            class="button is-primary is-rounded"
+            rounded
             v-if="authenticated && authorized"
           >
             {{ t('home.header.dashboard') }}
-          </router-link>
+          </Button>
           <ThemeToggle light class="ml-3" />
-          <router-link
+          <Button
+            as="RouterLink"
+            kind="primary"
             :to="{ name: 'DashboardHome' }"
-            class="button is-primary is-rounded ml-3 hidden md:flex"
+            rounded
+            class="ml-3 hidden md:flex"
             v-if="!authenticated"
           >
             {{ t('home.header.signIn') }}
-          </router-link>
-          <router-link
+          </Button>
+          <Button
+            as="RouterLink"
+            kind="primary"
+            size="large"
             :to="{ name: 'SignIn' }"
-            class="button is-primary is-rounded is-icon-only ml-3 md:hidden"
+            :aria-label="t('home.header.signIn')"
+            rounded
+            icon-only
+            class="ml-3 md:hidden"
             v-if="!authenticated"
+            v-slot="{ iconClass }"
           >
-            <span aria-hidden="true">
-              <ArrowLeftOnRectangleIcon class="w-5 h-5 rotate-180" />
-            </span>
-            <span class="sr-only">
-              {{ t('home.header.signIn') }}
-            </span>
-          </router-link>
+            <ArrowLeftOnRectangleIcon :class="[iconClass, 'rotate-180']" />
+          </Button>
           <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
         </div>
       </div>

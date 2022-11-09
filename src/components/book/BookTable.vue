@@ -11,6 +11,7 @@ import Book, {
   STATUS_READ,
   STATUS_UNREAD
 } from '@/model/Book'
+import type { Sort } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 
@@ -21,7 +22,7 @@ import {
   StarIcon
 } from '@heroicons/vue/20/solid'
 import { PhotoIcon } from '@heroicons/vue/24/outline'
-import type { Sort } from '@/stores/collection'
+import Button from '@/components/form/Button.vue'
 
 export interface BookTable {
   currentPage?: number
@@ -589,10 +590,9 @@ defineExpose({ focus, focusOnActiveHeader })
                 </template>
               </button>
               <div v-else-if="!skeleton" class="space-x-2 ml-3">
-                <button
+                <Button
                   v-if="!hasFutureSelected"
-                  type="button"
-                  class="button is-small"
+                  size="small"
                   @click="handleMarkAsClick"
                 >
                   {{
@@ -600,12 +600,8 @@ defineExpose({ focus, focusOnActiveHeader })
                       status: inverseStatusText.toLocaleLowerCase(locale)
                     })
                   }}
-                </button>
-                <button
-                  type="button"
-                  class="button is-small"
-                  @click="handleToggleFavorite"
-                >
+                </Button>
+                <Button size="small" @click="handleToggleFavorite">
                   {{
                     t(
                       inverseFavorite
@@ -613,16 +609,12 @@ defineExpose({ focus, focusOnActiveHeader })
                         : 'dashboard.details.header.options.removeFromFavorites'
                     )
                   }}
-                </button>
-                <button
-                  type="button"
-                  class="button is-small"
-                  @click="handleDeleteSelection"
-                >
+                </Button>
+                <Button size="small" @click="handleDeleteSelection">
                   {{
                     t('dashboard.library.items.tableColumns.deleteSelection')
                   }}
-                </button>
+                </Button>
               </div>
               <div
                 v-else
@@ -833,18 +825,19 @@ defineExpose({ focus, focusOnActiveHeader })
               <td
                 class="pr-6 py-4 w-16 md:whitespace-nowrap text-right text-sm font-medium"
               >
-                <router-link
+                <Button
+                  as="RouterLink"
+                  kind="ghost"
+                  icon-only
+                  rounded
                   :to="{ name: 'BookDetails', params: { bookId: book.id } }"
-                  class="button justify-center w-10 h-10 p-2 -mr-2 is-ghost is-icon-only bg-transparent"
+                  class="-mr-2"
                   tabindex="-1"
+                  :title="t('dashboard.library.items.view')"
+                  v-slot="{ iconClass }"
                 >
-                  <span class="sr-only">
-                    {{ t('dashboard.library.items.view') }}
-                  </span>
-                  <span aria-hidden="true">
-                    <EllipsisHorizontalIcon />
-                  </span>
-                </router-link>
+                  <EllipsisHorizontalIcon :class="iconClass" />
+                </Button>
               </td>
             </tr>
           </template>

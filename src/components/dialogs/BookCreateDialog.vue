@@ -33,6 +33,7 @@ import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
 import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import BulletSteps from '@/components/BulletSteps.vue'
+import Button from '@/components/form/Button.vue'
 import DescriptionList, {
   type InfoLine
 } from '@/components/DescriptionList.vue'
@@ -611,59 +612,43 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
           </div>
 
           <div class="dialog-footer">
-            <button
+            <Button
               v-if="bookCreatedId"
-              type="button"
-              class="button is-primary"
+              kind="primary"
               @click.stop="viewBook(bookCreatedId)"
             >
               {{ t('book.createdModal.view') }}
-            </button>
-            <button
+            </Button>
+            <Button
               v-else-if="step === 4"
-              type="button"
-              class="button is-primary"
+              kind="primary"
               @click.stop="handleInsertBook"
             >
-              <CheckIcon aria-hidden="true" />
-              {{ t('dashboard.details.editForm.finish') }}
-            </button>
-            <button
-              v-else
-              type="button"
-              class="button is-primary"
-              @click.stop="nextStep"
-            >
-              {{ nextStepText }}
-              <span aria-hidden="true">
-                <ArrowRightIcon class="is-right" aria-hidden="true" />
-              </span>
-            </button>
+              <template #left="{ iconClass }">
+                <CheckIcon :class="iconClass" />
+              </template>
+              <span>{{ t('dashboard.details.editForm.finish') }}</span>
+            </Button>
+            <Button v-else kind="primary" @click.stop="nextStep">
+              <span>{{ nextStepText }}</span>
+              <template #right="{ iconClass }">
+                <ArrowRightIcon :class="iconClass" />
+              </template>
+            </Button>
 
-            <button
-              v-if="step === 1"
-              type="button"
-              class="button is-ghost"
-              @click.stop="closeDialog"
-            >
+            <Button v-if="step === 1" kind="ghost" @click.stop="closeDialog">
               {{ t('dashboard.details.editForm.cancel') }}
-            </button>
-            <button
+            </Button>
+            <Button
               v-else-if="!bookCreatedId"
-              type="button"
-              class="button is-ghost"
+              kind="ghost"
               @click.stop="previousStep"
             >
               {{ t('dashboard.newBook.goBack') }}
-            </button>
-            <button
-              v-else
-              type="button"
-              class="button is-ghost"
-              @click.stop="resetSteps"
-            >
+            </Button>
+            <Button v-else kind="ghost" @click.stop="resetSteps">
               {{ t('book.createdModal.newBook') }}
-            </button>
+            </Button>
           </div>
 
           <LoadingIndicator :loading="loading || inserting" :blur="false" />

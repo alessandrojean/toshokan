@@ -24,6 +24,7 @@ import {
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 import Avatar from '@/components/Avatar.vue'
+import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import Paginator from '@/components/Paginator.vue'
@@ -490,25 +491,27 @@ function focusOnResults() {
                         </select>
                       </div>
 
-                      <button
-                        class="button direction-button is-icon-only"
+                      <Button
                         :disabled="searchLoading"
+                        size="small"
+                        class="!px-2 !rounded-l-none !rounded-r-md"
+                        icon-only
                         @click="toggleSortDirection"
+                        :title="
+                          t(
+                            sortDirection === 'asc'
+                              ? 'dashboard.library.filters.sortDirection.asc'
+                              : 'dashboard.library.filters.sortDirection.desc'
+                          )
+                        "
+                        v-slot="{ iconClass }"
                       >
-                        <span class="sr-only">
-                          {{
-                            t(
-                              sortDirection === 'asc'
-                                ? 'dashboard.library.filters.sortDirection.asc'
-                                : 'dashboard.library.filters.sortDirection.desc'
-                            )
-                          }}
-                        </span>
-                        <span aria-hidden="true">
-                          <BarsArrowUpIcon v-if="sortDirection === 'asc'" />
-                          <BarsArrowDownIcon v-else />
-                        </span>
-                      </button>
+                        <BarsArrowUpIcon
+                          v-if="sortDirection === 'asc'"
+                          :class="iconClass"
+                        />
+                        <BarsArrowDownIcon v-else :class="iconClass" />
+                      </Button>
                     </div>
                   </div>
 
@@ -715,30 +718,6 @@ input[type='search']::-webkit-search-results-decoration {
 
 .title {
   @apply text-gray-700 dark:text-gray-200 font-semibold font-display;
-}
-
-.direction-button {
-  @apply relative px-2 py-1.5 rounded-l-none
-    bg-gray-50 dark:bg-gray-800
-    dark:border-gray-600;
-}
-
-.direction-button:hover {
-  @apply bg-gray-100 dark:bg-gray-700;
-}
-
-.direction-button:active {
-  @apply dark:bg-gray-600 dark:border-gray-600;
-}
-
-.direction-button:focus {
-  @apply z-10;
-}
-
-.direction-button:focus-visible {
-  @apply ring ring-offset-0
-    border-primary-500 dark:border-primary-500
-    ring-opacity-30 dark:ring-opacity-50;
 }
 
 .no-results,

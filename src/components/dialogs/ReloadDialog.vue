@@ -17,6 +17,7 @@ import {
 } from '@headlessui/vue'
 
 import { SparklesIcon } from '@heroicons/vue/24/outline'
+import Button from '@/components/form/Button.vue'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW()
 
@@ -120,20 +121,19 @@ const sections = computed(() => {
             <div
               class="shrink-0 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
             >
-              <button
-                type="button"
-                class="button is-primary sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
+              <Button
+                kind="primary"
+                class="sm:ml-3 w-full sm:w-auto justify-center sm:justify-start"
                 @click="updateServiceWorker(true)"
               >
                 {{ t('pwa.newContent.update') }}
-              </button>
-              <button
-                type="button"
-                class="button mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start"
+              </Button>
+              <Button
+                class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto justify-center sm:justify-start"
                 @click="close"
               >
                 {{ t('pwa.newContent.close') }}
-              </button>
+              </Button>
             </div>
           </DialogPanel>
         </TransitionChild>

@@ -12,6 +12,7 @@ import {
   SparklesIcon
 } from '@heroicons/vue/24/outline'
 
+import Button from '@/components/form/Button.vue'
 import CreateBookDialogWireframe from '@/components/wireframes/CreateBookDialog.vue'
 import Dashboard from '@/components/wireframes/Dashboard.vue'
 import DesktopLibrary from '@/components/wireframes/DesktopLibrary.vue'
@@ -189,11 +190,13 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
           <p class="text-white/[0.85]">
             {{ t('home.cta.free') }}
           </p>
-          <router-link
+          <Button
+            as="RouterLink"
+            kind="secondary"
             :to="{
               name: authenticated && authorized ? 'DashboardHome' : 'SignIn'
             }"
-            class="button is-secondary px-4 py-2.5 w-fit"
+            class="!px-4 !py-2.5 w-fit"
           >
             {{
               t(
@@ -202,7 +205,7 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
                   : 'home.cta.signIn'
               )
             }}
-          </router-link>
+          </Button>
         </div>
         <figure class="-mt-8 md:-mt-5 h-80 lg:h-[25rem]">
           <DesktopLibrary
@@ -278,12 +281,5 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
 
 .functionality figure svg {
   @apply w-full h-full shadow-lg rounded-lg border border-gray-200 dark:border-gray-600;
-}
-
-.button.is-secondary {
-  @apply text-primary-600 dark:text-primary-600 border-none
-    dark:bg-white dark:border-0 dark:hover:bg-gray-100
-    focus-visible:ring-offset-primary-600 focus-visible:ring-white
-    dark:focus-visible:ring-offset-primary-600 dark:focus-visible:ring-white;
 }
 </style>

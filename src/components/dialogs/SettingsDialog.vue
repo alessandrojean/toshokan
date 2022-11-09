@@ -35,6 +35,7 @@ import {
 } from '@heroicons/vue/20/solid'
 
 import Alert from '@/components/Alert.vue'
+import Button from '@/components/form/Button.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
 
 const props = defineProps<{ isOpen: boolean }>()
@@ -596,19 +597,14 @@ async function exportAsAndroid() {
                         </p>
                       </div>
                       <div>
-                        <button
-                          type="button"
-                          class="button"
-                          :disabled="exporting"
-                          @click="exportAsAndroid"
-                        >
-                          <span aria-hidden="true">
-                            <ArrowDownTrayIcon />
-                          </span>
+                        <Button :disabled="exporting" @click="exportAsAndroid">
+                          <template #left="{ iconClass }">
+                            <ArrowDownTrayIcon :class="iconClass" />
+                          </template>
                           <span>
                             {{ t('dashboard.settings.export.android.export') }}
                           </span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
@@ -648,14 +644,10 @@ async function exportAsAndroid() {
                         </p>
                       </div>
                       <div>
-                        <button
-                          type="button"
-                          class="button is-danger"
-                          @click="handleDisconnect"
-                        >
-                          <span aria-hidden="true">
-                            <ExclamationTriangleIcon />
-                          </span>
+                        <Button kind="danger" @click="handleDisconnect">
+                          <template #left="{ iconClass }">
+                            <ExclamationTriangleIcon :class="iconClass" />
+                          </template>
                           <span>
                             {{
                               t(
@@ -663,7 +655,7 @@ async function exportAsAndroid() {
                               )
                             }}
                           </span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </TabPanel>
@@ -726,22 +718,16 @@ async function exportAsAndroid() {
             </TabGroup>
 
             <div class="dialog-footer">
-              <button
-                type="button"
-                class="button is-primary ml-2"
-                @click.stop="handleSave"
-              >
-                <CheckIcon aria-hidden="true" />
-                {{ t('dashboard.details.editForm.finish') }}
-              </button>
+              <Button kind="primary" @click.stop="handleSave">
+                <template #left="{ iconClass }">
+                  <CheckIcon :class="iconClass" />
+                </template>
+                <span>{{ t('dashboard.details.editForm.finish') }}</span>
+              </Button>
 
-              <button
-                type="button"
-                class="button is-ghost"
-                @click.stop="closeDialog"
-              >
+              <Button kind="ghost" @click.stop="closeDialog">
                 {{ t('dashboard.details.editForm.cancel') }}
-              </button>
+              </Button>
             </div>
           </DialogPanel>
         </TransitionChild>
@@ -778,7 +764,7 @@ async function exportAsAndroid() {
 }
 
 .dialog-footer {
-  @apply shrink-0 flex flex-row-reverse justify-start
+  @apply shrink-0 flex flex-row-reverse justify-start space-x-2 space-x-reverse
     border-t border-gray-200 dark:border-gray-600
     bg-gray-50 dark:bg-gray-800
     px-4 md:px-6 py-3 md:py-4;

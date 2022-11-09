@@ -12,6 +12,7 @@ import {
   parseFileSingle
 } from '@/services/export/androidExport'
 import { useAuthStore } from '@/stores/auth'
+import { ToshokanOwner } from '@/services/export/schema/library'
 
 import {
   Dialog,
@@ -27,8 +28,8 @@ import {
   XMarkIcon
 } from '@heroicons/vue/20/solid'
 
+import Button from '@/components/form/Button.vue'
 import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import { ToshokanOwner } from '@/services/export/schema/library'
 
 export interface BookShareDialogProps {
   modelValue: boolean
@@ -292,34 +293,34 @@ function handleAnonymousChange(event: Event) {
                   @focus="select"
                 />
 
-                <button
-                  type="button"
-                  class="button is-small flex-shrink-0"
+                <Button
+                  size="small"
+                  class="flex-shrink-0"
                   @click="copyShareUrl"
                 >
-                  <span aria-hidden="true">
-                    <ClipboardIcon />
-                  </span>
+                  <template #left="{ iconClass }">
+                    <ClipboardIcon :class="iconClass" />
+                  </template>
                   <span v-if="showCopiedInfo">
                     {{ t('dashboard.details.share.copied') }}
                   </span>
                   <span v-else>
                     {{ t('dashboard.details.share.actionCopy') }}
                   </span>
-                </button>
+                </Button>
 
-                <a
+                <Button
+                  as="a"
+                  size="small"
+                  icon-only
                   target="_blank"
+                  class="flex-shrink-0 ml-0.5"
                   :href="shareUrl"
-                  class="button is-small is-icon-only flex-shrink-0 ml-0.5"
+                  :title="t('dashboard.details.share.actionOpen')"
+                  v-slot="{ iconClass }"
                 >
-                  <span aria-hidden="true">
-                    <ArrowTopRightOnSquareIcon />
-                  </span>
-                  <span class="sr-only">
-                    {{ t('dashboard.details.share.actionOpen') }}
-                  </span>
-                </a>
+                  <ArrowTopRightOnSquareIcon :class="iconClass" />
+                </Button>
               </div>
             </div>
           </div>
@@ -380,18 +381,17 @@ function handleAnonymousChange(event: Event) {
                 </a>
               </div>
 
-              <button
-                type="button"
-                class="button w-full md:w-auto justify-center md:justify-start"
+              <Button
+                class="w-full md:w-auto justify-center md:justify-start"
                 @click="downloadFile"
               >
-                <span aria-hidden="true">
-                  <ArrowDownTrayIcon />
-                </span>
+                <template #left="{ iconClass }">
+                  <ArrowDownTrayIcon :class="iconClass" />
+                </template>
                 <span>
                   {{ t('dashboard.details.share.actionExport') }}
                 </span>
-              </button>
+              </Button>
             </div>
           </div>
         </DialogPanel>

@@ -33,6 +33,8 @@ import {
 
 import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
+import Button from '@/components/form/Button.vue'
+
 export interface FilterState {
   favorites: TriState
   futureItems: TriState
@@ -411,27 +413,33 @@ function toggleSort() {
                 <div
                   class="flex justify-between sm:justify-end w-full pb-4 sm:pb-0 pt-4 px-4 sm:px-6 border-t border-gray-300 dark:border-gray-600"
                 >
-                  <button
-                    type="button"
-                    class="button is-ghost justify-center sm:hidden -ml-4"
+                  <Button
+                    kind="ghost"
+                    size="large"
+                    class="justify-center sm:hidden -ml-4"
+                    rounded
                     @click="$emit('update:open', false)"
                   >
                     {{ t('dashboard.library.filters.closeMobile') }}
-                  </button>
+                  </Button>
 
-                  <button
-                    type="button"
-                    class="button justify-center text-base hidden sm:flex md:hidden sm:text-sm flex-1"
+                  <Button
+                    size="large"
+                    class="justify-center hidden sm:flex md:hidden flex-1"
+                    rounded
                     @click="$emit('update:open', false)"
                   >
                     {{ t('dashboard.library.filters.closeMobile') }}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    class="button is-primary justify-center sm:ml-4 sm:flex-1 md:flex-initial"
+                    size="large"
+                    kind="primary"
+                    class="justify-center sm:ml-4 sm:flex-1 md:flex-initial"
+                    rounded
                   >
                     {{ t('dashboard.library.filters.apply') }}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </DialogPanel>

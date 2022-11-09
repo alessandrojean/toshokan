@@ -9,6 +9,7 @@ import {
   ArrowLeftOnRectangleIcon
 } from '@heroicons/vue/20/solid'
 
+import Button from '@/components/form/Button.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
@@ -26,7 +27,7 @@ const authorized = computed(() => authStore.authorized)
     <div
       class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full"
     >
-      <router-link
+      <RouterLink
         :to="{ name: 'Home' }"
         class="inline-flex shrink-0 items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
       >
@@ -46,26 +47,35 @@ const authorized = computed(() => authStore.authorized)
         >
           BETA
         </sup>
-      </router-link>
+      </RouterLink>
       <div class="inline-flex shrink-0 items-center">
-        <router-link
+        <Button
+          as="RouterLink"
+          kind="primary"
           :to="{ name: 'DashboardHome' }"
-          class="button is-primary is-rounded"
+          rounded
           v-if="authenticated && authorized"
         >
           {{ t('home.header.dashboard') }}
-        </router-link>
+        </Button>
         <ThemeToggle class="ml-3" light />
-        <router-link
+        <Button
+          as="RouterLink"
+          kind="primary"
           :to="{ name: 'DashboardHome' }"
-          class="button is-primary is-rounded ml-3 hidden md:flex"
+          class="ml-3 hidden md:flex"
+          rounded
           v-if="!authenticated"
         >
           {{ t('home.header.signIn') }}
-        </router-link>
-        <router-link
+        </Button>
+        <Button
+          as="RouterLink"
+          kind="primary"
           :to="{ name: 'SignIn' }"
-          class="button is-primary is-rounded is-icon-only ml-3 md:hidden"
+          class="ml-3 md:hidden"
+          rounded
+          icon-only
           v-if="!authenticated"
         >
           <span aria-hidden="true">
@@ -74,7 +84,7 @@ const authorized = computed(() => authStore.authorized)
           <span class="sr-only">
             {{ t('home.header.signIn') }}
           </span>
-        </router-link>
+        </Button>
         <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
       </div>
     </div>

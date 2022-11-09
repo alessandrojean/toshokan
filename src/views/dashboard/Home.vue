@@ -27,6 +27,7 @@ import {
 import Avatar from '@/components/Avatar.vue'
 import BookCarousel from '@/components/book/BookCarousel.vue'
 import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
+import Button from '@/components/form/Button.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
 import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
 import StatCard from '@/components/StatCard.vue'
@@ -131,13 +132,13 @@ function handleMarkAsRead(book: Book) {
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
       <div
-        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-4 px-4 sm:px-6 lg:px-8"
+        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8"
       >
         <div class="flex-1 flex items-center space-x-4">
           <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
           <div>
             <h1
-              class="text-xl font-semibold font-display text-gray-900 dark:text-gray-100"
+              class="text-xl lg:text-2xl font-semibold font-display text-gray-900 dark:text-gray-100"
             >
               {{ t('dashboard.home.hello', { name: profileName }) }}
             </h1>
@@ -154,42 +155,44 @@ function handleMarkAsRead(book: Book) {
           </div>
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
-          <button
-            class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+          <Button
+            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading || isFetching > 0"
           >
-            <span
-              aria-hidden="true"
-              :class="loading || isFetching ? 'motion-safe:animate-spin' : ''"
-              class="origin-center w-5 h-5 -ml-1 mr-2"
-            >
-              <ArrowPathIcon class="-scale-x-100 !mx-0" />
-            </span>
+            <template #left="{ iconClass }">
+              <ArrowPathIcon
+                :class="[
+                  iconClass,
+                  loading || isFetching ? 'motion-safe:animate-spin' : ''
+                ]"
+              />
+            </template>
             {{ t('dashboard.home.reload') }}
-          </button>
-          <button
+          </Button>
+          <Button
             v-if="canChange"
-            class="button flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openSheetChooser"
             :disabled="loading || isFetching > 0"
           >
-            <span aria-hidden="true">
-              <RectangleStackIcon />
-            </span>
+            <template #left="{ iconClass }">
+              <RectangleStackIcon :class="iconClass" />
+            </template>
             {{ t('dashboard.sheetChooser.actionSelectSheet') }}
-          </button>
-          <button
+          </Button>
+          <Button
             v-if="canEdit"
-            class="hidden sm:flex button is-primary flex-1 md:flex-initial justify-center md:justify-start"
+            kind="primary"
+            class="hidden sm:flex flex-1 md:flex-initial justify-center md:justify-start"
             @click="openCreateDialog"
             :disabled="loading"
           >
-            <span aria-hidden="true">
-              <PlusIcon aria-hidden="true" />
-            </span>
-            {{ t('dashboard.home.newBook') }}
-          </button>
+            <template #left="{ iconClass }">
+              <PlusIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.home.newBook') }}</span>
+          </Button>
         </div>
       </div>
     </header>
@@ -280,20 +283,25 @@ function handleMarkAsRead(book: Book) {
           @mark-as-read="handleMarkAsRead"
         >
           <template #actions>
-            <RouterLink
-              class="button is-ghost -mr-3 hidden md:flex group"
+            <Button
+              as="RouterLink"
+              kind="ghost"
+              class="-mr-3 hidden md:flex group"
               :to="{
                 name: 'DashboardLibrary',
                 query: { sortProperty: 'readAt' }
               }"
             >
-              {{ t('dashboard.search.history') }}
-              <span aria-hidden="true">
+              <span>{{ t('dashboard.search.history') }}</span>
+              <template #right="{ iconClass }">
                 <ArrowRightIcon
-                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                  :class="[
+                    iconClass,
+                    'motion-safe:transition-transform group-hover:translate-x-1'
+                  ]"
                 />
-              </span>
-            </RouterLink>
+              </template>
+            </Button>
           </template>
         </BookCarousel>
 
@@ -307,20 +315,25 @@ function handleMarkAsRead(book: Book) {
           :items="lastAddedItems"
         >
           <template #actions>
-            <RouterLink
-              class="button is-ghost -mr-3 hidden md:flex group"
+            <Button
+              as="RouterLink"
+              kind="ghost"
+              class="-mr-3 hidden md:flex group"
               :to="{
                 name: 'DashboardLibrary',
                 query: { sortProperty: 'createdAt' }
               }"
             >
-              {{ t('dashboard.home.viewAll') }}
-              <span aria-hidden="true">
+              <span>{{ t('dashboard.home.viewAll') }}</span>
+              <template #right="{ iconClass }">
                 <ArrowRightIcon
-                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                  :class="[
+                    iconClass,
+                    'motion-safe:transition-transform group-hover:translate-x-1'
+                  ]"
                 />
-              </span>
-            </RouterLink>
+              </template>
+            </Button>
           </template>
         </BookCarousel>
 
@@ -339,20 +352,25 @@ function handleMarkAsRead(book: Book) {
           :items="latestReadingsItems"
         >
           <template #actions>
-            <RouterLink
-              class="button is-ghost -mr-3 hidden md:flex group"
+            <Button
+              as="RouterLink"
+              kind="ghost"
+              class="-mr-3 hidden md:flex group"
               :to="{
                 name: 'DashboardLibrary',
                 query: { sortProperty: 'readAt' }
               }"
             >
-              {{ t('dashboard.search.history') }}
-              <span aria-hidden="true">
+              <span>{{ t('dashboard.search.history') }}</span>
+              <template #right="{ iconClass }">
                 <ArrowRightIcon
-                  class="is-right motion-safe:transition-transform group-hover:translate-x-1"
+                  :class="[
+                    iconClass,
+                    'motion-safe:transition-transform group-hover:translate-x-1'
+                  ]"
                 />
-              </span>
-            </RouterLink>
+              </template>
+            </Button>
           </template>
         </BookCarousel>
 
@@ -379,16 +397,17 @@ function handleMarkAsRead(book: Book) {
           <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
             {{ t('dashboard.home.empty.description') }}
           </p>
-          <button
+          <Button
             v-if="canEdit"
-            class="button is-primary text-lg"
+            kind="primary"
+            size="large"
             @click="openCreateDialog"
           >
-            <span aria-hidden="true">
-              <PlusIcon aria-hidden="true" />
-            </span>
-            {{ t('dashboard.home.newBook') }}
-          </button>
+            <template #left="{ iconClass }">
+              <PlusIcon :class="iconClass" />
+            </template>
+            <span>{{ t('dashboard.home.newBook') }}</span>
+          </Button>
         </section>
       </div>
     </div>
