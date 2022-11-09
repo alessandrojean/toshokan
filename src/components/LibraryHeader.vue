@@ -80,7 +80,7 @@ const owner = computed(() => ({
 <template>
   <header class="bg-white shadow dark:bg-gray-800">
     <div
-      class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8"
+      class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6"
     >
       <div class="flex-1 items-center">
         <template v-if="sheetLoading && !sheetLoadedOnce && !writing">

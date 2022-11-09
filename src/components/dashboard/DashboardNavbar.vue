@@ -1,0 +1,144 @@
+<script lang="ts" setup>
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import { useSheetStore } from '@/stores/sheet'
+import { ShowAsideDialogKey, ShowSearchDialogKey } from '@/symbols'
+import { injectStrict } from '@/utils'
+
+import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
+
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
+import ProfileMenu from '@/components/ProfileMenu.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import ToshokanLogo from '@/components/ToshokanLogo.vue'
+
+const sheetStore = useSheetStore()
+
+const { t } = useI18n({ useScope: 'global' })
+
+const loading = computed(() => sheetStore.loading)
+
+const isMac = ref(
+  // @ts-ignore
+  navigator.userAgentData
+    ? // @ts-ignore
+      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
+    : navigator.platform.toLowerCase().indexOf('mac') > -1
+)
+
+const showAsideDialog = injectStrict(ShowAsideDialogKey)
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
+</script>
+
+<template>
+  <nav class="app-navbar z-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center h-16">
+        <button
+          @click="showAsideDialog()"
+          class="lg:hidden p-1 mr-2 rounded-full text-gray-300 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+        >
+          <span class="sr-only">
+            {{ t('dashboard.header.menu.mobileOpen') }}
+          </span>
+          <span aria-hidden="true">
+            <Bars3Icon class="h-6 w-6" />
+          </span>
+        </button>
+
+        <ToshokanLogo class="ml-1 lg:hidden" :label="t('app.name')" dark />
+
+        <FadeTransition>
+          <button
+            class="fake-search-input has-ring-focus group"
+            v-if="!loading"
+            @click="showSearchDialog()"
+          >
+            <span aria-hidden="true">
+              <MagnifyingGlassIcon class="w-4 h-4" />
+            </span>
+            <span class="text-sm w-56 text-left">
+              {{ t('dashboard.header.search.placeholder') }}
+            </span>
+            <span
+              aria-hidden="true"
+              class="ctrl-k text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
+            >
+              <kbd class="font-sans">
+                <abbr title="Control" class="no-underline" v-if="!isMac"
+                  >{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr
+                >
+                <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
+              </kbd>
+              <kbd class="font-sans">K</kbd>
+            </span>
+          </button>
+        </FadeTransition>
+
+        <div class="ml-auto inline-flex">
+          <FadeTransition>
+            <button
+              v-if="!loading"
+              @click="showSearchDialog()"
+              class="lg:hidden p-1 mr-2 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+            >
+              <span class="sr-only">{{
+                t('dashboard.header.search.link')
+              }}</span>
+              <span aria-hidden="true">
+                <MagnifyingGlassIcon class="h-6 w-6" />
+              </span>
+            </button>
+          </FadeTransition>
+
+          <ThemeToggle />
+
+          <ProfileMenu />
+        </div>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<style lang="postcss" scoped>
+.app-navbar {
+  @apply bg-gray-800 supports-backdrop-blur:bg-gray-800/95
+    backdrop-blur sm:backdrop-filter-none md:backdrop-blur
+    transition duration-300 ease-in-out sm:left-16 md:left-0
+    dark:border-b dark:border-gray-700;
+}
+
+abbr[title].no-underline {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.enter {
+  @apply hidden;
+}
+
+#search-navbar:focus + .key-tooltip .enter,
+#search-form:focus-within .key-tooltip .enter {
+  @apply md:block;
+}
+
+#search-navbar:focus + .key-tooltip .ctrl-k,
+#search-form:focus-within .key-tooltip .ctrl-k {
+  @apply hidden;
+}
+
+.fake-search-input {
+  @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
+    bg-gray-700 rounded-lg space-x-2
+    text-gray-300/80;
+}
+
+.fake-search-input:where(:hover, :focus-visible) {
+  @apply bg-gray-600 text-gray-300;
+}
+
+.fake-search-input:focus-visible {
+  @apply ring-offset-gray-800;
+}
+</style>

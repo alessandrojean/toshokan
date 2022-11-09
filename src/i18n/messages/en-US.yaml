@@ -309,6 +309,13 @@ dashboard:
       dashboard: Dashboard
       library: Library
       statistics: Statistics
+      readings: Readings
+      history:
+        title: History
+        readings: Readings
+        boughts: Boughts
+      settings: Settings
+      help: Help Center
     search:
       title: Collection search
       link: Search
@@ -322,6 +329,7 @@ dashboard:
       toSearch: to search
       search: Search
     menu:
+      mobileOpen: Open menu
       more: More
       open: Open user menu
       settings: Settings

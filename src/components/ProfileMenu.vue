@@ -37,11 +37,7 @@ const showSettingsDialog = !props.hideSettings
 </script>
 
 <template>
-  <Menu
-    as="div"
-    class="ml-3 md:relative hidden sm:inline-block"
-    v-slot="{ open }"
-  >
+  <Menu as="div" class="ml-3 relative inline-block" v-slot="{ open }">
     <div>
       <MenuButton
         class="max-w-xs flex items-center text-sm focus:outline-none group"

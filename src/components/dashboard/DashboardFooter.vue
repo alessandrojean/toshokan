@@ -40,32 +40,6 @@ const releaseLink = computed(() => {
 
       <div class="flex items-center space-x-4">
         <div class="flex items-center space-x-2">
-          <RouterLink
-            :to="{ name: 'Accessibility' }"
-            :title="t('app.routes.about.a11y')"
-            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
-          >
-            <span class="sr-only">
-              {{ t('app.routes.about.a11y') }}
-            </span>
-            <span aria-hidden="true">
-              <HandRaisedIcon class="w-6 h-6" />
-            </span>
-          </RouterLink>
-
-          <RouterLink
-            :to="{ name: 'Instructions' }"
-            :title="t('app.routes.about.instructions')"
-            class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
-          >
-            <span class="sr-only">
-              {{ t('app.routes.about.instructions') }}
-            </span>
-            <span aria-hidden="true">
-              <QuestionMarkCircleIcon class="w-6 h-6" />
-            </span>
-          </RouterLink>
-
           <button
             class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"
             :title="t('footer.donate.actionDonate')"

@@ -154,44 +154,46 @@ function handleMarkAsRead(book: Book) {
             </p>
           </div>
         </div>
-        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
+        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-2">
           <Button
+            size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="reload"
             :disabled="loading || isFetching > 0"
+            :title="t('dashboard.home.reload')"
+            v-slot="{ iconClass }"
+            icon-only
           >
-            <template #left="{ iconClass }">
-              <ArrowPathIcon
-                :class="[
-                  iconClass,
-                  loading || isFetching ? 'motion-safe:animate-spin' : ''
-                ]"
-              />
-            </template>
-            {{ t('dashboard.home.reload') }}
+            <ArrowPathIcon
+              :class="[
+                iconClass,
+                loading || isFetching ? 'motion-safe:animate-spin' : ''
+              ]"
+            />
           </Button>
           <Button
             v-if="canChange"
+            size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openSheetChooser"
             :disabled="loading || isFetching > 0"
+            :title="t('dashboard.sheetChooser.actionSelectSheet')"
+            v-slot="{ iconClass }"
+            icon-only
           >
-            <template #left="{ iconClass }">
-              <RectangleStackIcon :class="iconClass" />
-            </template>
-            {{ t('dashboard.sheetChooser.actionSelectSheet') }}
+            <RectangleStackIcon :class="iconClass" />
           </Button>
           <Button
             v-if="canEdit"
-            kind="primary"
-            class="hidden sm:flex flex-1 md:flex-initial justify-center md:justify-start"
+            size="large"
+            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
             @click="openCreateDialog"
             :disabled="loading"
+            :title="t('dashboard.home.newBook')"
+            v-slot="{ iconClass }"
+            icon-only
           >
-            <template #left="{ iconClass }">
-              <PlusIcon :class="iconClass" />
-            </template>
-            <span>{{ t('dashboard.home.newBook') }}</span>
+            <PlusIcon :class="iconClass" />
           </Button>
         </div>
       </div>

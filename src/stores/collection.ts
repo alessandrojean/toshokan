@@ -27,7 +27,7 @@ export const useCollectionStore = defineStore('collection', {
   state: () => ({
     currentPage: 1,
     filters: {
-      groups: useLocalStorage<string[]>('collection_groups', [])
+      groups: [] as string[]
     },
     favorites: useLocalStorage<TriState>('collection_favorites', 'indiferent'),
     futureItems: useLocalStorage<TriState>('collection_future_items', 'hide'),

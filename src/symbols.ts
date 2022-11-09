@@ -4,11 +4,15 @@ import type { InjectionKey, Ref } from 'vue'
  * Dashboard
  */
 
+export type ShowAsideDialog = () => void
 export type ShowSearchDialog = (query?: string) => void
 export type ShowSettingsDialog = (delay?: number) => void
 export type DisableSearchShortcut = () => void
 export type EnableSearchShortcut = () => void
 export type SetNavbarTransparent = (value: boolean) => void
+
+export const ShowAsideDialogKey: InjectionKey<ShowAsideDialog> =
+  Symbol('showAsideDialog')
 
 export const ShowSearchDialogKey: InjectionKey<ShowSearchDialog> =
   Symbol('showSearchDialog')

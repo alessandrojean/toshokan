@@ -183,22 +183,17 @@ watch(
 )
 
 function updateGroupFromQuery() {
-  const newGroup = route.query.group as string
+  const newGroup = route.query.group ? String(route.query.group) : null
 
   if (sheetLoading.value || loading.value) {
     return false
   }
 
   if (!newGroup) {
-    // Remove inexistent groups from selection.
-    const fixedGroups = collectionStore.filters.groups.filter(
-      (selGroup) =>
-        groupsData.value!.find((grp) => grp.name === selGroup) !== undefined
-    )
+    const allGroups = (groupsData.value ?? []).map((group) => group.name)
+    collectionStore.updateGroups(allGroups)
 
-    collectionStore.updateGroups(fixedGroups)
-
-    return false
+    return true
   }
 
   const groupExists = groupsData.value?.find((grp) => grp.name === newGroup)
@@ -246,10 +241,8 @@ function updateFromQuery() {
   }
 }
 
-watch(sheetLoading, (newSheetLoading) => {
-  if (!newSheetLoading) {
-    updateFromQuery()
-  }
+watch([sheetLoading, groupsData, () => route.query], () => {
+  updateFromQuery()
 })
 
 onMounted(() => {
@@ -416,7 +409,7 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
     <div class="flex-1">
       <FadeTransition>
         <section
-          class="h-full max-w-7xl mx-auto pt-4 sm:pt-6 px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 !mb-6"
+          class="h-full max-w-7xl mx-auto pt-4 sm:pt-6 px-4 sm:px-6 space-y-4 sm:space-y-6 !mb-6"
           aria-labelledby="results-title"
           v-if="
             (sheetLoading || loading || writing || books.length > 0) &&

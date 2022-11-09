@@ -136,7 +136,7 @@ defineExpose({ focus })
   <div>
     <div
       v-if="loading"
-      class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2.5 sm:gap-4"
+      class="grid grid-cols-3 md:grid-cols-5 2xl:grid-cols-6 gap-2.5 sm:gap-4"
     >
       <BookCard
         v-for="tempBook in skeletonItems"
@@ -149,7 +149,7 @@ defineExpose({ focus })
     </div>
     <ul
       v-else
-      class="mb-6 grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2.5 sm:gap-4"
+      class="mb-6 grid grid-cols-3 md:grid-cols-5 2xl:grid-cols-6 gap-2.5 sm:gap-4"
       ref="grid"
     >
       <li v-for="(book, bookIdx) in items" :key="book.id!">

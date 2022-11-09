@@ -28,7 +28,6 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
-import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 import Button from '@/components/form/Button.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
@@ -353,8 +352,6 @@ const canEdit = computed(() => sheetStore.canEdit)
         <div class="skeleton w-52 h-4"></div>
         <div class="skeleton w-64 h-4"></div>
       </div>
-
-      <BookOwnerBadge v-if="showBookInfo" />
 
       <FadeTransition>
         <ul

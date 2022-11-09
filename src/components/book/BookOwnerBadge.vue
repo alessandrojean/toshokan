@@ -40,7 +40,7 @@ const shared = computed(() => sheetStore.shared)
 
 <style lang="postcss" scoped>
 .owner-badge {
-  @apply flex items-center space-x-3 sm:w-64 rounded-md
+  @apply flex items-center space-x-3 rounded-md
     px-2.5 py-2 border border-gray-200 dark:border-gray-700;
 }
 

@@ -156,7 +156,7 @@ function handleReadToday(book: Book) {
         items!.length < 3
           ? 'grid grid-cols-2'
           : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
-        'md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
+        'md:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4'
       ]"
       ref="carousel"
     >
@@ -167,7 +167,7 @@ function handleReadToday(book: Book) {
           items!.length > 2
             ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto snap-start md:snap-none scroll-ml-5 md:scroll-ml-0'
             : '',
-          bookIdx === 5 ? 'md:hidden lg:block' : ''
+          bookIdx === 5 ? 'md:hidden xl:block' : ''
         ]"
       >
         <BookCard

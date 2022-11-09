@@ -314,6 +314,13 @@ dashboard:
       dashboard: Dashboard
       library: Biblioteca
       statistics: Estatísticas
+      readings: Leituras
+      history:
+        title: Histórico
+        readings: Leituras
+        boughts: Compras
+      settings: Configurações
+      help: Central de Ajuda
     search:
       title: Pesquisa na coleção
       link: Pesquisar na coleção
@@ -327,6 +334,7 @@ dashboard:
       toSearch: para pesquisar
       search: Pesquisar
     menu:
+      mobileOpen: Abrir menu
       more: Mais
       open: Abrir menu de usuário
       settings: Configurações
