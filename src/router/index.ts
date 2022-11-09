@@ -11,7 +11,7 @@ declare module 'vue-router' {
   interface RouteMeta {
     title: () => string
     category?: string
-    blurNavbar?: boolean
+    transparentNavbar?: boolean
   }
 }
 
@@ -149,7 +149,7 @@ const routes = [
             component: () => import('../views/dashboard/library/Book.vue'),
             meta: {
               title: () => t('app.routes.dashboard.details'),
-              blurNavbar: true
+              transparentNavbar: true
             }
           }
         ]

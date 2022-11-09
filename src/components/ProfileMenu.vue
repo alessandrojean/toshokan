@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/auth'
@@ -17,10 +17,19 @@ import {
 
 import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
 
-const props = defineProps({
-  light: Boolean,
-  hideSettings: Boolean
+export interface ProfileMenuProps {
+  light?: boolean
+  hideSettings?: boolean
+  transparent?: boolean
+}
+
+const props = withDefaults(defineProps<ProfileMenuProps>(), {
+  light: false,
+  hideSettings: false,
+  transparent: false
 })
+
+const { light, hideSettings, transparent } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()
@@ -57,9 +66,15 @@ const showSettingsDialog = !props.hideSettings
             :class="[
               open ? '-scale-y-100' : '',
               'w-5 h-5 ml-1 motion-safe:transition-transform',
-              light
+              light && !transparent
                 ? 'text-gray-400 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100 group-focus-visible:text-gray-500 dark:group-focus-visible:text-gray-100'
-                : 'text-gray-300 group-hover:text-gray-100 group-focus-visible:text-gray-100'
+                : '',
+              !light && !transparent
+                ? 'text-gray-300 group-hover:text-gray-100 group-focus-visible:text-gray-100'
+                : '',
+              transparent
+                ? 'text-white/80 group-hover:text-white/95 group-focus-visible:text-white/95'
+                : ''
             ]"
           />
         </span>

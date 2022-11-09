@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -25,7 +25,19 @@ import {
   SunIcon as SunIconSolid
 } from '@heroicons/vue/20/solid'
 
-defineProps<{ light?: boolean; bottom?: boolean }>()
+export interface ThemeToggleProps {
+  light?: boolean
+  bottom?: boolean
+  transparent?: boolean
+}
+
+const props = withDefaults(defineProps<ThemeToggleProps>(), {
+  light: false,
+  bottom: false,
+  transparent: false
+})
+
+const { light, bottom, transparent } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()
@@ -54,8 +66,10 @@ const currentOption = computed(() => {
   <Listbox
     v-model="theme"
     as="div"
-    :class="light ? 'light' : ''"
-    class="relative flex items-center justify-center"
+    :class="[
+      'relative flex items-center justify-center',
+      { light: light, transparent: transparent }
+    ]"
   >
     <ListboxButton
       class="theme-chooser has-ring-focus"
@@ -131,7 +145,8 @@ const currentOption = computed(() => {
 
 <style lang="postcss" scoped>
 .theme-chooser {
-  @apply w-8 h-8 flex items-center justify-center rounded-full text-gray-400;
+  @apply w-8 h-8 flex items-center justify-center rounded-full text-gray-400
+    motion-safe:transition;
 }
 
 .theme-chooser svg.not-system {
@@ -160,6 +175,22 @@ const currentOption = computed(() => {
 
 .light .theme-chooser:focus-visible {
   @apply ring-offset-white dark:ring-offset-gray-900;
+}
+
+.transparent .theme-chooser {
+  svg.system,
+  svg.not-system {
+    @apply text-white/80;
+  }
+
+  &:where(:focus-visible, :hover) {
+    @apply bg-white/20;
+
+    svg.system,
+    svg.not-system {
+      @apply text-white/95;
+    }
+  }
 }
 
 .theme-options {

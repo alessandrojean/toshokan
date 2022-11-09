@@ -203,10 +203,16 @@ watch(lgAndLarger, (shouldHide) => {
           </div>
         </template>
       </DashboardAsideMenu>
-      <div class="flex-1 flex flex-col relative overflow-y-auto">
-        <DashboardNavbar class="sticky inset-x-0 top-0 shrink-0" />
+      <div
+        class="flex-1 flex flex-col relative overflow-y-auto"
+        id="main-content"
+      >
+        <DashboardNavbar
+          class="sticky inset-x-0 top-0 shrink-0"
+          :transparent="route.meta?.transparentNavbar"
+        />
 
-        <main role="main" id="main-content" class="flex-1">
+        <main role="main" class="flex-1">
           <router-view v-slot="{ Component }">
             <FadeTransition>
               <component :is="Component" class="w-full" />

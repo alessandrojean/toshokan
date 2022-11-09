@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
@@ -12,6 +12,15 @@ import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import ToshokanLogo from '@/components/ToshokanLogo.vue'
+
+export interface DashboardNavbarProps {
+  transparent?: boolean
+}
+
+const props = withDefaults(defineProps<DashboardNavbarProps>(), {
+  transparent: false
+})
+const { transparent } = toRefs(props)
 
 const sheetStore = useSheetStore()
 
@@ -29,10 +38,28 @@ const isMac = ref(
 
 const showAsideDialog = injectStrict(ShowAsideDialogKey)
 const showSearchDialog = injectStrict(ShowSearchDialogKey)
+
+const isScrolling = ref(false)
+
+function handleScroll(event: Event) {
+  const element = event.target as Element
+
+  if (element.id === 'main-content') {
+    isScrolling.value = element.scrollTop > 0
+  }
+}
+
+onMounted(() => window.addEventListener('scroll', handleScroll, true))
+onUnmounted(() => window.removeEventListener('scroll', handleScroll, true))
 </script>
 
 <template>
-  <nav class="app-navbar z-20">
+  <nav
+    :class="[
+      'app-navbar z-20',
+      { 'app-navbar-transparent': transparent && !isScrolling }
+    ]"
+  >
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center h-16">
         <button
@@ -47,7 +74,12 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
           </span>
         </button>
 
-        <ToshokanLogo class="ml-1 lg:hidden" :label="t('app.name')" dark />
+        <ToshokanLogo
+          class="ml-1 lg:hidden"
+          :label="t('app.name')"
+          dark
+          icon-only
+        />
 
         <FadeTransition>
           <button
@@ -63,7 +95,7 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
             </span>
             <span
               aria-hidden="true"
-              class="ctrl-k text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
+              class="ctrl-k motion-safe:transition-colors text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
             >
               <kbd class="font-sans">
                 <abbr title="Control" class="no-underline" v-if="!isMac"
@@ -81,7 +113,12 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
             <button
               v-if="!loading"
               @click="showSearchDialog()"
-              class="lg:hidden p-1 mr-2 rounded-full text-gray-400 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+              :class="[
+                'lg:hidden p-1 mr-2 rounded-full transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800',
+                transparent && !isScrolling
+                  ? 'text-white/80 hover:text-white/95'
+                  : 'text-gray-400 hover:text-white'
+              ]"
             >
               <span class="sr-only">{{
                 t('dashboard.header.search.link')
@@ -92,9 +129,9 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
             </button>
           </FadeTransition>
 
-          <ThemeToggle />
+          <ThemeToggle :transparent="transparent && !isScrolling" />
 
-          <ProfileMenu />
+          <ProfileMenu :transparent="transparent && !isScrolling" />
         </div>
       </div>
     </div>
@@ -106,39 +143,61 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
   @apply bg-gray-800 supports-backdrop-blur:bg-gray-800/95
     backdrop-blur sm:backdrop-filter-none md:backdrop-blur
     transition duration-300 ease-in-out sm:left-16 md:left-0
-    dark:border-b dark:border-gray-700;
-}
+    dark:border-b dark:border-gray-700 motion-safe:transition-colors;
 
-abbr[title].no-underline {
-  -webkit-text-decoration: none;
-  text-decoration: none;
-}
+  &.app-navbar-transparent {
+    @apply bg-transparent backdrop-blur-none border-transparent;
+  }
 
-.enter {
-  @apply hidden;
-}
+  abbr[title].no-underline {
+    -webkit-text-decoration: none;
+    text-decoration: none;
+  }
 
-#search-navbar:focus + .key-tooltip .enter,
-#search-form:focus-within .key-tooltip .enter {
-  @apply md:block;
-}
+  .enter {
+    @apply hidden;
+  }
 
-#search-navbar:focus + .key-tooltip .ctrl-k,
-#search-form:focus-within .key-tooltip .ctrl-k {
-  @apply hidden;
-}
+  #search-navbar:focus + .key-tooltip .enter,
+  #search-form:focus-within .key-tooltip .enter {
+    @apply md:block;
+  }
 
-.fake-search-input {
-  @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
-    bg-gray-700 rounded-lg space-x-2
-    text-gray-300/80;
-}
+  #search-navbar:focus + .key-tooltip .ctrl-k,
+  #search-form:focus-within .key-tooltip .ctrl-k {
+    @apply hidden;
+  }
 
-.fake-search-input:where(:hover, :focus-visible) {
-  @apply bg-gray-600 text-gray-300;
-}
+  .fake-search-input {
+    @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
+      bg-gray-700 rounded-lg space-x-2
+      text-gray-300/80 motion-safe:transition-colors;
 
-.fake-search-input:focus-visible {
-  @apply ring-offset-gray-800;
+    &:where(:hover, :focus-visible) {
+      @apply bg-gray-600 text-gray-300;
+    }
+
+    &:focus-visible {
+      @apply ring-offset-gray-800;
+    }
+  }
+
+  &.app-navbar-transparent .fake-search-input {
+    @apply bg-white/80 supports-backdrop-blur:bg-white/70
+      dark:bg-gray-900/70 dark:supports-backdrop-blur:bg-gray-900/60
+      backdrop-blur text-gray-600 dark:text-gray-400;
+
+    &:where(:hover, :focus-visible) {
+      @apply bg-white/90 supports-backdrop-blur:bg-white/80
+        dark:bg-gray-900/80 dark:supports-backdrop-blur:bg-gray-900/70
+        text-gray-800 dark:text-gray-300;
+    }
+
+    .ctrl-k {
+      @apply bg-gray-100/80 dark:bg-gray-500/50
+        text-gray-600 dark:text-gray-300
+        border-gray-400 dark:border-gray-400/30;
+    }
+  }
 }
 </style>

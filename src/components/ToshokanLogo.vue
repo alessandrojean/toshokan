@@ -7,10 +7,11 @@ import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 export interface ToshokanLogoProps {
   dark?: boolean
   label: string
+  iconOnly?: boolean
 }
 
 const props = withDefaults(defineProps<ToshokanLogoProps>(), { dark: false })
-const { dark, label } = toRefs(props)
+const { dark, label, iconOnly } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
 </script>
@@ -22,6 +23,7 @@ const { t } = useI18n({ useScope: 'global' })
     </span>
     <span class="sr-only">{{ label }}</span>
     <span
+      v-if="!iconOnly"
       :class="[
         'font-display font-semibold text-xl ml-3',
         dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50'
@@ -31,6 +33,7 @@ const { t } = useI18n({ useScope: 'global' })
       {{ t('app.name') }}
     </span>
     <sup
+      v-if="!iconOnly"
       :class="[
         'font-semibold text-[0.6rem] align-super ml-0.5',
         dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'

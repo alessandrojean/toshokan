@@ -27,6 +27,7 @@ import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
+import BookBanner from '@/components/book/BookBanner.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -158,18 +159,10 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
 
 <template>
   <div
-    class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out"
+    class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out -mt-16"
   >
-    <div
-      class="border-b dark:border-b-0 border-gray-300 hidden md:block bg-white dark:bg-transparent"
-    >
-      <div class="max-w-7xl mx-auto md:px-6 lg:px-8 dark:mt-6">
-        <!-- Breadcrumb -->
-        <div class="py-2.5 dark:py-0">
-          <BookBreadcrumb :loading="!showBookInfo" :book="book" />
-        </div>
-      </div>
-    </div>
+    <BookBanner :loading="!showBookInfo" :book="book" />
+
     <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-6">
       <!-- Main section -->
       <div class="md:space-y-8 bg-white dark:bg-transparent">
@@ -181,7 +174,6 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
             <BookCover
               :loading="!showBookInfo"
               :book="book"
-              :collection="collection"
               :blur-nsfw="blurNsfw"
               :spoiler-mode="spoilerMode"
             />
