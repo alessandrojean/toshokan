@@ -170,6 +170,14 @@ function searchBy(keyword: string, value: string) {
 const { data: timeZone, isLoading: timeZoneLoading } = useTimeZoneQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
+
+const blurSynopsis = computed(() => {
+  return (
+    spoilerMode.value.synopsis &&
+    book.value?.status !== Status.READ &&
+    book.value?.synopsis?.length !== 0
+  )
+})
 </script>
 
 <template>
@@ -215,7 +223,7 @@ const { data: timeZone, isLoading: timeZoneLoading } = useTimeZoneQuery({
             :empty-message="t('book.emptySynopsis')"
             :loading="!showBookInfo"
             :markdown="book?.synopsis ?? undefined"
-            :blur="spoilerMode.synopsis && book?.status !== Status.READ"
+            :blur="blurSynopsis"
           />
 
           <BookMarkdown
