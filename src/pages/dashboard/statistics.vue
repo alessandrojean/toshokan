@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, watch } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -32,18 +32,6 @@ const loading = computed(() => isLoading.value || isIdle.value)
 
 const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 const tooEarly = computed(() => stats.value?.monthly?.length === 1)
-
-const shared = computed(() => sheetStore.shared)
-
-function checkPermissions() {
-  if (shared.value) {
-    router.replace({ name: 'dashboard' })
-  }
-}
-
-onMounted(() => checkPermissions())
-
-watch(shared, () => checkPermissions())
 
 const { t } = useI18n({ useScope: 'global' })
 </script>
