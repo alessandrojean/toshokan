@@ -9,7 +9,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 import { ShowSearchDialogKey } from '@/symbols'
 
 import {

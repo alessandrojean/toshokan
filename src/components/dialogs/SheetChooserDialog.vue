@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useQueryClient } from 'vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 
 import {

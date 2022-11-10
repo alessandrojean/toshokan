@@ -8,7 +8,7 @@ import type { GridMode, SpoilerMode } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { ShowSearchDialogKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import {
   ArrowTrendingDownIcon,

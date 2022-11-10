@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
 import { ShowAsideDialogKey, ShowSearchDialogKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 

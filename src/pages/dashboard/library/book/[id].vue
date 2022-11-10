@@ -20,7 +20,7 @@ import {
   SetNavbarTransparentKey,
   ShowSearchDialogKey
 } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import BookBanner from '@/components/book/BookBanner.vue'
 import BookButtons from '@/components/book/BookButtons.vue'

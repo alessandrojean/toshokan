@@ -10,7 +10,7 @@ import {
   DocumentationPage,
   RebuildPageContentsKey
 } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import Alert from '@/components/Alert.vue'
 import Content from '@/components/Content.vue'

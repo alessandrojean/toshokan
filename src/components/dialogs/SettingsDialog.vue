@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import androidExport from '@/services/export/androidExport'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 
 import {

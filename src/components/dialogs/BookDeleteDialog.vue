@@ -3,7 +3,7 @@ import { toRefs, watch } from 'vue'
 import { useI18n } from '@/i18n'
 
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import { TrashIcon } from '@heroicons/vue/24/outline'
 

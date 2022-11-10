@@ -4,7 +4,7 @@ import { type RouteRecordRaw, useRoute } from 'vue-router'
 
 import { useI18n } from '@/i18n'
 import { DocumentationKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'

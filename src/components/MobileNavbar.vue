@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useSheetStore } from '@/stores/sheet'
 import { ShowSearchDialogKey, ShowSettingsDialogKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import {
   EllipsisHorizontalIcon,

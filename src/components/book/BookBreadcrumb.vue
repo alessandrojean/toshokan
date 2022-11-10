@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 
 import Book from '@/model/Book'
 import { ShowSearchDialogKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/20/solid'
 

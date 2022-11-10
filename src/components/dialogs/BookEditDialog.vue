@@ -8,7 +8,7 @@ import Book from '@/model/Book'
 import { useSheetStore } from '@/stores/sheet'
 import useCoverQuery from '@/queries/useCoverQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import {
   Dialog,

@@ -12,7 +12,7 @@ import useCreateBookMutation from '@/mutations/useCreateBookMutation'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import {
   Dialog,

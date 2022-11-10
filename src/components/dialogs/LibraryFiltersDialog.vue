@@ -13,7 +13,7 @@ import {
 import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery, { type GroupData } from '@/queries/useGroupsQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-import { injectStrict } from '@/utils'
+import { injectStrict } from '@/util'
 
 import slugify from 'slugify'
 
