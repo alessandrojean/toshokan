@@ -31,7 +31,7 @@ const lastSeparator = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col sm:h-56 text-gray-700 sm:text-white/80">
+  <div class="flex flex-col sm:h-56 text-gray-700 sm:text-white/80 2xl:pr-52">
     <h2
       v-if="!loading"
       class="pt-3 text-gray-900 sm:text-white/95 text-xl sm:text-2xl md:text-3xl font-display font-medium"
@@ -58,6 +58,7 @@ const lastSeparator = computed(() => {
         <a
           href="#"
           class="author has-ring-focus"
+          :title="t('dashboard.search.searchBy', [author])"
           @click.prevent="$emit('click:author', author)"
         >
           {{ author }}
@@ -79,11 +80,8 @@ const lastSeparator = computed(() => {
 
 <style lang="postcss" scoped>
 .author {
-  @apply font-medium hocus:text-white relative sm:text-white/95;
-
-  &:where(:focus-visible, :hover)::before {
-    @apply content-[''] bg-white/10 w-full h-full py-0.5 px-2 box-content
-      inline-block absolute -top-0.5 -left-2 rounded-md;
-  }
+  @apply font-medium hocus:text-white relative sm:text-white/95
+    hocus:underline hocus:underline-offset-2 hocus:decoration-2
+    hocus:decoration-white/70;
 }
 </style>
