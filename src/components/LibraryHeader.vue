@@ -70,11 +70,6 @@ const currentGroups = computed(() => {
 })
 
 const canEdit = computed(() => sheetStore.canEdit)
-const shared = computed(() => sheetStore.shared)
-const owner = computed(() => ({
-  displayName: sheetStore.ownerDisplayName,
-  pictureUrl: sheetStore.ownerPictureUrl
-}))
 </script>
 
 <template>
@@ -97,12 +92,6 @@ const owner = computed(() => ({
           </div>
         </template>
         <div v-else class="flex flex-row-reverse md:flex-row items-center">
-          <Avatar
-            v-if="shared"
-            class="shrink-0 mr-4 scale-[140%] md:scale-100"
-            :picture-url="owner.pictureUrl"
-            :shared="shared"
-          />
           <div class="grow min-w-0">
             <h1
               class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
