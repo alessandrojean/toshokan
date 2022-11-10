@@ -1,15 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { setupLayouts } from 'virtual:generated-layouts'
+import generatedRoutes from 'virtual:generated-pages'
 
 import i18n from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 
-import Home from '@/views/Home.vue'
-import SignIn from '@/views/SignIn.vue'
-
 declare module 'vue-router' {
   interface RouteMeta {
-    title: () => string
+    title: string
     category?: string
     transparentNavbar?: boolean
   }
@@ -17,169 +16,7 @@ declare module 'vue-router' {
 
 const { t } = i18n.global
 
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    meta: {
-      title: () => t('app.routes.home')
-    }
-  },
-  {
-    path: '/sign-in',
-    name: 'SignIn',
-    component: SignIn,
-    meta: {
-      title: () => t('app.routes.signIn')
-    }
-  },
-  {
-    path: '/error',
-    name: 'Error',
-    component: () => import('../views/Error.vue'),
-    meta: {
-      title: () => t('app.routes.error')
-    }
-  },
-  {
-    path: '/help',
-    component: () => import('../views/help/Index.vue'),
-    children: [
-      {
-        path: 'general/about-the-project',
-        name: 'About',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.about'),
-          category: 'general'
-        },
-        props: { file: 'about' }
-      },
-      {
-        path: 'general/accessibility',
-        name: 'Accessibility',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.a11y'),
-          category: 'general'
-        },
-        props: { file: 'a11y' }
-      },
-      {
-        path: 'general/privacy-policy',
-        name: 'PrivacyPolicy',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.privacyPolicy'),
-          category: 'general'
-        },
-        props: { file: 'privacy-policy' }
-      },
-      {
-        path: 'general/terms-of-use',
-        name: 'TermsOfUse',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.termsOfUse'),
-          category: 'general'
-        },
-        props: { file: 'terms-of-use' }
-      },
-      {
-        path: 'guides/instructions',
-        name: 'Instructions',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.instructions'),
-          category: 'guide'
-        },
-        props: { file: 'instructions' },
-        alias: ['']
-      },
-      {
-        path: 'guides/searching',
-        name: 'Searching',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.searching'),
-          category: 'guide'
-        },
-        props: { file: 'searching' }
-      },
-      {
-        path: 'guides/sharing',
-        name: 'Sharing',
-        component: () => import('../views/help/BaseAbout.vue'),
-        meta: {
-          title: () => t('app.routes.about.sharing'),
-          category: 'guide'
-        },
-        props: { file: 'sharing' }
-      }
-    ]
-  },
-  {
-    path: '/dashboard',
-    component: () => import('../views/dashboard/Index.vue'),
-    children: [
-      {
-        path: '',
-        name: 'DashboardHome',
-        component: () => import('../views/dashboard/Home.vue'),
-        meta: {
-          title: () => t('app.routes.dashboard.home')
-        }
-      },
-      {
-        path: 'library',
-        component: () => import('../views/dashboard/library/Index.vue'),
-        children: [
-          {
-            path: '',
-            name: 'DashboardLibrary',
-            component: () => import('../views/dashboard/library/Explorer.vue'),
-            meta: {
-              title: () => t('app.routes.dashboard.library')
-            }
-          },
-          {
-            path: 'book/:bookId',
-            name: 'BookDetails',
-            component: () => import('../views/dashboard/library/Book.vue'),
-            meta: {
-              title: () => t('app.routes.dashboard.details'),
-              transparentNavbar: true
-            }
-          }
-        ]
-      },
-      {
-        path: 'stats',
-        name: 'DashboardStats',
-        component: () => import('../views/dashboard/Stats.vue'),
-        meta: {
-          title: () => t('app.routes.dashboard.stats')
-        }
-      }
-    ]
-  },
-  {
-    path: '/share',
-    name: 'Share',
-    component: () => import('../views/Share.vue'),
-    meta: {
-      title: () => t('app.routes.share')
-    }
-  },
-  {
-    path: '/:pathMatch(.*)',
-    component: () => import('../views/PageNotFound.vue'),
-    meta: {
-      title: () => t('app.routes.notFound')
-    }
-  }
-]
+const routes = setupLayouts(generatedRoutes)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -198,11 +35,12 @@ const router = createRouter({
  * Replace page title.
  */
 router.afterEach((to) => {
-  const routeTitle = to.meta?.title?.()
+  const routeTitle = to.meta?.title ?? ''
   document.title =
-    (routeTitle?.length > 0 ? routeTitle + ' | ' : '') + t('app.name')
-  // @ts-ignore
-  document.body.dataset.route = to.name
+    routeTitle.length > 0
+      ? t(routeTitle) + ' | ' + t('app.name')
+      : t('app.name')
+  document.body.dataset.route = String(to.name)
 })
 
 /**
@@ -218,11 +56,11 @@ router.beforeEach(async (to) => {
     } catch (e) {
       console.error(e)
       mainStore.updateCriticalError(e)
-      return { name: 'Error' }
+      return { name: 'error' }
     }
   }
 
-  if (to.name === 'SignIn' || to.name === 'Error') {
+  if (to.name === 'sign-in' || to.name === 'error') {
     return
   }
 
@@ -231,11 +69,11 @@ router.beforeEach(async (to) => {
       return
     }
 
-    return { name: 'SignIn', query: { redirect: to.fullPath } }
+    return { name: 'sign-in', query: { redirect: to.fullPath } }
   }
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(() => {
   const mainContent = document.querySelector<HTMLDivElement>('#main-content')
 
   if (mainContent) {

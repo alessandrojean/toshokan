@@ -27,7 +27,7 @@ const { t, locale } = useI18n({ useScope: 'global' })
 
 onMounted(() => {
   if (!route.query.d || route.query.d.length === 0) {
-    router.replace({ name: 'Home' })
+    router.replace({ name: 'index' })
     return
   }
 
@@ -103,6 +103,11 @@ function parseDataQuery() {
 const shareDialogOpen = ref(false)
 </script>
 
+<route lang="yaml">
+meta:
+  title: app.routes.share
+</route>
+
 <template>
   <main
     class="min-h-screen relative flex flex-col md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
@@ -112,7 +117,7 @@ const shareDialogOpen = ref(false)
 
     <div class="max-w-2xl w-full space-y-8 flex flex-col items-center md:block">
       <RouterLink
-        :to="{ name: 'Home' }"
+        :to="{ name: 'index' }"
         class="inline-flex items-center rounded-md has-ring-focus dark:focus-visible:ring-offset-gray-800"
       >
         <span aria-hidden="true">

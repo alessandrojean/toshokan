@@ -14,6 +14,11 @@ const authorized = computed(() => authStore.authorized)
 const { t } = useI18n({ useScope: 'global' })
 </script>
 
+<route lang="yaml">
+meta:
+  title: app.routes.notFound
+</route>
+
 <template>
   <main
     class="min-h-screen flex md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
@@ -43,7 +48,7 @@ const { t } = useI18n({ useScope: 'global' })
               kind="ghost"
               link
               :to="{
-                name: authenticated && authorized ? 'DashboardHome' : 'Home'
+                name: authenticated && authorized ? 'dashboard' : 'Home'
               }"
               class="-ml-3 group"
             >

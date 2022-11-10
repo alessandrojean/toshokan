@@ -39,7 +39,7 @@ const loading = computed(() => sheetStore.loading)
 
 const items = computed(() => [
   {
-    to: 'DashboardHome',
+    to: 'dashboard',
     title: t('dashboard.home.title'),
     icon: HomeIcon,
     exact: true

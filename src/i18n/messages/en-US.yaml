@@ -10,7 +10,7 @@ app:
     notFound: Page not found
     share: Shared book
     about:
-      a11y: Accessibility
+      accessibility: Accessibility
       about: About the project
       instructions: Instructions
       privacyPolicy: Privacy Policy

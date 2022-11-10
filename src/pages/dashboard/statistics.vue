@@ -37,7 +37,7 @@ const shared = computed(() => sheetStore.shared)
 
 function checkPermissions() {
   if (shared.value) {
-    router.replace({ name: 'DashboardHome' })
+    router.replace({ name: 'dashboard' })
   }
 }
 
@@ -47,6 +47,12 @@ watch(shared, () => checkPermissions())
 
 const { t } = useI18n({ useScope: 'global' })
 </script>
+
+<route lang="yaml">
+meta:
+  title: app.routes.dashboard.stats
+  layout: dashboard
+</route>
 
 <template>
   <div class="flex flex-col">

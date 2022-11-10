@@ -14,6 +14,7 @@ import useBookQuery from '@/queries/useBookQuery'
 import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
 import useSheetVersionQuery from '@/queries/useSheetVersionQuery'
 import {
+  ChangeTitleKey,
   DisableSearchShortcutKey,
   EnableSearchShortcutKey,
   SetNavbarTransparentKey,
@@ -41,7 +42,7 @@ const route = useRoute()
 const settingsStore = useSettingsStore()
 const sheetStore = useSheetStore()
 
-const bookId = computed(() => route.params.bookId as string)
+const bookId = computed(() => String(route.params.id))
 const loading = computed(() => sheetStore.loading)
 
 const enabled = computed(() => {
@@ -64,8 +65,10 @@ const { data: collection, isLoading: collectionLoading } =
 const { data: sheetVersion } = useSheetVersionQuery({ enabled })
 
 const redirectToHome = () => {
-  router.replace({ name: 'DashboardLibrary' })
+  router.replace({ name: 'dashboard-library' })
 }
+
+const changeTitle = injectStrict(ChangeTitleKey)
 
 watch(book, (newBook) => {
   if (newBook === null) {
@@ -74,7 +77,7 @@ watch(book, (newBook) => {
   }
 
   if (newBook !== undefined) {
-    document.title = newBook.title + ' | ' + t('app.name')
+    changeTitle(newBook.title ?? undefined)
   }
 })
 
@@ -191,6 +194,13 @@ const region = computed(() => {
   return formatter.of(book.value.isbnData.countryCode)
 })
 </script>
+
+<route lang="yaml">
+meta:
+  title: app.routes.dashboard.details
+  layout: dashboard
+  transparentNavbar: true
+</route>
 
 <template>
   <div

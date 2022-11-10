@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { type RouteLocationRaw, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import useAppInfo from '@/composables/useAppInfo'
@@ -27,7 +27,7 @@ const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
 const redirectToDashboard = () => {
   if (shouldRedirect.value) {
-    router.replace({ name: 'DashboardHome' })
+    router.replace({ name: 'dashboard' })
   }
 }
 
@@ -43,11 +43,19 @@ const steps = computed(() => [
   t('signIn.step3')
 ])
 
-const links = computed(() => [
-  { route: 'Accessibility', text: t('footer.links.a11y') },
-  { route: 'Instructions', text: t('footer.links.instructions') },
-  { route: 'PrivacyPolicy', text: t('footer.links.privacyPolicy') },
-  { route: 'TermsOfUse', text: t('footer.links.termsOfUse') }
+type Link = {
+  route: RouteLocationRaw
+  text: string
+}
+
+const links = computed<Link[]>(() => [
+  { route: '/help/general/accessibility', text: t('footer.links.a11y') },
+  { route: '/help/guide/instructions', text: t('footer.links.instructions') },
+  {
+    route: '/help/general/privacy-policy',
+    text: t('footer.links.privacyPolicy')
+  },
+  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') }
 ])
 
 const showOverlay = ref(false)
@@ -66,6 +74,11 @@ watch(authorized, (isAuthorized) => {
 
 const { darkMode } = useDarkMode()
 </script>
+
+<route lang="yaml">
+meta:
+  title: app.routes.signIn
+</route>
 
 <template>
   <main
@@ -87,7 +100,7 @@ const { darkMode } = useDarkMode()
         >
           <header class="p-4">
             <RouterLink
-              :to="{ name: 'Home' }"
+              :to="{ name: 'index' }"
               class="flex items-center rounded-md w-fit has-ring-focus focus-visible:ring-white focus-visible:ring-offset-primary-700"
               :title="t('app.routes.home')"
             >
@@ -193,11 +206,8 @@ const { darkMode } = useDarkMode()
             class="text-xs flex justify-between items-center relative"
           >
             <ul class="flex flex-wrap pr-8">
-              <li v-for="link in links" :key="link.route">
-                <RouterLink
-                  :to="{ name: link.route }"
-                  class="utility-link mr-2 mb-2"
-                >
+              <li v-for="(link, i) of links" :key="i">
+                <RouterLink :to="link.route" class="utility-link mr-2 mb-2">
                   {{ link.text }}
                 </RouterLink>
               </li>

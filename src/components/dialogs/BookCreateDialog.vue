@@ -233,8 +233,8 @@ function viewBook(bookId?: string) {
 
   setTimeout(() => {
     router.replace({
-      name: 'BookDetails',
-      params: { bookId }
+      name: 'dashboard-library-book-id',
+      params: { id: bookId }
     })
   }, 400)
 }

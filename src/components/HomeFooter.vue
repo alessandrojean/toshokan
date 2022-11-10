@@ -1,16 +1,25 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import type { RouteLocationRaw } from 'vue-router'
 
 import LocaleSelector from '@/components/LocaleSelector.vue'
 import { useI18n } from '@/i18n'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
-const links = computed(() => [
-  { route: 'Accessibility', text: t('footer.links.a11y') },
-  { route: 'Instructions', text: t('footer.links.instructions') },
-  { route: 'PrivacyPolicy', text: t('footer.links.privacyPolicy') },
-  { route: 'TermsOfUse', text: t('footer.links.termsOfUse') }
+type Link = {
+  route: RouteLocationRaw
+  text: string
+}
+
+const links = computed<Link[]>(() => [
+  { route: '/help/general/accessibility', text: t('footer.links.a11y') },
+  { route: '/help/guide/instructions', text: t('footer.links.instructions') },
+  {
+    route: '/help/general/privacy-policy',
+    text: t('footer.links.privacyPolicy')
+  },
+  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') }
 ])
 </script>
 
@@ -22,8 +31,8 @@ const links = computed(() => [
 
     <nav>
       <ul>
-        <li v-for="link in links" :key="link.route">
-          <RouterLink :to="{ name: link.route }">
+        <li v-for="(link, i) of links" :key="i">
+          <RouterLink :to="link.route">
             {{ link.text }}
           </RouterLink>
         </li>

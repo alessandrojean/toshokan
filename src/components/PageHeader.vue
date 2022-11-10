@@ -28,7 +28,7 @@ const authorized = computed(() => authStore.authorized)
       class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full"
     >
       <RouterLink
-        :to="{ name: 'Home' }"
+        :to="{ name: 'index' }"
         class="inline-flex shrink-0 items-center rounded-md transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
       >
         <span aria-hidden="true">
@@ -52,7 +52,7 @@ const authorized = computed(() => authStore.authorized)
         <Button
           as="RouterLink"
           kind="primary"
-          :to="{ name: 'DashboardHome' }"
+          :to="{ name: 'dashboard' }"
           rounded
           v-if="authenticated && authorized"
         >
@@ -62,7 +62,7 @@ const authorized = computed(() => authStore.authorized)
         <Button
           as="RouterLink"
           kind="primary"
-          :to="{ name: 'DashboardHome' }"
+          :to="{ name: 'dashboard' }"
           class="ml-3 hidden md:flex"
           rounded
           v-if="!authenticated"
@@ -72,7 +72,7 @@ const authorized = computed(() => authStore.authorized)
         <Button
           as="RouterLink"
           kind="primary"
-          :to="{ name: 'SignIn' }"
+          :to="{ name: 'sign-in' }"
           class="ml-3 md:hidden"
           rounded
           icon-only

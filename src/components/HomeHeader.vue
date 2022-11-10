@@ -40,7 +40,7 @@ const { t } = useI18n({ useScope: 'global' })
           </sup>
         </h1>
         <div class="flex-1 hidden md:block md:ml-6">
-          <Button as="RouterLink" kind="ghost" :to="{ name: 'Instructions' }">
+          <Button as="RouterLink" kind="ghost" to="/help/guide/instructions">
             {{ t('home.header.instructions') }}
           </Button>
         </div>
@@ -48,7 +48,7 @@ const { t } = useI18n({ useScope: 'global' })
           <Button
             as="RouterLink"
             kind="primary"
-            :to="{ name: 'DashboardHome' }"
+            :to="{ name: 'dashboard' }"
             rounded
             v-if="authenticated && authorized"
           >
@@ -58,7 +58,7 @@ const { t } = useI18n({ useScope: 'global' })
           <Button
             as="RouterLink"
             kind="primary"
-            :to="{ name: 'DashboardHome' }"
+            :to="{ name: 'dashboard' }"
             rounded
             class="ml-3 hidden md:flex"
             v-if="!authenticated"
@@ -69,7 +69,7 @@ const { t } = useI18n({ useScope: 'global' })
             as="RouterLink"
             kind="primary"
             size="large"
-            :to="{ name: 'SignIn' }"
+            :to="{ name: 'sign-in' }"
             :aria-label="t('home.header.signIn')"
             rounded
             icon-only

@@ -18,6 +18,8 @@
       "vite/client",
       "vue/ref-macros",
       "vite-plugin-pwa/client",
+      "vite-plugin-pages/client",
+      "vite-plugin-vue-layouts/client",
       "@types/gapi.client",
       "@types/gapi.client.drive",
       "@types/gapi.client.sheets",

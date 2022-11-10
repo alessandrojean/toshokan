@@ -53,6 +53,11 @@ const features = computed(() => [
 const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
 </script>
 
+<route lang="yaml">
+meta:
+  title: app.routes.home
+</route>
+
 <template>
   <div class="bg-gray-50 dark:bg-gray-900">
     <HomeHeader />
@@ -194,7 +199,7 @@ const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
             as="RouterLink"
             kind="secondary"
             :to="{
-              name: authenticated && authorized ? 'DashboardHome' : 'SignIn'
+              name: authenticated && authorized ? 'dashboard' : 'sign-in'
             }"
             class="!px-4 !py-2.5 w-fit"
           >

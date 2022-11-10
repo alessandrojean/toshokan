@@ -1,9 +1,15 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, toRefs, watch, watchEffect } from 'vue'
+import { computed, nextTick, ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 
 import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
-import { RebuildPageContentsKey } from '@/symbols'
+import {
+  ChangeTitleKey,
+  DocumentationKey,
+  DocumentationPage,
+  RebuildPageContentsKey
+} from '@/symbols'
 import { injectStrict } from '@/utils'
 
 import Alert from '@/components/Alert.vue'
@@ -12,36 +18,45 @@ import ContentTitle from '@/components/ContentTitle.vue'
 import ContentBody from '@/components/ContentBody.vue'
 import ContentFooter from '@/components/ContentFooter.vue'
 
-const props = defineProps({
-  file: {
-    type: String,
-    required: true
-  }
-})
-
-const { file } = toRefs(props)
-
+const route = useRoute()
+const category = computed(() => String(route.params.category))
+const slug = computed(() => String(route.params.slug))
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const markdownBody = ref('')
 const markdownLocale = ref(locale.value)
+const pageTitle = ref('')
 const mounted = ref(false)
 const rebuildPageContents = injectStrict(RebuildPageContentsKey)
 
 const { renderMarkdown, frontmatter } = useMarkdown()
+const docs = injectStrict(DocumentationKey)
+const changeTitle = injectStrict(ChangeTitleKey)
 
-const docs = import.meta.glob('/docs/**/*.md', { as: 'raw' })
+function getMarkdownContent(
+  locale: string,
+  category: string,
+  pageSlug: string
+): DocumentationPage {
+  const categoryPages = docs.find((c) => c.category === category)?.pages ?? []
+  const page = categoryPages.filter((p) => p.slug === pageSlug)
+  const localePage = page.find((p) => p.locale === locale)
+  const englishPage = page.find((p) => p.locale === 'en-US')!
 
-async function getMarkdownContent(locale: string, file: string) {
-  const localeFile = `/docs/${locale}/${file}.md`
-  const englishFile = `/docs/en-US/${file}.md`
-  const importFn = docs[localeFile] || docs[englishFile]
-
-  return importFn()
+  return localePage ?? englishPage
 }
 
 watchEffect(async () => {
-  markdownBody.value = await getMarkdownContent(locale.value, file.value)
+  const page = getMarkdownContent(locale.value, category.value, slug.value)
+
+  if (!page) {
+    return
+  }
+
+  markdownBody.value = await page.content()
+  pageTitle.value = page.title
+  changeTitle(t(page.title))
+
   await nextTick()
   rebuildPageContents(!mounted.value)
   mounted.value = true
@@ -49,6 +64,7 @@ watchEffect(async () => {
 
 watch(locale, (newLocale) => {
   markdownLocale.value = newLocale
+  changeTitle(t(pageTitle.value))
 })
 
 function getImageUrl(name: string) {
@@ -66,9 +82,14 @@ const body = computed(() => {
 
 const gitHubLink = computed(
   () =>
-    `https://github.com/alessandrojean/toshokan/blob/main/docs/${markdownLocale.value}/${file.value}.md`
+    `https://github.com/alessandrojean/toshokan/blob/main/docs/${markdownLocale.value}/${slug.value}.md`
 )
 </script>
+
+<route lang="yaml">
+meta:
+  layout: help-center
+</route>
 
 <template>
   <Content>

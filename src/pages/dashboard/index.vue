@@ -127,6 +127,12 @@ function handleMarkAsRead(book: Book) {
 }
 </script>
 
+<route lang="yaml">
+meta:
+  title: app.routes.dashboard.home
+  layout: dashboard
+</route>
+
 <template>
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
@@ -289,7 +295,7 @@ function handleMarkAsRead(book: Book) {
               kind="ghost"
               class="-mr-3 hidden md:flex group"
               :to="{
-                name: 'DashboardLibrary',
+                name: 'dashboard-library',
                 query: { sortProperty: 'readAt' }
               }"
             >
@@ -321,7 +327,7 @@ function handleMarkAsRead(book: Book) {
               kind="ghost"
               class="-mr-3 hidden md:flex group"
               :to="{
-                name: 'DashboardLibrary',
+                name: 'dashboard-library',
                 query: { sortProperty: 'createdAt' }
               }"
             >
@@ -343,7 +349,7 @@ function handleMarkAsRead(book: Book) {
           :title="t('dashboard.home.latestReadings')"
           :button-text="t('dashboard.search.history')"
           :button-link="{
-            name: 'DashboardLibrary',
+            name: 'dashboard-library',
             query: { sortProperty: 'readAt' }
           }"
           :mode="gridMode"
@@ -358,7 +364,7 @@ function handleMarkAsRead(book: Book) {
               kind="ghost"
               class="-mr-3 hidden md:flex group"
               :to="{
-                name: 'DashboardLibrary',
+                name: 'dashboard-library',
                 query: { sortProperty: 'readAt' }
               }"
             >

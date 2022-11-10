@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { type RouteRecordRaw, useRoute } from 'vue-router'
 
-import { CategoryOrderKey } from '@/symbols'
+import { useI18n } from '@/i18n'
+import { DocumentationKey } from '@/symbols'
 import { injectStrict } from '@/utils'
 
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
@@ -11,34 +11,24 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 
 defineProps({ githubLink: String })
 
-const { t } = useI18n({ useScope: 'global' })
-const categories = injectStrict(CategoryOrderKey)
+const { t, locale } = useI18n({ useScope: 'global' })
+const docs = injectStrict(DocumentationKey)
 
 const route = useRoute()
-const aboutRoute = computed(() => route.matched[0])
-const groups = computed(() => {
-  return aboutRoute.value.children.reduce((groups, route) => {
-    const category = route.meta!.category as string
+const category = computed(() => String(route.params.category))
+const slug = computed(() => String(route.params.slug))
 
-    if (groups[category]) {
-      groups[category].push(route)
-    } else {
-      groups[category] = [route]
-    }
+const pages = computed(() => {
+  const pages = docs.find((c) => c.category === category.value)?.pages ?? []
 
-    return groups
-  }, {} as Record<string, RouteRecordRaw[]>)
-})
-
-const aboutRoutes = computed(() => {
-  return categories.value.flatMap((group) => groups.value[group])
+  return pages.filter((p) => p.locale === locale.value)
 })
 
 const currentIdx = computed(() =>
-  aboutRoutes.value.findIndex((r) => r.name === route.name)
+  pages.value.findIndex((p) => p.slug === slug.value)
 )
-const previous = computed(() => aboutRoutes.value[currentIdx.value - 1])
-const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
+const previous = computed(() => pages.value[currentIdx.value - 1])
+const next = computed(() => pages.value[currentIdx.value + 1])
 </script>
 
 <template>
@@ -58,25 +48,31 @@ const next = computed(() => aboutRoutes.value[currentIdx.value + 1])
     >
       <RouterLink
         v-if="previous"
-        :to="{ name: previous.name }"
+        :to="{
+          name: 'help-category-slug',
+          params: { category, slug: previous.slug }
+        }"
         class="link previous has-ring-focus"
       >
         <div class="flex items-center">
           <ChevronLeftIcon class="w-4 h-4 inline-block -ml-1 mr-0.5" />
           <span>{{ t('about.previous') }}</span>
         </div>
-        <span class="title">{{ previous.meta!.title() }}</span>
+        <span class="title">{{ t(previous.title) }}</span>
       </RouterLink>
       <RouterLink
         v-if="next"
-        :to="{ name: next.name }"
+        :to="{
+          name: 'help-category-slug',
+          params: { category, slug: next.slug }
+        }"
         class="link next has-ring-focus"
       >
         <div class="flex items-center justify-end">
           <span>{{ t('about.next') }}</span>
           <ChevronRightIcon class="w-4 h-4 inline-block ml-0.5 -mr-1" />
         </div>
-        <span class="title">{{ next.meta!.title() }}</span>
+        <span class="title">{{ t(next.title) }}</span>
       </RouterLink>
     </div>
   </footer>

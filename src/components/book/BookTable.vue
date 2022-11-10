@@ -203,8 +203,8 @@ function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
 
   if (!isMdBreakpoint.value) {
     router.push({
-      name: 'BookDetails',
-      params: { bookId: items.value[idx].id }
+      name: 'dashboard-library-book-id',
+      params: { id: items.value[idx].id }
     })
     return
   }
@@ -273,8 +273,8 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
 
   if (key === 'Enter') {
     router.push({
-      name: 'BookDetails',
-      params: { bookId: items.value[idx].id }
+      name: 'dashboard-library-book-id',
+      params: { id: items.value[idx].id }
     })
 
     return
@@ -830,7 +830,7 @@ defineExpose({ focus, focusOnActiveHeader })
                   kind="ghost"
                   icon-only
                   rounded
-                  :to="{ name: 'BookDetails', params: { bookId: book.id } }"
+                  :to="{ name: 'dashboard-library-book-id', params: { id: book.id } }"
                   class="-mr-2"
                   tabindex="-1"
                   :title="t('dashboard.library.items.view')"

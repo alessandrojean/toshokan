@@ -50,7 +50,7 @@ async function findSheetId() {
         : e
 
       mainStore.updateCriticalError(error)
-      router.replace({ name: 'Error' })
+      router.replace({ name: 'error' })
     }
   }
 }
@@ -148,7 +148,7 @@ const libraryGroups = computed<ChildItem[]>(() => {
     key: group.name.toLowerCase(),
     label: group.name,
     to: {
-      name: 'DashboardLibrary',
+      name: 'dashboard-library',
       query: { group: group.name }
     },
     active: computed(() => {
@@ -216,11 +216,11 @@ const shared = computed(() => sheetStore.shared)
         />
 
         <main role="main" class="flex-1">
-          <router-view v-slot="{ Component }">
+          <RouterView v-slot="{ Component }">
             <FadeTransition>
               <component :is="Component" class="w-full" />
             </FadeTransition>
-          </router-view>
+          </RouterView>
         </main>
 
         <DashboardFooter class="shrink-0" />

@@ -44,7 +44,7 @@ const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
 const redirectToDashboard = () => {
   router.replace(
-    (route.query.redirect as string | undefined) ?? { name: 'DashboardHome' }
+    (route.query.redirect as string | undefined) ?? { name: 'dashboard' }
   )
 }
 

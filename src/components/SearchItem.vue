@@ -76,7 +76,7 @@ const authorsFormatted = computed(() => {
 
 <template>
   <RouterLink
-    :to="{ name: 'BookDetails', params: { bookId: result.id } }"
+    :to="{ name: 'dashboard-library-book-id', params: { id: result.id } }"
     class="result group has-ring-focus focus-visible:ring-inset dark:focus-visible:ring-offset-gray-800"
     ref="searchItem"
   >

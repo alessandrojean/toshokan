@@ -110,7 +110,7 @@ const blurCover = computed(() => {
     :is="imageOnly ? 'div' : 'RouterLink'"
     :to="
       !imageOnly
-        ? { name: 'BookDetails', params: { bookId: book.id } }
+        ? { name: 'dashboard-library-book-id', params: { id: book.id } }
         : undefined
     "
     class="book-link group focus:outline-none relative"
@@ -124,7 +124,7 @@ const blurCover = computed(() => {
       :class="blurCover ? 'blurred' : ''"
       :to="
         imageOnly
-          ? { name: 'BookDetails', params: { bookId: book.id } }
+          ? { name: 'dashboard-library-book-id', params: { id: book.id } }
           : undefined
       "
       class="book-card !outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"

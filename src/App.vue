@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useI18n } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
+import { ChangeTitleKey } from '@/symbols'
 
 import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 
@@ -39,7 +40,9 @@ watch(
   () => {
     nextTick(() => {
       setTimeout(() => {
-        changeNavigationHelpText(route.meta.title())
+        changeNavigationHelpText(
+          route.meta.title ? t(route.meta.title) : t('app.name')
+        )
         focusOnJumpLink()
       }, 500)
     })
@@ -47,10 +50,16 @@ watch(
 )
 
 watch(locale, (newLocale) => {
-  document.title = route.meta.title() + ' | ' + t('app.name')
+  changeTitle(route.meta.title)
   document.documentElement.lang = newLocale
   localStorage.setItem('locale', newLocale)
 })
+
+function changeTitle(title?: string) {
+  document.title = title ? title + ' | ' + t('app.name') : t('app.name')
+}
+
+provide(ChangeTitleKey, changeTitle)
 
 const showLoadingIndicator = computed(() => {
   return !authStarted.value && !hasCriticalError.value

@@ -115,7 +115,7 @@ const showSettingsDialog = !props.hideSettings
           </MenuItem>
           <MenuItem v-slot="{ active }">
             <RouterLink
-              :to="{ name: 'Instructions' }"
+              to="/help/guide/instructions"
               :class="[
                 active
                   ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'

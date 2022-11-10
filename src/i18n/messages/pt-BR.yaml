@@ -10,7 +10,7 @@ app:
     notFound: Página não encontrada
     share: Livro compartilhado
     about:
-      a11y: Acessibilidade
+      accessibility: Acessibilidade
       about: Sobre o projeto
       instructions: Instruções de uso
       privacyPolicy: Política de Privacidade

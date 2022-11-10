@@ -57,46 +57,46 @@ const items = computed<Item[]>(() => [
     key: 'dashboard',
     label: t('dashboard.header.links.dashboard'),
     icon: HomeIcon,
-    to: { name: 'DashboardHome' },
+    to: { name: 'dashboard' },
     exact: true
   },
   {
     key: 'library',
     label: t('dashboard.header.links.library'),
     icon: BookOpenIcon,
-    to: { name: 'DashboardLibrary' },
+    to: { name: 'dashboard-library' },
     children: libraryGroups.value
   },
   {
     key: 'readings',
     label: t('dashboard.header.links.readings'),
     icon: BookmarkIcon,
-    to: { name: 'Home' }
+    to: { name: 'index' }
   },
   {
     key: 'history',
     label: t('dashboard.header.links.history.title'),
     // TODO: Replace with counter clockwise icon.
     icon: ClockIcon,
-    to: { name: 'Home' }
+    to: { name: 'index' }
   },
   {
     key: 'statistics',
     label: t('dashboard.header.links.statistics'),
     icon: PresentationChartBarIcon,
-    to: { name: 'DashboardStats' }
+    to: { name: 'dashboard-statistics' }
   },
   {
     key: 'settings',
     label: t('dashboard.header.links.settings'),
     icon: Cog8ToothIcon,
-    to: { name: 'Home' }
+    to: { name: 'index' }
   },
   {
     key: 'help-center',
     label: t('dashboard.header.links.help'),
     icon: LifebuoyIcon,
-    to: { name: 'Instructions' },
+    to: '/help/guide/instructions',
     external: true
   }
 ])

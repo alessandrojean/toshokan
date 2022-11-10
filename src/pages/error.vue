@@ -21,7 +21,7 @@ const criticalError = computed(() => mainStore.criticalError)
 
 onMounted(() => {
   if (!hasCriticalError.value) {
-    router.replace({ name: 'Home' })
+    router.replace({ name: 'index' })
   }
 })
 
@@ -41,10 +41,15 @@ async function grantPermissions() {
 
 watch(hasGrantedScopes, (newValue) => {
   if (newValue) {
-    router.replace({ name: 'DashboardHome' })
+    router.replace({ name: 'dashboard' })
   }
 })
 </script>
+
+<route lang="yaml">
+meta:
+  title: app.routes.error
+</route>
 
 <template>
   <main

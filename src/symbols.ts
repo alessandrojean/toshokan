@@ -1,6 +1,14 @@
 import type { InjectionKey, Ref } from 'vue'
 
 /**
+ * Application
+ */
+
+export type ChangeTitle = (title?: string) => void
+
+export const ChangeTitleKey: InjectionKey<ChangeTitle> = Symbol('changeTitle')
+
+/**
  * Dashboard
  */
 
@@ -34,11 +42,23 @@ export const SetNavbarTransparentKey: InjectionKey<SetNavbarTransparent> =
  */
 
 export type RebuildPageContents = (resetPosition?: boolean) => void
-export type CategoryOrder = Ref<string[]>
+export type DocumentationPage = {
+  order: number
+  slug: string
+  locale: string
+  title: string
+  content: () => Promise<string>
+}
+export type DocumentationCategory = {
+  order: number
+  category: string
+  pages: DocumentationPage[]
+}
+export type Documentation = DocumentationCategory[]
 
 export const RebuildPageContentsKey: InjectionKey<RebuildPageContents> = Symbol(
   'rebuildPageContents'
 )
 
-export const CategoryOrderKey: InjectionKey<CategoryOrder> =
-  Symbol('categoryOrder')
+export const DocumentationKey: InjectionKey<Documentation> =
+  Symbol('documentation')

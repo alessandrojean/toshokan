@@ -397,6 +397,12 @@ const blurNsfw = computed(() => settingsStore.blurNsfw)
 const spoilerMode = computed(() => settingsStore.spoilerMode)
 </script>
 
+<route lang="yaml">
+meta:
+  title: app.routes.dashboard.library
+  layout: dashboard
+</route>
+
 <template>
   <div class="flex flex-col">
     <LibraryHeader

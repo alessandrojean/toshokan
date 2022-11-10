@@ -1,10 +1,12 @@
 import { defineConfig } from 'vitest/config'
-import vue from '@vitejs/plugin-vue'
+import Vue from '@vitejs/plugin-vue'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { VitePWA } from 'vite-plugin-pwa'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
+import Pages from 'vite-plugin-pages'
+import Layouts from 'vite-plugin-vue-layouts'
 import postcss from './postcss.config.js'
 
 export default defineConfig({
@@ -16,7 +18,9 @@ export default defineConfig({
     )
   },
   plugins: [
-    vue(),
+    Vue(),
+    Pages(),
+    Layouts(),
     vueI18n({
       include: resolve(
         dirname(fileURLToPath(import.meta.url)),
