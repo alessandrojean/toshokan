@@ -21,7 +21,9 @@ import {
   ArrowRightIcon,
   RectangleStackIcon,
   PlusIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  EyeIcon,
+  EyeSlashIcon
 } from '@heroicons/vue/20/solid'
 
 import Avatar from '@/components/Avatar.vue'
@@ -125,6 +127,8 @@ function handleMarkAsRead(book: Book) {
     onError: () => removeFromEditing(book.id!)
   })
 }
+
+const showValues = ref(false)
 </script>
 
 <route lang="yaml">
@@ -135,9 +139,9 @@ meta:
 
 <template>
   <div class="flex flex-col">
-    <header class="bg-white shadow dark:bg-gray-800">
+    <header class="border-b dark:border-gray-700 mx-4 sm:mx-6">
       <div
-        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6"
+        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6"
       >
         <div class="flex-1 flex items-center space-x-4">
           <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
@@ -160,6 +164,33 @@ meta:
           </div>
         </div>
         <div class="flex mt-5 md:mt-0 md:ml-4 space-x-2">
+          <Button
+            v-if="!shared"
+            size="large"
+            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+            @click="showValues = !showValues"
+            :disabled="loading"
+            :title="
+              showValues
+                ? t('dashboard.home.hideValues')
+                : t('dashboard.home.showValues')
+            "
+            v-slot="{ iconClass }"
+            icon-only
+          >
+            <Transition
+              mode="out-in"
+              leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+              leave-from-class="opacity-100 rotate-0"
+              leave-to-class="opacity-0 rotate-180"
+              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+              enter-from-class="opacity-0 -rotate-180"
+              enter-to-class="opacity-100 rotate-0"
+            >
+              <EyeIcon :class="iconClass" v-if="!showValues" />
+              <EyeSlashIcon :class="iconClass" v-else />
+            </Transition>
+          </Button>
           <Button
             size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
@@ -208,20 +239,17 @@ meta:
       <div class="h-full max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <section
           v-if="!sheetIsEmpty"
-          :aria-labelledby="loading ? '' : 'overview-title'"
+          class="bg-block dark:bg-block-dark p-4 rounded-xl"
         >
-          <div v-if="loading" class="skeleton h-6 w-40 mb-3"></div>
           <h2
-            v-else
             id="overview-title"
-            class="font-medium font-display text-lg mb-2 dark:text-gray-200"
+            class="font-medium font-display text-md sm:text-lg dark:text-gray-200"
           >
             {{ t('dashboard.home.overview.title') }}
           </h2>
 
-          <!-- Stats -->
           <div
-            class="grid grid-cols-1 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 rounded-md sm:rounded-none overflow-hidden sm:overflow-visible shadow sm:shadow-none divide-y sm:divide-y-0 divide-gray-200 dark:divide-gray-700"
+            class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             <StatCard
               :title="t('dashboard.home.overview.stats.count')"
@@ -252,6 +280,7 @@ meta:
               "
               :loading="!statsSuccess"
               :always-hidden="shared"
+              :show-value="showValues"
               sensitive
             >
               <template v-slot:icon="{ cssClass }">
@@ -268,6 +297,7 @@ meta:
               "
               :loading="!statsSuccess"
               :always-hidden="shared"
+              :show-value="showValues"
               sensitive
             >
               <template v-slot:icon="{ cssClass }">
@@ -279,6 +309,7 @@ meta:
 
         <!-- Next reads -->
         <BookCarousel
+          class="mt-6"
           :title="t('dashboard.home.nextReads')"
           :mode="gridMode"
           :blur-nsfw="blurNsfw"
@@ -314,6 +345,7 @@ meta:
 
         <!-- Last added books -->
         <BookCarousel
+          class="mt-6"
           :title="t('dashboard.home.lastAdded')"
           :mode="gridMode"
           :blur-nsfw="blurNsfw"
@@ -346,6 +378,7 @@ meta:
 
         <!-- Latest readings -->
         <BookCarousel
+          class="mt-6"
           :title="t('dashboard.home.latestReadings')"
           :button-text="t('dashboard.search.history')"
           :button-link="{

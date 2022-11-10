@@ -29,7 +29,9 @@ export default {
           850: '#17202D'
         },
         picpay: '#21c25e',
-        current: 'currentColor'
+        current: 'currentColor',
+        block: colors.gray[50],
+        'block-dark': '#18212F'
       },
       fontSize: {
         xxs: '.7rem'

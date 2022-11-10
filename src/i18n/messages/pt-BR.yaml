@@ -425,6 +425,8 @@ dashboard:
     hello: 'Olá, {name}!'
     newBook: Novo livro
     reload: Recarregar
+    showValues: Mostrar valores
+    hideValues: Ocultar valores
     viewAll: Visualizar todos
     beta:
       short: Serviço atualmente em beta!

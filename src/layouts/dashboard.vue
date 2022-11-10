@@ -190,7 +190,7 @@ const shared = computed(() => sheetStore.shared)
 </script>
 
 <template>
-  <div class="bg-gray-100 min-h-screen dark:bg-gray-900">
+  <div class="bg-white min-h-screen dark:bg-gray-900">
     <a href="#main-menu-desktop" class="jump-to hidden md:block">
       {{ t('a11y.jumpToNavigation') }}
     </a>

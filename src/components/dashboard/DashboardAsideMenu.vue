@@ -125,7 +125,7 @@ async function handleNavigation(
 
 <template>
   <aside
-    class="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow"
+    class="bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow"
   >
     <div class="flex flex-col min-h-0 h-full">
       <div class="flex-1 overflow-y-auto fancy-scrollbar">

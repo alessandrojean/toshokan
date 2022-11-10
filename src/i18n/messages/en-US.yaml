@@ -421,6 +421,8 @@ dashboard:
     newBook: New book
     reload: Reload
     viewAll: View all
+    showValues: Show values
+    hideValues: Hide values
     beta:
       short: Service currently in beta testing!
       full: >

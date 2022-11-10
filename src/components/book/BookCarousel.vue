@@ -119,32 +119,14 @@ function handleReadToday(book: Book) {
 </script>
 
 <template>
-  <div v-if="loading">
-    <div class="skeleton h-6 w-48 mt-8 mb-3"></div>
-
-    <div
-      class="-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid md:grid-cols-5 xl:grid-cols-6 gap-5"
-    >
-      <div
-        v-for="idx in 6"
-        :key="idx"
-        :class="idx === 5 ? 'md:hidden xl:block' : ''"
-        class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
+  <section
+    v-if="(items?.length ?? 0) > 0 || loading"
+    class="bg-block dark:bg-block-dark p-4 rounded-xl"
+  >
+    <div class="flex justify-between items-center w-full">
+      <h2
+        class="font-medium font-display text-sm sm:text-lg dark:text-gray-200"
       >
-        <BookCard
-          loading
-          :image-only="showReadingActions"
-          :mode="mode"
-          :spoiler-mode="spoilerMode"
-          :blur-nsfw="blurNsfw"
-        />
-      </div>
-    </div>
-  </div>
-
-  <section v-else-if="(items?.length ?? 0) > 0">
-    <div class="flex justify-between items-center w-full mt-8 mb-2">
-      <h2 class="font-medium font-display text-lg dark:text-gray-200">
         {{ title }}
       </h2>
 
@@ -152,11 +134,12 @@ function handleReadToday(book: Book) {
     </div>
 
     <ul
+      v-if="!loading"
       :class="[
         items!.length < 3
           ? 'grid grid-cols-2'
-          : '-mx-5 md:mx-0 px-5 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
-        'md:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4'
+          : '-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
+        'md:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 mt-4'
       ]"
       ref="carousel"
     >
@@ -192,5 +175,26 @@ function handleReadToday(book: Book) {
         </BookCard>
       </li>
     </ul>
+
+    <div
+      v-else
+      class="mt-4 -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto md:overflow-x-visible flex md:grid md:grid-cols-5 xl:grid-cols-6 gap-5"
+      aria-hidden="true"
+    >
+      <div
+        v-for="idx in 6"
+        :key="idx"
+        :class="idx === 5 ? 'md:hidden xl:block' : ''"
+        class="shrink-0 w-2/5 sm:w-3/12 md:w-auto"
+      >
+        <BookCard
+          loading
+          :image-only="showReadingActions"
+          :mode="mode"
+          :spoiler-mode="spoilerMode"
+          :blur-nsfw="blurNsfw"
+        />
+      </div>
+    </div>
   </section>
 </template>
