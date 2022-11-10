@@ -287,14 +287,14 @@ meta:
           />
         </div>
 
-        <div class="book-right">
+        <aside class="book-right">
           <BookTags
             :tags="book?.tags"
             :loading="!showBookInfo"
             group
             @click:tag="searchBy('tags', $event)"
           />
-        </div>
+        </aside>
       </div>
     </div>
 
