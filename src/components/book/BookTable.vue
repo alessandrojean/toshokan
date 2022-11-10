@@ -529,7 +529,7 @@ defineExpose({ focus, focusOnActiveHeader })
 
 <template>
   <div
-    class="relative -mx-4 sm:-mx-6 md:mx-0 md:rounded-lg shadow overflow-hidden"
+    class="relative -mx-4 sm:-mx-6 md:mx-0 md:rounded-lg border dark:border-gray-700 overflow-hidden"
   >
     <div class="align-middle inline-block min-w-full" :aria-hidden="skeleton">
       <table
@@ -830,7 +830,10 @@ defineExpose({ focus, focusOnActiveHeader })
                   kind="ghost"
                   icon-only
                   rounded
-                  :to="{ name: 'dashboard-library-book-id', params: { id: book.id } }"
+                  :to="{
+                    name: 'dashboard-library-book-id',
+                    params: { id: book.id }
+                  }"
                   class="-mr-2"
                   tabindex="-1"
                   :title="t('dashboard.library.items.view')"

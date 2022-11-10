@@ -406,6 +406,7 @@ meta:
 <template>
   <div class="flex flex-col">
     <LibraryHeader
+      class="mx-4 sm:mx-6 border-b dark:border-gray-700"
       :loading="loading"
       :writing="writing"
       @click:new="openCreateDialog"
@@ -441,7 +442,7 @@ meta:
           </h2>
 
           <div
-            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 -mx-4 sm:-mx-6 md:mx-0 shadow md:rounded-xl flex flex-row justify-between items-center"
+            class="bg-block dark:bg-block-dark px-4 py-4 rounded-xl flex flex-row justify-between items-center"
           >
             <div
               v-if="
@@ -556,7 +557,7 @@ meta:
 
           <div
             v-if="paginationInfo.total_pages > 1"
-            class="bg-white dark:bg-gray-800 px-4 py-4 md:py-3 sm:px-6 shadow md:rounded-xl flex -mx-4 sm:-mx-6 md:mx-0 flex-col md:flex-row md:justify-between items-center"
+            class="bg-block dark:bg-block-dark p-4 rounded-xl flex flex-col md:flex-row md:justify-between items-center"
           >
             <div
               v-if="
@@ -756,7 +757,7 @@ meta:
 
 .view-button[aria-checked='true'] {
   @apply text-primary-600 dark:text-gray-300
-    bg-primary-50 dark:bg-gray-600/50;
+    bg-primary-100 dark:bg-gray-600/50;
 }
 
 .view-button[aria-checked='true']:not([aria-disabled='true']):hover {
