@@ -32,7 +32,7 @@ const releaseLink = computed(() => {
     role="contentinfo"
   >
     <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-between"
+      class="max-w-7xl mx-auto px-4 sm:px-6 text-center flex items-center justify-between"
     >
       <p class="text-sm text-gray-500 dark:text-gray-300">
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}

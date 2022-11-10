@@ -1,0 +1,147 @@
+<script lang="ts" setup>
+import { computed, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+import Book from '@/model/Book'
+
+import {
+  BookmarkIcon as BookmarkSolidIcon,
+  PencilIcon,
+  StarIcon as StarSolidIcon
+} from '@heroicons/vue/20/solid'
+import {
+  BookmarkIcon as BookmarkOutlineIcon,
+  ShareIcon,
+  StarIcon as StarOutlineIcon,
+  TrashIcon
+} from '@heroicons/vue/24/outline'
+
+import Button from '@/components/form/Button.vue'
+
+export interface BookButtonsProps {
+  book?: Book | null
+  canEdit?: boolean
+  editing?: boolean
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<BookButtonsProps>(), {
+  book: undefined,
+  canEdit: true,
+  editing: false,
+  loading: false
+})
+
+defineEmits<{
+  (e: 'click:edit', event: MouseEvent): void
+  (e: 'click:delete', event: MouseEvent): void
+  (e: 'click:toggleFavorite', event: MouseEvent): void
+  (e: 'click:toggleStatus', event: MouseEvent): void
+  (e: 'click:updateCover', event: MouseEvent): void
+  (e: 'click:share', event: MouseEvent): void
+}>()
+
+const { book, editing, loading } = toRefs(props)
+const { t } = useI18n({ useScope: 'global' })
+
+const disabled = computed(() => loading.value || editing.value)
+</script>
+
+<template>
+  <div class="flex w-full justify-center sm:justify-start" v-if="canEdit">
+    <Button
+      v-if="!loading"
+      class="sm:hidden"
+      size="large"
+      @click="$emit('click:edit', $event)"
+      :disabled="disabled"
+      icon-only
+      :title="t('dashboard.details.header.edit')"
+      v-slot="{ iconClass }"
+    >
+      <PencilIcon :class="iconClass" />
+    </Button>
+
+    <Button
+      v-if="!loading"
+      class="hidden sm:flex"
+      kind="primary"
+      size="large"
+      @click="$emit('click:edit', $event)"
+      :disabled="disabled"
+    >
+      <template #left="{ iconClass }">
+        <PencilIcon :class="iconClass" />
+      </template>
+      <span>{{ t('dashboard.details.header.edit') }}</span>
+    </Button>
+    <div
+      v-else
+      class="hidden sm:block skeleton flex-1 md:flex-initial md:w-28 h-11"
+    ></div>
+
+    <Button
+      v-if="!loading && !book!.isFuture"
+      class="ml-2"
+      size="large"
+      icon-only
+      :disabled="disabled"
+      :title="
+          t('dashboard.details.header.options.markAs', {
+            status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase()
+          })
+        "
+      @click="$emit('click:toggleStatus', $event)"
+      v-slot="{ iconClass }"
+    >
+      <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
+      <BookmarkOutlineIcon v-else :class="iconClass" />
+    </Button>
+
+    <Button
+      v-if="!loading"
+      class="ml-2"
+      size="large"
+      icon-only
+      :disabled="disabled"
+      :title="
+          t(
+            `dashboard.details.header.options.${
+              book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
+            }`
+          )
+        "
+      @click="$emit('click:toggleFavorite', $event)"
+      v-slot="{ iconClass }"
+    >
+      <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
+      <StarOutlineIcon v-else :class="iconClass" />
+    </Button>
+
+    <Button
+      v-if="!loading"
+      class="ml-2"
+      size="large"
+      icon-only
+      :disabled="disabled"
+      :title="t('dashboard.details.header.options.share')"
+      @click="$emit('click:share', $event)"
+      v-slot="{ iconClass }"
+    >
+      <ShareIcon :class="iconClass" />
+    </Button>
+
+    <Button
+      v-if="!loading"
+      class="ml-2"
+      size="large"
+      icon-only
+      :disabled="disabled"
+      :title="t('dashboard.details.header.options.delete')"
+      @click="$emit('click:delete', $event)"
+      v-slot="{ iconClass }"
+    >
+      <TrashIcon :class="iconClass" />
+    </Button>
+  </div>
+</template>

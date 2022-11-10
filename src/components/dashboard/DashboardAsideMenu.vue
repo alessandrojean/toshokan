@@ -38,6 +38,7 @@ export interface Item {
 export type ChildItem = NonNullable<Item['children']>[number]
 
 export interface AsideMenuProps {
+  dark?: boolean
   libraryGroups?: ChildItem[]
 }
 

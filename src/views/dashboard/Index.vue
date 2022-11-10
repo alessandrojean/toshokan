@@ -177,6 +177,7 @@ function closeAsideDialog() {
 provide(ShowAsideDialogKey, openAsideDialog)
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
+const smAndLarger = breakpoints.greaterOrEqual('sm')
 const lgAndLarger = breakpoints.greaterOrEqual('lg')
 
 watch(lgAndLarger, (shouldHide) => {
@@ -184,6 +185,8 @@ watch(lgAndLarger, (shouldHide) => {
     closeAsideDialog()
   }
 })
+
+const shared = computed(() => sheetStore.shared)
 </script>
 
 <template>
@@ -197,7 +200,7 @@ watch(lgAndLarger, (shouldHide) => {
         class="w-72 hidden lg:block shrink-0"
         :library-groups="libraryGroups"
       >
-        <template #footer v-if="enabled">
+        <template #footer v-if="enabled && shared">
           <div class="border-t border-gray-200 dark:border-gray-700 py-2">
             <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
           </div>
@@ -209,7 +212,7 @@ watch(lgAndLarger, (shouldHide) => {
       >
         <DashboardNavbar
           class="sticky inset-x-0 top-0 shrink-0"
-          :transparent="route.meta?.transparentNavbar"
+          :transparent="route.meta?.transparentNavbar && smAndLarger"
         />
 
         <main role="main" class="flex-1">
@@ -242,7 +245,7 @@ watch(lgAndLarger, (shouldHide) => {
       :library-groups="libraryGroups"
       @close="closeAsideDialog"
     >
-      <template #footer v-if="enabled">
+      <template #footer v-if="enabled && shared">
         <div class="border-t border-gray-200 dark:border-gray-700 py-2">
           <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
         </div>

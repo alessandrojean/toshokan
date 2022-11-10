@@ -7,7 +7,7 @@ import cloneDeep from 'lodash.clonedeep'
 
 import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
 import useEditBookMutation from '@/mutations/useEditBookMutation'
-import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import Book, { Status, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
 import { useSettingsStore } from '@/stores/settings'
 import { useSheetStore } from '@/stores/sheet'
 import useBookQuery from '@/queries/useBookQuery'
@@ -16,18 +16,23 @@ import useSheetVersionQuery from '@/queries/useSheetVersionQuery'
 import {
   DisableSearchShortcutKey,
   EnableSearchShortcutKey,
-  SetNavbarTransparentKey
+  SetNavbarTransparentKey,
+  ShowSearchDialogKey
 } from '@/symbols'
 import { injectStrict } from '@/utils'
 
-import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
+import BookBanner from '@/components/book/BookBanner.vue'
+import BookButtons from '@/components/book/BookButtons.vue'
 import BookCover from '@/components/book/BookCover.vue'
 import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
+import BookMarkdown from '@/components/book/BookMarkdown.vue'
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
-import BookBanner from '@/components/book/BookBanner.vue'
+import BookTitle from '@/components/book/BookTitle.vue'
+import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+import BookAttributes from '@/components/book/BookAttributes.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -152,61 +157,94 @@ watch(shareDialogOpen, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()
 })
 
-const gridMode = computed(() => settingsStore.gridMode)
 const blurNsfw = computed(() => settingsStore.blurNsfw)
 const spoilerMode = computed(() => settingsStore.spoilerMode)
+
+const showSearchDialog = injectStrict(ShowSearchDialogKey)
+
+function searchBy(keyword: string, value: string) {
+  const query = `${t('dashboard.search.keywords.' + keyword)}:"${value}"`
+  showSearchDialog(query)
+}
+
+const { data: timeZone, isLoading: timeZoneLoading } = useTimeZoneQuery({
+  enabled: computed(() => sheetStore.sheetId !== null)
+})
 </script>
 
 <template>
   <div
-    class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out -mt-16"
+    class="bg-white dark:bg-gray-900 motion-safe:transition-colors duration-300 ease-in-out -mt-16 relative"
   >
-    <BookBanner :loading="!showBookInfo" :book="book" />
+    <div class="absolute inset-x-0 top-0">
+      <BookBanner :loading="!showBookInfo" :book="book" />
+    </div>
 
-    <div class="max-w-7xl mx-auto md:px-6 lg:px-8 md:py-10 md:dark:py-6">
-      <!-- Main section -->
-      <div class="md:space-y-8 bg-white dark:bg-transparent">
-        <section
-          class="bg-gray-800 dark:bg-gray-700 md:bg-transparent md:dark:bg-transparent md:grid md:grid-cols-2 lg:grid-cols-7 md:gap-8 -mt-16 md:mt-0"
-        >
-          <!-- Book cover -->
-          <div class="lg:col-span-3">
-            <BookCover
-              :loading="!showBookInfo"
-              :book="book"
-              :blur-nsfw="blurNsfw"
-              :spoiler-mode="spoilerMode"
-            />
-          </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 relative">
+      <div class="book-grid">
+        <BookCover
+          class="book-cover"
+          :loading="!showBookInfo"
+          :book="book"
+          :blur-nsfw="blurNsfw"
+          :spoiler-mode="spoilerMode"
+        />
 
-          <!-- Book information -->
-          <div
-            class="bg-white dark:bg-gray-800 md:dark:bg-transparent relative -mt-5 md:mt-0 p-6 md:p-0 shadow-inner md:shadow-none rounded-t-3xl md:rounded-none lg:col-span-4"
-          >
-            <BookInformation
-              :loading="!showBookInfo"
-              :book="book"
-              :disabled="writing"
-              @click:edit="openEditDialog"
-              @click:toggleFavorite="toggleFavorite"
-              @click:toggleStatus="toggleStatus"
-              @click:share="openShareDialog"
-              @click:delete="openDeleteModal"
-            />
-          </div>
-        </section>
+        <BookTitle
+          class="book-title"
+          :loading="!showBookInfo"
+          :book="book"
+          @click:author="searchBy('author', $event)"
+        />
 
-        <!-- Book tabs -->
-        <section class="dark:bg-gray-800 md:dark:bg-transparent md:pt-6">
-          <BookTabs
+        <BookButtons
+          class="book-buttons pt-1.5"
+          :loading="!showBookInfo"
+          :book="book"
+          :editing="writing"
+          @click:edit="openEditDialog"
+          @click:toggleFavorite="toggleFavorite"
+          @click:toggleStatus="toggleStatus"
+          @click:share="openShareDialog"
+          @click:delete="openDeleteModal"
+        />
+
+        <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
+          <BookMarkdown
+            :title="t('book.properties.synopsis')"
+            :empty-message="t('book.emptySynopsis')"
             :loading="!showBookInfo"
-            :book="book"
-            :collection="collection"
-            :blur-nsfw="blurNsfw"
-            :spoiler-mode="spoilerMode"
-            :mode="gridMode"
+            :markdown="book?.synopsis ?? undefined"
+            :blur="spoilerMode.synopsis && book?.status !== Status.READ"
           />
-        </section>
+
+          <BookMarkdown
+            :title="t('book.properties.notes')"
+            :loading="!showBookInfo"
+            :markdown="book?.notes ?? undefined"
+            :options="{ youtube: true }"
+          />
+        </div>
+
+        <BookAttributes
+          class="book-attributes"
+          :loading="!showBookInfo || timeZoneLoading"
+          :book="book"
+          :time-zone="timeZone"
+          @click:group="searchBy('group', $event)"
+          @click:publisher="searchBy('publisher', $event)"
+          @click:store="searchBy('store', $event)"
+        />
+
+        <!-- <BookTabs
+          class="book-tabs"
+          :loading="!showBookInfo"
+          :book="book"
+          :collection="collection"
+          :blur-nsfw="blurNsfw"
+          :spoiler-mode="spoilerMode"
+          :mode="gridMode"
+        /> -->
       </div>
     </div>
 
@@ -229,3 +267,52 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
     />
   </div>
 </template>
+
+<style lang="postcss">
+.book-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-areas:
+    'art title'
+    'buttons buttons'
+    'synopsis synopsis'
+    'attributes attributes'
+    'tabs tabs';
+  grid-template-columns: 6rem 1fr;
+
+  @media (min-width: 640px) {
+    gap: 1.5rem;
+    grid-template-areas:
+      'art title'
+      'art buttons'
+      'art padding'
+      'attributes synopsis'
+      'tabs tabs';
+    grid-template-columns: 14rem 1fr;
+  }
+
+  .book-cover {
+    grid-area: art / art / art / art;
+  }
+
+  .book-buttons {
+    grid-area: buttons / buttons / buttons / buttons;
+  }
+
+  .book-title {
+    grid-area: title / title / title / title;
+  }
+
+  .book-synopsis {
+    grid-area: synopsis / synopsis / synopsis / synopsis;
+  }
+
+  .book-attributes {
+    grid-area: attributes / attributes / attributes / attributes;
+  }
+
+  .book-tabs {
+    grid-area: tabs / tabs / tabs / tabs;
+  }
+}
+</style>

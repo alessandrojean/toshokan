@@ -131,7 +131,7 @@ function handleMarkAsRead(book: Book) {
   <div class="flex flex-col">
     <header class="bg-white shadow dark:bg-gray-800">
       <div
-        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6 lg:px-8"
+        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6 px-4 sm:px-6"
       >
         <div class="flex-1 flex items-center space-x-4">
           <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
@@ -199,7 +199,7 @@ function handleMarkAsRead(book: Book) {
     </header>
 
     <div class="flex-1">
-      <div class="h-full max-w-7xl mx-auto py-6 px-5 md:px-8">
+      <div class="h-full max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <section
           v-if="!sheetIsEmpty"
           :aria-labelledby="loading ? '' : 'overview-title'"

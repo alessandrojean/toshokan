@@ -12,7 +12,7 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
 
 <template>
   <header class="bg-white shadow dark:bg-gray-800">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6">
       <div v-if="loading" class="skeleton h-7 w-56"></div>
       <h1
         v-else

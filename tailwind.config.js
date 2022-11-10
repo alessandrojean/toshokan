@@ -73,7 +73,7 @@ export default {
 
               '& > img, & > .video-player': {
                 margin: '0 auto',
-                borderRadius: theme('borderRadius.md'),
+                borderRadius: theme('borderRadius.lg'),
                 boxShadow: theme('boxShadow.lg')
               },
 

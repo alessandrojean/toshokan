@@ -55,7 +55,7 @@ const { t } = useI18n({ useScope: 'global' })
     <div class="flex-1">
       <div
         v-if="!sheetIsEmpty && !tooEarly"
-        class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 lg:px-8 space-y-1 md:space-y-6"
+        class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 space-y-1 md:space-y-6"
       >
         <GroupedStatistics class="mb-2 md:mb-0" />
 

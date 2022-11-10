@@ -96,7 +96,7 @@ const { t } = useI18n({ useScope: 'global' })
         v-if="showBookCover"
         :src="coverUrl"
         :alt="book?.title ?? undefined"
-        :class="['w-full h-full', blurCover ? ' filter blur-sm' : '']"
+        :class="['w-full h-full', blurCover ? ' filter blur-sm scale-105' : '']"
       />
       <div v-else class="w-full h-full flex items-center justify-center">
         <PhotoIcon
