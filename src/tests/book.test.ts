@@ -112,6 +112,18 @@ it('Should split the titles correctly', () => {
       number: null,
       main: 'Gyo',
       subtitle: null
+    },
+    'The Ghost in the Shell: The Perfect Book 1995⇾2017': {
+      title: 'The Ghost in the Shell: The Perfect Book 1995⇾2017',
+      number: null,
+      main: 'The Ghost in the Shell',
+      subtitle: 'The Perfect Book 1995⇾2017'
+    },
+    'Jujutsu Kaisen: Batalha de Feiticeiros #01': {
+      title: 'Jujutsu Kaisen: Batalha de Feiticeiros',
+      number: '01',
+      main: 'Jujutsu Kaisen: Batalha de Feiticeiros #01',
+      subtitle: null
     }
   }
 

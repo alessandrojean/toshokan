@@ -201,17 +201,26 @@ export default class Book {
     const titleRegex = /\s+#(\d+(?:[.,]\d+)?)(?::\s+)?/
     const parts = this.title!.split(titleRegex)
 
-    const main = parts[2]
+    let main = parts[2]
       ? this.title!.substring(0, this.title!.indexOf(parts[2]) - 2).trim()
       : this.title!
+
+    let subtitle = parts[2]
+      ? this.title!.replace(main, '').replace(':', '').trim()
+      : ''
+
+    if (!parts[1]) {
+      const [title, ...rest] = this.title!.split(':')
+
+      main = title.trim()
+      subtitle = rest.join(' ').trim()
+    }
 
     return {
       title: parts[0].trim(),
       number: parts[1] || null,
       main,
-      subtitle: parts[2]
-        ? this.title!.replace(main, '').replace(':', '').trim()
-        : null
+      subtitle: subtitle.length > 0 ? subtitle : null
     }
   }
 
