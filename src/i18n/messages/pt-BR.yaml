@@ -51,6 +51,7 @@ book:
   unread: Não lido
   currentVolume: Volume atual
   emptySynopsis: A sinopse do livro não foi preenchida.
+  emptyTags: O livro não possui tags.
   future: Futuro
   properties:
     id: Identificação

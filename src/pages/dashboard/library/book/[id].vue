@@ -27,11 +27,10 @@ import BookButtons from '@/components/book/BookButtons.vue'
 import BookCover from '@/components/book/BookCover.vue'
 import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
-import BookInformation from '@/components/book/BookInformation.vue'
 import BookMarkdown from '@/components/book/BookMarkdown.vue'
 import BookNavigator from '@/components/book/BookNavigator.vue'
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
-import BookTabs from '@/components/book/BookTabs.vue'
+import BookTags from '@/components/book/BookTags.vue'
 import BookTitle from '@/components/book/BookTitle.vue'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import BookAttributes from '@/components/book/BookAttributes.vue'
@@ -210,7 +209,7 @@ meta:
       <BookBanner :loading="!showBookInfo" :book="book" />
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 z-10 pt-20 pb-6 relative">
       <div class="book-grid">
         <BookCover
           class="book-cover"
@@ -261,6 +260,13 @@ meta:
             :blur="blurSynopsis"
           />
 
+          <BookTags
+            class="2xl:hidden"
+            :tags="book?.tags"
+            :loading="!showBookInfo"
+            @click:tag="searchBy('tags', $event)"
+          />
+
           <BookMarkdown
             v-if="book?.notes?.length"
             :title="t('book.properties.notes')"
@@ -281,15 +287,13 @@ meta:
           />
         </div>
 
-        <!-- <BookTabs
-          class="book-tabs"
-          :loading="!showBookInfo"
-          :book="book"
-          :collection="collection"
-          :blur-nsfw="blurNsfw"
-          :spoiler-mode="spoilerMode"
-          :mode="gridMode"
-        /> -->
+        <div class="book-right">
+          <BookTags
+            :tags="book?.tags"
+            :loading="!showBookInfo"
+            @click:tag="searchBy('tags', $event)"
+          />
+        </div>
       </div>
     </div>
 
@@ -321,19 +325,34 @@ meta:
     'art title'
     'buttons buttons'
     'synopsis synopsis'
+    'tags tags'
     'attributes attributes'
+    'notes notes'
     'tabs tabs';
   grid-template-columns: 6rem 1fr;
 
-  @media (min-width: 640px) {
+  @media (min-width: theme('screens.sm')) {
     gap: 1.5rem;
     grid-template-areas:
       'art title'
       'art buttons'
       'art padding'
       'attributes synopsis'
-      'tabs tabs';
+      'attributes tags'
+      'attributes notes';
     grid-template-columns: 14rem 1fr;
+  }
+
+  @media (min-width: theme('screens.2xl')) {
+    gap: 1.5rem;
+    grid-template-areas:
+      'art title title'
+      'art buttons buttons'
+      'art padding padding'
+      'attributes synopsis right'
+      'attributes tags right'
+      'attributes notes right';
+    grid-template-columns: 14rem 1fr 22rem;
   }
 
   .book-cover {
@@ -356,8 +375,9 @@ meta:
     grid-area: attributes / attributes / attributes / attributes;
   }
 
-  .book-tabs {
-    grid-area: tabs / tabs / tabs / tabs;
+  .book-right {
+    @apply hidden 2xl:block;
+    grid-area: right / right / right / right;
   }
 }
 </style>
