@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { type Locale, useI18n } from '@/i18n'
+import { getFlagUrl } from '@/util'
 
 import {
   Listbox,
@@ -32,10 +33,6 @@ const { t, availableLocales } = useI18n({ useScope: 'global' })
 const localeFlags: Record<Locale, string> = {
   'pt-BR': 'BR',
   'en-US': 'US'
-}
-
-function createFlagUrl(country: string) {
-  return `https://hatscripts.github.io/circle-flags/flags/${country.toLowerCase()}.svg`
 }
 </script>
 
@@ -89,7 +86,7 @@ function createFlagUrl(country: string) {
       <ListboxButton class="select relative w-56">
         <span class="flex items-center">
           <img
-            :src="createFlagUrl(localeFlags[modelValue])"
+            :src="getFlagUrl(localeFlags[modelValue]).circle"
             aria-hidden="true"
             class="shrink-0 h-5 w-5 rounded-full"
           />
@@ -131,7 +128,7 @@ function createFlagUrl(country: string) {
             >
               <div class="flex items-center">
                 <img
-                  :src="createFlagUrl(localeFlags[loc as Locale])"
+                  :src="getFlagUrl(localeFlags[loc as Locale]).circle"
                   aria-hidden="true"
                   class="shrink-0 h-5 w-5 rounded-full"
                 />

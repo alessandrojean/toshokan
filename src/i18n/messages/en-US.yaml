@@ -54,6 +54,7 @@ book:
   future: Future
   properties:
     id: ID
+    code: Code
     title: Title
     author: Author | Authors
     authors: Authors
@@ -336,6 +337,10 @@ dashboard:
       help: Help
       signOut: Sign out
   details:
+    expand: Expand
+    collapse: Collapse
+    flag: Flag of {region}
+    cover: Cover of {title}
     zoom:
       view: Zoom in
       title: Book cover

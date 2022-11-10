@@ -54,6 +54,7 @@ book:
   future: Futuro
   properties:
     id: Identificação
+    code: Código
     title: Título
     author: Autor | Autores
     authors: Autores
@@ -341,6 +342,10 @@ dashboard:
       help: Ajuda
       signOut: Sair
   details:
+    expand: Expandir
+    collapse: Retrair
+    flag: Bandeira do {region}
+    cover: Capa de {title}
     zoom:
       view: Dar zoom na imagem
       title: Capa do livro

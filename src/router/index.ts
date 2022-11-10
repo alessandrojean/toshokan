@@ -201,6 +201,7 @@ router.afterEach((to) => {
   const routeTitle = to.meta?.title?.()
   document.title =
     (routeTitle?.length > 0 ? routeTitle + ' | ' : '') + t('app.name')
+  // @ts-ignore
   document.body.dataset.route = to.name
 })
 
@@ -231,6 +232,14 @@ router.beforeEach(async (to) => {
     }
 
     return { name: 'SignIn', query: { redirect: to.fullPath } }
+  }
+})
+
+router.beforeEach((to, from) => {
+  const mainContent = document.querySelector<HTMLDivElement>('#main-content')
+
+  if (mainContent) {
+    mainContent.scroll({ top: 0, behavior: 'smooth' })
   }
 })
 

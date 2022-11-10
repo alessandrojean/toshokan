@@ -89,6 +89,10 @@ const metadata = computed(() => {
       value: country.value ? language.value : null
     },
     {
+      title: book.value?.codeType ?? t('book.properties.code'),
+      value: book.value?.code
+    },
+    {
       title: t('book.properties.publisher'),
       key: 'publisher',
       value: book.value?.publisher,

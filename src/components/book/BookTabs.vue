@@ -158,7 +158,7 @@ const metadata = computed(() => {
     {
       title: t('book.properties.language'),
       value: country.value ? language.value : null,
-      flagUrl: country.value?.flagUrl
+      flagUrl: country.value?.flagUrl?.circle
     },
     {
       title: t('book.properties.publisher'),

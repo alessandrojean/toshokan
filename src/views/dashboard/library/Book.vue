@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 import cloneDeep from 'lodash.clonedeep'
 
+import { useI18n } from '@/i18n'
 import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
 import useEditBookMutation from '@/mutations/useEditBookMutation'
 import Book, { Status, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
@@ -28,13 +28,14 @@ import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
 import BookInformation from '@/components/book/BookInformation.vue'
 import BookMarkdown from '@/components/book/BookMarkdown.vue'
+import BookNavigator from '@/components/book/BookNavigator.vue'
 import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
 import BookTabs from '@/components/book/BookTabs.vue'
 import BookTitle from '@/components/book/BookTitle.vue'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import BookAttributes from '@/components/book/BookAttributes.vue'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 const settingsStore = useSettingsStore()
@@ -49,15 +50,16 @@ const enabled = computed(() => {
 
 const { isLoading, data: book } = useBookQuery(bookId, { enabled })
 
-const { data: collection } = useBookCollectionQuery(book, {
-  enabled: computed(() => {
-    return (
-      enabled.value &&
-      book.value?.titleParts !== undefined &&
-      book.value.titleParts.number !== null
-    )
+const { data: collection, isLoading: collectionLoading } =
+  useBookCollectionQuery(book, {
+    enabled: computed(() => {
+      return (
+        enabled.value &&
+        book.value?.titleParts !== undefined &&
+        book.value.titleParts.number !== null
+      )
+    })
   })
-})
 
 const { data: sheetVersion } = useSheetVersionQuery({ enabled })
 
@@ -178,6 +180,16 @@ const blurSynopsis = computed(() => {
     book.value?.synopsis?.length !== 0
   )
 })
+
+const region = computed(() => {
+  if (!book.value?.isbnData) {
+    return ''
+  }
+
+  const formatter = new Intl.DisplayNames(locale.value, { type: 'region' })
+
+  return formatter.of(book.value.isbnData.countryCode)
+})
 </script>
 
 <template>
@@ -196,7 +208,14 @@ const blurSynopsis = computed(() => {
           :book="book"
           :blur-nsfw="blurNsfw"
           :spoiler-mode="spoilerMode"
-        />
+        >
+          <img
+            v-if="book?.isbnData"
+            :src="book.isbnData.flagUrl.rectangle"
+            :alt="t('dashboard.details.flag', { region })"
+            class="inline-block z-10 w-6 aspect-[3/2] rounded-sm shadow absolute right-3 bottom-3 pointer-events-none"
+          />
+        </BookCover>
 
         <BookTitle
           class="book-title"
@@ -218,6 +237,12 @@ const blurSynopsis = computed(() => {
         />
 
         <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
+          <BookNavigator
+            :loading="!showBookInfo || collectionLoading"
+            :book="book"
+            :collection="collection"
+          />
+
           <BookMarkdown
             :title="t('book.properties.synopsis')"
             :empty-message="t('book.emptySynopsis')"
@@ -227,6 +252,7 @@ const blurSynopsis = computed(() => {
           />
 
           <BookMarkdown
+            v-if="book?.notes?.length"
             :title="t('book.properties.notes')"
             :loading="!showBookInfo"
             :markdown="book?.notes ?? undefined"
@@ -234,15 +260,16 @@ const blurSynopsis = computed(() => {
           />
         </div>
 
-        <BookAttributes
-          class="book-attributes"
-          :loading="!showBookInfo || timeZoneLoading"
-          :book="book"
-          :time-zone="timeZone"
-          @click:group="searchBy('group', $event)"
-          @click:publisher="searchBy('publisher', $event)"
-          @click:store="searchBy('store', $event)"
-        />
+        <div class="book-attributes">
+          <BookAttributes
+            :loading="!showBookInfo || timeZoneLoading"
+            :book="book"
+            :time-zone="timeZone"
+            @click:group="searchBy('group', $event)"
+            @click:publisher="searchBy('publisher', $event)"
+            @click:store="searchBy('store', $event)"
+          />
+        </div>
 
         <!-- <BookTabs
           class="book-tabs"

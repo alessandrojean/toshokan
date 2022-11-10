@@ -95,7 +95,11 @@ const { t } = useI18n({ useScope: 'global' })
       <img
         v-if="showBookCover"
         :src="coverUrl"
-        :alt="book?.title ?? undefined"
+        :alt="
+          book?.title
+            ? t('dashboard.details.cover', { title: book.title })
+            : undefined
+        "
         :class="['w-full h-full', blurCover ? ' filter blur-sm scale-105' : '']"
       />
       <div v-else class="w-full h-full flex items-center justify-center">
@@ -110,7 +114,7 @@ const { t } = useI18n({ useScope: 'global' })
 
     <button
       v-if="showBookCover"
-      class="bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 motion-safe:transition-opacity"
+      class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 motion-safe:transition-opacity"
       type="button"
       :title="t('dashboard.details.zoom.view')"
       @click="openDialog"
@@ -118,6 +122,8 @@ const { t } = useI18n({ useScope: 'global' })
       <EyeIcon v-if="blurCover" class="w-8 h-8 text-white" />
       <MagnifyingGlassPlusIcon v-else class="w-8 h-8 text-white" />
     </button>
+
+    <slot />
 
     <BookCoverDialog
       v-if="showBookCover && showBookInfo"
