@@ -291,6 +291,7 @@ meta:
           <BookTags
             :tags="book?.tags"
             :loading="!showBookInfo"
+            group
             @click:tag="searchBy('tags', $event)"
           />
         </div>
@@ -325,7 +326,6 @@ meta:
     'art title'
     'buttons buttons'
     'synopsis synopsis'
-    'tags tags'
     'attributes attributes'
     'notes notes'
     'tabs tabs';

@@ -86,7 +86,7 @@ function handleContainerClick(event: MouseEvent) {
     ref="content"
     @click="handleContainerClick"
   >
-    <h3 class="text-lg font-medium font-display dark:text-gray-100">
+    <h3 class="text-md sm:text-lg font-medium font-display dark:text-gray-100">
       {{ title }}
     </h3>
     <div
@@ -97,7 +97,7 @@ function handleContainerClick(event: MouseEvent) {
           blur && (collapsed || !showReadMore) && markdownRendered?.length,
         'show-on-hover': blur && !showReadMore && markdownRendered?.length
       }"
-      class="mt-3 prose dark:prose-invert max-w-none motion-safe:transition"
+      class="mt-3 prose prose-sm sm:prose-base dark:prose-invert max-w-none motion-safe:transition"
     />
     <div v-else class="flex flex-col space-y-2 mt-3" aria-hidden="true">
       <div class="skeleton w-full h-5"></div>

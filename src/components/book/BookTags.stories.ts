@@ -6,6 +6,7 @@ export default {
   title: 'Components/Book/Tags',
   component: BookTags,
   args: {
+    group: false,
     loading: false,
     tags: [...Array.from({ length: 20 }).keys()].map((i) => `Tag ${i + 1}`)
   },
@@ -45,4 +46,21 @@ export const Empty: StoryObj<typeof BookTags> = {
     template: '<BookTags v-bind="args" />'
   }),
   args: { tags: [] }
+}
+
+export const Groups: StoryObj<typeof BookTags> = {
+  render: (args) => ({
+    components: { BookTags },
+    setup: () => ({ args }),
+    template: '<BookTags v-bind="args" />'
+  }),
+  args: {
+    group: true,
+    tags: [
+      'group: tag1',
+      'group: tag2',
+      'another group: tag1',
+      'yet another group: tag3'
+    ]
+  }
 }
