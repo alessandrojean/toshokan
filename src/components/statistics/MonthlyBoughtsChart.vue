@@ -179,7 +179,7 @@ const itemsBought = computed(() => ({
     </h2>
     <div class="bg-white dark:bg-gray-900 px-2 py-3 mt-4 rounded-lg">
       <div
-        class="aspect-[16/10] md:aspect-[16/8] sm:-mx-3 flex items-center justify-center"
+        class="aspect-[16/10] md:aspect-[16/8] flex items-center justify-center"
         role="img"
       >
         <FadeTransition>
