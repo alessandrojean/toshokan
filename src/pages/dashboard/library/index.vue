@@ -408,10 +408,19 @@ meta:
                 <RadioGroupLabel class="sr-only">
                   {{ t('dashboard.library.filters.viewMode.label') }}
                 </RadioGroupLabel>
-                <div class="flex space-x-0.5">
+                <div class="flex space-x-1 relative">
+                  <div
+                    aria-hidden="true"
+                    :class="[
+                      'w-9 h-9 rounded-md bg-primary-100 dark:bg-gray-600/50 absolute left-0 top-0',
+                      'motion-safe:transition-transform',
+                      viewMode === 'grid,comfortable' ? 'translate-x-10' : '',
+                      viewMode === 'grid,compact' ? 'translate-x-20' : ''
+                    ]"
+                  />
                   <RadioGroupOption
                     value="table"
-                    class="view-button has-ring-focus"
+                    class="view-button has-ring-focus z-10 !ml-0"
                     :title="t('dashboard.library.filters.viewMode.table')"
                   >
                     <span class="sr-only">
@@ -423,7 +432,7 @@ meta:
                   </RadioGroupOption>
                   <RadioGroupOption
                     value="grid,comfortable"
-                    class="view-button has-ring-focus"
+                    class="view-button has-ring-focus z-10"
                     :title="
                       t('dashboard.library.filters.gridMode.comfortableGrid')
                     "
@@ -439,7 +448,7 @@ meta:
                   </RadioGroupOption>
                   <RadioGroupOption
                     value="grid,compact"
-                    class="view-button has-ring-focus"
+                    class="view-button has-ring-focus z-10"
                     :title="t('dashboard.library.filters.gridMode.compactGrid')"
                   >
                     <span class="sr-only">
@@ -695,8 +704,7 @@ meta:
 }
 
 .view-button[aria-checked='true'] {
-  @apply text-primary-600 dark:text-gray-300
-    bg-primary-100 dark:bg-gray-600/50;
+  @apply text-primary-600 dark:text-gray-300;
 }
 
 .view-button[aria-checked='true']:not([aria-disabled='true']):hover {

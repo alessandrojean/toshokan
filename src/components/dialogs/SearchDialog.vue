@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import PaginatorUtil from 'paginator'
-import { useActiveElement } from '@vueuse/core'
+import { useActiveElement, refDebounced, useDebounceFn } from '@vueuse/core'
 
 import { useI18n } from '@/i18n'
 import { useSearchStore } from '@/stores/search'
@@ -31,6 +31,9 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import Paginator from '@/components/Paginator.vue'
 import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
+import useMarkdown from '@/composables/useMarkdown'
+import { createSearchKeywords } from '@/services/sheet/searchBooks'
+import { m } from 'vitest/dist/index-b68b3c09'
 
 const props = defineProps<{ isOpen: boolean }>()
 
@@ -42,13 +45,19 @@ const { isOpen } = toRefs(props)
 const searchStore = useSearchStore()
 const sheetStore = useSheetStore()
 
+const searchInputValue = ref('')
 const searchQuery = ref('')
 const searchedOnce = ref(false)
 const searchedTerm = ref('')
 const searchHistory = computed(() => searchStore.history)
 const searchPagination = computed(() => searchStore.pagination)
 
+const handleInput = useDebounceFn(() => {
+  searchQuery.value = searchInputValue.value
+}, 1000)
+
 const searchInput = ref<HTMLInputElement>()
+const inputRenderer = ref<HTMLDivElement>()
 const results = ref(null)
 const dialogContent = ref(null)
 
@@ -109,6 +118,7 @@ watch(searchData, (newData) => {
 async function clearSearch(focusOnInput?: boolean) {
   remove.value()
 
+  searchInputValue.value = ''
   searchQuery.value = ''
   searchedOnce.value = false
   searchedTerm.value = ''
@@ -127,6 +137,7 @@ function closeDialog() {
 
 function search(query: string) {
   searchQuery.value = query
+  searchInputValue.value = query
   searchStore.updateQuery(query)
 }
 
@@ -320,6 +331,44 @@ function focusOnResults() {
     focusOnElement(historyList.value!, historyItemFocused.value)
   }
 }
+
+const searchKeywordsRegex = computed(() => {
+  return new RegExp(
+    '^-?(?:' + Object.keys(createSearchKeywords()).join('|') + ')'
+  )
+})
+
+// https://github.com/nepsilon/search-query-parser/blob/master/lib/search-query-parser.js
+const KEYWORDS_REGEX =
+  /(\S+:'(?:[^'\\]|\\.)*'?)|(\S+:"(?:[^"\\]|\\.)*"?)|\S+:\S+/g
+const KEYWORD_INCLUDE_TEMPLATE =
+  '<span class="keyword keyword-included">$&</span>'
+const KEYWORD_EXCLUDE_TEMPLATE =
+  '<span class="keyword keyword-excluded">$&</span>'
+
+const { escapeHtml } = useMarkdown()
+
+function syncScroll(event: Event) {
+  const target = event.target! as HTMLInputElement
+
+  inputRenderer.value!.scrollTop = target.scrollTop
+  inputRenderer.value!.scrollLeft = target.scrollLeft
+}
+
+const inputRendererHtml = computed(() => {
+  return escapeHtml(searchInputValue.value)
+    .replace(/&quot;/g, '"')
+    .replace(KEYWORDS_REGEX, (string) => {
+      const template =
+        string.charAt(0) === '-'
+          ? KEYWORD_EXCLUDE_TEMPLATE
+          : KEYWORD_INCLUDE_TEMPLATE
+      return string.match(searchKeywordsRegex.value)
+        ? template.replace('$&', string)
+        : string
+    })
+    .replace(/<\/span>(.*?)<span/g, '</span><span>$1</span><span')
+})
 </script>
 
 <template>
@@ -376,28 +425,33 @@ function focusOnResults() {
                   {{ t('dashboard.search.label') }}
                 </label>
 
-                <input
-                  type="search"
-                  id="search-input"
-                  ref="searchInput"
-                  class="search-input"
-                  spellcheck="false"
-                  role="combobox"
-                  aria-controls="search-options"
-                  aria-labelledby="search-label"
-                  :value="searchQuery"
-                  :placeholder="t('dashboard.search.placeholder')"
-                  :disabled="searchLoading || !isOpen"
-                  @input="
-                    debounce(() => {
-                      searchQuery = ($event.target as HTMLInputElement).value
-                    })
-                  "
-                  @keyup.enter.prevent="
-                    search(($event.target as HTMLInputElement).value)
-                  "
-                  @keyup.arrow-down.exact.prevent="focusOnResults"
-                />
+                <div class="relative">
+                  <input
+                    type="search"
+                    id="search-input"
+                    ref="searchInput"
+                    class="search-input"
+                    spellcheck="false"
+                    role="combobox"
+                    aria-controls="search-options"
+                    aria-labelledby="search-label"
+                    v-model="searchInputValue"
+                    :placeholder="t('dashboard.search.placeholder')"
+                    :disabled="searchLoading || !isOpen"
+                    @input="handleInput"
+                    @keyup.enter.prevent="
+                      search(($event.target as HTMLInputElement).value)
+                    "
+                    @keyup.arrow-down.exact.prevent="focusOnResults"
+                    @scroll="syncScroll"
+                  />
+
+                  <div
+                    class="input-renderer"
+                    ref="inputRenderer"
+                    v-html="inputRendererHtml"
+                  />
+                </div>
               </div>
 
               <FadeTransition>
@@ -438,22 +492,7 @@ function focusOnResults() {
 
             <FadeTransition>
               <div
-                v-if="searchResults?.length === 0"
-                class="no-results select-none"
-              >
-                <i18n-t
-                  keypath="dashboard.search.noResultsFound"
-                  tag="p"
-                  scope="global"
-                >
-                  <span class="text-gray-900 dark:text-gray-100">{{
-                    searchedTerm
-                  }}</span>
-                </i18n-t>
-              </div>
-
-              <div
-                v-else-if="
+                v-if="
                   (searchResults?.length ?? 0) > 0 && searchQuery.length > 0
                 "
                 tabindex="-1"
@@ -570,6 +609,23 @@ function focusOnResults() {
                 </FadeTransition>
               </div>
 
+              <div
+                v-else-if="
+                  searchResults?.length === 0 && searchQuery.length > 0
+                "
+                class="no-results select-none"
+              >
+                <i18n-t
+                  keypath="dashboard.search.noResultsFound"
+                  tag="p"
+                  scope="global"
+                >
+                  <span class="text-gray-900 dark:text-gray-100">{{
+                    searchedTerm
+                  }}</span>
+                </i18n-t>
+              </div>
+
               <div v-else-if="searchHistory.length > 0" class="history">
                 <h3 class="title px-5" id="history-header">
                   {{ t('dashboard.search.history') }}
@@ -650,27 +706,44 @@ input[type='search']::-webkit-search-results-decoration {
     ring-1 ring-black/5;
 }
 
-.search-input-wrapper::after {
-  @apply content-[''] absolute inset-x-0 bottom-0
+.search-input-wrapper {
+  &::after {
+    @apply content-[''] absolute inset-x-0 bottom-0
     bg-primary-600 dark:bg-primary-400 h-2px scale-x-0
     motion-safe:transition-transform motion-safe:ease-in motion-safe:delay-150;
-}
+  }
 
-.search-input-wrapper:focus-within::after {
-  @apply scale-x-100 will-change-transform;
-}
+  &:focus-within::after {
+    @apply scale-x-100 will-change-transform;
+  }
 
-.search-input {
-  @apply w-full border-0 p-0 font-medium
-    dark:bg-gray-800 dark:text-gray-100;
-}
+  .search-input {
+    @apply px-1 w-full border-0 p-0 font-medium text-base
+      selection:bg-primary-200 dark:selection:bg-gray-600/80
+      dark:bg-gray-800 dark:text-gray-100 accent-primary-600;
 
-.search-input:focus {
-  @apply ring-0;
-}
+    &:focus {
+      @apply ring-0;
+    }
 
-.search-input:disabled {
-  @apply opacity-60;
+    &:disabled {
+      @apply opacity-60;
+    }
+
+    &:not(:placeholder-shown) {
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .input-renderer {
+    scrollbar-width: 0;
+    @apply px-1 absolute inset-x-0 -inset-y-1 flex items-center whitespace-pre text-base
+      font-medium overflow-x-auto select-none pointer-events-none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 .clear-button {
@@ -735,5 +808,26 @@ input[type='search']::-webkit-search-results-decoration {
 
 .search-footer[data-total-pages='1'] {
   @apply hidden sm:flex;
+}
+</style>
+
+<style lang="postcss">
+.keyword {
+  @apply dark:h-6 rounded dark:rounded-none inline-block
+    dark:box-border dark:border-dotted;
+
+  &.keyword-included {
+    @apply text-emerald-700 dark:text-emerald-400
+      bg-emerald-200/40 dark:bg-transparent
+      dark:border-b-2 dark:border-emerald-600/80
+      ring-2 ring-emerald-200/40 dark:ring-0;
+  }
+
+  &.keyword-excluded {
+    @apply text-red-700 dark:text-red-400
+      bg-red-200/40 dark:bg-transparent
+      dark:border-b-2 dark:border-red-400/50
+      ring-2 ring-red-200/40 dark:ring-0;
+  }
 }
 </style>
