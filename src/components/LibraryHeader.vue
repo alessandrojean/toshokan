@@ -74,107 +74,109 @@ const canEdit = computed(() => sheetStore.canEdit)
 
 <template>
   <header>
-    <div
-      class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6"
-    >
-      <div class="flex-1 items-center">
-        <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
-          <div
-            class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"
-          ></div>
-          <div class="flex space-x-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div
+        class="py-6 md:flex md:items-center md:justify-between border-b dark:border-gray-700"
+      >
+        <div class="flex-1 items-center">
+          <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
             <div
-              class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"
+              class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-56 mb-2"
             ></div>
-            <div
-              class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-24"
-            ></div>
-          </div>
-        </template>
-        <div v-else class="flex flex-row-reverse md:flex-row items-center">
-          <div class="grow min-w-0">
-            <h1
-              class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
-            >
-              {{ t('dashboard.library.title') }}
-            </h1>
-            <div
-              class="mt-1 flex flex-col md:flex-row items-start md:flex-wrap md:mt-0 md:-mb-1 md:space-x-2"
-            >
-              <button
-                class="group -ml-2.5 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
-                :disabled="writing || loading"
-                @click="$emit('click:filter')"
+            <div class="flex space-x-2">
+              <div
+                class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-32"
+              ></div>
+              <div
+                class="motion-safe:animate-pulse h-5 bg-gray-400 dark:bg-gray-600 rounded w-24"
+              ></div>
+            </div>
+          </template>
+          <div v-else class="flex flex-row-reverse md:flex-row items-center">
+            <div class="grow min-w-0">
+              <h1
+                class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
               >
-                <span aria-hidden="true">
-                  <ArchiveBoxIcon
-                    class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
-                  />
-                </span>
-                <span class="sr-only">
-                  {{ t('dashboard.library.currentGroup') }}
-                </span>
-                {{ currentGroups }}
-              </button>
+                {{ t('dashboard.library.title') }}
+              </h1>
+              <div
+                class="mt-1 flex flex-col md:flex-row items-start md:flex-wrap md:mt-0 md:-mb-1 md:space-x-2"
+              >
+                <button
+                  class="group -ml-2.5 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
+                  :disabled="writing || loading"
+                  @click="$emit('click:filter')"
+                >
+                  <span aria-hidden="true">
+                    <ArchiveBoxIcon
+                      class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
+                    />
+                  </span>
+                  <span class="sr-only">
+                    {{ t('dashboard.library.currentGroup') }}
+                  </span>
+                  {{ currentGroups }}
+                </button>
 
-              <button
-                class="group -ml-2.5 md:ml-0 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
-                :disabled="writing || loading"
-                @click="$emit('click:filter')"
-              >
-                <span aria-hidden="true">
-                  <component
-                    class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
-                    :is="
-                      sortDirection === 'asc'
-                        ? BarsArrowUpIcon
-                        : BarsArrowDownIcon
-                    "
-                  />
-                </span>
-                <span class="sr-only">
-                  {{ t('dashboard.library.sortingBy') }}
-                </span>
-                {{ sortPropertyName }}
-              </button>
+                <button
+                  class="group -ml-2.5 md:ml-0 flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 has-ring-focus"
+                  :disabled="writing || loading"
+                  @click="$emit('click:filter')"
+                >
+                  <span aria-hidden="true">
+                    <component
+                      class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
+                      :is="
+                        sortDirection === 'asc'
+                          ? BarsArrowUpIcon
+                          : BarsArrowDownIcon
+                      "
+                    />
+                  </span>
+                  <span class="sr-only">
+                    {{ t('dashboard.library.sortingBy') }}
+                  </span>
+                  {{ sortPropertyName }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
-        <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
-          <div
-            class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"
-          ></div>
-          <div
-            class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"
-          ></div>
-        </template>
-        <template v-else>
-          <Button
-            class="flex-1 md:flex-initial justify-center md:justify-start"
-            @click.stop="$emit('click:filter')"
-            v-if="!sheetIsEmpty"
-            :disabled="loading || writing"
-          >
-            <template #left="{ iconClass }">
-              <FunnelIcon :class="iconClass" />
-            </template>
-            <span>{{ t('dashboard.library.filter') }}</span>
-          </Button>
-          <Button
-            v-if="canEdit"
-            kind="primary"
-            @click="$emit('click:new')"
-            class="flex-1 md:flex-initial justify-center md:justify-start"
-            :disabled="loading || writing"
-          >
-            <template #left="{ iconClass }">
-              <PlusIcon :class="iconClass" />
-            </template>
-            <span>{{ t('dashboard.library.newBook') }}</span>
-          </Button>
-        </template>
+        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
+          <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
+            <div
+              class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"
+            ></div>
+            <div
+              class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-32 flex-1 md:flex-initial"
+            ></div>
+          </template>
+          <template v-else>
+            <Button
+              class="flex-1 md:flex-initial justify-center md:justify-start"
+              @click.stop="$emit('click:filter')"
+              v-if="!sheetIsEmpty"
+              :disabled="loading || writing"
+            >
+              <template #left="{ iconClass }">
+                <FunnelIcon :class="iconClass" />
+              </template>
+              <span>{{ t('dashboard.library.filter') }}</span>
+            </Button>
+            <Button
+              v-if="canEdit"
+              kind="primary"
+              @click="$emit('click:new')"
+              class="flex-1 md:flex-initial justify-center md:justify-start"
+              :disabled="loading || writing"
+            >
+              <template #left="{ iconClass }">
+                <PlusIcon :class="iconClass" />
+              </template>
+              <span>{{ t('dashboard.library.newBook') }}</span>
+            </Button>
+          </template>
+        </div>
       </div>
     </div>
   </header>

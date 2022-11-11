@@ -78,7 +78,7 @@ function handleContainerClick(event: MouseEvent) {
   <section
     v-if="markdownRendered?.length || emptyMessage || loading"
     :class="[
-      'book-markdown bg-gray-50 dark:bg-gray-800/70 p-4 rounded-xl relative motion-safe:transition overflow-hidden',
+      'book-markdown bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition overflow-hidden',
       collapsed && showReadMore
         ? 'h-52 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 animate-hover'
         : ''
@@ -148,16 +148,16 @@ function handleContainerClick(event: MouseEvent) {
     background-image: linear-gradient(
       to bottom,
       transparent,
-      theme('colors.gray.50 / 70%') 40%,
-      theme('colors.gray.50') 80%
+      theme('colors.block / 70%') 40%,
+      theme('colors.block') 80%
     );
 
     html.dark & {
       background-image: linear-gradient(
         to bottom,
         transparent,
-        theme('colors.gray.800 / 70%') 40%,
-        theme('colors.gray.800') 80%
+        theme('colors.block-dark / 70%') 40%,
+        theme('colors.block-dark') 80%
       );
     }
   }

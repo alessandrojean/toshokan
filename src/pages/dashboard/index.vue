@@ -139,98 +139,100 @@ meta:
 
 <template>
   <div class="flex flex-col">
-    <header class="border-b dark:border-gray-700 mx-4 sm:mx-6">
-      <div
-        class="max-w-7xl mx-auto md:flex md:items-center md:justify-between py-6"
-      >
-        <div class="flex-1 flex items-center space-x-4">
-          <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
-          <div>
-            <h1
-              class="text-xl lg:text-2xl font-semibold font-display text-gray-900 dark:text-gray-100"
-            >
-              {{ t('dashboard.home.hello', { name: profileName }) }}
-            </h1>
-            <p
-              v-if="isDev || shared"
-              class="text-sm text-gray-600 dark:text-gray-300"
-            >
-              {{
-                shared
-                  ? t('dashboard.sheetChooser.viewing', [ownerDisplayName])
-                  : t('footer.dev')
-              }}
-            </p>
+    <header>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div
+          class="md:flex md:items-center md:justify-between py-6 border-b dark:border-gray-700"
+        >
+          <div class="flex-1 flex items-center space-x-4">
+            <Avatar :picture-url="ownerPictureUrl" :shared="shared" />
+            <div>
+              <h1
+                class="text-xl lg:text-2xl font-semibold font-display text-gray-900 dark:text-gray-100"
+              >
+                {{ t('dashboard.home.hello', { name: profileName }) }}
+              </h1>
+              <p
+                v-if="isDev || shared"
+                class="text-sm text-gray-600 dark:text-gray-300"
+              >
+                {{
+                  shared
+                    ? t('dashboard.sheetChooser.viewing', [ownerDisplayName])
+                    : t('footer.dev')
+                }}
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-2">
-          <Button
-            v-if="!shared"
-            size="large"
-            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="showValues = !showValues"
-            :disabled="loading"
-            :title="
-              showValues
-                ? t('dashboard.home.hideValues')
-                : t('dashboard.home.showValues')
-            "
-            v-slot="{ iconClass }"
-            icon-only
-          >
-            <Transition
-              mode="out-in"
-              leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
-              leave-from-class="opacity-100 rotate-0"
-              leave-to-class="opacity-0 rotate-180"
-              enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
-              enter-from-class="opacity-0 -rotate-180"
-              enter-to-class="opacity-100 rotate-0"
+          <div class="flex mt-5 md:mt-0 md:ml-4 space-x-2">
+            <Button
+              v-if="!shared"
+              size="large"
+              class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+              @click="showValues = !showValues"
+              :disabled="loading"
+              :title="
+                showValues
+                  ? t('dashboard.home.hideValues')
+                  : t('dashboard.home.showValues')
+              "
+              v-slot="{ iconClass }"
+              icon-only
             >
-              <EyeIcon :class="iconClass" v-if="!showValues" />
-              <EyeSlashIcon :class="iconClass" v-else />
-            </Transition>
-          </Button>
-          <Button
-            size="large"
-            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="reload"
-            :disabled="loading || isFetching > 0"
-            :title="t('dashboard.home.reload')"
-            v-slot="{ iconClass }"
-            icon-only
-          >
-            <ArrowPathIcon
-              :class="[
-                iconClass,
-                loading || isFetching ? 'motion-safe:animate-spin' : ''
-              ]"
-            />
-          </Button>
-          <Button
-            v-if="canChange"
-            size="large"
-            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="openSheetChooser"
-            :disabled="loading || isFetching > 0"
-            :title="t('dashboard.sheetChooser.actionSelectSheet')"
-            v-slot="{ iconClass }"
-            icon-only
-          >
-            <RectangleStackIcon :class="iconClass" />
-          </Button>
-          <Button
-            v-if="canEdit"
-            size="large"
-            class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="openCreateDialog"
-            :disabled="loading"
-            :title="t('dashboard.home.newBook')"
-            v-slot="{ iconClass }"
-            icon-only
-          >
-            <PlusIcon :class="iconClass" />
-          </Button>
+              <Transition
+                mode="out-in"
+                leave-active-class="transition motion-reduce:transition-none duration-100 ease-in"
+                leave-from-class="opacity-100 rotate-0"
+                leave-to-class="opacity-0 rotate-180"
+                enter-active-class="transition motion-reduce:transition-none duration-200 ease-out"
+                enter-from-class="opacity-0 -rotate-180"
+                enter-to-class="opacity-100 rotate-0"
+              >
+                <EyeIcon :class="iconClass" v-if="!showValues" />
+                <EyeSlashIcon :class="iconClass" v-else />
+              </Transition>
+            </Button>
+            <Button
+              size="large"
+              class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+              @click="reload"
+              :disabled="loading || isFetching > 0"
+              :title="t('dashboard.home.reload')"
+              v-slot="{ iconClass }"
+              icon-only
+            >
+              <ArrowPathIcon
+                :class="[
+                  iconClass,
+                  loading || isFetching ? 'motion-safe:animate-spin' : ''
+                ]"
+              />
+            </Button>
+            <Button
+              v-if="canChange"
+              size="large"
+              class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+              @click="openSheetChooser"
+              :disabled="loading || isFetching > 0"
+              :title="t('dashboard.sheetChooser.actionSelectSheet')"
+              v-slot="{ iconClass }"
+              icon-only
+            >
+              <RectangleStackIcon :class="iconClass" />
+            </Button>
+            <Button
+              v-if="canEdit"
+              size="large"
+              class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
+              @click="openCreateDialog"
+              :disabled="loading"
+              :title="t('dashboard.home.newBook')"
+              v-slot="{ iconClass }"
+              icon-only
+            >
+              <PlusIcon :class="iconClass" />
+            </Button>
+          </div>
         </div>
       </div>
     </header>

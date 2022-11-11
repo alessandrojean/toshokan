@@ -10,7 +10,7 @@ import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import { ChartBarIcon } from '@heroicons/vue/24/solid'
 
-import FadeTransition from './transitions/FadeTransition.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
@@ -35,16 +35,15 @@ const {
 
 const loading = computed(() => isLoading.value || isIdle.value)
 
-const { n, t, d, locale } = useI18n({ useScope: 'global' })
+const { t, d, locale } = useI18n({ useScope: 'global' })
+
+const { darkMode } = useDarkMode()
 
 const localeStr = computed(() => {
   return locale.value === 'en-US' ? 'en' : locale.value.toLowerCase()
 })
 
-const { darkMode } = useDarkMode()
-
 const currentYear = new Date().getFullYear()
-const pastYear = currentYear - 1
 
 type MonthlyValues = NonNullable<UnwrapRef<typeof stats>>['monthly']
 
@@ -70,91 +69,98 @@ function fillMissingMonths(values: MonthlyValues, year: number) {
 }
 
 const currentYearValues = computed(() => {
-  const values = (stats.value?.monthly || []).filter(
+  const values = (stats.value?.monthly ?? []).filter(
     (m) => m.month.getFullYear() === currentYear
   )
 
   return fillMissingMonths(values, currentYear)
 })
 
-const pastYearValues = computed(() => {
-  const values = (stats.value?.monthly || []).filter(
-    (m) => m.month.getFullYear() === pastYear
-  )
-
-  const lastMonth = currentYearValues.value.length
-  return fillMissingMonths(values, pastYear).slice(0, lastMonth)
-})
-
-const expenses = computed(() => ({
+const itemsBought = computed(() => ({
   options: <ApexOptions>{
     chart: {
       animations: { enabled: false },
       fontFamily: fontFamily('sans')!.join(', '),
-      id: 'monthly-expenses',
+      id: 'monthly-boughts',
       locales: [apexLocales[locale.value]],
       defaultLocale: localeStr.value,
       selection: { enabled: false },
       toolbar: { show: false },
       zoom: { enabled: false }
     },
-    colors: [color('cyan', 500)!, color('primary', 500)!],
-    dataLabels: { enabled: false },
+    states: {
+      active: { filter: { type: 'none' } }
+    },
+    colors: [color('primary', 500)!, color('cyan', 500)!],
+    fill: { opacity: 1.0 },
     grid: {
       borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!
     },
-    stroke: { curve: 'smooth' },
-    tooltip: {
-      theme: darkMode.value ? 'dark' : 'light',
-      x: {
-        formatter: (value) => {
-          return d(currentYearValues.value[value - 1].month, 'monthYear')
-        }
-      }
-    },
+    tooltip: { enabled: false },
     xaxis: {
       categories: currentYearValues.value.map((m) => m.month.toISOString()),
       labels: {
-        formatter: (value) => {
-          return value ? d(new Date(value), 'month') : value
+        formatter: (_, timestamp) => {
+          return d(new Date(timestamp!), 'month')
         },
+        hideOverlappingLabels: false,
+        showDuplicates: true,
         style: {
-          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
         }
-      },
-      tooltip: { enabled: false }
+      }
     },
     yaxis: {
       labels: {
-        formatter: (value) => {
-          // @ts-ignore
-          return n(value, 'currency', {
-            currency: stats.value!.money?.currency ?? 'USD'
-          })
-        },
+        formatter: (val) => val.toFixed(0),
         style: {
-          colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
+        }
+      },
+      max: (max) => max + 1,
+      forceNiceScale: true
+    },
+    legend: {
+      labels: {
+        colors: darkMode.value ? color('slate', 300) : color('slate', 600),
+        useSeriesColors: false
+      },
+      onItemClick: {
+        toggleDataSeries: false
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      offsetY: -20,
+      style: {
+        colors: [darkMode.value ? color('slate', 100) : color('slate', 700)]
+      }
+    },
+    stroke: {
+      show: true,
+      colors: ['transparent'],
+      width: 6
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 5,
+        endingShape: 'rounded',
+        dataLabels: {
+          position: 'top',
+          hideOverflowingLabels: false
         }
       }
-    }
-  },
-  legend: {
-    labels: {
-      colors: darkMode.value ? color('slate', 300)! : color('slate', 600)!,
-      useSeriesColors: false
-    },
-    onItemClick: {
-      toggleDataSeries: false
     }
   },
   series: [
     {
-      name: t('dashboard.stats.monthlyExpense', { year: pastYear }),
-      data: pastYearValues.value.map((m) => m.totalSpent)
+      name: t('dashboard.stats.booksBoughtAndRead.bought'),
+      data: currentYearValues.value.map((m) => m.count)
     },
     {
-      name: t('dashboard.stats.monthlyExpense', { year: currentYear }),
-      data: currentYearValues.value.map((m) => m.totalSpent)
+      name: t('dashboard.stats.booksBoughtAndRead.read'),
+      data: currentYearValues.value.map((m) => m.read)
     }
   ]
 }))
@@ -162,21 +168,20 @@ const expenses = computed(() => ({
 
 <template>
   <section
-    class="bg-white dark:bg-gray-800 md:rounded-2xl shadow"
-    :aria-labelledby="!loading ? 'monthly-expense-title' : ''"
+    class="bg-block dark:bg-block-dark rounded-xl p-4"
+    aria-labelledby="monthly-boughts-title"
   >
-    <div class="px-4 sm:px-6 py-3 border-b dark:border-b-gray-700">
-      <div v-if="loading" class="skeleton h-6 w-40" />
-      <h2
-        v-else
-        id="monthly-expense-title"
-        class="font-medium font-display text-gray-900 dark:text-gray-100"
+    <h2
+      id="monthly-boughts-title"
+      class="font-medium font-display text-gray-900 dark:text-gray-100 text-md sm:text-lg"
+    >
+      {{ t('dashboard.stats.booksBoughtAndRead.title') }}
+    </h2>
+    <div class="bg-white dark:bg-gray-900 px-2 py-3 mt-4 rounded-lg">
+      <div
+        class="aspect-[16/10] md:aspect-[16/8] sm:-mx-3 flex items-center justify-center"
+        role="img"
       >
-        {{ t('dashboard.stats.monthlyExpenseTitle') }}
-      </h2>
-    </div>
-    <div class="px-4 py-3 sm:px-6">
-      <div class="aspect-w-16 aspect-h-10 md:aspect-h-7 sm:-mx-3" role="img">
         <FadeTransition>
           <div v-if="loading" class="flex items-center justify-center">
             <ChartBarIcon
@@ -184,13 +189,13 @@ const expenses = computed(() => ({
               aria-hidden="true"
             />
           </div>
-          <div v-else class="monthly-expense-chart">
+          <div v-else class="w-full h-full">
             <ApexChart
               width="100%"
               height="100%"
-              type="area"
-              :options="expenses.options"
-              :series="expenses.series"
+              type="bar"
+              :options="itemsBought.options"
+              :series="itemsBought.series"
             />
           </div>
         </FadeTransition>
@@ -198,12 +203,3 @@ const expenses = computed(() => ({
     </div>
   </section>
 </template>
-
-<style lang="postcss">
-.monthly-expense-chart
-  .apexcharts-legend
-  .apexcharts-legend-series
-  .apexcharts-legend-text {
-  @apply !text-gray-600 dark:!text-gray-300;
-}
-</style>

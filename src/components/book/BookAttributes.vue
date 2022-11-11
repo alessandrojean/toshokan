@@ -152,7 +152,7 @@ const metadata = computed(() => {
 </script>
 
 <template>
-  <dl class="bg-gray-50 dark:bg-gray-800/70 px-4 py-2 rounded-xl">
+  <dl class="bg-block dark:bg-block-dark px-4 py-2 rounded-xl">
     <template v-for="(mt, i) in metadata" :key="i">
       <div v-if="mt.value || loading" class="px-0 py-2">
         <dt

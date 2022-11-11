@@ -28,17 +28,17 @@ const releaseLink = computed(() => {
 
 <template>
   <footer
-    class="hidden sm:block bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 py-4"
+    class="bg-white dark:bg-gray-900 shadow border-t border-gray-200 dark:border-gray-700 pt-6 pb-10 sm:pb-6"
     role="contentinfo"
   >
     <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 text-center flex items-center justify-between"
+      class="max-w-7xl mx-auto px-4 sm:px-6 text-center flex flex-col sm:flex-row items-center justify-between"
     >
-      <p class="text-sm text-gray-500 dark:text-gray-300">
+      <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
         {{ t('footer.copyright', { year: new Date().getFullYear() }) }}
       </p>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-4 mt-4 sm:mt-0">
         <div class="flex items-center space-x-2">
           <button
             class="p-1 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 rounded has-ring-focus"

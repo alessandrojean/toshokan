@@ -15,7 +15,7 @@ export default {
       ...defaultTheme.fontFamily,
       sans: ['Inter', ...defaultTheme.fontFamily.sans],
       'sans-var': ['Inter var', ...defaultTheme.fontFamily.sans],
-      display: ['Poppins', ...defaultTheme.fontFamily.sans]
+      display: ['Inter', ...defaultTheme.fontFamily.sans]
     },
     extend: {
       boxShadow: {

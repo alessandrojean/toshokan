@@ -1,5 +1,10 @@
 import { promisify } from '@/util/gapi'
 
+export interface RankingItem {
+  name: string
+  count: number
+}
+
 /**
  * Get the sheet statistics.
  *
@@ -50,12 +55,23 @@ export default async function getStatistics(sheetId: string) {
       })),
     authors: (response.result.valueRanges![4].values || [])
       .slice(0, 10)
-      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map<RankingItem>((row) => ({
+        name: row[0],
+        count: parseInt(row[1], 10)
+      })),
     series: (response.result.valueRanges![5].values || [])
       .slice(0, 10)
-      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) })),
+      .map<RankingItem>((row) => ({
+        name: row[0],
+        count: parseInt(row[1], 10)
+      })),
     publishers: (response.result.valueRanges![6].values || [])
       .slice(0, 10)
-      .map((row) => ({ name: row[0], count: parseInt(row[1], 10) }))
+      .map<RankingItem>((row) => ({
+        name: row[0],
+        count: parseInt(row[1], 10)
+      }))
   }
 }
+
+export type Statistics = Awaited<ReturnType<typeof getStatistics>>

@@ -12,9 +12,10 @@ import {
 } from '@heroicons/vue/24/outline'
 
 import BasicBarChart from '@/components/BasicBarChart.vue'
-import GroupedStatistics from '@/components/GroupedStatistics.vue'
-import MonthlyBoughtsChart from '@/components/MonthlyBoughtsChart.vue'
-import MonthlyExpenseChart from '@/components/MonthlyExpenseChart.vue'
+import GroupedStatistics from '@/components/statistics/GroupedStatistics.vue'
+import MonthlyBoughtsChart from '@/components/statistics/MonthlyBoughtsChart.vue'
+import MonthlyExpenseChart from '@/components/statistics/MonthlyExpenseChart.vue'
+import StatisticsRanking from '@/components/statistics/StatisticsRanking.vue'
 import SimpleHeader from '@/components/SimpleHeader.vue'
 
 const sheetStore = useSheetStore()
@@ -49,38 +50,37 @@ meta:
     <div class="flex-1">
       <div
         v-if="!sheetIsEmpty && !tooEarly"
-        class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 md:px-6 space-y-1 md:space-y-6"
+        class="h-full flex flex-col max-w-7xl w-full mx-auto md:py-6 px-4 sm:px-6 space-y-4 sm:space-y-6"
       >
         <GroupedStatistics class="mb-2 md:mb-0" />
 
         <div
-          class="flex overflow-x-scroll md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 gap-6"
+          class="flex overflow-x-scroll md:overflow-x-visible -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 gap-6"
         >
-          <MonthlyExpenseChart class="w-full shrink-0 snap-start" />
+          <MonthlyExpenseChart
+            class="w-full shrink-0 snap-start scroll-ml-4 sm:scroll-ml-6 md:scroll-ml-0"
+          />
           <MonthlyBoughtsChart class="w-full shrink-0 snap-start" />
         </div>
 
         <div
-          class="flex overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          class="flex overflow-x-auto md:overflow-x-visible -mx-4 sm:-mx-6 md:mx-0 px-4 sm:px-6 md:px-0 pb-6 md:pb-0 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <BasicBarChart
-            class="w-full shrink-0 snap-start"
-            :series="(stats?.publishers || []).slice(0, 10)"
-            :series-name="t('dashboard.stats.bookQuantity')"
+          <StatisticsRanking
+            class="w-full shrink-0 snap-start scroll-ml-4 sm:scroll-ml-6 md:scroll-ml-0"
+            :ranking="(stats?.publishers || []).slice(0, 10)"
             :title="t('dashboard.stats.publishersRankTitle')"
             :loading="loading"
           />
-          <BasicBarChart
-            class="w-full shrink-0 snap-start"
-            :series="(stats?.authors || []).slice(0, 10)"
-            :series-name="t('dashboard.stats.bookQuantity')"
+          <StatisticsRanking
+            class="w-full shrink-0 snap-start scroll-ml-4 sm:scroll-ml-6 md:scroll-ml-0"
+            :ranking="(stats?.authors || []).slice(0, 10)"
             :title="t('dashboard.stats.authorsRankTitle')"
             :loading="loading"
           />
-          <BasicBarChart
+          <StatisticsRanking
             class="w-full shrink-0 snap-start"
-            :series="(stats?.series || []).slice(0, 10)"
-            :series-name="t('dashboard.stats.bookQuantity')"
+            :ranking="(stats?.series || []).slice(0, 10)"
             :title="t('dashboard.stats.seriesRankTitle')"
             :loading="loading"
           />

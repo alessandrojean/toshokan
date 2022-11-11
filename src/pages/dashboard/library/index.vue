@@ -406,7 +406,6 @@ meta:
 <template>
   <div class="flex flex-col">
     <LibraryHeader
-      class="mx-4 sm:mx-6 border-b dark:border-gray-700"
       :loading="loading"
       :writing="writing"
       @click:new="openCreateDialog"

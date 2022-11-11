@@ -696,6 +696,7 @@ dashboard:
     read: Lidos
     count: Contagem
     book: livro | livros
+    bookCount: '{count} livro | {count} livros'
   sheetChooser:
     title: Escolha uma planilha
     description: Você pode visualizar e editar outras planilhas compartilhadas.

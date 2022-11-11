@@ -55,7 +55,7 @@ const groupedTags = computed(() => {
 
 <template>
   <section
-    class="bg-gray-50 dark:bg-gray-800/70 p-4 rounded-xl relative motion-safe:transition"
+    class="bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition"
   >
     <h3 class="text-md sm:text-lg font-medium font-display dark:text-gray-100">
       {{ t('book.properties.tags') }}

@@ -691,6 +691,7 @@ dashboard:
     read: Read
     count: Count
     book: book | books
+    bookCount: '{count} book | {count} books'
   sheetChooser:
     title: Pick a sheet
     description: You can view and edit other sheets shared with you.
