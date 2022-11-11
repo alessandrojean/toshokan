@@ -103,8 +103,8 @@ export const Warning: StoryObj<typeof Alert> = {
     `
   }),
   args: {
-    title: 'This is an warning alert',
+    title: 'This is a warning alert',
     show: true,
-    type: 'error'
+    type: 'warning'
   }
 }

@@ -19,45 +19,17 @@ const props = defineProps<AlertProps>()
 
 const { type } = toRefs(props)
 
-const backgroundColor = computed(() => {
-  if (type.value === 'error') {
-    return 'bg-red-50'
-  } else if (type.value === 'info') {
-    return 'bg-blue-50'
-  } else {
-    return 'bg-amber-50'
-  }
-})
+const classes: Record<AlertProps['type'], string> = {
+  info: 'bg-blue-50 text-blue-700 border-blue-500',
+  error: 'bg-red-50 text-red-700 border-red-500',
+  warning: 'bg-amber-50 text-amber-900 border-amber-400'
+}
 
-const baseTextColor = computed(() => {
-  if (type.value === 'error') {
-    return 'text-red-700'
-  } else if (type.value === 'info') {
-    return 'text-blue-700'
-  } else {
-    return 'text-amber-900'
-  }
-})
-
-const titleTextColor = computed(() => {
-  if (type.value === 'error') {
-    return 'text-red-800'
-  } else if (type.value === 'info') {
-    return 'text-blue-800'
-  } else {
-    return 'text-amber-800'
-  }
-})
-
-const borderColor = computed(() => {
-  if (type.value === 'error') {
-    return 'border-red-500'
-  } else if (type.value === 'info') {
-    return 'border-blue-500'
-  } else {
-    return 'border-amber-400'
-  }
-})
+const titleClasses: Record<AlertProps['type'], string> = {
+  info: 'text-blue-800',
+  error: 'text-red-800',
+  warning: 'text-amber-800'
+}
 </script>
 
 <template>
@@ -67,13 +39,11 @@ const borderColor = computed(() => {
       role="alert"
       :data-type="type"
       :class="[
-        backgroundColor,
-        baseTextColor,
-        borderColor,
-        'dark:bg-gray-700 border-l-4 dark:border-l-0 dark:rounded-md dark:text-gray-100 px-3 py-5 text-sm flex space-x-3'
+        'dark:bg-gray-800 border-l-4 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3',
+        classes[type]
       ]"
     >
-      <div class="shrink-0">
+      <div class="shrink-0 pt-1">
         <XCircleIcon
           v-if="type === 'error'"
           class="h-5 w-5 text-red-500 dark:text-red-400"
@@ -96,8 +66,8 @@ const borderColor = computed(() => {
         <p
           v-if="title && title.length > 0"
           :class="[
-            titleTextColor,
-            'font-display font-medium dark:text-gray-100'
+            titleClasses[type],
+            'font-display font-medium text-md sm:text-lg dark:text-gray-100'
           ]"
         >
           {{ title }}
