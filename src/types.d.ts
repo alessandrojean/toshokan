@@ -28,3 +28,45 @@ declare module '~~/tailwind.config.js' {
   const config: Config
   export default config
 }
+
+declare module 'markdown-it-abbr' {
+  import type { PluginSimple } from 'markdown-it'
+  const abbr: PluginSimple
+  export default abbr
+}
+
+declare module 'markdown-it-deflist' {
+  import type { PluginSimple } from 'markdown-it'
+  const deflist: PluginSimple
+  export default deflist
+}
+
+declare module 'markdown-it-implicit-figures' {
+  import type { PluginWithOptions } from 'markdown-it'
+  type Options = {
+    dataType?: boolean
+    figcaption?: boolean
+    tabindex?: boolean
+    link?: boolean
+    copyAttrs?: boolean
+  }
+  const implicitFigures: PluginWithOptions<Options>
+  export default implicitFigures
+}
+
+declare module 'markdown-it-table-of-contents' {
+  import type md, { PluginWithOptions } from 'markdown-it'
+  type Options = {
+    dincludeLevel?: number[]
+    containerClass?: string
+    slugify?: (text: string) => string
+    markerPattern?: RegExp
+    listType?: 'ul' | 'ol'
+    format?: (content: string, md: md) => string
+    containerHeaderHtml?: string
+    containerFooterHtml?: string
+    transformLink?: (link: string) => string
+  }
+  const tableOfContents: PluginWithOptions<Options>
+  export default tableOfContents
+}
