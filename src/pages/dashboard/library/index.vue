@@ -2,7 +2,8 @@
 import { computed, nextTick, onMounted, ref, toRaw, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-
+import { useActiveElement } from '@vueuse/core'
+import Paginator from '@/components/Paginator.vue'
 import cloneDeep from 'lodash.clonedeep'
 
 import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
@@ -48,7 +49,6 @@ import LibraryFiltersDialog, {
   type FilterState
 } from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
-import Paginator from '@/components/Paginator.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const collectionStore = useCollectionStore()
@@ -257,16 +257,12 @@ const currentView = computed(() => {
   return viewMode.value === 'table' ? table.value : grid.value
 })
 
-type FocusableElement = Element & {
-  blur: () => void
-  focus: () => void
-}
-
-const lastFocus = ref<FocusableElement>()
+const lastFocus = ref<HTMLElement | undefined | null>(null)
+const activeElement = useActiveElement()
 
 watch(booksFetching, (value) => {
   if (value) {
-    lastFocus.value = document.activeElement as FocusableElement
+    lastFocus.value = activeElement.value
     lastFocus.value?.blur()
   }
 })

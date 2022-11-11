@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import PaginatorUtil from 'paginator'
+import { useActiveElement } from '@vueuse/core'
 
 import { useI18n } from '@/i18n'
 import { useSearchStore } from '@/stores/search'
@@ -131,16 +132,12 @@ function search(query: string) {
 
 defineExpose({ search })
 
-type FocusableElement = Element & {
-  blur: () => void
-  focus: () => void
-}
-
-const lastFocus = ref<FocusableElement | null>(null)
+const lastFocus = ref<HTMLElement | null | undefined>(null)
+const activeElement = useActiveElement()
 
 watch(isFetching, async (newIsFetching) => {
   if (newIsFetching) {
-    lastFocus.value = document.activeElement as FocusableElement
+    lastFocus.value = activeElement.value
     lastFocus.value?.blur()
 
     return
@@ -307,7 +304,7 @@ function handleItemKeydown(
 
 function focusOnElement(container: Element, i: number) {
   const li = container?.children?.[i]
-  const element = li?.children?.[0] as FocusableElement | undefined
+  const element = li?.children?.[0] as HTMLElement | undefined
 
   element?.focus()
 }

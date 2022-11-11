@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, onUnmounted, ref, toRefs, watch } from 'vue'
 import QrCode from 'qrcode'
+import { useClipboard } from '@vueuse/core'
 
 import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
@@ -147,20 +148,10 @@ function downloadFile() {
 const shareUrlInput = ref<HTMLInputElement>()
 const showCopiedInfo = ref(false)
 
+const { copy } = useClipboard({ source: shareUrl })
+
 function copyShareUrl() {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(shareUrl.value)
-
-    showCopied()
-  }
-
-  shareUrlInput.value?.focus()
-  shareUrlInput.value?.select()
-
-  try {
-    document.execCommand('copy')
-  } catch (e) {}
-
+  copy()
   showCopied()
 }
 
