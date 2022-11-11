@@ -5,11 +5,12 @@ import { PropertyToColumn } from '@/model/Book'
 import searchBooks from '@/services/sheet/searchBooks'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
+import type { Sort } from '@/types'
 
 type UseBookSearchQueryArgs = {
   query: Ref<string>
   sortBy: Ref<string>
-  sortDirection: Ref<'asc' | 'desc'>
+  sortDirection: Ref<Sort>
   page: Ref<number>
 }
 

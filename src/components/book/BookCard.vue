@@ -77,8 +77,8 @@ watch(loading, (newValue) => {
 
 const blurCover = computed(() => {
   return (
-    (spoilerMode.value.cover && !book.value.isRead) ||
-    (blurNsfw.value && book.value.isNsfw)
+    (spoilerMode.value.cover && !book.value?.isRead) ||
+    (blurNsfw.value && book.value?.isNsfw)
   )
 })
 </script>
@@ -110,12 +110,12 @@ const blurCover = computed(() => {
     :is="imageOnly ? 'div' : 'RouterLink'"
     :to="
       !imageOnly
-        ? { name: 'dashboard-library-book-id', params: { id: book.id } }
+        ? { name: 'dashboard-library-book-id', params: { id: book?.id ?? '' } }
         : undefined
     "
     class="book-link group focus:outline-none relative"
     ref="loadedCard"
-    :title="!imageOnly ? book.title : undefined"
+    :title="!imageOnly ? book?.title ?? '' : undefined"
     :aria-current="current && !imageOnly ? 'page' : undefined"
     :tabindex="!imageOnly ? tabindex : undefined"
   >
@@ -124,13 +124,16 @@ const blurCover = computed(() => {
       :class="blurCover ? 'blurred' : ''"
       :to="
         imageOnly
-          ? { name: 'dashboard-library-book-id', params: { id: book.id } }
+          ? {
+              name: 'dashboard-library-book-id',
+              params: { id: book?.id ?? '' }
+            }
           : undefined
       "
       class="book-card !outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
       :aria-current="current && imageOnly ? 'page' : undefined"
       :tabindex="imageOnly ? tabindex : undefined"
-      :title="imageOnly ? book.title : undefined"
+      :title="imageOnly ? book?.title ?? '' : undefined"
     >
       <FadeTransition>
         <div
@@ -162,14 +165,14 @@ const blurCover = computed(() => {
       </FadeTransition>
 
       <div
-        v-if="(book.isRead || current || book.isFuture) && !imageOnly"
+        v-if="(book?.isRead || current || book?.isFuture) && !imageOnly"
         class="badge-wrapper"
       >
         <span v-if="current" class="current-volume">
           {{ t('book.currentVolume') }}
         </span>
         <template
-          v-if="!book.isFuture && book.isRead && mode === 'comfortable'"
+          v-if="!book?.isFuture && book?.isRead && mode === 'comfortable'"
         >
           <span class="sr-only">{{ t('book.read') }}</span>
           <div
@@ -178,7 +181,7 @@ const blurCover = computed(() => {
             <BookmarkIcon class="w-4 h-4 text-primary-500" />
           </div>
         </template>
-        <span v-else-if="!current && book.isFuture" class="future-item">
+        <span v-else-if="!current && book?.isFuture" class="future-item">
           <span aria-hidden="true">
             <ClockIcon class="w-3.5 h-3.5" />
           </span>
@@ -204,14 +207,14 @@ const blurCover = computed(() => {
               <span
                 class="font-semibold font-display text-[0.8rem] sm:text-sm truncate max-w-full"
               >
-                {{ book.titleParts.title }}
+                {{ book?.titleParts?.title }}
               </span>
               <span class="font-medium text-xxs sm:text-xs">
                 {{ volume }}
               </span>
             </div>
             <div
-              v-if="!book.isFuture && book.isRead"
+              v-if="!book?.isFuture && book?.isRead"
               class="shrink-0 bg-white dark:bg-primary-50 dark:bg-opacity-95 rounded p-0.5 mt-px ml-1 sm:ml-2"
             >
               <BookmarkIcon class="w-4 h-4 text-primary-500" />
@@ -232,7 +235,7 @@ const blurCover = computed(() => {
       <p
         class="text-[0.8rem] sm:text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200"
       >
-        {{ book.titleParts.title }}
+        {{ book?.titleParts?.title }}
       </p>
       <p
         class="text-xxs sm:text-xs font-medium truncate text-gray-600 dark:text-gray-400"

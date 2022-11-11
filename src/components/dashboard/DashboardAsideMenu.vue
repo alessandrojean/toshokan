@@ -5,11 +5,8 @@ import {
   type ComputedRef,
   type FunctionalComponent
 } from 'vue'
-import type {
-  NavigationFailure,
-  RouteLocation,
-  RouteLocationRaw
-} from 'vue-router'
+import { useRouter } from 'vue-router'
+import type { RouteLocation, RouteLocationRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -51,6 +48,7 @@ const emit = defineEmits<{ (e: 'navigate', location: RouteLocation): void }>()
 const { libraryGroups } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
+const router = useRouter()
 
 const items = computed<Item[]>(() => [
   {
@@ -65,7 +63,12 @@ const items = computed<Item[]>(() => [
     label: t('dashboard.header.links.library'),
     icon: BookOpenIcon,
     to: { name: 'dashboard-library' },
-    children: libraryGroups.value
+    children: libraryGroups.value,
+    active: computed(() => {
+      return String(router.currentRoute.value.name).includes(
+        'dashboard-library'
+      )
+    })
   },
   {
     key: 'readings',
@@ -113,12 +116,8 @@ function active(
   return activeResult ?? ((exact && isExactActive) || (!exact && isActive))
 }
 
-async function handleNavigation(
-  route: RouteLocation,
-  navigate: (e?: MouseEvent | undefined) => Promise<void | NavigationFailure>,
-  event: MouseEvent
-) {
-  await navigate(event)
+async function handleNavigation(route: RouteLocation) {
+  await router.push(route)
   emit('navigate', route)
 }
 </script>
@@ -141,12 +140,12 @@ async function handleNavigation(
                 <RouterLink
                   custom
                   :to="item.to"
-                  v-slot="{ href, navigate, isActive, isExactActive, route }"
+                  v-slot="{ href, isActive, isExactActive, route }"
                 >
                   <a
                     :href="href"
                     :target="item.external ? '_blank' : undefined"
-                    @click="handleNavigation(route, navigate, $event)"
+                    @click.prevent="handleNavigation(route)"
                     :class="[
                       'group flex w-full items-center px-2.5 py-2 rounded-lg text-sm font-medium',
                       'motion-safe:transition-color',
@@ -179,17 +178,11 @@ async function handleNavigation(
                     <RouterLink
                       custom
                       :to="child.to"
-                      v-slot="{
-                        href,
-                        navigate,
-                        isActive,
-                        isExactActive,
-                        route
-                      }"
+                      v-slot="{ href, isActive, isExactActive, route }"
                     >
                       <a
                         :href="href"
-                        @click="handleNavigation(route, navigate, $event)"
+                        @click.prevent="handleNavigation(route)"
                         :class="[
                           'group flex w-full items-center pl-12 pr-2.5 py-1.5 rounded-lg text-sm',
                           'motion-safe:transition-color',

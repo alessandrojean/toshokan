@@ -15,6 +15,7 @@ import QueryBuilder, {
   WhereRestriction
 } from '@/data/QueryBuilder'
 import { isoDate, lastDayOfMonth } from '@/util/date'
+import type { Sort } from '@/types'
 
 type SearchKeyword = {
   column: string
@@ -151,8 +152,8 @@ export type SearchBooksArgs = {
   sheetId: string
   searchTerm: string
   sort?: {
-    sortBy?: (string | [string, 'asc' | 'desc'])[]
-    sortDirection?: 'asc' | 'desc'
+    sortBy?: (string | [string, Sort])[]
+    sortDirection?: Sort
   }
   page: number
 }

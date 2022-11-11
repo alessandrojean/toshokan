@@ -11,9 +11,9 @@ import Book, {
   STATUS_READ,
   STATUS_UNREAD
 } from '@/model/Book'
-import type { Sort } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
+import type { Sort } from '@/types'
 
 import {
   ArrowDownIcon,
@@ -31,7 +31,7 @@ export interface BookTable {
   selectable?: boolean
   skeleton?: boolean
   sortProperty?: string
-  sortDirection?: 'asc' | 'desc'
+  sortDirection?: Sort
 }
 
 export type SortEvent = {
@@ -164,11 +164,14 @@ function handleTopCheckbox(event: Event) {
     return
   }
 
-  selection.value = checked ? Array.from(Array(items.value.length).keys()) : []
+  selection.value = checked
+    ? Array.from(Array(items.value?.length ?? 0).keys())
+    : []
 
   if (topCheckbox.value) {
     topCheckbox.value.indeterminate =
-      selection.value.length > 0 && selection.value.length < items.value.length
+      selection.value.length > 0 &&
+      selection.value.length < (items.value?.length ?? 0)
   }
 
   current.value = 0
@@ -204,7 +207,7 @@ function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
   if (!isMdBreakpoint.value) {
     router.push({
       name: 'dashboard-library-book-id',
-      params: { id: items.value[idx].id }
+      params: { id: items.value?.[idx].id ?? '' }
     })
     return
   }
@@ -241,7 +244,8 @@ function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
 
   if (topCheckbox.value) {
     topCheckbox.value.indeterminate =
-      selection.value.length > 0 && selection.value.length < items.value.length
+      selection.value.length > 0 &&
+      selection.value.length < (items.value?.length ?? 0)
   }
 
   current.value = idx
@@ -264,7 +268,7 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
 
   const controlKey = isMac.value ? metaKey : ctrlKey
 
-  const totalItems = items.value.length
+  const totalItems = items.value?.length ?? 0
   const selectionTotalItems = selection.value.length
 
   if (!allowedKeys.includes(key) || !isMdBreakpoint.value) {
@@ -274,7 +278,7 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   if (key === 'Enter') {
     router.push({
       name: 'dashboard-library-book-id',
-      params: { id: items.value[idx].id }
+      params: { id: items.value?.[idx]?.id ?? '' }
     })
 
     return
@@ -401,7 +405,8 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
 
   if (topCheckbox.value) {
     topCheckbox.value.indeterminate =
-      selection.value.length > 0 && selection.value.length < items.value.length
+      selection.value.length > 0 &&
+      selection.value.length < (items.value?.length ?? '')
   }
 
   nextTick(() => focus())
@@ -426,7 +431,7 @@ watch(() => loading.value || skeleton.value, clearSelection)
 watch([currentPage, sortProperty, sortDirection], clearSelection)
 
 function handleDeleteSelection() {
-  const booksToDelete = selection.value.map((idx) => items.value[idx])
+  const booksToDelete = selection.value.map((idx) => items.value![idx])
   emit('click:deleteSelection', booksToDelete)
 }
 
@@ -442,7 +447,7 @@ function handleSort(property: string) {
   if (property !== sortProperty.value) {
     emit('sort', {
       property,
-      direction: sortDirection.value
+      direction: sortDirection.value!
     })
   } else {
     emit('sort', {
@@ -454,7 +459,7 @@ function handleSort(property: string) {
 
 function countBy(array: number[], key: keyof Book) {
   const counting = array
-    .map((idx) => items.value[idx])
+    .map((idx) => items.value![idx])
     .reduce((acm, crr) => {
       const acmKey = acm[crr[key] as string]
 
@@ -490,7 +495,7 @@ const hasFutureSelected = computed(() => {
 })
 
 function handleMarkAsClick() {
-  const booksToEdit = selection.value.map((idx) => items.value[idx])
+  const booksToEdit = selection.value.map((idx) => items.value![idx])
   emit('click:markAs', { booksToEdit, newStatus: inverseStatus.value })
 }
 
@@ -501,7 +506,7 @@ const inverseFavorite = computed(() => {
 })
 
 function handleToggleFavorite() {
-  const booksToEdit = selection.value.map((idx) => items.value[idx])
+  const booksToEdit = selection.value.map((idx) => items.value![idx])
   emit('click:toggleFavorite', {
     booksToEdit,
     newFavorite: inverseFavorite.value
@@ -550,7 +555,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 type="checkbox"
                 class="checkbox !ml-0"
                 id="select-all"
-                :checked="selection.length === items.length && !skeleton"
+                :checked="selection.length === items?.length && !skeleton"
                 :disabled="loading || skeleton"
                 @change="handleTopCheckbox"
               />

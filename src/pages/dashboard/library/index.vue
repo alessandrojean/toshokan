@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref, toRaw, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, nextTick, ref, toRaw, toRef, toRefs, watch } from 'vue'
+import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useActiveElement } from '@vueuse/core'
-import Paginator from '@/components/Paginator.vue'
+import { reactiveComputed, useActiveElement } from '@vueuse/core'
 import cloneDeep from 'lodash.clonedeep'
+import { z as zod } from 'zod'
+import { default as PaginatorUtil } from 'paginator'
 
 import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
 import useBulkEditBookMutation from '@/mutations/useBulkEditBookMutation'
-import { useCollectionStore } from '@/stores/collection'
 import {
   useSettingsStore,
   type GridMode,
@@ -18,6 +18,7 @@ import { useSheetStore } from '@/stores/sheet'
 import { STATUS_READ } from '@/model/Book'
 import useBooksQuery from '@/queries/useBooksQuery'
 import useGroupsQuery from '@/queries/useGroupsQuery'
+import { TriState } from '@/types'
 
 import {
   ChevronLeftIcon,
@@ -49,20 +50,78 @@ import LibraryFiltersDialog, {
   type FilterState
 } from '@/components/dialogs/LibraryFiltersDialog.vue'
 import LibraryHeader from '@/components/LibraryHeader.vue'
+import Paginator from '@/components/Paginator.vue'
 
 const { t } = useI18n({ useScope: 'global' })
-const collectionStore = useCollectionStore()
 const settingsStore = useSettingsStore()
 const sheetStore = useSheetStore()
+const route = useRoute()
+const router = useRouter()
+
+const SORT_PROPERTY_DEFAULT = 'createdAt'
+const SORT_DIRECTION_DEFAULT = 'desc'
+const FAVORITES_DEFAULT = TriState.INDIFERENT
+const FUTURE_ITEMS_DEFAULT = TriState.HIDE
+
+function castQueryValue(val?: unknown | unknown[]): unknown[] | undefined {
+  if (val === undefined) {
+    return undefined
+  }
+
+  if (Array.isArray(val)) {
+    return val
+  }
+
+  return [val]
+}
+
+const queryParamsSchema = zod.object({
+  page: zod.string().regex(/^\d+$/).default('1').transform(Number),
+  groups: zod.preprocess(
+    (val) => castQueryValue(val),
+    zod.string().array().optional()
+  ),
+  sortProperty: zod
+    .enum([
+      'title',
+      'publisher',
+      'status',
+      'readAt',
+      'boughtAt',
+      'paidPrice.value',
+      'labelPrice.value',
+      'createdAt',
+      'updatedAt'
+    ])
+    .default(SORT_PROPERTY_DEFAULT),
+  sortDirection: zod.enum(['asc', 'desc']).default(SORT_DIRECTION_DEFAULT),
+  favorites: zod.nativeEnum(TriState).default(FAVORITES_DEFAULT),
+  futureItems: zod.nativeEnum(TriState).default(FUTURE_ITEMS_DEFAULT)
+})
+
+type QueryParams = zod.output<typeof queryParamsSchema>
 
 const filterOpen = ref(false)
 
 const sheetIsEmpty = computed(() => sheetStore.isEmpty)
+const queryParams = reactiveComputed<QueryParams>(() => {
+  const result = queryParamsSchema.safeParse(route.query)
 
-const currentPage = computed(() => collectionStore.currentPage)
-const paginationInfo = computed(() => collectionStore.paginationInfo)
-const sortProperty = computed(() => collectionStore.sortBy)
-const sortDirection = computed(() => collectionStore.sortDirection)
+  return result.success
+    ? result.data
+    : {
+        page: 1,
+        groups: undefined,
+        sortProperty: 'createdAt',
+        sortDirection: 'desc',
+        favorites: TriState.INDIFERENT,
+        futureItems: TriState.HIDE
+      }
+})
+const { page, sortProperty, sortDirection, favorites, futureItems } =
+  toRefs(queryParams)
+// https://github.com/vuejs/core/issues/6420
+const queryGroups = toRef(queryParams, 'groups')
 
 const viewMode = computed({
   get() {
@@ -85,22 +144,8 @@ const viewMode = computed({
   }
 })
 
-const sortPropertyNames = computed<Record<string, string>>(() => ({
-  title: t('book.properties.title'),
-  publisher: t('book.properties.publisher'),
-  status: t('book.properties.status'),
-  readAt: t('book.properties.readAt'),
-  'paidPrice.value': t('book.properties.paidPrice'),
-  'labelPrice.value': t('book.properties.labelPrice'),
-  createdAt: t('book.properties.createdAt'),
-  updatedAt: t('book.properties.updatedAt')
-}))
-
-const route = useRoute()
 const sheetId = computed(() => sheetStore.sheetId)
 const sheetLoading = computed(() => sheetStore.loading)
-const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
-const groupsFilter = computed(() => collectionStore.filters.groups)
 
 const {
   mutate: bulkDeleteBooks,
@@ -128,26 +173,35 @@ const {
   isIdle: groupsIdle,
   isLoading: groupsLoading
 } = useGroupsQuery({ enabled: queriesEnabled })
+const groups = computed(() => {
+  const sheetGroups = (groupsData.value ?? []).map((g) => g.name)
+
+  return queryGroups.value?.filter((g) => sheetGroups.includes(g))
+})
 
 const {
   data: booksData,
   isFetching: booksFetching,
   isIdle: booksIdle,
-  isLoading: booksLoading,
-  isStale: booksStale
+  isLoading: booksLoading
 } = useBooksQuery(
   {
-    favorites: computed(() => collectionStore.favorites),
-    futureItems: computed(() => collectionStore.futureItems),
-    groups: groupsFilter,
-    page: currentPage,
+    favorites,
+    futureItems,
+    groups,
+    page,
     sortBy: sortProperty,
     sortDirection
   },
   { enabled: queriesEnabled }
 )
 
-const books = computed(() => booksData.value?.books || [])
+const books = computed(() => booksData.value?.books ?? [])
+const totalResults = computed(() => booksData.value?.totalResults ?? 0)
+const paginator = new PaginatorUtil(18, 6)
+const paginationInfo = computed(() => {
+  return paginator.build(totalResults.value, page.value)
+})
 
 const loading = computed(() => {
   return (
@@ -156,99 +210,6 @@ const loading = computed(() => {
     groupsIdle.value ||
     booksIdle.value
   )
-})
-
-watch(groupsData, (newGroups) => {
-  if (!newGroups) {
-    return
-  }
-
-  // Remove the inexistent groups from selection.
-  const fixedGroups = collectionStore.filters.groups.filter(
-    (selGroup) =>
-      groupsData.value!.find((grp) => grp.name === selGroup) !== undefined
-  )
-
-  collectionStore.updateGroups(fixedGroups)
-})
-
-watch(
-  () => booksData.value?.totalResults,
-  (newTotals) => {
-    collectionStore.updateCurrentPage({
-      page: currentPage.value,
-      totalResults: newTotals
-    })
-  }
-)
-
-function updateGroupFromQuery() {
-  const newGroup = route.query.group ? String(route.query.group) : null
-
-  if (sheetLoading.value || loading.value) {
-    return false
-  }
-
-  if (!newGroup) {
-    const allGroups = (groupsData.value ?? []).map((group) => group.name)
-    collectionStore.updateGroups(allGroups)
-
-    return true
-  }
-
-  const groupExists = groupsData.value?.find((grp) => grp.name === newGroup)
-
-  if (groupExists) {
-    collectionStore.updateGroups([newGroup])
-
-    return true
-  }
-
-  return false
-}
-
-function updateSortPropertyFromQuery() {
-  const newSortProperty = route.query.sortProperty as string
-
-  if (sheetLoading.value || !newSortProperty) {
-    return false
-  }
-
-  if (!sortPropertyNames.value[newSortProperty]) {
-    return false
-  }
-
-  if (newSortProperty !== sortProperty.value) {
-    collectionStore.updateSort({
-      sortBy: newSortProperty,
-      sortDirection: 'desc'
-    })
-
-    return true
-  }
-
-  return false
-}
-
-function updateFromQuery() {
-  const groupChanged = updateGroupFromQuery()
-  const sortChanged = updateSortPropertyFromQuery()
-
-  if (groupChanged || sortChanged || books.value.length === 0) {
-    collectionStore.$patch({
-      currentPage: sortChanged ? 1 : currentPage.value
-    })
-  }
-}
-
-watch([sheetLoading, groupsData, () => route.query], () => {
-  updateFromQuery()
-})
-
-onMounted(() => {
-  if (sheetId.value) {
-    updateFromQuery()
-  }
 })
 
 const table = ref<InstanceType<typeof BookTable>>()
@@ -279,7 +240,6 @@ async function handleFocus() {
   }
 }
 
-watch(collectionStore.$state, handleFocus)
 watch(booksLoading, async (newValue) => {
   if (newValue) {
     await handleFocus()
@@ -287,52 +247,46 @@ watch(booksLoading, async (newValue) => {
 })
 
 async function handlePage(page: number) {
-  window.scroll({
-    top: 0,
-    left: 0,
-    behavior: 'smooth'
-  })
-
-  const totalResults = collectionStore.paginationInfo.total_results
-  collectionStore.updateCurrentPage({ page, totalResults })
+  router.push({ name: 'dashboard-library', query: { ...route.query, page } })
 }
 
 async function handleFilter(filters: FilterState) {
-  selection.value = []
-
-  if (
-    collectionStore.filters.groups !== filters.groups ||
-    collectionStore.sortBy !== filters.sortProperty ||
-    collectionStore.sortDirection !== filters.sortDirection ||
-    collectionStore.favorites !== filters.favorites ||
-    collectionStore.futureItems !== filters.futureItems
-  ) {
-    const totalResults = collectionStore.paginationInfo.total_results
-    collectionStore.updateCurrentPage({
-      page: 1,
-      totalResults
-    })
-
-    collectionStore.updateGroups(filters.groups)
-    collectionStore.updateSort({
-      sortBy: filters.sortProperty,
-      sortDirection: filters.sortDirection
-    })
-    collectionStore.updateFavorites(filters.favorites)
-    collectionStore.updateFutureItems(filters.futureItems)
-  }
+  router.push({
+    name: 'dashboard-library',
+    query: {
+      favorites:
+        filters.favorites !== FAVORITES_DEFAULT ? filters.favorites : undefined,
+      futureItems:
+        filters.futureItems !== FUTURE_ITEMS_DEFAULT
+          ? filters.futureItems
+          : undefined,
+      groups:
+        filters.groups.length > 0 &&
+        filters.groups.length !== groupsData.value?.length
+          ? filters.groups
+          : undefined,
+      sortDirection:
+        filters.sortDirection !== SORT_DIRECTION_DEFAULT
+          ? filters.sortDirection
+          : undefined,
+      sortProperty:
+        filters.sortProperty !== SORT_PROPERTY_DEFAULT
+          ? filters.sortProperty
+          : undefined,
+      page: 1
+    }
+  })
 }
 
 async function handleTableSort({ property, direction }: SortEvent) {
-  const totalResults = collectionStore.paginationInfo.total_results
-  collectionStore.updateCurrentPage({
-    page: 1,
-    totalResults
-  })
-
-  collectionStore.updateSort({
-    sortBy: property,
-    sortDirection: direction
+  router.push({
+    name: 'dashboard-library',
+    query: {
+      ...route.query,
+      sortProperty: property !== SORT_PROPERTY_DEFAULT ? property : undefined,
+      sortDirection:
+        direction !== SORT_DIRECTION_DEFAULT ? direction : undefined
+    }
   })
 }
 
@@ -404,6 +358,9 @@ meta:
     <LibraryHeader
       :loading="loading"
       :writing="writing"
+      :groups="groups"
+      :sort-property="sortProperty"
+      :sort-direction="sortDirection"
       @click:new="openCreateDialog"
       @click:filter="filterOpen = true"
     />
@@ -418,24 +375,6 @@ meta:
             !sheetIsEmpty
           "
         >
-          <h2
-            id="results-title"
-            class="sr-only"
-            hidden
-            aria-live="polite"
-            aria-hidden="true"
-          >
-            {{
-              // @ts-ignore
-              t('dashboard.library.items.current', groupsFilter.length, {
-                count:
-                  groupsFilter.length === 1
-                    ? groupsFilter[0]
-                    : groupsFilter.length
-              })
-            }}
-          </h2>
-
           <div
             class="bg-block dark:bg-block-dark px-4 py-4 rounded-xl flex flex-row justify-between items-center"
           >
@@ -523,7 +462,7 @@ meta:
                 :items="books"
                 :sort-direction="sortDirection"
                 :sort-property="sortProperty"
-                :current-page="currentPage"
+                :current-page="page"
                 :loading="loading || writing"
                 :selectable="canEdit"
                 :skeleton="sheetLoading || loading || writing"
@@ -540,7 +479,7 @@ meta:
                 :items="books"
                 :sort-direction="sortDirection"
                 :sort-property="sortProperty"
-                :current-page="currentPage"
+                :current-page="page"
                 :loading="loading || writing"
                 :skeleton-items="18"
                 :mode="gridMode"
@@ -711,8 +650,13 @@ meta:
 
     <!-- Filters -->
     <LibraryFiltersDialog
-      v-model:open="filterOpen"
       v-if="!sheetIsEmpty"
+      v-model:open="filterOpen"
+      :favorites="favorites"
+      :future-items="futureItems"
+      :groups="groups ?? []"
+      :sort-direction="sortDirection"
+      :sort-property="sortProperty"
       @filter="handleFilter"
     />
 

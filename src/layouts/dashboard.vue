@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 import { useAuthStore } from '@/stores/auth'
-import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import { useStore } from '@/stores/main'
 import {
@@ -31,7 +30,6 @@ import SettingsDialog from '@/components/dialogs/SettingsDialog.vue'
 import useGroupsQuery from '@/queries/useGroupsQuery'
 
 const authStore = useAuthStore()
-const collectionStore = useCollectionStore()
 const mainStore = useStore()
 const sheetStore = useSheetStore()
 const router = useRouter()
@@ -149,16 +147,12 @@ const libraryGroups = computed<ChildItem[]>(() => {
     label: group.name,
     to: {
       name: 'dashboard-library',
-      query: { group: group.name }
+      query: { groups: group.name }
     },
     active: computed(() => {
-      const isCurrentFilter =
-        collectionStore.filters.groups.length === 1 &&
-        collectionStore.filters.groups[0] === group.name
-      const isRouteGroup = route.query.group === group.name
-
       return (
-        route.name === 'DashboardLibrary' && isRouteGroup && isCurrentFilter
+        route.name === 'dashboard-library' &&
+        String(route.query.groups) === group.name
       )
     })
   }))

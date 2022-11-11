@@ -47,7 +47,11 @@ const bookId = computed(() => String(route.params.id))
 const loading = computed(() => sheetStore.loading)
 
 const enabled = computed(() => {
-  return !loading.value && !!bookId.value
+  return (
+    !loading.value &&
+    !!bookId.value &&
+    router.currentRoute.value.name === 'dashboard-library-book-id'
+  )
 })
 
 const { isLoading, data: book } = useBookQuery(bookId, { enabled })
@@ -72,12 +76,15 @@ const redirectToHome = () => {
 const changeTitle = injectStrict(ChangeTitleKey)
 
 watch(book, (newBook) => {
-  if (newBook === null) {
+  if (
+    newBook === null &&
+    router.currentRoute.value.name === 'dashboard-library-book-id'
+  ) {
     redirectToHome()
     return
   }
 
-  if (newBook !== undefined) {
+  if (newBook) {
     changeTitle(newBook.title ?? undefined)
   }
 })

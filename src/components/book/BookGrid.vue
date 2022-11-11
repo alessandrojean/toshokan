@@ -5,6 +5,7 @@ import { useBreakpoints } from '@vueuse/core'
 import Book from '@/model/Book'
 import useTailwindTheme from '@/composables/useTailwindTheme'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
+import type { Sort } from '@/types'
 
 import BookCard from '@/components/book/BookCard.vue'
 
@@ -16,7 +17,7 @@ export interface BookGridProps {
   loading?: boolean
   mode?: GridMode
   skeletonItems?: number
-  sortDirection?: 'asc' | 'desc'
+  sortDirection?: Sort
   sortProperty?: string
   spoilerMode?: SpoilerMode
 }

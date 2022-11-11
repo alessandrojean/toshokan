@@ -11,6 +11,7 @@ import i18n from '@/i18n'
 import { decimalComma } from '@/util/validators'
 import { getIsbnCountry } from '@/util/isbn'
 import { fixDate, formatDateTimeToSheet, formatDateToSheet } from '@/util/date'
+import type { Sort } from '@/types'
 
 import type {
   CblBook,
@@ -73,10 +74,7 @@ export enum CollectionColumns {
   UPDATED_AT = 'X'
 }
 
-export const PropertyToColumn: Record<
-  string,
-  (string | [string, 'asc' | 'desc'])[]
-> = {
+export const PropertyToColumn: Record<string, (string | [string, Sort])[]> = {
   title: [CollectionColumns.TITLE],
   publisher: [CollectionColumns.PUBLISHER],
   status: [CollectionColumns.STATUS],

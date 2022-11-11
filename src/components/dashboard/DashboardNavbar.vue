@@ -95,7 +95,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll, true))
             </span>
             <span
               aria-hidden="true"
-              class="ctrl-k motion-safe:transition-colors text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
+              class="ctrl-k motion-safe:transition-colors motion-safe:duration-1000 text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
             >
               <kbd class="font-sans">
                 <abbr title="Control" class="no-underline" v-if="!isMac"
@@ -143,7 +143,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll, true))
   @apply bg-gray-800 supports-backdrop-blur:bg-gray-800/95
     backdrop-blur sm:backdrop-filter-none md:backdrop-blur
     transition duration-300 ease-in-out sm:left-16 md:left-0
-    dark:border-b dark:border-gray-700 motion-safe:transition-colors;
+    dark:border-b dark:border-gray-700 motion-safe:transition-colors motion-safe:duration-1000;
 
   &.app-navbar-transparent {
     @apply bg-transparent backdrop-blur-none border-transparent;
@@ -171,7 +171,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll, true))
   .fake-search-input {
     @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
       bg-gray-700 rounded-lg space-x-2
-      text-gray-300/80 motion-safe:transition-colors;
+      text-gray-300/80 motion-safe:transition-colors motion-safe:duration-1000;
 
     &:where(:hover, :focus-visible) {
       @apply bg-gray-600 text-gray-300;

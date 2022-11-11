@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from 'vue-query'
 
-import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import updateBook from '@/services/sheet/updateBook'
 import { fetch } from '@/util/gapi'
 import Book from '@/model/Book'
 
 export default function useEditBookMutation() {
-  const collectionStore = useCollectionStore()
   const sheetStore = useSheetStore()
   const queryClient = useQueryClient()
 
@@ -17,12 +15,6 @@ export default function useEditBookMutation() {
 
   return useMutation(mutate, {
     onSuccess(_, book) {
-      const groups = collectionStore.filters.groups
-
-      if (!groups.includes(book.group!) && groups.length > 0) {
-        collectionStore.updateGroups(groups.concat(book.group!))
-      }
-
       queryClient.setQueriesData<{ books: Book[] }>('books', (oldData) => {
         return {
           ...oldData,

@@ -18,15 +18,24 @@ export default defineConfig({
     )
   },
   plugins: [
+    // https://github.com/vitejs/vite/tree/main/packages/plugin-vue
     Vue(),
+
+    // https://github.com/hannoeru/vite-plugin-pages
     Pages(),
+
+    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
+
+    // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
     vueI18n({
       include: resolve(
         dirname(fileURLToPath(import.meta.url)),
         './src/i18n/messages/**'
       )
     }),
+
+    // https://github.com/vite-pwa/vite-plugin-pwa
     VitePWA({
       includeAssets: [
         'favicon.ico',

@@ -492,6 +492,7 @@ dashboard:
         label: Favorites
         indiferent: Doesn't matter
         only: Only
+        hide: Hide
       futureItems:
         label: Future itens
         indiferent: Doesn't matter

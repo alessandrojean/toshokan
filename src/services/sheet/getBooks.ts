@@ -11,11 +11,11 @@ import Book, {
   FAVORITE_ACTIVE,
   STATUS_FUTURE
 } from '@/model/Book'
-import { TriState } from '@/stores/collection'
+import { Sort, TriState } from '@/types'
 
 export type GetBooksArgs = {
-  orderBy?: (string | [string, 'asc' | 'desc'])[]
-  orderDirection?: 'asc' | 'desc'
+  orderBy?: (string | [string, Sort])[]
+  orderDirection?: Sort
   limit?: number
   groups?: string[]
   futureItems?: TriState
@@ -64,8 +64,10 @@ export default async function getBooks(
     queryBuilder.andWhere(STATUS, comparation, STATUS_FUTURE)
   }
 
-  if (options.favorites === 'only') {
-    queryBuilder.andWhere(FAVORITE, '=', FAVORITE_ACTIVE)
+  if (options.favorites === 'only' || options.favorites === 'hide') {
+    const comparation = options.favorites === 'only' ? '=' : '!='
+
+    queryBuilder.andWhere(FAVORITE, comparation, FAVORITE_ACTIVE)
   }
 
   const query = queryBuilder.build()

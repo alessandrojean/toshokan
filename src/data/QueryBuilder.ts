@@ -1,4 +1,5 @@
 import Query from './Query'
+import type { Sort } from '@/types'
 
 export type WhereCondition = {
   negated?: boolean
@@ -25,7 +26,7 @@ export type BinaryOperator = typeof binaryOperators[number]
 
 export type WhereRestriction = [string, BinaryOperator, any]
 
-export type OrderBy = [string, 'asc' | 'desc']
+export type OrderBy = [string, Sort]
 
 type Limit = number | null
 type Offset = Limit

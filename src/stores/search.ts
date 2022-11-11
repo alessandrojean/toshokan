@@ -1,8 +1,8 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import type Paginator from 'paginator'
+import type { Sort } from '@/types'
 
-export type Sort = 'asc' | 'desc'
 type PaginationInfo = ReturnType<Paginator['build']>
 
 type UpdateSortArgs = {

@@ -5,6 +5,7 @@ import { PropertyToColumn } from '@/model/Book'
 import getBooks, { GetBooksArgs } from '@/services/sheet/getBooks'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
+import type { Sort } from '@/types'
 
 type RefOrComputed<T> = Ref<T> | ComputedRef<T>
 
@@ -14,7 +15,7 @@ type UseBooksQueryArgs = {
   groups: RefOrComputed<GetBooksArgs['groups']>
   page: RefOrComputed<number>
   sortBy: RefOrComputed<string>
-  sortDirection: RefOrComputed<'asc' | 'desc'>
+  sortDirection: RefOrComputed<Sort>
 }
 
 export default function useBooksQuery(

@@ -1,19 +1,12 @@
 <script lang="ts" setup>
-import { computed, reactive, toRefs, watch } from 'vue'
+import { computed, reactive, toRefs, unref, watch, type Ref } from 'vue'
 
 import { useI18n } from '@/i18n'
-import {
-  useCollectionStore,
-  HIDE,
-  INDIFERENT,
-  ONLY,
-  TriState,
-  Sort
-} from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery, { type GroupData } from '@/queries/useGroupsQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
+import { Sort, TriState } from '@/types'
 
 import slugify from 'slugify'
 
@@ -43,14 +36,31 @@ export interface FilterState {
   sortProperty: string
 }
 
-const props = defineProps<{ open: boolean }>()
+export interface LibraryFiltersDialogProps {
+  favorites: TriState
+  futureItems: TriState
+  groups: string[]
+  sortDirection: Sort
+  sortProperty: string
+  open: boolean
+}
+
+const props = defineProps<LibraryFiltersDialogProps>()
 
 const emit = defineEmits<{
   (e: 'update:open', open: boolean): void
   (e: 'filter', filter: FilterState): void
 }>()
 
-const collectionStore = useCollectionStore()
+const {
+  favorites,
+  futureItems,
+  groups: groupsProps,
+  sortDirection,
+  sortProperty,
+  open
+} = toRefs(props)
+
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const sortProperties = computed(() => {
@@ -77,16 +87,14 @@ const { data: groupsData } = useGroupsQuery({ enabled: groupsEnabled })
 const groups = computed<GroupData[]>(() => {
   const values = groupsData.value?.slice() || []
 
-  if (state.futureItems === HIDE) {
+  if (state.futureItems === TriState.HIDE) {
     return values
   }
 
-  return state.futureItems === ONLY
+  return state.futureItems === TriState.ONLY
     ? values.sort((a, b) => b.futureCount - a.futureCount)
     : values.sort((a, b) => b.totalCount - a.totalCount)
 })
-
-const { open } = toRefs(props)
 
 const disableSearchShortcut = injectStrict(DisableSearchShortcutKey)
 const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
@@ -94,11 +102,11 @@ const enableSearchShortcut = injectStrict(EnableSearchShortcutKey)
 watch(open, (newOpen) => {
   if (newOpen) {
     Object.assign(state, {
-      favorites: collectionStore.favorites,
-      futureItems: collectionStore.futureItems,
-      groups: collectionStore.filters.groups,
-      sortDirection: collectionStore.sortDirection,
-      sortProperty: collectionStore.sortBy
+      favorites: favorites.value,
+      futureItems: futureItems.value,
+      sortDirection: sortDirection.value,
+      sortProperty: sortProperty.value,
+      groups: groupsProps.value
     })
   }
 
@@ -107,7 +115,7 @@ watch(open, (newOpen) => {
 
 function handleFilter() {
   emit('update:open', false)
-  emit('filter', state)
+  emit('filter', unref(state))
 }
 
 function checked(key: keyof typeof state, value: string) {
@@ -115,17 +123,17 @@ function checked(key: keyof typeof state, value: string) {
 }
 
 const state = reactive<FilterState>({
-  favorites: collectionStore.favorites,
-  futureItems: collectionStore.futureItems,
-  groups: collectionStore.filters.groups,
-  sortDirection: collectionStore.sortDirection,
-  sortProperty: collectionStore.sortBy
+  favorites: favorites.value,
+  futureItems: futureItems.value,
+  sortDirection: sortDirection.value,
+  sortProperty: sortProperty.value,
+  groups: groupsProps.value
 })
 
 const countProperty: Record<TriState, keyof GroupData> = {
-  [INDIFERENT]: 'totalCount',
-  [ONLY]: 'futureCount',
-  [HIDE]: 'count'
+  [TriState.INDIFERENT]: 'totalCount',
+  [TriState.ONLY]: 'futureCount',
+  [TriState.HIDE]: 'count'
 }
 
 interface FilterGroup {
@@ -174,14 +182,19 @@ const filters = computed(
             label: t('dashboard.library.filters.favorites.label'),
             options: [
               {
-                key: INDIFERENT,
-                value: INDIFERENT,
+                key: TriState.INDIFERENT,
+                value: TriState.INDIFERENT,
                 label: t('dashboard.library.filters.favorites.indiferent')
               },
               {
-                key: ONLY,
-                value: ONLY,
+                key: TriState.ONLY,
+                value: TriState.ONLY,
                 label: t('dashboard.library.filters.favorites.only')
+              },
+              {
+                key: TriState.HIDE,
+                value: TriState.HIDE,
+                label: t('dashboard.library.filters.favorites.hide')
               }
             ]
           },
@@ -190,18 +203,18 @@ const filters = computed(
             label: t('dashboard.library.filters.futureItems.label'),
             options: [
               {
-                key: INDIFERENT,
-                value: INDIFERENT,
+                key: TriState.INDIFERENT,
+                value: TriState.INDIFERENT,
                 label: t('dashboard.library.filters.futureItems.indiferent')
               },
               {
-                key: ONLY,
-                value: ONLY,
+                key: TriState.ONLY,
+                value: TriState.ONLY,
                 label: t('dashboard.library.filters.futureItems.only')
               },
               {
-                key: HIDE,
-                value: HIDE,
+                key: TriState.HIDE,
+                value: TriState.HIDE,
                 label: t('dashboard.library.filters.futureItems.hide')
               }
             ]

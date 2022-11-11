@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useCollectionStore } from '@/stores/collection'
 import { useSheetStore } from '@/stores/sheet'
 import useGroupsQuery from '@/queries/useGroupsQuery'
+import type { Sort } from '@/types'
 
 import {
   ArchiveBoxIcon,
@@ -14,17 +14,35 @@ import {
   BarsArrowDownIcon
 } from '@heroicons/vue/20/solid'
 
-import Avatar from '@/components/Avatar.vue'
 import Button from '@/components/form/Button.vue'
 
-defineProps({
-  loading: Boolean,
-  writing: Boolean
+export interface LibraryHeaderProps {
+  loading?: boolean
+  groups?: string[]
+  sortDirection: Sort
+  sortProperty: string
+  writing?: boolean
+}
+
+const props = withDefaults(defineProps<LibraryHeaderProps>(), {
+  loading: false,
+  groups: () => [],
+  writing: false
 })
 
-defineEmits(['click:filter', 'click:new'])
+defineEmits<{
+  (e: 'click:filter'): void
+  (e: 'click:new'): void
+}>()
 
-const collectionStore = useCollectionStore()
+const {
+  loading,
+  groups: selectedGroups,
+  sortDirection,
+  sortProperty,
+  writing
+} = toRefs(props)
+
 const sheetStore = useSheetStore()
 const { t } = useI18n({ useScope: 'global' })
 
@@ -42,11 +60,9 @@ const sortPropertyNames = computed<Record<string, string>>(() => ({
   updatedAt: t('book.properties.updatedAt')
 }))
 
-const sortProperty = computed(() => collectionStore.sortBy)
 const sortPropertyName = computed(() => {
   return sortPropertyNames.value[sortProperty.value]
 })
-const sortDirection = computed(() => collectionStore.sortDirection)
 
 const sheetLoading = computed(() => sheetStore.loading)
 const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
@@ -54,8 +70,6 @@ const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
 const { data: allGroups } = useGroupsQuery({
   enabled: computed(() => !sheetLoading.value)
 })
-
-const selectedGroups = computed(() => collectionStore.filters.groups)
 
 const currentGroups = computed(() => {
   if (selectedGroups.value.length === allGroups.value?.length) {
