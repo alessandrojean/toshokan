@@ -116,7 +116,8 @@ function active(
   return activeResult ?? ((exact && isExactActive) || (!exact && isActive))
 }
 
-async function handleNavigation(route: RouteLocation) {
+async function handleNavigation(route: RouteLocation, event: MouseEvent) {
+  event.preventDefault()
   await router.push(route)
   emit('navigate', route)
 }
@@ -140,12 +141,16 @@ async function handleNavigation(route: RouteLocation) {
                 <RouterLink
                   custom
                   :to="item.to"
-                  v-slot="{ href, isActive, isExactActive, route }"
+                  v-slot="{ href, isActive, isExactActive, navigate, route }"
                 >
                   <a
                     :href="href"
                     :target="item.external ? '_blank' : undefined"
-                    @click.prevent="handleNavigation(route)"
+                    @click="
+                      item.external
+                        ? navigate($event)
+                        : handleNavigation(route, $event)
+                    "
                     :class="[
                       'group flex w-full items-center px-2.5 py-2 rounded-lg text-sm font-medium',
                       'motion-safe:transition-color',
@@ -178,11 +183,21 @@ async function handleNavigation(route: RouteLocation) {
                     <RouterLink
                       custom
                       :to="child.to"
-                      v-slot="{ href, isActive, isExactActive, route }"
+                      v-slot="{
+                        href,
+                        isActive,
+                        isExactActive,
+                        navigate,
+                        route
+                      }"
                     >
                       <a
                         :href="href"
-                        @click.prevent="handleNavigation(route)"
+                        @click="
+                          item.external
+                            ? navigate($event)
+                            : handleNavigation(route, $event)
+                        "
                         :class="[
                           'group flex w-full items-center pl-12 pr-2.5 py-1.5 rounded-lg text-sm',
                           'motion-safe:transition-color',
