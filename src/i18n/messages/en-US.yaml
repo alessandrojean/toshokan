@@ -49,6 +49,8 @@ book:
   single: Single volume
   read: Read
   unread: Unread
+  inFavorites: In favorites
+  addToFavorites: Add to favorites
   currentVolume: Current
   emptySynopsis: The book synopsis is empty.
   emptyTags: The book has no tags.
@@ -342,6 +344,7 @@ dashboard:
     collapse: Collapse
     flag: Flag of {region}
     cover: Cover of {title}
+    relations: Relations
     zoom:
       view: Zoom in
       title: Book cover

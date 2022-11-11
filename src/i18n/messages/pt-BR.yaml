@@ -49,6 +49,8 @@ book:
   single: Volume único
   read: Lido
   unread: Não lido
+  inFavorites: Favoritado
+  addToFavorites: Favoritar
   currentVolume: Volume atual
   emptySynopsis: A sinopse do livro não foi preenchida.
   emptyTags: O livro não possui tags.
@@ -347,6 +349,7 @@ dashboard:
     collapse: Retrair
     flag: Bandeira do {region}
     cover: Capa de {title}
+    relations: Relações
     zoom:
       view: Dar zoom na imagem
       title: Capa do livro

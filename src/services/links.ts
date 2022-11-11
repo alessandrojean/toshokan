@@ -8,34 +8,46 @@ import PaniniIcon from '@/components/icons/PaniniIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
 import Book from '@/model/Book'
+import { DefineComponent } from 'vue'
 
-enum Categories {
+enum Category {
   DATABASE = 0,
   STORE = 1
 }
 
 const ALL_COUNTRIES = 'ALL'
 
-const WEBSITES = [
+export interface Link {
+  title: string
+  url: string | ((book: Book) => string)
+  country: string
+  category: Category
+  icon?: DefineComponent<{}, {}, any>
+  check?: (book: Book) => boolean
+}
+
+export type BookLink = Omit<Link, 'url'> & { url: string }
+
+const WEBSITES: Link[] = [
   // Database websites.
   {
     title: 'Goodreads',
     url: 'https://goodreads.com/search?q={isbn}',
     country: ALL_COUNTRIES,
-    category: Categories.DATABASE,
+    category: Category.DATABASE,
     icon: GoodreadsIcon
   },
   {
     title: 'Open Library',
     url: 'https://openlibrary.org/isbn/{isbn}',
     country: ALL_COUNTRIES,
-    category: Categories.DATABASE
+    category: Category.DATABASE
   },
   {
     title: 'Skoob',
     url: 'https://www.skoob.com.br/livro/lista/busca:{isbn}/tipo:isbn',
     country: 'BR',
-    category: Categories.DATABASE,
+    category: Category.DATABASE,
     icon: SkoobIcon
   },
   // Stores
@@ -43,28 +55,28 @@ const WEBSITES = [
     title: 'Amazon',
     url: 'https://amazon.com/dp/{isbn10}',
     country: 'US',
-    category: Categories.STORE,
+    category: Category.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.co.jp',
     url: 'https://amazon.co.jp/dp/{isbn10}',
     country: 'JP',
-    category: Categories.STORE,
+    category: Category.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.com.br',
     url: 'https://amazon.com.br/dp/{isbn10}?m=A1ZZFT5FULY4LN',
     country: 'BR',
-    category: Categories.STORE,
+    category: Category.STORE,
     icon: AmazonIcon
   },
   {
     title: 'Amazon.es',
     url: 'https://amazon.es/dp/{isbn10}',
     country: 'ES',
-    category: Categories.STORE,
+    category: Category.STORE,
     icon: AmazonIcon
   },
   {
@@ -76,7 +88,7 @@ const WEBSITES = [
       return url.href
     },
     country: 'BR',
-    category: Categories.STORE,
+    category: Category.STORE,
     check: (book: Book) => book.publisher!.includes('Panini'),
     icon: PaniniIcon
   },
@@ -84,7 +96,7 @@ const WEBSITES = [
     title: 'NewPOP SHOP',
     url: 'https://www.lojanewpop.com.br/buscar?q={isbn}',
     country: 'BR',
-    category: Categories.STORE,
+    category: Category.STORE,
     check: (book: Book) => book.publisher!.includes('NewPOP'),
     icon: NewPopIcon
   },
@@ -92,7 +104,7 @@ const WEBSITES = [
     title: 'Fnac.pt',
     url: 'https://fnac.pt/SearchResult/ResultList.aspx?Search={isbn}',
     country: 'PT',
-    category: Categories.STORE,
+    category: Category.STORE,
     icon: FnacIcon
   }
 ]
@@ -103,7 +115,10 @@ const WEBSITES = [
  * @param {Book} book
  * @param {string} locale
  */
-export default function getBookLinks(book: Book | undefined, locale: string) {
+export default function getBookLinks(
+  book: Book | undefined | null,
+  locale: string
+): BookLink[] {
   if (!book || !book.codeType.includes('ISBN')) {
     return []
   }

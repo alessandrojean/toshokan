@@ -34,6 +34,8 @@ import BookTags from '@/components/book/BookTags.vue'
 import BookTitle from '@/components/book/BookTitle.vue'
 import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import BookAttributes from '@/components/book/BookAttributes.vue'
+import getBookLinks from '@/services/links'
+import BookRelations from '@/components/book/BookRelations.vue'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -192,6 +194,10 @@ const region = computed(() => {
 
   return formatter.of(book.value.isbnData.countryCode)
 })
+
+const externalLinks = computed(() => {
+  return getBookLinks(book.value, locale.value)
+})
 </script>
 
 <route lang="yaml">
@@ -267,6 +273,12 @@ meta:
             @click:tag="searchBy('tags', $event)"
           />
 
+          <BookRelations
+            class="2xl:hidden"
+            :links="externalLinks"
+            :loading="!showBookInfo"
+          />
+
           <BookMarkdown
             v-if="book?.notes?.length"
             :title="t('book.properties.notes')"
@@ -278,6 +290,7 @@ meta:
 
         <div class="book-attributes">
           <BookAttributes
+            class="sticky top-24"
             :loading="!showBookInfo || timeZoneLoading"
             :book="book"
             :time-zone="timeZone"
@@ -287,13 +300,17 @@ meta:
           />
         </div>
 
-        <aside class="book-right">
-          <BookTags
-            :tags="book?.tags"
-            :loading="!showBookInfo"
-            group
-            @click:tag="searchBy('tags', $event)"
-          />
+        <aside class="book-right hidden 2xl:block">
+          <div class="sticky top-24 flex flex-col gap-6">
+            <BookTags
+              :tags="book?.tags"
+              :loading="!showBookInfo"
+              group
+              @click:tag="searchBy('tags', $event)"
+            />
+
+            <BookRelations :links="externalLinks" :loading="!showBookInfo" />
+          </div>
         </aside>
       </div>
     </div>
@@ -376,7 +393,6 @@ meta:
   }
 
   .book-right {
-    @apply hidden 2xl:block;
     grid-area: right / right / right / right;
   }
 }

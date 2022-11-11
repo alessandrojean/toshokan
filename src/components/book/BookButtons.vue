@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
 import Book from '@/model/Book'
 
@@ -45,6 +46,9 @@ const { book, editing, loading } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
 
 const disabled = computed(() => loading.value || editing.value)
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const iconOnly = breakpoints.smaller('2xl')
 </script>
 
 <template>
@@ -78,13 +82,13 @@ const disabled = computed(() => loading.value || editing.value)
     <div
       v-else
       class="hidden sm:block skeleton flex-1 md:flex-initial md:w-28 h-11"
-    ></div>
+    />
 
     <Button
       v-if="!loading && !book!.isFuture"
       class="ml-2"
       size="large"
-      icon-only
+      :icon-only="iconOnly"
       :disabled="disabled"
       :title="
           t('dashboard.details.header.options.markAs', {
@@ -92,17 +96,27 @@ const disabled = computed(() => loading.value || editing.value)
           })
         "
       @click="$emit('click:toggleStatus', $event)"
-      v-slot="{ iconClass }"
     >
-      <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
-      <BookmarkOutlineIcon v-else :class="iconClass" />
+      <template #left="{ iconClass }" v-if="!iconOnly">
+        <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
+        <BookmarkOutlineIcon v-else :class="iconClass" />
+      </template>
+      <template #default v-if="!iconOnly">
+        <span>
+          {{ book!.isRead ? t('book.read') : t('book.unread') }}
+        </span>
+      </template>
+      <template #default="{ iconClass }" v-else>
+        <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
+        <BookmarkOutlineIcon v-else :class="iconClass" />
+      </template>
     </Button>
 
     <Button
       v-if="!loading"
       class="ml-2"
       size="large"
-      icon-only
+      :icon-only="iconOnly"
       :disabled="disabled"
       :title="
           t(
@@ -112,36 +126,66 @@ const disabled = computed(() => loading.value || editing.value)
           )
         "
       @click="$emit('click:toggleFavorite', $event)"
-      v-slot="{ iconClass }"
     >
-      <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
-      <StarOutlineIcon v-else :class="iconClass" />
+      <template #left="{ iconClass }" v-if="!iconOnly">
+        <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
+        <StarOutlineIcon v-else :class="iconClass" />
+      </template>
+      <template #default v-if="!iconOnly">
+        <span>
+          {{
+            book!.favorite ? t('book.inFavorites') : t('book.addToFavorites')
+          }}
+        </span>
+      </template>
+      <template #default="{ iconClass }" v-else>
+        <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
+        <StarOutlineIcon v-else :class="iconClass" />
+      </template>
     </Button>
 
     <Button
       v-if="!loading"
       class="ml-2"
       size="large"
-      icon-only
+      :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.share')"
       @click="$emit('click:share', $event)"
-      v-slot="{ iconClass }"
     >
-      <ShareIcon :class="iconClass" />
+      <template #left="{ iconClass }" v-if="!iconOnly">
+        <ShareIcon :class="iconClass" />
+      </template>
+      <template #default v-if="!iconOnly">
+        <span>
+          {{ t('dashboard.details.header.options.share') }}
+        </span>
+      </template>
+      <template #default="{ iconClass }" v-else>
+        <ShareIcon :class="iconClass" />
+      </template>
     </Button>
 
     <Button
       v-if="!loading"
       class="ml-2"
       size="large"
-      icon-only
+      :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.delete')"
       @click="$emit('click:delete', $event)"
-      v-slot="{ iconClass }"
     >
-      <TrashIcon :class="iconClass" />
+      <template #left="{ iconClass }" v-if="!iconOnly">
+        <TrashIcon :class="iconClass" />
+      </template>
+      <template #default v-if="!iconOnly">
+        <span>
+          {{ t('dashboard.details.header.options.delete') }}
+        </span>
+      </template>
+      <template #default="{ iconClass }" v-else>
+        <TrashIcon :class="iconClass" />
+      </template>
     </Button>
   </div>
 </template>

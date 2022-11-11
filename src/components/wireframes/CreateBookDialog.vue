@@ -376,7 +376,7 @@
           fill="white"
           xml:space="preserve"
           style="white-space: pre"
-          font-family="Poppins"
+          font-family="Inter"
           font-size="18"
           font-weight="500"
           letter-spacing="-0.333333px"
