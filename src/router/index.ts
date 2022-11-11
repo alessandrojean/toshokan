@@ -20,13 +20,13 @@ const routes = setupLayouts(generatedRoutes)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior(to, from) {
-    if (to.name !== from.name) {
-      return {
+  scrollBehavior(to, from, savedPosition) {
+    return (
+      savedPosition ?? {
         top: 0,
         behavior: 'smooth'
       }
-    }
+    )
   },
   routes
 })
@@ -73,12 +73,12 @@ router.beforeEach(async (to) => {
   }
 })
 
-router.beforeEach(() => {
-  const mainContent = document.querySelector<HTMLDivElement>('#main-content')
+// router.beforeEach(() => {
+//   const mainContent = document.querySelector<HTMLDivElement>('#main-content')
 
-  if (mainContent) {
-    mainContent.scroll({ top: 0, behavior: 'smooth' })
-  }
-})
+//   if (mainContent) {
+//     mainContent.scroll({ top: 0, behavior: 'smooth' })
+//   }
+// })
 
 export default router

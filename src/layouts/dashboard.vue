@@ -189,21 +189,20 @@ const shared = computed(() => sheetStore.shared)
       {{ t('a11y.jumpToNavigation') }}
     </a>
 
-    <div class="flex w-full h-screen overflow-hidden">
-      <DashboardAsideMenu
-        class="w-72 hidden lg:block shrink-0"
-        :library-groups="libraryGroups"
-      >
-        <template #footer v-if="enabled && shared">
-          <div class="border-t border-gray-200 dark:border-gray-700 py-2">
-            <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
-          </div>
-        </template>
-      </DashboardAsideMenu>
-      <div
-        class="flex-1 flex flex-col relative overflow-y-auto"
-        id="main-content"
-      >
+    <div class="flex w-full">
+      <div class="shrink-0 w-72 hidden lg:block">
+        <DashboardAsideMenu
+          class="sticky inset-x-0 top-0 h-screen"
+          :library-groups="libraryGroups"
+        >
+          <template #footer v-if="enabled && shared">
+            <div class="border-t border-gray-200 dark:border-gray-700 py-2">
+              <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
+            </div>
+          </template>
+        </DashboardAsideMenu>
+      </div>
+      <div class="flex-1 flex flex-col relative" id="main-content">
         <DashboardNavbar
           class="sticky inset-x-0 top-0 shrink-0"
           :transparent="route.meta?.transparentNavbar && smAndLarger"
