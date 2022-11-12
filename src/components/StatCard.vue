@@ -29,27 +29,27 @@ const { t } = useI18n({ useScope: 'global' })
   <div v-if="loading">
     <div class="flex items-center">
       <div
-        class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 xl:w-16 xl:h-16 mr-3 md:mr-4 rounded-xl"
+        class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 2xl:w-16 2xl:h-16 mr-3 md:mr-4 rounded-xl"
       />
       <div class="flex-1 space-y-2">
-        <div class="skeleton h-3 xl:h-4 w-24"></div>
-        <div class="skeleton h-5 xl:h-7 w-32"></div>
+        <div class="skeleton h-3 2xl:h-4 w-24"></div>
+        <div class="skeleton h-5 2xl:h-7 w-32"></div>
       </div>
     </div>
   </div>
   <div class="flex items-center justify-center" v-else>
     <div
-      class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 xl:w-16 xl:h-16 mr-3 md:mr-4 items-center justify-center rounded-xl bg-primary-100 dark:bg-gray-700/50"
+      class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 2xl:w-16 2xl:h-16 mr-3 md:mr-4 items-center justify-center rounded-xl bg-primary-100 dark:bg-gray-700/50"
       aria-hidden="true"
     >
       <slot
         name="icon"
-        css-class="text-primary-600 dark:text-gray-400 h-6 w-6 md:h-8 md:w-8 xl:w-10 xl:h-10"
+        css-class="text-primary-600 dark:text-gray-400 h-6 w-6 md:h-8 md:w-8 2xl:w-10 2xl:h-10"
       />
     </div>
     <div class="flex-1">
       <p
-        class="text-gray-500 dark:text-gray-300 font-semibold text-xs xl:text-sm mb-0"
+        class="text-gray-500 dark:text-gray-300 font-semibold text-xs 2xl:text-sm mb-0"
       >
         {{ title }}
       </p>
@@ -64,7 +64,7 @@ const { t } = useI18n({ useScope: 'global' })
           enter-to-class="opacity-100 translate-x-0"
         >
           <p
-            class="font-semibold dark:text-gray-50 text-md sm:text-lg lg:text-xl xl:text-2xl mb-0"
+            class="font-medium dark:text-gray-50 text-md sm:text-lg lg:text-xl 2xl:text-2xl mb-0"
             v-if="showValue && !alwaysHidden"
           >
             {{ value || '' }}
@@ -72,7 +72,7 @@ const { t } = useI18n({ useScope: 'global' })
           <div
             v-else
             aria-hidden="true"
-            class="h-5 sm:h-6 xl:h-7 mt-1 bg-gray-300 dark:bg-gray-700 rounded w-32 lg:w-24"
+            class="h-5 sm:h-6 2xl:h-7 mt-1 bg-gray-300 dark:bg-gray-700 rounded w-32 lg:w-24"
           />
         </transition>
       </div>
