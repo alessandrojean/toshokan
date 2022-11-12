@@ -68,7 +68,7 @@ watch(locale, (newLocale) => {
 })
 
 function getImageUrl(name: string) {
-  return new URL(`../../assets/about/${name}.jpg`, import.meta.url).href
+  return new URL(`../../../assets/about/${name}.jpg`, import.meta.url).href
 }
 
 const body = computed(() => {
