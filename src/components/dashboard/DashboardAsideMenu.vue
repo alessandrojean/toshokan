@@ -5,7 +5,7 @@ import {
   type ComputedRef,
   type FunctionalComponent
 } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import type { RouteLocation, RouteLocationRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -18,7 +18,9 @@ import {
   LifebuoyIcon,
   PresentationChartBarIcon
 } from '@heroicons/vue/24/outline'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+
+import DashboardAsideButton from '@/components/dashboard/DashboardAsideButton.vue'
 import ToshokanLogo from '@/components/ToshokanLogo.vue'
 
 export interface Item {
@@ -137,90 +139,119 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
         <nav class="mt-6 px-2">
           <ul class="space-y-1.5">
             <template v-for="item in items" :key="item.key">
-              <li>
+              <li v-if="!item.children || item.children.length === 0">
                 <RouterLink
                   custom
                   :to="item.to"
                   v-slot="{ href, isActive, isExactActive, navigate, route }"
                 >
-                  <a
+                  <DashboardAsideButton
+                    :item="item"
                     :href="href"
                     :target="item.external ? '_blank' : undefined"
+                    :active="
+                      active(item.active, item.exact, isExactActive, isActive)
+                    "
                     @click="
                       item.external
                         ? navigate($event)
                         : handleNavigation(route, $event)
                     "
-                    :class="[
-                      'group flex w-full items-center px-2.5 py-2 rounded-lg text-sm font-medium',
-                      'motion-safe:transition-color',
-                      active(item.active, item.exact, isExactActive, isActive)
-                        ? 'bg-primary-100 dark:bg-gray-900 text-primary-900 dark:text-gray-100'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100'
-                    ]"
-                  >
-                    <component
-                      v-if="item.icon"
-                      :is="item.icon"
-                      :class="[
-                        'w-6 h-6 shrink-0 motion-safe:transition-color',
-                        active(item.active, item.exact, isExactActive, isActive)
-                          ? 'text-primary-600 dark:text-primary-400'
-                          : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'
-                      ]"
-                    />
-                    <span class="ml-3.5 grow">{{ item.label }}</span>
-                    <ArrowTopRightOnSquareIcon
-                      v-if="item.external"
-                      class="shrink-0 w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100 motion-safe:transition-color"
-                    />
-                  </a>
+                  />
                 </RouterLink>
               </li>
-              <li v-if="item.children && item.children.length > 0">
-                <ul class="space-y-1">
-                  <li v-for="child in item.children" :key="child.key">
-                    <RouterLink
-                      custom
-                      :to="child.to"
-                      v-slot="{
-                        href,
-                        isActive,
-                        isExactActive,
-                        navigate,
-                        route
-                      }"
+              <Disclosure as="li" v-else v-slot="{ open }">
+                <RouterLink
+                  custom
+                  :to="item.to"
+                  v-slot="{ href, isActive, isExactActive, navigate, route }"
+                >
+                  <div
+                    :class="[
+                      'rounded-xl motion-safe:transition-all',
+                      open &&
+                      active(item.active, item.exact, isExactActive, isActive)
+                        ? 'bg-white dark:bg-gray-700 p-2 ring-1 ring-gray-200 dark:ring-gray-600'
+                        : ''
+                    ]"
+                  >
+                    <DisclosureButton
+                      :as="DashboardAsideButton"
+                      :href="href"
+                      :target="item.external ? '_blank' : undefined"
+                      :item="item"
+                      expandable
+                      :open="open"
+                      :active="
+                        active(item.active, item.exact, isExactActive, isActive)
+                      "
+                      @click="
+                        item.external
+                          ? navigate($event)
+                          : handleNavigation(route, $event)
+                      "
+                    />
+
+                    <transition
+                      enter-active-class="transition-all duration-300 ease-out"
+                      enter-from-class="max-h-0 -translate-y-1 opacity-0"
+                      enter-to-class="max-h-screen translate-y-0 opacity-100"
+                      leave-active-class="motion-safe:transition-all duration-100 ease-out"
+                      leave-from-class="max-h-screen translate-y-0 opacity-100"
+                      leave-to-class="max-h-0 -translate-y-1 opacity-0"
                     >
-                      <a
-                        :href="href"
-                        @click="
-                          item.external
-                            ? navigate($event)
-                            : handleNavigation(route, $event)
-                        "
-                        :class="[
-                          'group flex w-full items-center pl-12 pr-2.5 py-1.5 rounded-lg text-sm',
-                          'motion-safe:transition-color',
+                      <DisclosurePanel
+                        v-show="
+                          open &&
                           active(
-                            child.active,
-                            child.exact,
+                            item.active,
+                            item.exact,
                             isExactActive,
                             isActive
                           )
-                            ? 'bg-primary-100 dark:bg-gray-900 text-primary-900 dark:text-gray-100'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-100'
-                        ]"
+                        "
+                        as="ul"
+                        class="space-y-1.5 mt-1.5"
+                        static
                       >
-                        <span class="grow">{{ child.label }}</span>
-                        <ArrowTopRightOnSquareIcon
-                          v-if="child.external"
-                          class="shrink-0 w-4 h-4 text-gray-500 group-hover:text-gray-600 motion-safe:transition-color"
-                        />
-                      </a>
-                    </RouterLink>
-                  </li>
-                </ul>
-              </li>
+                        <li v-for="child in item.children" :key="child.key">
+                          <RouterLink
+                            custom
+                            :to="child.to"
+                            v-slot="{
+                              href,
+                              isActive,
+                              isExactActive,
+                              navigate,
+                              route
+                            }"
+                          >
+                            <DashboardAsideButton
+                              :item="child"
+                              :href="href"
+                              :target="child.external ? '_blank' : undefined"
+                              :active="
+                                active(
+                                  child.active,
+                                  child.exact,
+                                  isExactActive,
+                                  isActive
+                                )
+                              "
+                              child
+                              @click="
+                                item.external
+                                  ? navigate($event)
+                                  : handleNavigation(route, $event)
+                              "
+                            />
+                          </RouterLink>
+                        </li>
+                      </DisclosurePanel>
+                    </transition>
+                  </div>
+                </RouterLink>
+              </Disclosure>
             </template>
           </ul>
         </nav>

@@ -125,7 +125,7 @@ function handleReadToday(book: Book) {
   >
     <div class="flex justify-between items-center w-full">
       <h2
-        class="font-medium font-display text-sm sm:text-lg dark:text-gray-200"
+        class="font-medium font-display text-md sm:text-lg dark:text-gray-200"
       >
         {{ title }}
       </h2>

@@ -189,7 +189,7 @@ const shared = computed(() => sheetStore.shared)
       {{ t('a11y.jumpToNavigation') }}
     </a>
 
-    <div class="flex w-full">
+    <div class="md:flex w-full">
       <div class="shrink-0 w-72 hidden lg:block">
         <DashboardAsideMenu
           class="sticky inset-x-0 top-0 h-screen"

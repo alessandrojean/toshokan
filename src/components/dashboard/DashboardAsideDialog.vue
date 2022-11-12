@@ -14,6 +14,7 @@ import DashboardAsideMenu, {
   type AsideMenuProps
 } from '@/components/dashboard/DashboardAsideMenu.vue'
 import ToshokanLogo from '@/components/ToshokanLogo.vue'
+import { RouteLocation } from 'vue-router'
 
 export interface DashboardAsideDialogProps extends AsideMenuProps {
   isOpen?: boolean
@@ -29,6 +30,16 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { isOpen, libraryGroups } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
+
+function handleNavigate(route: RouteLocation) {
+  // Handle the case where the buttons have childrens and are
+  // rendered as disposables. In this case we don't want the
+  // dialog to be closed immediately as the user may want to
+  // navigate to a inner item after the disclosure panel is open.
+  if (route.name !== 'dashboard-library') {
+    emit('close')
+  }
+}
 </script>
 
 <script lang="ts">
@@ -65,7 +76,7 @@ export default { inheritAttrs: false }
               class=""
               :library-groups="libraryGroups"
               v-bind="$attrs"
-              @navigate="emit('close')"
+              @navigate="handleNavigate"
             >
               <template #logo>
                 <DialogTitle>
