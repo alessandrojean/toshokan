@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import { toRefs } from 'vue'
-import type { ButtonHTMLAttributes } from 'vue'
 
 export type Kind = 'primary' | 'secondary' | 'default' | 'ghost' | 'danger'
 export type Size = 'small' | 'normal' | 'large'
 
-export interface ButtonProps extends ButtonHTMLAttributes {
+export interface ButtonProps {
   as?: keyof HTMLElementTagNameMap | string
+  disabled?: boolean
   iconOnly?: boolean
   kind?: Kind
   link?: boolean
   rounded?: boolean
   size?: Size
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const props = withDefaults(defineProps<ButtonProps>(), {
@@ -37,7 +38,29 @@ const {
 </script>
 
 <template>
+  <button
+    v-if="component === 'button'"
+    :class="[
+      `btn btn-${size} btn-${kind} has-ring-focus`,
+      {
+        'btn-rounded': rounded,
+        'btn-link': link,
+        'btn-icon-only': iconOnly
+      }
+    ]"
+    :disabled="disabled"
+    :type="type"
+  >
+    <span v-if="$slots.left" class="btn-left">
+      <slot name="left" iconClass="btn-icon" />
+    </span>
+    <slot iconClass="btn-icon" />
+    <span v-if="$slots.right" class="btn-right">
+      <slot name="right" iconClass="btn-icon" />
+    </span>
+  </button>
   <component
+    v-else
     :is="component"
     :class="[
       `btn btn-${size} btn-${kind} has-ring-focus`,
@@ -47,8 +70,6 @@ const {
         'btn-icon-only': iconOnly
       }
     ]"
-    :disabled="component === 'button' ? disabled : undefined"
-    :type="component === 'button' ? type : undefined"
   >
     <span v-if="$slots.left" class="btn-left">
       <slot name="left" iconClass="btn-icon" />
