@@ -103,7 +103,7 @@ const groupedTags = computed(() => {
       </div>
     </div>
     <p
-      v-else-if="tags?.length === 0"
+      v-else-if="tags?.length === 0 && !loading"
       class="mt-4 italic text-gray-700 dark:text-gray-300"
     >
       {{ t('book.emptyTags') }}
@@ -113,7 +113,7 @@ const groupedTags = computed(() => {
         <div
           v-for="tag of 20"
           :key="tag"
-          :class="['skeleton h-5', randomSize()]"
+          :class="['skeleton h-6', randomSize()]"
         />
       </div>
     </div>

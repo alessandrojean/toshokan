@@ -62,6 +62,8 @@ const SORT_PROPERTY_DEFAULT = 'createdAt'
 const SORT_DIRECTION_DEFAULT = 'desc'
 const FAVORITES_DEFAULT = TriState.INDIFERENT
 const FUTURE_ITEMS_DEFAULT = TriState.HIDE
+const BOOKS_PER_PAGE = 30
+const LINKS_COUNT = 6
 
 function castQueryValue(val?: unknown | unknown[]): unknown[] | undefined {
   if (val === undefined) {
@@ -190,6 +192,7 @@ const {
     futureItems,
     groups,
     page,
+    perPage: BOOKS_PER_PAGE,
     sortBy: sortProperty,
     sortDirection
   },
@@ -198,7 +201,7 @@ const {
 
 const books = computed(() => booksData.value?.books ?? [])
 const totalResults = computed(() => booksData.value?.totalResults ?? 0)
-const paginator = new PaginatorUtil(18, 6)
+const paginator = new PaginatorUtil(BOOKS_PER_PAGE, LINKS_COUNT)
 const paginationInfo = computed(() => {
   return paginator.build(totalResults.value, page.value)
 })

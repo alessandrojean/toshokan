@@ -14,6 +14,7 @@ type UseBooksQueryArgs = {
   futureItems: RefOrComputed<GetBooksArgs['futureItems']>
   groups: RefOrComputed<GetBooksArgs['groups']>
   page: RefOrComputed<number>
+  perPage?: number
   sortBy: RefOrComputed<string>
   sortDirection: RefOrComputed<Sort>
 }
@@ -24,6 +25,7 @@ export default function useBooksQuery(
     futureItems,
     groups,
     page,
+    perPage = 18,
     sortBy,
     sortDirection
   }: UseBooksQueryArgs,
@@ -38,7 +40,8 @@ export default function useBooksQuery(
       futureItems: futureItems.value,
       groups: groups.value,
       orderBy: PropertyToColumn[sortBy.value],
-      orderDirection: sortDirection.value
+      orderDirection: sortDirection.value,
+      limit: perPage
     })
 
     return await fetch(promise)
