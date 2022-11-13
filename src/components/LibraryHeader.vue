@@ -156,7 +156,7 @@ const canEdit = computed(() => sheetStore.canEdit)
             </div>
           </div>
         </div>
-        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-4">
+        <div class="flex mt-5 md:mt-0 md:ml-4 space-x-2">
           <template v-if="sheetLoading && !sheetLoadedOnce && !writing">
             <div
               class="motion-safe:animate-pulse h-9 bg-gray-400 dark:bg-gray-600 rounded w-28 flex-1 md:flex-initial"
