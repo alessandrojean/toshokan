@@ -32,16 +32,18 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
     :href="href"
     :target="item.external ? '_blank' : undefined"
     :class="[
-      'group flex items-center flex-nowrap text-sm rounded-lg w-full',
-      child ? 'font-normal' : 'font-medium',
+      'group flex items-center flex-nowrap text-sm rounded-lg w-full has-ring-focus',
+      child
+        ? 'font-normal dark:focus-visible:ring-offset-gray-700'
+        : 'font-medium dark:focus-visible:ring-offset-gray-800',
       item.icon ? 'h-10' : 'h-9',
       active
         ? 'bg-primary-100 text-primary-900 dark:text-gray-100 ' +
           ((expandable && open) || child
             ? 'dark:bg-gray-800'
             : 'dark:bg-gray-900')
-        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 hover:text-gray-800 dark:hover:text-gray-100 ' +
-          (child ? 'dark:hover:bg-gray-600' : 'dark:hover:bg-gray-700')
+        : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 ' +
+          (child ? 'dark:hocus:bg-gray-600' : 'dark:hocus:bg-gray-700')
     ]"
     :title="item.label"
   >
@@ -58,7 +60,7 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
           'w-6 h-6 motion-safe:transition-colors',
           active
             ? 'text-primary-600 dark:text-gray-100'
-            : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'
+            : 'text-gray-500 dark:text-gray-500 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
         ]"
       />
     </div>
@@ -80,7 +82,7 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
     >
       <ArrowTopRightOnSquareIcon
         v-if="item.external && !expandable"
-        class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100 motion-safe:transition-color"
+        class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hocus:text-gray-600 dark:group-hocus:text-gray-100 motion-safe:transition-color"
       />
       <ChevronUpIcon
         v-else-if="expandable"
@@ -90,7 +92,7 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
           open && active ? '' : 'rotate-180',
           active
             ? 'text-primary-600 dark:text-gray-200'
-            : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100'
+            : 'text-gray-500 dark:text-gray-400 group-hocus:text-gray-600 dark:group-hocus:text-gray-100'
         ]"
       />
     </div>

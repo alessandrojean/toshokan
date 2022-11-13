@@ -193,6 +193,10 @@ export default {
         '@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))'
       )
       addVariant('hocus', ['&:hover', '&:focus-visible'])
+      addVariant(
+        'group-hocus',
+        ':merge(.group):where(:hover, :focus-visible) &'
+      )
       addVariant('not-disabled', '&:not(:disabled)')
       addVariant('group-not-disabled', ':merge(.group):not(:disabled) &')
       addVariant(
