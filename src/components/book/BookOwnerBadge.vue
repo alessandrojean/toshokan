@@ -18,7 +18,7 @@ const shared = computed(() => sheetStore.shared)
 
 <template>
   <div v-if="shared" class="owner-badge">
-    <Avatar class="shrink-0" :picture-url="ownerPictureUrl" small shared />
+    <Avatar class="shrink-0" :picture-url="ownerPictureUrl" small />
     <div class="owner-info">
       <span class="owner-title">
         {{ t('dashboard.sheetChooser.libraryOf') }}
