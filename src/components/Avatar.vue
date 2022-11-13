@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { onMounted, toRefs, type HTMLAttributes } from 'vue'
+import { onMounted, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import useImageLoader from '@/composables/useImageLoader'
 
 import { UserGroupIcon, UserIcon } from '@heroicons/vue/20/solid'
 
-export interface AvatarProps extends HTMLAttributes {
+export interface AvatarProps {
+  alt?: string
   dark?: boolean
   pictureUrl?: string
   shared?: boolean
@@ -14,12 +15,13 @@ export interface AvatarProps extends HTMLAttributes {
 }
 
 const props = withDefaults(defineProps<AvatarProps>(), {
+  alt: undefined,
   dark: false,
   shared: false,
   small: false
 })
 
-const { pictureUrl } = toRefs(props)
+const { alt, pictureUrl } = toRefs(props)
 
 const { imageLoading, imageHasError, loadImage } = useImageLoader(pictureUrl)
 
@@ -36,7 +38,7 @@ const { t } = useI18n({ useScope: 'global' })
     >
       <UserIcon class="user-icon" />
     </div>
-    <img v-else class="avatar-img" alt="" :src="pictureUrl" />
+    <img v-else class="avatar-img" :alt="alt" :src="pictureUrl" />
     <div
       v-if="shared"
       class="shared-badge"

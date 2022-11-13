@@ -28,6 +28,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 
+import Avatar from '@/components/Avatar.vue'
 import Button from '@/components/form/Button.vue'
 
 const props = defineProps<{ isOpen: boolean }>()
@@ -168,10 +169,15 @@ watch(isOpen, (newIsOpen) => {
 
                     <div class="file-group">
                       <div class="sheet-owner">
-                        <img
-                          class="owner-picture"
+                        <Avatar
+                          class="shrink-0"
+                          :picture-url="
+                            !option.owners![0].photoLink?.includes('default-user')
+                              ? option.owners![0].photoLink
+                              : undefined
+                          "
                           :alt="option.owners![0].displayName"
-                          :src="option.owners![0].photoLink"
+                          small
                         />
                         <div class="owner-info">
                           <p class="owner-name">
@@ -390,17 +396,12 @@ watch(isOpen, (newIsOpen) => {
   @apply hidden md:block flex-1 min-w-0;
 }
 
-.owner-picture {
-  @apply w-9 h-9 rounded-full object-contain shrink-0
-    border-2 border-gray-100 dark:border-gray-600;
-}
-
 .sheet[aria-checked='true'] .owner-picture {
   @apply border-primary-100 dark:border-primary-400;
 }
 
 .owner-name {
-  @apply text-xs font-semibold dark:font-medium
+  @apply text-xs font-medium
     w-full truncate leading-none dark:text-gray-300;
 }
 

@@ -18,7 +18,7 @@ const shared = computed(() => sheetStore.shared)
 
 <template>
   <div v-if="shared" class="owner-badge">
-    <Avatar :picture-url="ownerPictureUrl" small />
+    <Avatar class="shrink-0" :picture-url="ownerPictureUrl" small shared />
     <div class="owner-info">
       <span class="owner-title">
         {{ t('dashboard.sheetChooser.libraryOf') }}
@@ -40,12 +40,11 @@ const shared = computed(() => sheetStore.shared)
 
 <style lang="postcss" scoped>
 .owner-badge {
-  @apply flex items-center space-x-3 rounded-md
-    px-2.5 py-2 border border-gray-200 dark:border-gray-700;
+  @apply flex items-center px-3.5 py-2 w-full;
 }
 
 .owner-info {
-  @apply min-w-0 flex-grow;
+  @apply shrink-0 w-[12.75rem] px-3.5 box-border;
 }
 
 .owner-title {
@@ -60,6 +59,6 @@ const shared = computed(() => sheetStore.shared)
 }
 
 .user-group {
-  @apply shrink-0 pr-1 text-gray-400 dark:text-gray-500;
+  @apply shrink-0 w-5 h-5 text-gray-400 dark:text-gray-500;
 }
 </style>

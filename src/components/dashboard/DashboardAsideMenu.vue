@@ -309,7 +309,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
       </div>
 
       <div v-if="$slots.footer" class="shrink-0">
-        <slot name="footer" />
+        <slot name="footer" :collapsed="collapsed" :collapsible="collapsible" />
       </div>
     </div>
   </aside>

@@ -199,7 +199,7 @@ const shared = computed(() => sheetStore.shared)
         >
           <template #footer v-if="enabled && shared">
             <div class="border-t border-gray-200 dark:border-gray-700 py-2">
-              <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
+              <BookOwnerBadge />
             </div>
           </template>
         </DashboardAsideMenu>
@@ -242,7 +242,7 @@ const shared = computed(() => sheetStore.shared)
     >
       <template #footer v-if="enabled && shared">
         <div class="border-t border-gray-200 dark:border-gray-700 py-2">
-          <BookOwnerBadge class="!border-0 !border-t-1 !px-[1.125rem]" />
+          <BookOwnerBadge />
         </div>
       </template>
     </DashboardAsideDialog>
