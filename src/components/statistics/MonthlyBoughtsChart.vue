@@ -25,15 +25,11 @@ const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
 const sheetStore = useSheetStore()
 const { color, fontFamily } = useTailwindTheme()
 
-const {
-  data: stats,
-  isLoading,
-  isIdle
-} = useStatisticsQuery({
+const { data: stats, isLoading } = useStatisticsQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-const loading = computed(() => isLoading.value || isIdle.value)
+const loading = computed(() => isLoading.value)
 
 const { t, d, locale } = useI18n({ useScope: 'global' })
 

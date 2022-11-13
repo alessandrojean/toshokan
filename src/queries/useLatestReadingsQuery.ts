@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getLatestReadings from '@/services/sheet/getLatestReadings'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,5 +13,5 @@ export default function useLatestReadingsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getLatestReadings(sheetId.value!, { limit: 6 }))
   }
 
-  return useQuery('latest-readings', fetcher, { enabled })
+  return useQuery(['latest-readings'], fetcher, { enabled })
 }

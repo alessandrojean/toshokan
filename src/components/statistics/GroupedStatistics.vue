@@ -13,15 +13,11 @@ import {
 const { t, n } = useI18n()
 const sheetStore = useSheetStore()
 
-const {
-  data: stats,
-  isLoading,
-  isIdle
-} = useStatisticsQuery({
+const { data: stats, isLoading } = useStatisticsQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-const loading = computed(() => isLoading.value || isIdle.value)
+const loading = computed(() => isLoading.value)
 
 const currency = computed(() => stats.value?.money.currency)
 

@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getBookById from '@/services/sheet/getBookById'
 import { useSheetStore } from '@/stores/sheet'

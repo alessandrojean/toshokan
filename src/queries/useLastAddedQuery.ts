@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getBooks from '@/services/sheet/getBooks'
 import { useSheetStore } from '@/stores/sheet'
@@ -20,5 +20,5 @@ export default function useLastAddedQuery({ enabled }: UseQueryOptions) {
     return result?.books
   }
 
-  return useQuery('last-added', fetcher, { enabled })
+  return useQuery(['last-added'], fetcher, { enabled })
 }

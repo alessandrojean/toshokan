@@ -33,7 +33,6 @@ import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
 import SearchItem from '@/components/SearchItem.vue'
 import useMarkdown from '@/composables/useMarkdown'
 import { createSearchKeywords } from '@/services/sheet/searchBooks'
-import { m } from 'vitest/dist/index-b68b3c09'
 
 const props = defineProps<{ isOpen: boolean }>()
 
@@ -112,16 +111,19 @@ watch(searchData, (newData) => {
     )
 
     searchStore.updatePagination(pagination)
+
+    state.value = newData.total > 0 ? 'results' : 'empty_results'
   }
 })
 
 async function clearSearch(focusOnInput?: boolean) {
-  remove.value()
+  remove()
 
   searchInputValue.value = ''
   searchQuery.value = ''
   searchedOnce.value = false
   searchedTerm.value = ''
+  state.value = 'history'
 
   searchStore.clear()
 
@@ -178,8 +180,6 @@ function createDebounce() {
     }, delayMs ?? 1000)
   }
 }
-
-const debounce = createDebounce()
 
 watch(searchQuery, async (newQuery, oldQuery) => {
   if (newQuery.length === 0 && oldQuery.length > 0) {
@@ -369,6 +369,9 @@ const inputRendererHtml = computed(() => {
     })
     .replace(/<\/span>(.*?)<span/g, '</span><span>$1</span><span')
 })
+
+type State = 'history' | 'results' | 'empty_results'
+const state = ref<State>('history')
 </script>
 
 <template>
@@ -437,7 +440,7 @@ const inputRendererHtml = computed(() => {
                     aria-labelledby="search-label"
                     v-model="searchInputValue"
                     :placeholder="t('dashboard.search.placeholder')"
-                    :disabled="searchLoading || !isOpen"
+                    :disabled="(searchLoading && searchEnabled) || !isOpen"
                     @input="handleInput"
                     @keyup.enter.prevent="
                       search(($event.target as HTMLInputElement).value)
@@ -450,6 +453,7 @@ const inputRendererHtml = computed(() => {
                     class="input-renderer"
                     ref="inputRenderer"
                     v-html="inputRendererHtml"
+                    v-if="searchInputValue.length > 0"
                   />
                 </div>
               </div>
@@ -492,9 +496,7 @@ const inputRendererHtml = computed(() => {
 
             <FadeTransition>
               <div
-                v-if="
-                  (searchResults?.length ?? 0) > 0 && searchQuery.length > 0
-                "
+                v-if="state === 'results'"
                 tabindex="-1"
                 ref="results"
                 class="results"
@@ -610,9 +612,7 @@ const inputRendererHtml = computed(() => {
               </div>
 
               <div
-                v-else-if="
-                  searchResults?.length === 0 && searchQuery.length > 0
-                "
+                v-else-if="state === 'empty_results'"
                 class="no-results select-none"
               >
                 <i18n-t
@@ -626,7 +626,10 @@ const inputRendererHtml = computed(() => {
                 </i18n-t>
               </div>
 
-              <div v-else-if="searchHistory.length > 0" class="history">
+              <div
+                v-else-if="state === 'history' && searchHistory.length > 0"
+                class="history"
+              >
                 <h3 class="title px-5" id="history-header">
                   {{ t('dashboard.search.history') }}
                 </h3>
@@ -674,7 +677,7 @@ const inputRendererHtml = computed(() => {
             </FadeTransition>
 
             <LoadingIndicator
-              :loading="searchLoading || (isFetching && isPreviousData)"
+              :loading="(searchLoading && searchEnabled) || isFetching"
               :blur="false"
               z-index="z-50"
             />

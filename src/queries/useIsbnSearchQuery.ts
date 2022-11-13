@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import lookupSearch from '@/services/lookup'
 

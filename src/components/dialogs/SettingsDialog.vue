@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, toRefs, watch } from 'vue'
-import { useQueryClient } from 'vue-query'
+import { useQueryClient } from '@tanstack/vue-query'
 
 import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
@@ -161,11 +161,11 @@ function saveLocale() {
 
   if (locale.value !== appearence.locale) {
     locale.value = appearence.locale
-    queryClient.invalidateQueries('statistics')
-    queryClient.invalidateQueries('last-added')
-    queryClient.invalidateQueries('latest-readings')
-    queryClient.invalidateQueries('books')
-    queryClient.invalidateQueries('book')
+    queryClient.invalidateQueries(['statistics'])
+    queryClient.invalidateQueries(['last-added'])
+    queryClient.invalidateQueries(['latest-readings'])
+    queryClient.invalidateQueries(['books'])
+    queryClient.invalidateQueries(['book'])
   }
 }
 

@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getGroups from '@/services/sheet/getGroups'
 import { useSheetStore } from '@/stores/sheet'
@@ -15,5 +15,5 @@ export default function useGroupsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getGroups(sheetId.value!))
   }
 
-  return useQuery('groups', fetcher, { enabled })
+  return useQuery(['groups'], fetcher, { enabled })
 }

@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getNextReads from '@/services/sheet/getNextReads'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,5 +13,5 @@ export default function useNextReadsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getNextReads(sheetId.value!))
   }
 
-  return useQuery('next-reads', fetcher, { enabled })
+  return useQuery(['next-reads'], fetcher, { enabled })
 }

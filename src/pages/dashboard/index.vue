@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useIsFetching, useQueryClient } from 'vue-query'
+import { useIsFetching, useQueryClient } from '@tanstack/vue-query'
 
 import useEditBookMutation from '@/mutations/useEditBookMutation'
 import { useAuthStore } from '@/stores/auth'

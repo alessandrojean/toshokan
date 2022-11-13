@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import insertBook from '@/services/sheet/insertBook'
@@ -18,13 +18,13 @@ export default function useCreateBookMutation() {
       queryClient.setQueryData(['book', book.id], book)
     },
     onSettled() {
-      queryClient.invalidateQueries('last-added')
-      queryClient.invalidateQueries('next-reads')
-      queryClient.invalidateQueries('groups')
-      queryClient.invalidateQueries('books')
-      queryClient.invalidateQueries('authors')
-      queryClient.invalidateQueries('book-search')
-      queryClient.invalidateQueries('statistics')
+      queryClient.invalidateQueries(['last-added'])
+      queryClient.invalidateQueries(['next-reads'])
+      queryClient.invalidateQueries(['groups'])
+      queryClient.invalidateQueries(['books'])
+      queryClient.invalidateQueries(['authors'])
+      queryClient.invalidateQueries(['book-search'])
+      queryClient.invalidateQueries(['statistics'])
     }
   })
 }

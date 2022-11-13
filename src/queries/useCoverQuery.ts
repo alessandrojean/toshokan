@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import { findCovers } from '@/services/cover'
 import Book from '@/model/Book'

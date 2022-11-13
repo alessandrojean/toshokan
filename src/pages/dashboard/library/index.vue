@@ -170,11 +170,9 @@ const queriesEnabled = computed(() => {
   )
 })
 
-const {
-  data: groupsData,
-  isIdle: groupsIdle,
-  isLoading: groupsLoading
-} = useGroupsQuery({ enabled: queriesEnabled })
+const { data: groupsData, isLoading: groupsLoading } = useGroupsQuery({
+  enabled: queriesEnabled
+})
 const groups = computed(() => {
   const sheetGroups = (groupsData.value ?? []).map((g) => g.name)
 
@@ -184,7 +182,6 @@ const groups = computed(() => {
 const {
   data: booksData,
   isFetching: booksFetching,
-  isIdle: booksIdle,
   isLoading: booksLoading
 } = useBooksQuery(
   {
@@ -207,12 +204,7 @@ const paginationInfo = computed(() => {
 })
 
 const loading = computed(() => {
-  return (
-    booksLoading.value ||
-    groupsLoading.value ||
-    groupsIdle.value ||
-    booksIdle.value
-  )
+  return booksLoading.value || groupsLoading.value
 })
 
 const table = ref<InstanceType<typeof BookTable>>()

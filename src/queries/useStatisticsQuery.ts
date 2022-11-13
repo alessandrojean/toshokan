@@ -1,5 +1,5 @@
 import { computed, watch } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getStatistics from '@/services/sheet/getStatistics'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,7 +13,7 @@ export default function useStatisticsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getStatistics(sheetId.value!))
   }
 
-  const query = useQuery('statistics', fetcher, { enabled })
+  const query = useQuery(['statistics'], fetcher, { enabled })
 
   watch(query.data, (newData) => {
     sheetStore.updateIsEmpty(newData?.count === 0)

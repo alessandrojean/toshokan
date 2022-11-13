@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import updateBook from '@/services/sheet/updateBook'
@@ -15,7 +15,7 @@ export default function useEditBookMutation() {
 
   return useMutation(mutate, {
     onSuccess(_, book) {
-      queryClient.setQueriesData<{ books: Book[] }>('books', (oldData) => {
+      queryClient.setQueriesData<{ books: Book[] }>(['books'], (oldData) => {
         return {
           ...oldData,
           books: (oldData?.books ?? []).map((oldBook) => {
@@ -26,14 +26,14 @@ export default function useEditBookMutation() {
       queryClient.setQueryData(['book', book.id], book)
     },
     onSettled() {
-      queryClient.invalidateQueries('last-added')
-      queryClient.invalidateQueries('latest-readings')
-      queryClient.invalidateQueries('next-reads')
-      queryClient.invalidateQueries('groups')
-      queryClient.invalidateQueries('books')
-      queryClient.invalidateQueries('authors')
-      queryClient.invalidateQueries('book-search')
-      queryClient.invalidateQueries('statistics')
+      queryClient.invalidateQueries(['last-added'])
+      queryClient.invalidateQueries(['latest-readings'])
+      queryClient.invalidateQueries(['next-reads'])
+      queryClient.invalidateQueries(['groups'])
+      queryClient.invalidateQueries(['books'])
+      queryClient.invalidateQueries(['authors'])
+      queryClient.invalidateQueries(['book-search'])
+      queryClient.invalidateQueries(['statistics'])
     }
   })
 }

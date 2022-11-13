@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, toRefs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQueryClient } from 'vue-query'
+import { useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import { injectStrict } from '@/util'

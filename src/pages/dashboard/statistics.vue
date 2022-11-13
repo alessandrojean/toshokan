@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 import { useSheetStore } from '@/stores/sheet'
@@ -11,7 +10,6 @@ import {
   PresentationChartLineIcon
 } from '@heroicons/vue/24/outline'
 
-import BasicBarChart from '@/components/BasicBarChart.vue'
 import GroupedStatistics from '@/components/statistics/GroupedStatistics.vue'
 import MonthlyBoughtsChart from '@/components/statistics/MonthlyBoughtsChart.vue'
 import MonthlyExpenseChart from '@/components/statistics/MonthlyExpenseChart.vue'
@@ -19,17 +17,12 @@ import StatisticsRanking from '@/components/statistics/StatisticsRanking.vue'
 import SimpleHeader from '@/components/SimpleHeader.vue'
 
 const sheetStore = useSheetStore()
-const router = useRouter()
 
-const {
-  data: stats,
-  isLoading,
-  isIdle
-} = useStatisticsQuery({
+const { data: stats, isLoading } = useStatisticsQuery({
   enabled: computed(() => sheetStore.sheetId !== null)
 })
 
-const loading = computed(() => isLoading.value || isIdle.value)
+const loading = computed(() => isLoading.value)
 
 const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 const tooEarly = computed(() => stats.value?.monthly?.length === 1)

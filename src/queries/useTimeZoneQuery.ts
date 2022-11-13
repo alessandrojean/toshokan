@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getTimeZone from '@/services/sheet/getTimeZone'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,7 +13,7 @@ export default function useTimeZoneQuery({ enabled }: UseQueryOptions) {
     return await fetch(getTimeZone(sheetId.value!))
   }
 
-  return useQuery('timezone', fetcher, {
+  return useQuery(['timezone'], fetcher, {
     enabled,
     initialData: {
       name: 'America/Sao_Paulo',

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import bulkUpdateBooks from '@/services/sheet/bulkUpdateBooks'
@@ -19,7 +19,7 @@ export default function useBulkEditBookMutation() {
         queryClient.setQueryData(['book', book.id], book)
       })
 
-      queryClient.setQueriesData<{ books: Book[] }>('books', (oldData) => {
+      queryClient.setQueriesData<{ books: Book[] }>(['books'], (oldData) => {
         return {
           ...oldData,
           books: (oldData?.books ?? []).map((oldBook) => {
@@ -29,13 +29,13 @@ export default function useBulkEditBookMutation() {
       })
     },
     onSettled() {
-      queryClient.invalidateQueries('latest-readings')
-      queryClient.invalidateQueries('next-reads')
-      queryClient.invalidateQueries('groups')
-      queryClient.invalidateQueries('books')
-      queryClient.invalidateQueries('authors')
-      queryClient.invalidateQueries('book-search')
-      queryClient.invalidateQueries('statistics')
+      queryClient.invalidateQueries(['latest-readings'])
+      queryClient.invalidateQueries(['next-reads'])
+      queryClient.invalidateQueries(['groups'])
+      queryClient.invalidateQueries(['books'])
+      queryClient.invalidateQueries(['authors'])
+      queryClient.invalidateQueries(['book-search'])
+      queryClient.invalidateQueries(['statistics'])
     }
   })
 }

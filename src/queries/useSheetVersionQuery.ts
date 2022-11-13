@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getVersion from '@/services/sheet/getVersion'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,7 +13,7 @@ export default function useSheetVersionQuery({ enabled }: UseQueryOptions) {
     return await fetch(getVersion(sheetId.value!))
   }
 
-  return useQuery('sheet-version', fetcher, {
+  return useQuery(['sheet-version'], fetcher, {
     enabled,
     initialData: 0
   })

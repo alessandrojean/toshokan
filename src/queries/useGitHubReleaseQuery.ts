@@ -1,4 +1,4 @@
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 import axios from 'axios'
 
@@ -15,7 +15,7 @@ export default function useGitHubReleaseQuery() {
     return await axios.get<GitHubRelease>(RELEASE_URL)
   }
 
-  return useQuery('github-release', fetcher, {
+  return useQuery(['github-release'], fetcher, {
     select: (response) => response?.data?.body
   })
 }

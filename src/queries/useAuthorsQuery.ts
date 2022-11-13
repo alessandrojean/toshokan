@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getAuthors from '@/services/sheet/getAuthors'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,5 +13,5 @@ export default function useAuthorsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getAuthors(sheetId.value!))
   }
 
-  return useQuery('authors', fetcher, { enabled })
+  return useQuery(['authors'], fetcher, { enabled })
 }

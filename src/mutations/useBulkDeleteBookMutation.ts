@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
 import bulkDeleteBooks from '@/services/sheet/bulkDeleteBooks'
@@ -19,7 +19,7 @@ export default function useBulkDeleteBookMutation() {
         queryClient.setQueryData(['book', book.id], null)
       })
 
-      queryClient.setQueriesData<{ books: Book[] }>('books', (oldData) => {
+      queryClient.setQueriesData<{ books: Book[] }>(['books'], (oldData) => {
         return {
           ...oldData,
           books: (oldData?.books ?? []).filter((oldBook) => {
@@ -29,14 +29,14 @@ export default function useBulkDeleteBookMutation() {
       })
     },
     onSettled() {
-      queryClient.invalidateQueries('last-added')
-      queryClient.invalidateQueries('latest-readings')
-      queryClient.invalidateQueries('next-reads')
-      queryClient.invalidateQueries('groups')
-      queryClient.invalidateQueries('authors')
-      queryClient.invalidateQueries('books')
-      queryClient.invalidateQueries('book-search')
-      queryClient.invalidateQueries('statistics')
+      queryClient.invalidateQueries(['last-added'])
+      queryClient.invalidateQueries(['latest-readings'])
+      queryClient.invalidateQueries(['next-reads'])
+      queryClient.invalidateQueries(['groups'])
+      queryClient.invalidateQueries(['authors'])
+      queryClient.invalidateQueries(['books'])
+      queryClient.invalidateQueries(['book-search'])
+      queryClient.invalidateQueries(['statistics'])
     }
   })
 }

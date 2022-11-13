@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from 'vue-query'
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getStores from '@/services/sheet/getStores'
 import { useSheetStore } from '@/stores/sheet'
@@ -13,5 +13,5 @@ export default function useStoresQuery({ enabled }: UseQueryOptions) {
     return await fetch(getStores(sheetId.value!))
   }
 
-  return useQuery('stores', fetcher, { enabled })
+  return useQuery(['stores'], fetcher, { enabled })
 }
