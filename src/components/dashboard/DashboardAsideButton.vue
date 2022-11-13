@@ -33,7 +33,6 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
     :target="item.external ? '_blank' : undefined"
     :class="[
       'group flex items-center flex-nowrap text-sm rounded-lg w-full',
-      'motion-safe:transition-colors',
       child ? 'font-normal' : 'font-medium',
       item.icon ? 'h-10' : 'h-9',
       active
@@ -57,22 +56,28 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
         :is="item.icon"
         :class="[
           'w-6 h-6 motion-safe:transition-colors',
-
           active
-            ? 'text-primary-600 dark:text-primary-400'
+            ? 'text-primary-600 dark:text-gray-100'
             : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'
         ]"
       />
     </div>
     <span
       :class="[
-        'pl-2.5 box-border truncate motion-safe:transition-opacity',
-        item.icon ? 'w-48' : 'w-full'
+        'shrink-0 pl-3 box-border truncate motion-safe:transition-all',
+        item.icon
+          ? expandable && open
+            ? 'w-[10.5rem]'
+            : 'w-[11.5rem]'
+          : 'w-full'
       ]"
     >
       {{ item.label }}
     </span>
-    <div class="w-10 h-10 flex items-center justify-center">
+    <div
+      v-if="item.external || expandable"
+      class="shrink-0 w-10 h-10 flex items-center justify-center"
+    >
       <ArrowTopRightOnSquareIcon
         v-if="item.external && !expandable"
         class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100 motion-safe:transition-color"
@@ -84,7 +89,7 @@ const { active, iconOnly, item, href, expandable, open } = toRefs(props)
           'motion-safe:transition-transform',
           open && active ? '' : 'rotate-180',
           active
-            ? 'text-primary-600 dark:text-primary-400'
+            ? 'text-primary-600 dark:text-gray-200'
             : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100'
         ]"
       />

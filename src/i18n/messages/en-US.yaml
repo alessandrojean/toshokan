@@ -307,6 +307,9 @@ home:
     instructions: Instructions
     signIn: Sign In
 dashboard:
+  aside:
+    expand: Expand menu
+    collapse: Collapse menu
   header:
     links:
       start: Home

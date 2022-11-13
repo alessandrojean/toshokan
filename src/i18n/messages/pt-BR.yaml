@@ -312,6 +312,9 @@ home:
     dashboard: Dashboard
     signIn: Autentique-se
 dashboard:
+  aside:
+    expand: Expandir o menu
+    collapse: Retrair o menu
   header:
     links:
       start: Início

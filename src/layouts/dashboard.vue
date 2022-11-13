@@ -193,6 +193,7 @@ const shared = computed(() => sheetStore.shared)
       <div class="shrink-0 hidden lg:block">
         <DashboardAsideMenu
           class="sticky inset-x-0 top-0 h-screen"
+          id="dashboard-aside-menu"
           :library-groups="libraryGroups"
           collapsible
         >

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import {
   computed,
-  ref,
   toRefs,
   type ComputedRef,
   type FunctionalComponent
@@ -159,9 +158,14 @@ const collapsed = useLocalStorage('aside-collapsed', false)
             class="w-10 h-10"
             kind="ghost"
             icon-only
-            rounded
             v-slot="{ iconClass }"
+            :aria-controls="$attrs.id"
             :aria-expanded="!collapsed"
+            :title="
+              collapsed
+                ? t('dashboard.aside.expand')
+                : t('dashboard.aside.collapse')
+            "
             @click="collapsed = !collapsed"
           >
             <ChevronDoubleLeftIcon
