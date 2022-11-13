@@ -94,20 +94,20 @@ const {
   }
 
   &.btn-default {
-    @apply border-gray-300 dark:border-gray-600
+    @apply border-gray-300 dark:border-gray-700
       text-gray-700 dark:text-gray-300
       bg-white dark:bg-gray-700
       not-disabled:hover:bg-gray-50 dark:not-disabled:hover:bg-gray-600
-      dark:not-disabled:hover:border-gray-500 dark:not-disabled:hover:text-gray-200
+      dark:not-disabled:hover:border-gray-600 dark:not-disabled:hover:text-gray-200
       not-disabled:active:bg-gray-100 dark:not-disabled:active:bg-gray-700
-      dark:not-disabled:active:border-gray-600;
+      dark:not-disabled:active:border-gray-700;
 
     & .btn-icon {
-      @apply text-gray-500 dark:text-gray-400;
+      @apply text-gray-500 dark:text-gray-300;
     }
 
     &:not(:disabled):hover .btn-icon {
-      @apply dark:text-gray-300;
+      @apply dark:text-gray-200;
     }
   }
 
@@ -199,7 +199,7 @@ const {
     @apply px-4 py-2 text-sm;
 
     &.btn-icon-only {
-      @apply p-2;
+      @apply px-2;
     }
 
     & .btn-icon {
@@ -219,7 +219,7 @@ const {
     @apply px-5 py-2.5 text-base;
 
     &.btn-icon-only {
-      @apply px-3;
+      @apply px-2.5;
     }
 
     & .btn-icon {

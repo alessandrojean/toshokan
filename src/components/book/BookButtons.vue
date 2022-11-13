@@ -52,7 +52,7 @@ const iconOnly = breakpoints.smaller('2xl')
 </script>
 
 <template>
-  <div class="flex w-full justify-center sm:justify-start" v-if="canEdit">
+  <div class="flex w-full justify-center sm:justify-start h-12" v-if="canEdit">
     <Button
       v-if="!loading"
       class="sm:hidden"
