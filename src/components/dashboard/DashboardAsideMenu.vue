@@ -160,11 +160,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
             @click="collapsed = !collapsed"
           >
             <ChevronDoubleLeftIcon
-              :class="[
-                iconClass,
-                'motion-safe:transition-transform',
-                collapsed ? 'rotate-180' : ''
-              ]"
+              :class="[iconClass, 'collapse-icon', { collapsed: collapsed }]"
             />
           </Button>
         </div>
@@ -207,3 +203,15 @@ const collapsed = useLocalStorage('aside-collapsed', false)
     </div>
   </aside>
 </template>
+
+<style lang="postcss">
+.collapse-icon {
+  & > path {
+    @apply motion-safe:transition-[d];
+  }
+
+  &.collapsed > path {
+    d: path('M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5');
+  }
+}
+</style>
