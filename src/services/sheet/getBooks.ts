@@ -47,8 +47,8 @@ export default async function getBooks(
 
   const queryBuilder = new QueryBuilder(sheetUrl)
     .orderBy(...orderBy)
-    .limit(options.limit || PER_PAGE)
-    .offset((page - 1) * PER_PAGE)
+    .limit(options.limit ?? PER_PAGE)
+    .offset((page - 1) * (options.limit ?? PER_PAGE))
 
   if (options.groups && options.groups.length > 0) {
     const groupConditions = options.groups.map(
