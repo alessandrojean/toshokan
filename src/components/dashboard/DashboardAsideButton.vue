@@ -12,6 +12,7 @@ export interface DashboardAsideButton extends AnchorHTMLAttributes {
   active: boolean
   child?: boolean
   expandable?: boolean
+  iconOnly?: boolean
   item: Item
   open?: boolean
 }
@@ -19,10 +20,11 @@ export interface DashboardAsideButton extends AnchorHTMLAttributes {
 const props = withDefaults(defineProps<DashboardAsideButton>(), {
   child: false,
   expandable: false,
+  iconOnly: false,
   open: false
 })
 
-const { active, item, href, expandable, open } = toRefs(props)
+const { active, iconOnly, item, href, expandable, open } = toRefs(props)
 </script>
 
 <template>
@@ -30,43 +32,62 @@ const { active, item, href, expandable, open } = toRefs(props)
     :href="href"
     :target="item.external ? '_blank' : undefined"
     :class="[
-      'group flex w-full items-center rounded-lg text-sm px-2.5 py-2',
-      'motion-safe:transition-color',
+      'group flex items-center flex-nowrap text-sm rounded-lg w-full',
+      'motion-safe:transition-colors',
       child ? 'font-normal' : 'font-medium',
+      item.icon ? 'h-10' : 'h-9',
       active
         ? 'bg-primary-100 text-primary-900 dark:text-gray-100 ' +
           ((expandable && open) || child
             ? 'dark:bg-gray-800'
             : 'dark:bg-gray-900')
-        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 hover:text-gray-800 dark:hover:text-gray-100 ' +
+        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 hover:text-gray-800 dark:hover:text-gray-100 ' +
           (child ? 'dark:hover:bg-gray-600' : 'dark:hover:bg-gray-700')
     ]"
+    :title="item.label"
   >
-    <component
+    <div
       v-if="item.icon"
-      :is="item.icon"
       :class="[
-        'w-6 h-6 shrink-0 motion-safe:transition-color mr-3.5',
-        active
-          ? 'text-primary-600 dark:text-primary-400'
-          : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'
+        'shrink-0 w-10 h-10 flex items-center justify-center',
+        'motion-safe:transition-colors'
       ]"
-    />
-    <span class="grow">{{ item.label }}</span>
-    <ArrowTopRightOnSquareIcon
-      v-if="item.external && !expandable"
-      class="shrink-0 w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100 motion-safe:transition-color"
-    />
-    <ChevronUpIcon
-      v-else-if="expandable"
+    >
+      <component
+        :is="item.icon"
+        :class="[
+          'w-6 h-6 motion-safe:transition-colors',
+
+          active
+            ? 'text-primary-600 dark:text-primary-400'
+            : 'text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'
+        ]"
+      />
+    </div>
+    <span
       :class="[
-        'shrink-0 w-5 h-5',
-        'motion-safe:transition',
-        open && active ? '' : 'rotate-180',
-        active
-          ? 'text-primary-600 dark:text-primary-400'
-          : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100'
+        'pl-2.5 box-border truncate motion-safe:transition-opacity',
+        item.icon ? 'w-48' : 'w-full'
       ]"
-    />
+    >
+      {{ item.label }}
+    </span>
+    <div class="w-10 h-10 flex items-center justify-center">
+      <ArrowTopRightOnSquareIcon
+        v-if="item.external && !expandable"
+        class="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100 motion-safe:transition-color"
+      />
+      <ChevronUpIcon
+        v-else-if="expandable"
+        :class="[
+          'w-5 h-5',
+          'motion-safe:transition-transform',
+          open && active ? '' : 'rotate-180',
+          active
+            ? 'text-primary-600 dark:text-primary-400'
+            : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-100'
+        ]"
+      />
+    </div>
   </a>
 </template>

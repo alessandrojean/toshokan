@@ -17,7 +17,7 @@ const { t } = useI18n({ useScope: 'global' })
 </script>
 
 <template>
-  <div class="shrink-0 flex items-center px-2 py-1 -ml-2 select-none">
+  <div class="shrink-0 flex items-center py-1 select-none">
     <span aria-hidden="true">
       <BuildingLibraryIcon class="h-9 w-9 text-primary-500" />
     </span>

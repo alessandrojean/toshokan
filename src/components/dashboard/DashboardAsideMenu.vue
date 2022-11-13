@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {
   computed,
+  ref,
   toRefs,
   type ComputedRef,
   type FunctionalComponent
@@ -8,10 +9,12 @@ import {
 import { useRouter, RouterLink } from 'vue-router'
 import type { RouteLocation, RouteLocationRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useLocalStorage } from '@vueuse/core'
 
 import {
   BookOpenIcon,
   BookmarkIcon,
+  ChevronDoubleLeftIcon,
   ClockIcon,
   Cog8ToothIcon,
   HomeIcon,
@@ -20,6 +23,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 
+import Button from '@/components/form/Button.vue'
 import DashboardAsideButton from '@/components/dashboard/DashboardAsideButton.vue'
 import ToshokanLogo from '@/components/ToshokanLogo.vue'
 
@@ -37,11 +41,13 @@ export interface Item {
 export type ChildItem = NonNullable<Item['children']>[number]
 
 export interface AsideMenuProps {
+  collapsible?: boolean
   dark?: boolean
   libraryGroups?: ChildItem[]
 }
 
 const props = withDefaults(defineProps<AsideMenuProps>(), {
+  collapsible: false,
   libraryGroups: () => []
 })
 
@@ -123,23 +129,62 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
   await router.push(route)
   emit('navigate', route)
 }
+
+const collapsed = useLocalStorage('aside-collapsed', false)
 </script>
 
 <template>
   <aside
-    class="bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow"
+    :class="[
+      'box-content bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow',
+      'motion-safe:transition-all',
+      collapsed ? 'w-16' : 'w-72'
+    ]"
   >
     <div class="flex flex-col min-h-0 h-full">
-      <div class="flex-1 overflow-y-auto fancy-scrollbar">
-        <div class="px-3.5 h-16 flex items-center">
+      <div class="flex-1 overflow-y-auto overflow-x-hidden fancy-scrollbar">
+        <div
+          :class="[
+            'px-3.5 flex justify-between items-center h-16 w-[18rem] box-border',
+            'motion-safe:transition-transform origin-right',
+            collapsed ? '-translate-x-[13.85rem]' : ''
+          ]"
+        >
           <slot name="logo">
             <ToshokanLogo :label="t('dashboard.header.links.start')" />
           </slot>
+
+          <Button
+            v-if="collapsible"
+            class="w-10 h-10"
+            kind="ghost"
+            icon-only
+            rounded
+            v-slot="{ iconClass }"
+            :aria-expanded="!collapsed"
+            @click="collapsed = !collapsed"
+          >
+            <ChevronDoubleLeftIcon
+              :class="[
+                iconClass,
+                'motion-safe:transition-transform',
+                collapsed ? 'rotate-180' : ''
+              ]"
+            />
+          </Button>
         </div>
-        <nav class="mt-6 px-2">
-          <ul class="space-y-1.5">
+        <nav class="mt-6 px-3">
+          <ul
+            :class="[
+              'space-y-1.5',
+              collapsed ? 'flex flex-col items-center' : ''
+            ]"
+          >
             <template v-for="item in items" :key="item.key">
-              <li v-if="!item.children || item.children.length === 0">
+              <li
+                v-if="!item.children || item.children.length === 0 || collapsed"
+                class="w-full"
+              >
                 <RouterLink
                   custom
                   :to="item.to"
@@ -152,6 +197,7 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
                     :active="
                       active(item.active, item.exact, isExactActive, isActive)
                     "
+                    :icon-only="collapsed"
                     @click="
                       item.external
                         ? navigate($event)
@@ -185,6 +231,7 @@ async function handleNavigation(route: RouteLocation, event: MouseEvent) {
                       :active="
                         active(item.active, item.exact, isExactActive, isActive)
                       "
+                      :icon-only="collapsed"
                       @click="
                         item.external
                           ? navigate($event)

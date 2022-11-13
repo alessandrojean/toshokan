@@ -190,10 +190,11 @@ const shared = computed(() => sheetStore.shared)
     </a>
 
     <div class="md:flex w-full">
-      <div class="shrink-0 w-72 hidden lg:block">
+      <div class="shrink-0 hidden lg:block">
         <DashboardAsideMenu
           class="sticky inset-x-0 top-0 h-screen"
           :library-groups="libraryGroups"
+          collapsible
         >
           <template #footer v-if="enabled && shared">
             <div class="border-t border-gray-200 dark:border-gray-700 py-2">

@@ -73,7 +73,6 @@ export default { inheritAttrs: false }
         <div class="fixed inset-0 w-72 max-w-full">
           <DialogPanel class="w-full h-full">
             <DashboardAsideMenu
-              class=""
               :library-groups="libraryGroups"
               v-bind="$attrs"
               @navigate="handleNavigate"
