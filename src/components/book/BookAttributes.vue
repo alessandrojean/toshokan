@@ -161,11 +161,7 @@ const metadata = computed(() => {
         >
           {{ mt.title }}
         </dt>
-        <div
-          v-else
-          aria-hidden="true"
-          class="mt-1 motion-safe:animate-pulse w-32 h-5 bg-gray-400 dark:bg-gray-600 rounded"
-        />
+        <div v-else aria-hidden="true" class="skeleton w-16 h-5" />
 
         <dd
           v-if="!loading"
@@ -201,11 +197,7 @@ const metadata = computed(() => {
             <span>{{ n(mt.badge, 'percent') }}</span>
           </div>
         </dd>
-        <div
-          v-else
-          aria-hidden="true"
-          class="mt-1 md:mt-0 motion-safe:animate-pulse w-44 h-5 bg-gray-400 dark:bg-gray-600 rounded"
-        />
+        <div v-else aria-hidden="true" class="mt-1 skeleton w-32 h-6" />
       </div>
     </template>
   </dl>
