@@ -19,15 +19,12 @@ import {
 import BetaWarning from '@/components/BetaWarning.vue'
 import BookOwnerBadge from '@/components/book/BookOwnerBadge.vue'
 import DashboardAsideDialog from '@/components/dashboard/DashboardAsideDialog.vue'
-import DashboardAsideMenu, {
-  type ChildItem
-} from '@/components/dashboard/DashboardAsideMenu.vue'
+import DashboardAsideMenu from '@/components/dashboard/DashboardAsideMenu.vue'
 import DashboardFooter from '@/components/dashboard/DashboardFooter.vue'
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import SearchDialog from '@/components/dialogs/SearchDialog.vue'
 import SettingsDialog from '@/components/dialogs/SettingsDialog.vue'
-import useGroupsQuery from '@/queries/useGroupsQuery'
 
 const authStore = useAuthStore()
 const mainStore = useStore()
@@ -140,23 +137,6 @@ function closeSettingsDialog() {
 provide(ShowSettingsDialogKey, showSettingsDialog)
 
 const route = useRoute()
-const { data: groups } = useGroupsQuery({ enabled })
-const libraryGroups = computed<ChildItem[]>(() => {
-  return (groups.value ?? []).map((group) => ({
-    key: group.name.toLowerCase(),
-    label: group.name,
-    to: {
-      name: 'dashboard-library',
-      query: { groups: group.name }
-    },
-    active: computed(() => {
-      return (
-        route.name === 'dashboard-library' &&
-        String(route.query.groups) === group.name
-      )
-    })
-  }))
-})
 
 const asideDialogOpen = ref(false)
 
@@ -194,7 +174,6 @@ const shared = computed(() => sheetStore.shared)
         <DashboardAsideMenu
           class="sticky inset-x-0 top-0 h-screen"
           id="dashboard-aside-menu"
-          :library-groups="libraryGroups"
           collapsible
         >
           <template #footer v-if="enabled && shared">
@@ -235,11 +214,7 @@ const shared = computed(() => sheetStore.shared)
 
     <BetaWarning />
 
-    <DashboardAsideDialog
-      :is-open="asideDialogOpen"
-      :library-groups="libraryGroups"
-      @close="closeAsideDialog"
-    >
+    <DashboardAsideDialog :is-open="asideDialogOpen" @close="closeAsideDialog">
       <template #footer v-if="enabled && shared">
         <div class="border-t border-gray-200 dark:border-gray-700 py-2">
           <BookOwnerBadge />
