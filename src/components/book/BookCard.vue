@@ -7,7 +7,11 @@ import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import Book from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 
-import { BookOpenIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import {
+  BookOpenIcon,
+  ExclamationCircleIcon,
+  EyeSlashIcon
+} from '@heroicons/vue/24/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
@@ -142,11 +146,16 @@ const blurCover = computed(() => {
           aria-hidden="true"
         >
           <BookOpenIcon
+            v-if="thumbnailUrl.length > 0 && !imageHasError"
             :class="[
               imageLoading ? 'motion-safe:animate-pulse' : '',
               'w-10 h-10 text-gray-400 dark:text-gray-500'
             ]"
             aria-hidden="true"
+          />
+          <ExclamationCircleIcon
+            v-else
+            class="w-10 h-10 text-gray-400 dark:text-gray-500"
           />
         </div>
         <div v-else class="book-cover-wrapper" aria-hidden="true">

@@ -52,7 +52,7 @@ onMounted(() => {
 <template>
   <div
     aria-hidden="true"
-    class="h-72 sm:h-80 w-full overflow-hidden relative bg-gray-100 dark:bg-gray-900"
+    class="h-72 sm:h-80 w-full overflow-hidden relative bg-primary-300 dark:bg-gray-900"
   >
     <FadeTransition>
       <img
@@ -61,6 +61,17 @@ onMounted(() => {
         :alt="book?.title ?? undefined"
         class="w-full h-full scale-105 object-cover filter blur"
       />
+      <div v-else class="relative w-full h-full">
+        <img
+          src="@/assets/library-unsplash.jpg"
+          alt=""
+          class="w-full h-full scale-105 object-cover filter blur"
+        />
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 opacity-70 bg-gradient-to-br from-primary-900/80 to-primary-500/80"
+        />
+      </div>
     </FadeTransition>
 
     <div

@@ -7,6 +7,7 @@ import Book from '@/model/Book'
 import type { SpoilerMode } from '@/stores/settings'
 
 import {
+  ExclamationCircleIcon,
   EyeIcon,
   MagnifyingGlassPlusIcon,
   PhotoIcon
@@ -104,10 +105,17 @@ const { t } = useI18n({ useScope: 'global' })
       />
       <div v-else class="w-full h-full flex items-center justify-center">
         <PhotoIcon
+          v-if="
+            (imageLoading || loading) && coverUrl.length > 0 && !imageHasError
+          "
           :class="[
             'w-10 h-10 text-gray-500 dark:text-gray-600',
             imageLoading || loading ? 'motion-safe:animate-pulse' : ''
           ]"
+        />
+        <ExclamationCircleIcon
+          v-else
+          class="w-10 h-10 text-gray-500 dark:text-gray-600"
         />
       </div>
     </FadeTransition>
