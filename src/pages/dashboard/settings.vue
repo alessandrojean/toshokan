@@ -310,6 +310,7 @@ watch(locale, () => {
   queryClient.invalidateQueries(['latest-readings'])
   queryClient.invalidateQueries(['books'])
   queryClient.invalidateQueries(['book'])
+  queryClient.invalidateQueries(['reading-months'])
 })
 
 watch(useDevSheet, async () => {

@@ -146,7 +146,7 @@ const blurCover = computed(() => {
           aria-hidden="true"
         >
           <BookOpenIcon
-            v-if="thumbnailUrl.length > 0 && !imageHasError"
+            v-if="loading || imageLoading || thumbnailUrl.length === 0"
             :class="[
               imageLoading ? 'motion-safe:animate-pulse' : '',
               'w-10 h-10 text-gray-400 dark:text-gray-500'

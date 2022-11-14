@@ -23,6 +23,10 @@ export default <DefaultDateTimeFormatSchema>{
     second: '2-digit',
     hourCycle: 'h23'
   },
+  dayMonth: {
+    day: '2-digit',
+    month: 'short'
+  },
   month: {
     month: 'short'
   },

@@ -15,15 +15,26 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="py-6 border-b dark:border-gray-700">
         <div v-if="loading" class="skeleton h-7 w-56"></div>
-        <h1
-          v-else
-          class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
+        <slot name="title" v-else :title="title">
+          <h1
+            class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
+          >
+            {{ title }}
+          </h1>
+        </slot>
+
+        <p
+          class="text-gray-500 dark:text-gray-400"
+          v-if="subtitle && !$slots.subtitle"
         >
-          {{ title }}
-        </h1>
-        <p class="text-gray-500 dark:text-gray-400" v-if="subtitle">
           {{ subtitle }}
         </p>
+        <slot
+          name="subtitle"
+          v-else
+          :subtitle="subtitle"
+          subtitleClasses="text-gray-500 dark:text-gray-400"
+        />
       </div>
     </div>
   </header>

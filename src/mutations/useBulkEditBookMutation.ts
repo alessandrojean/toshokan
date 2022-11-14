@@ -36,6 +36,7 @@ export default function useBulkEditBookMutation() {
       queryClient.invalidateQueries(['authors'])
       queryClient.invalidateQueries(['book-search'])
       queryClient.invalidateQueries(['statistics'])
+      queryClient.invalidateQueries(['reading-months'])
     }
   })
 }

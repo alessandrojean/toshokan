@@ -14,7 +14,7 @@ app:
       about: Sobre o projeto
       instructions: Instruções de uso
       privacyPolicy: Política de Privacidade
-      searching: Pesquisando
+      searching: Pesquisandos
       sharing: Compartilhando
       termsOfUse: Termos de Uso
     dashboard:
@@ -25,6 +25,7 @@ app:
       search: Busca
       stats: Estatísticas
       settings: Configurações
+      readings: Leituras
 a11y:
   jumpToMain: Pular para o conteúdo principal
   jumpToNavigation: Pular para a navegação principal
@@ -705,6 +706,10 @@ dashboard:
     count: Contagem
     book: livro | livros
     bookCount: '{count} livro | {count} livros'
+  readings:
+    title: Leituras
+    year: Ano
+    month: Mês
   sheetChooser:
     title: Escolha uma planilha
     description: Você pode visualizar e editar outras planilhas compartilhadas.

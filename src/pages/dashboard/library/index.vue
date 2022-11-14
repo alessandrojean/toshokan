@@ -481,11 +481,8 @@ meta:
                 v-else
                 ref="grid"
                 :items="books"
-                :sort-direction="sortDirection"
-                :sort-property="sortProperty"
-                :current-page="page"
                 :loading="loading || writing"
-                :skeleton-items="18"
+                :skeleton-items="30"
                 :mode="gridMode"
                 :blur-nsfw="blurNsfw"
                 :spoiler-mode="spoilerMode"

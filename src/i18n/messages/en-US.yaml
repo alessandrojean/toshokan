@@ -25,6 +25,7 @@ app:
       search: Search
       stats: Statistics
       settings: Settings
+      readings: Leituras
 a11y:
   jumpToMain: Jump to main content
   jumpToNavigation: Jump to main navigation
@@ -700,6 +701,10 @@ dashboard:
     count: Count
     book: book | books
     bookCount: '{count} book | {count} books'
+  readings:
+    title: Readings
+    year: Year
+    month: Month
   sheetChooser:
     title: Pick a sheet
     description: You can view and edit other sheets shared with you.

@@ -34,6 +34,7 @@ export default function useEditBookMutation() {
       queryClient.invalidateQueries(['authors'])
       queryClient.invalidateQueries(['book-search'])
       queryClient.invalidateQueries(['statistics'])
+      queryClient.invalidateQueries(['reading-months'])
     }
   })
 }

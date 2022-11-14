@@ -33,6 +33,7 @@ export default function useDeleteBookMutation() {
       queryClient.invalidateQueries(['authors'])
       queryClient.invalidateQueries(['book-search'])
       queryClient.invalidateQueries(['statistics'])
+      queryClient.invalidateQueries(['reading-months'])
     }
   })
 }

@@ -28,7 +28,7 @@ const {
   error: searchError,
   isError: searchFailed,
   data: searchResults,
-  isLoading: searching,
+  isFetching: searching,
   refetch: isbnSearch
 } = useIsbnSearchQuery(isbnQuery, { enabled: false })
 
@@ -50,7 +50,7 @@ async function search() {
 
   searchInput.value?.blur()
   await searchInSheet()
-  await isbnSearch.value()
+  await isbnSearch()
 
   emit('search', false)
   loading.value = false
@@ -65,7 +65,7 @@ const proceedAnyway = ref(false)
 const existInSheet = computed(() => (existingIds.value?.length ?? 0) > 0)
 
 async function searchInSheet() {
-  await checkIfExists.value()
+  await checkIfExists()
   proceedAnyway.value = !existInSheet.value
 }
 

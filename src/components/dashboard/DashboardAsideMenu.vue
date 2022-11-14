@@ -72,7 +72,7 @@ const items = computed<Item[]>(() => [
     key: 'readings',
     label: t('dashboard.header.links.readings'),
     icon: BookmarkIcon,
-    to: { name: 'index' }
+    to: { name: 'dashboard-readings' }
   },
   {
     key: 'history',

@@ -56,16 +56,16 @@ const enabled = computed(() => {
 
 const { isLoading, data: book } = useBookQuery(bookId, { enabled })
 
+const collectionEnabled = computed(() => {
+  return (
+    enabled.value &&
+    book.value?.titleParts !== undefined &&
+    book.value.titleParts.number !== null
+  )
+})
+
 const { data: collection, isLoading: collectionLoading } =
-  useBookCollectionQuery(book, {
-    enabled: computed(() => {
-      return (
-        enabled.value &&
-        book.value?.titleParts !== undefined &&
-        book.value.titleParts.number !== null
-      )
-    })
-  })
+  useBookCollectionQuery(book, { enabled: collectionEnabled })
 
 const { data: sheetVersion } = useSheetVersionQuery({ enabled })
 
@@ -90,7 +90,7 @@ watch(book, (newBook) => {
 })
 
 const showBookInfo = computed(() => {
-  return !loading.value && !isLoading.value && book.value
+  return !loading.value && !isLoading.value && !!book.value
 })
 
 const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
@@ -260,10 +260,7 @@ meta:
 
         <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
           <BookNavigator
-            :loading="
-              !showBookInfo ||
-              (collectionLoading && book?.titleParts?.number !== undefined)
-            "
+            :loading="!showBookInfo || (collectionLoading && collectionEnabled)"
             :book="book"
             :collection="collection"
           />
