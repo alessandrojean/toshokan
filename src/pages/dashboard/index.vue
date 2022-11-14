@@ -309,10 +309,7 @@ meta:
               as="RouterLink"
               kind="ghost"
               class="-mr-3 hidden md:flex group"
-              :to="{
-                name: 'dashboard-library',
-                query: { sortProperty: 'readAt' }
-              }"
+              :to="{ name: 'dashboard-readings' }"
             >
               <span>{{ t('dashboard.search.history') }}</span>
               <template #right="{ iconClass }">
