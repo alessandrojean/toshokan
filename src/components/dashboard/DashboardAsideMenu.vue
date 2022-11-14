@@ -207,7 +207,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
 <style lang="postcss">
 .collapse-icon {
   & > path {
-    @apply motion-safe:transition-[d];
+    @apply motion-safe:transition-[d] motion-safe:delay-150 motion-safe:duration-300;
   }
 
   &.collapsed > path {
