@@ -1,11 +1,7 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import dedent from 'dedent'
 import searchQuery from 'search-query-parser'
 
-import useMarkdown from '@/composables/useMarkdown'
 import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 import { XMarkIcon } from '@heroicons/vue/20/solid'

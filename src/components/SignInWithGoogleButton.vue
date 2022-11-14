@@ -1,20 +1,5 @@
 <script lang="ts" setup>
-import {
-  computed,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  toRefs,
-  watch
-} from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useBreakpoints } from '@vueuse/core'
-
-import useDarkMode from '@/composables/useDarkMode'
-import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useI18n } from '@/i18n'
-import { useAuthStore } from '@/stores/auth'
 
 export interface SignInWithGoogleButtonProps {
   prompt?: boolean

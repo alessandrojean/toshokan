@@ -1,18 +1,7 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { type RouteLocationRaw, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
-import useAppInfo from '@/composables/useAppInfo'
-import { useAuthStore } from '@/stores/auth'
+import type { RouteLocationRaw } from 'vue-router'
 
 import { BuildingLibraryIcon, CameraIcon } from '@heroicons/vue/20/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-import SignInWithGoogleButton from '@/components/SignInWithGoogleButton.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
-import useDarkMode from '@/composables/useDarkMode'
 
 import libraryUnsplash from '@/assets/library-unsplash.jpg'
 

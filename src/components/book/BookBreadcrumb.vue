@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import Book from '@/model/Book'
 import { ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'

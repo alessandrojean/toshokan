@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useI18n } from '@/i18n'
-import { toRefs } from 'vue'
 
 export interface BookTagsProps {
   group?: boolean

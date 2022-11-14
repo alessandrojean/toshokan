@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
-
-import LocaleSelector from '@/components/LocaleSelector.vue'
 import { useI18n } from '@/i18n'
 
 const { t, locale } = useI18n({ useScope: 'global' })

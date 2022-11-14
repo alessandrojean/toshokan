@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-
 import {
   BuildingLibraryIcon,
   ArrowLeftOnRectangleIcon
 } from '@heroicons/vue/20/solid'
-
-import Button from '@/components/form/Button.vue'
-import ProfileMenu from '@/components/ProfileMenu.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 

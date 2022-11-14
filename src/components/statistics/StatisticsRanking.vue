@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-
 import type { RankingItem } from '@/services/sheet/getStatistics'
 import { useI18n } from '@/i18n'
 

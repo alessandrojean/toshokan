@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-
 export type Kind = 'primary' | 'secondary' | 'default' | 'ghost' | 'danger'
 export type Size = 'small' | 'normal' | 'large'
 

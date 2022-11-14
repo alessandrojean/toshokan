@@ -1,32 +1,18 @@
 <script lang="ts" setup>
-import {
-  computed,
-  FunctionalComponent,
-  Ref,
-  ref,
-  watch,
-  type WritableComputedRef
-} from 'vue'
+import type { FunctionalComponent, WritableComputedRef } from 'vue'
+import { useBrowserLocation } from '@vueuse/core'
 import { useQueryClient } from '@tanstack/vue-query'
 
 import { useI18n } from '@/i18n'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
 
-import { Switch, SwitchLabel, SwitchGroup } from '@headlessui/vue'
 import {
   ArrowDownTrayIcon,
   CheckIcon,
   ExclamationTriangleIcon
 } from '@heroicons/vue/20/solid'
 
-import Button, { type ButtonProps } from '@/components/form/Button.vue'
+import type { ButtonProps } from '@/components/form/Button.vue'
 import type { Item } from '@/components/dashboard/DashboardAsideMenu.vue'
-import DashboardAsideButton from '@/components/dashboard/DashboardAsideButton.vue'
-import LocaleSelector from '@/components/LocaleSelector.vue'
-import Preference from '@/components/preference/Preference.vue'
-import SimpleHeader from '@/components/SimpleHeader.vue'
-import { useBrowserLocation } from '@vueuse/core'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const isDev = ref(import.meta.env.DEV)

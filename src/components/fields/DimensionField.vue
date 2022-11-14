@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import BaseField, {
-  type BaseFieldProps
-} from '@/components/fields/BaseField.vue'
+import type { BaseFieldProps } from '@/components/fields/BaseField.vue'
 import type { Dimension } from '@/model/Book'
 
 export interface DimensionFieldProps extends BaseFieldProps {

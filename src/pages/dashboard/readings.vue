@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
-
 import { useI18n } from '@/i18n'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-import useReadingMonthsQuery from '@/queries/useReadingMonthsQuery'
-import useReadBooksInYearQuery from '@/queries/useReadBooksInYearQuery'
-
-import BookGrid from '@/components/book/BookGrid.vue'
-import SimpleHeader from '@/components/SimpleHeader.vue'
 
 const { t, d, locale } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()

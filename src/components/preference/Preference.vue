@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-
 export interface PreferenceProps {
   alwaysHorizontal?: boolean
   controlId: string

@@ -1,20 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-import useStatisticsQuery from '@/queries/useStatisticsQuery'
-
 import {
   ExclamationCircleIcon,
   PresentationChartLineIcon
 } from '@heroicons/vue/24/outline'
-
-import GroupedStatistics from '@/components/statistics/GroupedStatistics.vue'
-import MonthlyBoughtsChart from '@/components/statistics/MonthlyBoughtsChart.vue'
-import MonthlyExpenseChart from '@/components/statistics/MonthlyExpenseChart.vue'
-import StatisticsRanking from '@/components/statistics/StatisticsRanking.vue'
-import SimpleHeader from '@/components/SimpleHeader.vue'
 
 const sheetStore = useSheetStore()
 

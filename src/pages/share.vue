@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
-import useImageLoader from '@/composables/useImageLoader'
-import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
 import { parseFileSingle } from '@/services/export/androidExport'
 import type { ToshokanBook } from '@/services/export/schema/library'
@@ -14,11 +9,6 @@ import {
   ShareIcon
 } from '@heroicons/vue/24/outline'
 import { BuildingLibraryIcon, QrCodeIcon } from '@heroicons/vue/20/solid'
-
-import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
-import Button from '@/components/form/Button.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 const router = useRouter()
 const route = useRoute()

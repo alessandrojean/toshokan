@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { toRaw, toRefs } from 'vue'
-
 import cloneDeep from 'lodash.clonedeep'
 
 import Book from '@/model/Book'
 import { useI18n } from '@/i18n'
-
-import TagField from '@/components/fields/TagField.vue'
 
 const props = defineProps<{ modelValue: Book }>()
 

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, toRaw, toRefs, watch } from 'vue'
-
 import useVuelidate from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 
@@ -8,21 +6,9 @@ import cloneDeep from 'lodash.clonedeep'
 
 import { useI18n } from '@/i18n'
 import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
-import { useSheetStore } from '@/stores/sheet'
-import useAuthorsQuery from '@/queries/useAuthorsQuery'
-import useGroupsQuery from '@/queries/useGroupsQuery'
-import usePublishersQuery from '@/queries/usePublishersQuery'
-import useStoresQuery from '@/queries/useStoresQuery'
 import { decimalComma, dimension } from '@/util/validators'
 
 import { UserPlusIcon } from '@heroicons/vue/20/solid'
-
-import Alert from '@/components/Alert.vue'
-import DimensionField from '@/components/fields/DimensionField.vue'
-import MarkdownField from '@/components/fields/MarkdownField.vue'
-import MonetaryField from '@/components/fields/MonetaryField.vue'
-import TagField from '@/components/fields/TagField.vue'
-import TextField from '@/components/fields/TextField.vue'
 
 export interface BookFormProps {
   editing?: boolean

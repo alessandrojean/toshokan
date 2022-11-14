@@ -1,13 +1,8 @@
 <script lang="ts" setup>
-import { ref, toRaw, toRefs } from 'vue'
-
 import cloneDeep from 'lodash.clonedeep'
 
 import Book, { STATUS_READ } from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
-
-import BookCard from '@/components/book/BookCard.vue'
-import BookCardReadingActions from '@/components/book/BookCardReadingActions.vue'
 
 export interface BookCarouselProps {
   blurNsfw?: boolean

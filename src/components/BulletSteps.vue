@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 const props = defineProps<{
   modelValue: number
   steps: string[]

@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { computed, onUnmounted, ref, toRefs, watch } from 'vue'
 import QrCode from 'qrcode'
 import { useClipboard } from '@vueuse/core'
 
-import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 import {
@@ -12,25 +10,14 @@ import {
   generateFileSingle,
   parseFileSingle
 } from '@/services/export/androidExport'
-import { useAuthStore } from '@/stores/auth'
 import { ToshokanOwner } from '@/services/export/schema/library'
 
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
 import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import {
   ClipboardIcon,
   ArrowTopRightOnSquareIcon,
   XMarkIcon
 } from '@heroicons/vue/20/solid'
-
-import Button from '@/components/form/Button.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export interface BookShareDialogProps {
   modelValue: boolean

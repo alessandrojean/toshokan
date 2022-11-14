@@ -1,12 +1,7 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-
-import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
 import Book, { MonetaryValue } from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'
 
@@ -14,10 +9,6 @@ import {
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon
 } from '@heroicons/vue/20/solid'
-import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
-
-import BookGrid from '@/components/book/BookGrid.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookTabsProps {
   blurNsfw?: boolean

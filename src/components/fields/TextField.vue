@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { computed, type HTMLAttributes, toRefs, unref } from 'vue'
+import type { HTMLAttributes } from 'vue'
 
 import { ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
-import BaseField, { type BaseFieldProps } from './BaseField.vue'
+import type { BaseFieldProps } from './BaseField.vue'
 
 export interface TextFieldProps extends BaseFieldProps {
   inputClass?: string

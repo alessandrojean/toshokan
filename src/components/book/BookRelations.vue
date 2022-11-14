@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useI18n } from '@/i18n'
-import { toRefs } from 'vue'
 
 import type { BookLink } from '@/services/links'
 
@@ -8,7 +7,6 @@ import {
   ArrowTopRightOnSquareIcon,
   GlobeAltIcon
 } from '@heroicons/vue/20/solid'
-import Button from '@/components/form/Button.vue'
 
 export interface BookTagsProps {
   links?: BookLink[] | null

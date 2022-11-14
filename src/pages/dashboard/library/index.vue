@@ -1,23 +1,11 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, toRaw, toRef, toRefs, watch } from 'vue'
-import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { reactiveComputed, useActiveElement } from '@vueuse/core'
 import cloneDeep from 'lodash.clonedeep'
 import { z as zod } from 'zod'
 import { default as PaginatorUtil } from 'paginator'
 
-import useBulkDeleteBookMutation from '@/mutations/useBulkDeleteBookMutation'
-import useBulkEditBookMutation from '@/mutations/useBulkEditBookMutation'
-import {
-  useSettingsStore,
-  type GridMode,
-  type ViewMode
-} from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
+import type { GridMode, ViewMode } from '@/stores/settings'
 import { STATUS_READ } from '@/model/Book'
-import useBooksQuery from '@/queries/useBooksQuery'
-import useGroupsQuery from '@/queries/useGroupsQuery'
 import { TriState } from '@/types'
 
 import {
@@ -34,23 +22,13 @@ import {
   Squares2X2Icon
 } from '@heroicons/vue/24/outline'
 
-import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
-
-import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
-import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
 import BookGrid from '@/components/book/BookGrid.vue'
 import BookTable, {
-  MarkAsEvent,
-  SortEvent,
-  ToggleFavoriteEvent
+  type MarkAsEvent,
+  type SortEvent,
+  type ToggleFavoriteEvent
 } from '@/components/book/BookTable.vue'
-import Button from '@/components/form/Button.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LibraryFiltersDialog, {
-  type FilterState
-} from '@/components/dialogs/LibraryFiltersDialog.vue'
-import LibraryHeader from '@/components/LibraryHeader.vue'
-import Paginator from '@/components/Paginator.vue'
+import type { FilterState } from '@/components/dialogs/LibraryFiltersDialog.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()

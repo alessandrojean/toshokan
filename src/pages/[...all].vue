@@ -1,11 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-
 import { ArrowLeftIcon } from '@heroicons/vue/20/solid'
-import Button from '@/components/form/Button.vue'
 
 const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)

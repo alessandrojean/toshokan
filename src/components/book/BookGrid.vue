@@ -1,13 +1,6 @@
 <script lang="ts" setup>
-import { nextTick, ref, toRefs, watch } from 'vue'
-import { useBreakpoints } from '@vueuse/core'
-
 import Book from '@/model/Book'
-import useTailwindTheme from '@/composables/useTailwindTheme'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
-import type { Sort } from '@/types'
-
-import BookCard from '@/components/book/BookCard.vue'
 
 export type Kind = 'default' | 'readings'
 export interface BookGridProps {

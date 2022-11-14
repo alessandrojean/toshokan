@@ -1,17 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useAppInfo from '@/composables/useAppInfo'
-
-import {
-  CurrencyDollarIcon,
-  HandRaisedIcon,
-  QuestionMarkCircleIcon
-} from '@heroicons/vue/24/outline'
-
-import DonationDialog from '@/components/dialogs/DonationDialog.vue'
-import GitHubIcon from '@/components/icons/GitHubIcon.vue'
+import { CurrencyDollarIcon } from '@heroicons/vue/24/outline'
 
 const { t } = useI18n({ useScope: 'global' })
 

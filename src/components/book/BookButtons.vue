@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-
 import Book from '@/model/Book'
 
 import {
@@ -16,8 +12,6 @@ import {
   StarIcon as StarOutlineIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline'
-
-import Button from '@/components/form/Button.vue'
 
 export interface BookButtonsProps {
   book?: Book | null

@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, toRefs, watch } from 'vue'
-
-import useImageLoader from '@/composables/useImageLoader'
 import Book from '@/model/Book'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCoverProps {
   book: Book | null | undefined

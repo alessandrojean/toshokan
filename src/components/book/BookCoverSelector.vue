@@ -1,20 +1,9 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import useVuelidate from '@vuelidate/core'
 import { helpers, required, url } from '@vuelidate/validators'
 
-import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue'
-
 import { FaceFrownIcon } from '@heroicons/vue/24/outline'
 import { PlusIcon } from '@heroicons/vue/20/solid'
-
-import Alert from '@/components/Alert.vue'
-import Button from '@/components/form/Button.vue'
-import CoverOption from '@/components/CoverOption.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
 export interface BookCoverSelectorProps {
   custom?: boolean

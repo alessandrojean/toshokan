@@ -1,15 +1,7 @@
 <script lang="ts" setup>
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { onBeforeRouteUpdate } from 'vue-router'
-import { useBreakpoints } from '@vueuse/core'
-
-import useTailwindTheme from '@/composables/useTailwindTheme'
-
 const { t } = useI18n({ useScope: 'global' })
-const { breakpoints } = useTailwindTheme()
 
-const isVisible = useBreakpoints(breakpoints).greater('xl')
+const isVisible = useBreakpoints(breakpointsTailwind).greater('xl')
 
 interface Content {
   id: string

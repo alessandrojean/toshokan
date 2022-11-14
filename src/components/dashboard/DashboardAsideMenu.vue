@@ -1,14 +1,6 @@
 <script lang="ts" setup>
-import {
-  computed,
-  toRefs,
-  type ComputedRef,
-  type FunctionalComponent
-} from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import type { ComputedRef, FunctionalComponent } from 'vue'
 import type { RouteLocation, RouteLocationRaw } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useLocalStorage } from '@vueuse/core'
 
 import {
   BookOpenIcon,
@@ -20,10 +12,6 @@ import {
   LifebuoyIcon,
   PresentationChartBarIcon
 } from '@heroicons/vue/24/outline'
-
-import Button from '@/components/form/Button.vue'
-import DashboardAsideButton from '@/components/dashboard/DashboardAsideButton.vue'
-import ToshokanLogo from '@/components/ToshokanLogo.vue'
 
 export interface Item {
   key: string

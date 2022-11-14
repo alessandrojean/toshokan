@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useImageLoader from '@/composables/useImageLoader'
 import Book from '@/model/Book'
 import type { SpoilerMode } from '@/stores/settings'
 
@@ -12,9 +8,6 @@ import {
   MagnifyingGlassPlusIcon,
   PhotoIcon
 } from '@heroicons/vue/24/outline'
-
-import BookCoverDialog from '@/components/dialogs/BookCoverDialog.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCoverProps {
   blurNsfw?: boolean

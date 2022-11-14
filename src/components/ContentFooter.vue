@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { type RouteRecordRaw, useRoute } from 'vue-router'
-
 import { useI18n } from '@/i18n'
 import { DocumentationKey } from '@/symbols'
 import { injectStrict } from '@/util'

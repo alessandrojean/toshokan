@@ -1,24 +1,8 @@
 <script lang="ts" setup>
-import { computed, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useQueryClient } from '@tanstack/vue-query'
 
-import { useSheetStore } from '@/stores/sheet'
 import { injectStrict } from '@/util'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-
-import {
-  Dialog,
-  DialogDescription,
-  DialogPanel,
-  DialogTitle,
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
 
 import {
   LockClosedIcon,
@@ -27,9 +11,6 @@ import {
   UserGroupIcon
 } from '@heroicons/vue/24/outline'
 import { XMarkIcon } from '@heroicons/vue/20/solid'
-
-import Avatar from '@/components/Avatar.vue'
-import Button from '@/components/form/Button.vue'
 
 const props = defineProps<{ isOpen: boolean }>()
 

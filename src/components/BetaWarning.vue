@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
-import { useLocalStorage } from '@vueuse/core'
-
 import { MegaphoneIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 const LOCAL_STORAGE_KEY = 'hide_beta_warning'
 

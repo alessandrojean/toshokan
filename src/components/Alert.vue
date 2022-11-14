@@ -1,13 +1,9 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-
 import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
   XCircleIcon
 } from '@heroicons/vue/20/solid'
-
-import FadeTransition from './transitions/FadeTransition.vue'
 
 export interface AlertProps {
   show?: boolean

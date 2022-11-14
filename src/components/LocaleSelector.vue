@@ -3,13 +3,6 @@ import { type Locale, useI18n } from '@/i18n'
 import { getFlagUrl } from '@/util'
 
 import {
-  Listbox,
-  ListboxButton,
-  ListboxLabel,
-  ListboxOption,
-  ListboxOptions
-} from '@headlessui/vue'
-import {
   CheckIcon,
   ChevronUpDownIcon,
   LanguageIcon

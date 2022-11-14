@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-
 export interface TypewriterProps {
   textClass?: string
   speed?: number

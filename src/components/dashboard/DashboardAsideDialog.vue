@@ -1,20 +1,6 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
-import DashboardAsideMenu, {
-  type AsideMenuProps
-} from '@/components/dashboard/DashboardAsideMenu.vue'
-import ToshokanLogo from '@/components/ToshokanLogo.vue'
-import { RouteLocation } from 'vue-router'
+import type { AsideMenuProps } from '@/components/dashboard/DashboardAsideMenu.vue'
+import type { RouteLocation } from 'vue-router'
 
 export interface DashboardAsideDialogProps extends AsideMenuProps {
   isOpen?: boolean

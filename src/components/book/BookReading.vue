@@ -1,13 +1,7 @@
 <script lang="ts" setup>
-import { ref, toRaw, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import cloneDeep from 'lodash.clonedeep'
 
 import Book, { STATUS_READ, STATUS_UNREAD } from '@/model/Book'
-
-import Alert from '@/components/Alert.vue'
-import TextField from '@/components/fields/TextField.vue'
 
 const props = defineProps<{ modelValue: Book }>()
 

@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 
 export interface ToshokanLogoProps {

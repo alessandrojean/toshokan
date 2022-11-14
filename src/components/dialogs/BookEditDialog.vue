@@ -1,37 +1,17 @@
 <script lang="ts" setup>
-import { computed, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
-
 import cloneDeep from 'lodash.clonedeep'
 
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
-import { useSheetStore } from '@/stores/sheet'
-import useCoverQuery from '@/queries/useCoverQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
 
-import {
-  Dialog,
-  DialogDescription,
-  DialogPanel,
-  DialogTitle,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
 import { CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
-import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
 import BookOrganization from '@/components/book/BookOrganization.vue'
 import BookReading from '@/components/book/BookReading.vue'
-import Button from '@/components/form/Button.vue'
 
 export interface BookEditDialogProps {
   book?: Book

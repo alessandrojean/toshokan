@@ -1,19 +1,10 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-
 import {
   Cog8ToothIcon,
   ChevronDownIcon,
   ArrowLeftOnRectangleIcon,
   QuestionMarkCircleIcon
 } from '@heroicons/vue/20/solid'
-
-import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
 
 export interface ProfileMenuProps {
   light?: boolean

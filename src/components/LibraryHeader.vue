@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-import useGroupsQuery from '@/queries/useGroupsQuery'
 import type { Sort } from '@/types'
 
 import {
@@ -13,8 +8,6 @@ import {
   BarsArrowUpIcon,
   BarsArrowDownIcon
 } from '@heroicons/vue/20/solid'
-
-import Button from '@/components/form/Button.vue'
 
 export interface LibraryHeaderProps {
   loading?: boolean

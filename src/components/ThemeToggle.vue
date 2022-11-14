@@ -1,21 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import {
-  useSettingsStore,
-  THEME_SYSTEM,
-  THEME_DARK,
-  THEME_LIGHT
-} from '@/stores/settings'
-
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption
-} from '@headlessui/vue'
-
 import { MoonIcon, SunIcon } from '@heroicons/vue/24/outline'
 
 import {

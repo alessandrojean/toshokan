@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { onMounted, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import useImageLoader from '@/composables/useImageLoader'
-
 import { UserGroupIcon, UserIcon } from '@heroicons/vue/20/solid'
 
 export interface AvatarProps {

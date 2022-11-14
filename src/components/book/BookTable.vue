@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useBreakpoints } from '@vueuse/core'
-
-import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useI18n } from '@/i18n'
 import Book, {
   Status,
@@ -11,8 +6,6 @@ import Book, {
   STATUS_READ,
   STATUS_UNREAD
 } from '@/model/Book'
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import type { Sort } from '@/types'
 
 import {
@@ -22,7 +15,6 @@ import {
   StarIcon
 } from '@heroicons/vue/20/solid'
 import { PhotoIcon } from '@heroicons/vue/24/outline'
-import Button from '@/components/form/Button.vue'
 
 export interface BookTable {
   currentPage?: number

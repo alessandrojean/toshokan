@@ -1,13 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-
-import {
-  RadioGroup,
-  RadioGroupDescription,
-  RadioGroupLabel,
-  RadioGroupOption
-} from '@headlessui/vue'
-
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 

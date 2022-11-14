@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useAuthStore } from '@/stores/auth'
-
 import {
   CodeBracketIcon,
   CircleStackIcon,
@@ -11,15 +6,6 @@ import {
   MagnifyingGlassIcon,
   SparklesIcon
 } from '@heroicons/vue/24/outline'
-
-import Button from '@/components/form/Button.vue'
-import CreateBookDialogWireframe from '@/components/wireframes/CreateBookDialog.vue'
-import Dashboard from '@/components/wireframes/Dashboard.vue'
-import DesktopLibrary from '@/components/wireframes/DesktopLibrary.vue'
-import HomeFooter from '@/components/HomeFooter.vue'
-import HomeHeader from '@/components/HomeHeader.vue'
-import MobileLibrary from '@/components/wireframes/MobileLibrary.vue'
-import Typewriter from '@/components/Typewriter.vue'
 
 const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)

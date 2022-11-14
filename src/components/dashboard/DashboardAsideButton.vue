@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { toRefs } from 'vue'
-
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
 
 import type { Item } from '@/components/dashboard/DashboardAsideMenu.vue'

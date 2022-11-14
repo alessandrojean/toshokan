@@ -21,3 +21,8 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Vite plugins
+.eslintrc-auto-import.json
+src/auto-imports.d.ts
+src/components.d.ts

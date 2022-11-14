@@ -1,18 +1,8 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
 import cloneDeep from 'lodash.clonedeep'
 
 import { useI18n } from '@/i18n'
-import useDeleteBookMutation from '@/mutations/useDeleteBookMutation'
-import useEditBookMutation from '@/mutations/useEditBookMutation'
 import Book, { Status, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-import useBookQuery from '@/queries/useBookQuery'
-import useBookCollectionQuery from '@/queries/useBookCollectionQuery'
-import useSheetVersionQuery from '@/queries/useSheetVersionQuery'
 import {
   ChangeTitleKey,
   DisableSearchShortcutKey,
@@ -22,20 +12,7 @@ import {
 } from '@/symbols'
 import { injectStrict } from '@/util'
 
-import BookBanner from '@/components/book/BookBanner.vue'
-import BookButtons from '@/components/book/BookButtons.vue'
-import BookCover from '@/components/book/BookCover.vue'
-import BookDeleteDialog from '@/components/dialogs/BookDeleteDialog.vue'
-import BookEditDialog from '@/components/dialogs/BookEditDialog.vue'
-import BookMarkdown from '@/components/book/BookMarkdown.vue'
-import BookNavigator from '@/components/book/BookNavigator.vue'
-import BookShareDialog from '@/components/dialogs/BookShareDialog.vue'
-import BookTags from '@/components/book/BookTags.vue'
-import BookTitle from '@/components/book/BookTitle.vue'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
-import BookAttributes from '@/components/book/BookAttributes.vue'
 import getBookLinks from '@/services/links'
-import BookRelations from '@/components/book/BookRelations.vue'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const router = useRouter()

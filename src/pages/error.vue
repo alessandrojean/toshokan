@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-
-import useAppInfo from '@/composables/useAppInfo'
-import { useAuthStore } from '@/stores/auth'
-import { useStore } from '@/stores/main'
-
 import { IdentificationIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
-import Button from '@/components/form/Button.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

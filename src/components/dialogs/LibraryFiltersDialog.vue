@@ -1,32 +1,13 @@
 <script lang="ts" setup>
-import { computed, reactive, toRefs, unref, watch, type Ref } from 'vue'
-
 import { useI18n } from '@/i18n'
-import { useSheetStore } from '@/stores/sheet'
-import useGroupsQuery, { type GroupData } from '@/queries/useGroupsQuery'
+import type { GroupData } from '@/queries/useGroupsQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
 import { Sort, TriState } from '@/types'
 
 import slugify from 'slugify'
 
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  RadioGroup,
-  RadioGroupLabel,
-  RadioGroupOption,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
 import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
-
-import Button from '@/components/form/Button.vue'
 
 export interface FilterState {
   favorites: TriState

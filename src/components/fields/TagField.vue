@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { computed, type HTMLAttributes, ref, toRefs, watch, unref } from 'vue'
+import Draggable from 'vuedraggable'
+import type { HTMLAttributes } from 'vue'
+import type { BaseFieldProps } from './BaseField.vue'
 
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/20/solid'
-
-import Draggable from 'vuedraggable'
-
-import BaseField, { type BaseFieldProps } from './BaseField.vue'
 
 export interface TagFieldProps extends BaseFieldProps {
   breakCharacter?: string

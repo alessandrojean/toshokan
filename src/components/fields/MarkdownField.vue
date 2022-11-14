@@ -1,12 +1,9 @@
 <script lang="ts" setup>
-import { computed, type HTMLAttributes, ref, toRefs, unref } from 'vue'
+import type { HTMLAttributes } from 'vue'
 import { useI18n } from '@/i18n'
 
-import useMarkdown, { type UseMarkdownOptions } from '@/composables/useMarkdown'
-
-import { Tab, TabGroup, TabList, TabPanels, TabPanel } from '@headlessui/vue'
-
-import BaseField, { type BaseFieldProps } from './BaseField.vue'
+import type { UseMarkdownOptions } from '@/composables/useMarkdown'
+import type { BaseFieldProps } from './BaseField.vue'
 
 export interface MarkdownFieldProps extends BaseFieldProps {
   inputClass?: string

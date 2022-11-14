@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 import Book from '@/model/Book'
 
 import { CalendarIcon, CheckIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon as CheckIconSolid } from '@heroicons/vue/20/solid'
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
-
-import Button from '@/components/form/Button.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-import ScaleTransition from '@/components/transitions/ScaleTransition.vue'
 
 export interface BookCardReadingActionsProps {
   book: Book

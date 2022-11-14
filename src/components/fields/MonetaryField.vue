@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { computed, ref, toRefs, watch } from 'vue'
-
 import { useI18n } from '@/i18n'
 import { decimalComma } from '@/util/validators'
 
-import BaseField, {
-  type BaseFieldProps
-} from '@/components/fields/BaseField.vue'
+import type { BaseFieldProps } from '@/components/fields/BaseField.vue'
 import type { EmptyMonetaryValue } from '@/model/Book'
 
 export interface MonetaryFieldProps extends BaseFieldProps {

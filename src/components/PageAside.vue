@@ -1,14 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-import LocaleSelector from '@/components/LocaleSelector.vue'
 import { useI18n } from '@/i18n'
 import { DocumentationCategory, DocumentationKey } from '@/symbols'
 import { injectStrict } from '@/util'
 
-const route = useRoute()
-const category = computed(() => String(route.params.category))
 const docs = injectStrict(DocumentationKey)
 
 function currentLocalePages(category: DocumentationCategory) {

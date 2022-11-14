@@ -1,13 +1,7 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-
 import { useI18n } from '@/i18n'
-import useMarkdown from '@/composables/useMarkdown'
 import Book from '@/model/Book'
 import getBookLinks from '@/services/links'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 import { injectStrict } from '@/util'
 import { ShowSearchDialogKey } from '@/symbols'
@@ -26,10 +20,6 @@ import {
   StarIcon as StarOutlineIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline'
-
-import BookBreadcrumb from '@/components/book/BookBreadcrumb.vue'
-import Button from '@/components/form/Button.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookInformationProps {
   book: Book | null | undefined

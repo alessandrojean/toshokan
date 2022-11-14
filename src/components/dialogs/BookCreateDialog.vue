@@ -1,26 +1,10 @@
 <script lang="ts" setup>
-import { computed, nextTick, reactive, ref, toRaw, toRefs, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
 import cloneDeep from 'lodash.clonedeep'
 
-import useMarkdown from '@/composables/useMarkdown'
-import useImageLoader from '@/composables/useImageLoader'
 import { useI18n } from '@/i18n'
 import Book, { FilledBook, MonetaryValue, STATUS_UNREAD } from '@/model/Book'
-import useCreateBookMutation from '@/mutations/useCreateBookMutation'
-import { useSheetStore } from '@/stores/sheet'
-import useTimeZoneQuery from '@/queries/useTimeZoneQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import {
-  Dialog,
-  DialogDescription,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
 
 import { ArrowRightIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import {
@@ -28,18 +12,10 @@ import {
   PhotoIcon
 } from '@heroicons/vue/24/outline'
 
-import Avatar from '@/components/Avatar.vue'
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
 import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
-import BulletSteps from '@/components/BulletSteps.vue'
-import Button from '@/components/form/Button.vue'
-import DescriptionList, {
-  type InfoLine
-} from '@/components/DescriptionList.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import useCoverQuery from '@/queries/useCoverQuery'
+import type { InfoLine } from '@/components/DescriptionList.vue'
 
 const props = withDefaults(defineProps<{ isOpen?: boolean }>(), {
   isOpen: false

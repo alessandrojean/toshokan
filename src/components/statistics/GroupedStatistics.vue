@@ -1,10 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { useSheetStore } from '@/stores/sheet'
-import useStatisticsQuery from '@/queries/useStatisticsQuery'
-
 import {
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon

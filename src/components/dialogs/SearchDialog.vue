@@ -1,21 +1,10 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, toRefs, watch } from 'vue'
 import PaginatorUtil from 'paginator'
-import { useActiveElement, refDebounced, useDebounceFn } from '@vueuse/core'
+import { useActiveElement, useDebounceFn } from '@vueuse/core'
 
 import { useI18n } from '@/i18n'
-import { useSearchStore } from '@/stores/search'
-import { useSheetStore } from '@/stores/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
-import useBookSearchQuery from '@/queries/useBookSearchQuery'
-
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
+import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 import {
   BarsArrowUpIcon,
@@ -23,16 +12,6 @@ import {
   XMarkIcon
 } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
-
-import Avatar from '@/components/Avatar.vue'
-import Button from '@/components/form/Button.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
-import Paginator from '@/components/Paginator.vue'
-import SearchHistoryItem from '@/components/SearchHistoryItem.vue'
-import SearchItem from '@/components/SearchItem.vue'
-import useMarkdown from '@/composables/useMarkdown'
-import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 const props = defineProps<{ isOpen: boolean }>()
 

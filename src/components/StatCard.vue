@@ -1,10 +1,4 @@
 <script lang="ts" setup>
-import { ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-
-import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/20/solid'
-import Button from '@/components/form/Button.vue'
-
 export interface StatCardProps {
   alwaysHidden?: boolean
   loading: boolean
@@ -21,8 +15,6 @@ const props = withDefaults(defineProps<StatCardProps>(), {
 })
 
 const { alwaysHidden, showValue } = toRefs(props)
-
-const { t } = useI18n({ useScope: 'global' })
 </script>
 
 <template>

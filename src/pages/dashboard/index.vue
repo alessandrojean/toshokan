@@ -1,13 +1,6 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useIsFetching, useQueryClient } from '@tanstack/vue-query'
-
-import useEditBookMutation from '@/mutations/useEditBookMutation'
-import { useAuthStore } from '@/stores/auth'
-import { useSettingsStore } from '@/stores/settings'
-import { useSheetStore } from '@/stores/sheet'
-import useStatisticsQuery from '@/queries/useStatisticsQuery'
+import Book from '@/model/Book'
 
 import {
   BookOpenIcon,
@@ -25,17 +18,6 @@ import {
   EyeIcon,
   EyeSlashIcon
 } from '@heroicons/vue/20/solid'
-
-import Avatar from '@/components/Avatar.vue'
-import BookCarousel from '@/components/book/BookCarousel.vue'
-import BookCreateDialog from '@/components/dialogs/BookCreateDialog.vue'
-import Button from '@/components/form/Button.vue'
-import SheetChooserDialog from '@/components/dialogs/SheetChooserDialog.vue'
-import StatCard from '@/components/StatCard.vue'
-import useLastAddedQuery from '@/queries/useLastAddedQuery'
-import useLatestReadingsQuery from '@/queries/useLatestReadingsQuery'
-import useNextReadsQuery from '@/queries/useNextReadsQuery'
-import Book from '@/model/Book'
 
 const authStore = useAuthStore()
 const settingsStore = useSettingsStore()

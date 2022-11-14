@@ -7,7 +7,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts'
+import Components from 'unplugin-vue-components/vite'
+import AutoImport from 'unplugin-auto-import/vite'
 import postcss from './postcss.config.js'
+
+import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
   assetsInclude: ['**/*.md'],
@@ -33,6 +37,35 @@ export default defineConfig({
         dirname(fileURLToPath(import.meta.url)),
         './src/i18n/messages/**'
       )
+    }),
+
+    // https://github.com/antfu/unplugin-auto-import
+    AutoImport({
+      imports: [
+        'vue',
+        'vue-router',
+        'vue-i18n',
+        'vue/macros',
+        {
+          '@vueuse/core': [
+            'breakpointsTailwind',
+            'useBreakpoints',
+            'useLocalStorage'
+          ]
+        }
+      ],
+      dts: 'src/auto-imports.d.ts',
+      dirs: ['src/composables', 'src/stores', 'src/queries', 'src/mutations'],
+      vueTemplate: true,
+      eslintrc: {
+        enabled: true
+      }
+    }),
+
+    // https://github.com/antfu/unplugin-vue-components
+    Components({
+      dts: 'src/components.d.ts',
+      resolvers: [HeadlessUiResolver()]
     }),
 
     // https://github.com/vite-pwa/vite-plugin-pwa

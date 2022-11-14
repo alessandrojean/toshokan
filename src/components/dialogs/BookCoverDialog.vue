@@ -1,17 +1,7 @@
 <script lang="ts" setup>
-import { toRefs, watch } from 'vue'
-
 import { useI18n } from '@/i18n'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import {
-  TransitionRoot,
-  TransitionChild,
-  Dialog,
-  DialogPanel,
-  DialogTitle
-} from '@headlessui/vue'
 
 import { XMarkIcon } from '@heroicons/vue/20/solid'
 

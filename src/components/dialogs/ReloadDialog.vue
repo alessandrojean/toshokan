@@ -1,23 +1,9 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
 import chunk from 'lodash.chunk'
 
-import useMarkdown from '@/composables/useMarkdown'
-import useGitHubReleaseQuery from '@/queries/useGitHubReleaseQuery'
-
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
 import { SparklesIcon } from '@heroicons/vue/24/outline'
-import Button from '@/components/form/Button.vue'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW()
 

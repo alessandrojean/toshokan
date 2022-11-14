@@ -1,9 +1,4 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useDebounceFn } from '@vueuse/core'
-
-import { useSheetStore } from '@/stores/sheet'
 import { ShowAsideDialogKey, ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'
 

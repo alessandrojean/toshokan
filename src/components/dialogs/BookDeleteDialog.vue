@@ -1,21 +1,10 @@
 <script lang="ts" setup>
-import { toRefs, watch } from 'vue'
 import { useI18n } from '@/i18n'
 
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
 
 import { TrashIcon } from '@heroicons/vue/24/outline'
-
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot
-} from '@headlessui/vue'
-
-import Button from '@/components/form/Button.vue'
 
 export interface BookDeleteDialogProps {
   open?: boolean

@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import FadeTransition from './transitions/FadeTransition.vue'
-import LoadingSpinIcon from '@/components/icons/LoadingSpinIcon.vue'
-
 export interface LoadingIndicatorProps {
   blur?: boolean
   loading?: boolean

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed, Ref, ref, toRefs, unref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import type { Ref } from 'vue'
 
 import { nanoid } from 'nanoid'
 

@@ -1,17 +1,8 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-
-import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
-import useBookExistsQuery from '@/queries/useBookExistsQuery'
-import useIsbnSearchQuery from '@/queries/useIsbnSearchQuery'
 
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
-
-import Alert from '@/components/Alert.vue'
-import BookSelector from '@/components/book/BookSelector.vue'
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 const emit = defineEmits<{
   (e: 'search', searching: boolean): void

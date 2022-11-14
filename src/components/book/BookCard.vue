@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRefs, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { _RouterLinkI } from 'vue-router'
 
-import useImageLazyLoader from '@/composables/useImageLazyLoader'
 import Book from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 
@@ -13,8 +10,6 @@ import {
   EyeSlashIcon
 } from '@heroicons/vue/24/outline'
 import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface BookCardProps {
   blurNsfw?: boolean

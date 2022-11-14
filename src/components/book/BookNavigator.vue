@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
-
 import Book from '@/model/Book'
 import { useI18n } from '@/i18n'
 

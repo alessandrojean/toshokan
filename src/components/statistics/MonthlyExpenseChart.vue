@@ -1,16 +1,10 @@
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, type UnwrapRef } from 'vue'
+import type { UnwrapRef } from 'vue'
 import type { ApexOptions } from 'apexcharts'
 
-import useDarkMode from '@/composables/useDarkMode'
-import useTailwindTheme from '@/composables/useTailwindTheme'
 import { useI18n, type Locale } from '@/i18n'
-import { useSheetStore } from '@/stores/sheet'
-import useStatisticsQuery from '@/queries/useStatisticsQuery'
 
 import { ChartBarIcon } from '@heroicons/vue/24/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
