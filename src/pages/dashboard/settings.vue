@@ -323,7 +323,10 @@ meta:
 
 <template>
   <div class="w-full">
-    <SimpleHeader :title="t('dashboard.settings.title')" class="mb-3 md:mb-0" />
+    <DashboardHeader
+      :title="t('dashboard.settings.title')"
+      class="mb-3 md:mb-0"
+    />
 
     <div class="md:hidden px-4 sm:px-6">
       <label class="sr-only" for="navigate-to">

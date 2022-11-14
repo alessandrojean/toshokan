@@ -76,7 +76,7 @@ meta:
 
 <template>
   <div>
-    <SimpleHeader
+    <DashboardHeader
       :title="t('dashboard.readings.title')"
       :subtitle="selectedMonthYear"
     />

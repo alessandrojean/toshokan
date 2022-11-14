@@ -26,7 +26,7 @@ meta:
 
 <template>
   <div class="flex flex-col">
-    <SimpleHeader :title="t('dashboard.stats.title')" class="mb-3 md:mb-0" />
+    <DashboardHeader :title="t('dashboard.stats.title')" class="mb-3 md:mb-0" />
 
     <div class="flex-1">
       <div
