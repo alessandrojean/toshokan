@@ -31,13 +31,10 @@ function randomSize() {
 </script>
 
 <template>
-  <section
+  <DashboardBlock
     v-if="loading || links?.length"
-    class="bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition"
+    :title="t('dashboard.details.relations')"
   >
-    <h3 class="text-md sm:text-lg font-medium font-display dark:text-gray-100">
-      {{ t('dashboard.details.relations') }}
-    </h3>
     <ul v-if="!loading && links?.length" class="flex flex-wrap gap-2 mt-4">
       <li v-for="link in links" :key="link.url" class="block">
         <Button
@@ -70,5 +67,5 @@ function randomSize() {
         />
       </div>
     </div>
-  </section>
+  </DashboardBlock>
 </template>

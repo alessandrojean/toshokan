@@ -18,13 +18,7 @@ const { t, n } = useI18n({ useScope: 'global' })
 </script>
 
 <template>
-  <section class="bg-block dark:bg-block-dark p-4 rounded-xl">
-    <h3
-      class="font-display font-medium text-md sm:text-lg text-gray-900 dark:text-gray-100"
-    >
-      {{ title }}
-    </h3>
-
+  <DashboardBlock :title="title">
     <ol v-if="!loading" class="mt-4 divide-y dark:divide-gray-700">
       <li v-for="(item, i) of ranking" :key="item.name" class="py-2.5 relative">
         <span
@@ -63,5 +57,5 @@ const { t, n } = useI18n({ useScope: 'global' })
         <div class="skeleton w-16 h-3 mt-1" />
       </div>
     </div>
-  </section>
+  </DashboardBlock>
 </template>

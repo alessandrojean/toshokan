@@ -150,55 +150,57 @@ const metadata = computed(() => {
 </script>
 
 <template>
-  <dl class="bg-block dark:bg-block-dark px-4 py-2 rounded-xl">
-    <template v-for="(mt, i) in metadata" :key="i">
-      <div v-if="mt.value || loading" class="px-0 py-2">
-        <dt
-          v-if="!loading"
-          class="text-sm font-medium text-gray-500 dark:text-gray-400"
-        >
-          {{ mt.title }}
-        </dt>
-        <div v-else aria-hidden="true" class="skeleton w-16 h-5" />
-
-        <dd
-          v-if="!loading"
-          class="mt-1 text-sm text-gray-900 dark:text-gray-200 inline-flex items-center"
-        >
-          <time v-if="mt.time" :datetime="mt.value!.toISOString()">
-            {{ formatDate(mt.value!) }}
-          </time>
-          <a
-            v-else-if="mt.searchable"
-            href="#"
-            class="search-link has-ring-focus"
-            :title="t('dashboard.search.searchBy', [mt.value])"
-            @click.prevent="$emit(`click:${mt.key}`, mt.value!)"
+  <DashboardBlock as="dl">
+    <div class="space-y-4">
+      <template v-for="(mt, i) in metadata" :key="i">
+        <div v-if="mt.value || loading">
+          <dt
+            v-if="!loading"
+            class="text-sm font-medium text-gray-500 dark:text-gray-400"
           >
-            {{ mt.value }}
-          </a>
-          <span v-else>{{ mt.value }}</span>
+            {{ mt.title }}
+          </dt>
+          <div v-else aria-hidden="true" class="skeleton w-16 h-5" />
 
-          <div
-            v-if="mt.badge && !mt.samePrice"
-            :class="[
-              mt.badge <= 1
-                ? 'bg-emerald-100 text-emerald-700'
-                : 'bg-red-100 text-red-800',
-              'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
-            ]"
+          <dd
+            v-if="!loading"
+            class="mt-1 text-sm text-gray-900 dark:text-gray-200 inline-flex items-center"
           >
-            <span aria-hidden="true">
-              <ArrowTrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
-              <ArrowTrendingUpIcon v-else class="w-4 h-4" />
-            </span>
-            <span>{{ n(mt.badge, 'percent') }}</span>
-          </div>
-        </dd>
-        <div v-else aria-hidden="true" class="mt-1 skeleton w-32 h-6" />
-      </div>
-    </template>
-  </dl>
+            <time v-if="mt.time" :datetime="mt.value!.toISOString()">
+              {{ formatDate(mt.value!) }}
+            </time>
+            <a
+              v-else-if="mt.searchable"
+              href="#"
+              class="search-link has-ring-focus"
+              :title="t('dashboard.search.searchBy', [mt.value])"
+              @click.prevent="$emit(`click:${mt.key}`, mt.value!)"
+            >
+              {{ mt.value }}
+            </a>
+            <span v-else>{{ mt.value }}</span>
+
+            <div
+              v-if="mt.badge && !mt.samePrice"
+              :class="[
+                mt.badge <= 1
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-red-100 text-red-800',
+                'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
+              ]"
+            >
+              <span aria-hidden="true">
+                <ArrowTrendingDownIcon v-if="mt.badge <= 1" class="w-4 h-4" />
+                <ArrowTrendingUpIcon v-else class="w-4 h-4" />
+              </span>
+              <span>{{ n(mt.badge, 'percent') }}</span>
+            </div>
+          </dd>
+          <div v-else aria-hidden="true" class="mt-1 skeleton w-32 h-6" />
+        </div>
+      </template>
+    </div>
+  </DashboardBlock>
 </template>
 
 <style lang="postcss" scoped>

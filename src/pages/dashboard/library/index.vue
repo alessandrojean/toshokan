@@ -348,93 +348,99 @@ meta:
             !sheetIsEmpty
           "
         >
-          <div
-            class="bg-block dark:bg-block-dark px-4 py-4 rounded-xl flex flex-row justify-between items-center"
-          >
-            <div
-              v-if="
-                (sheetLoading && !writing) || (loading && books.length === 0)
-              "
-              class="skeleton h-5 w-40 md:w-48"
-            />
-            <div v-else>
-              <i18n-t
-                keypath="pagination.text"
-                tag="p"
-                class="text-xs sm:text-sm text-gray-700 dark:text-gray-300"
-                scope="global"
-              >
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.current_page || 1 }}
-                </span>
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.total_pages || 1 }}
-                </span>
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.total_results || 0 }}
-                </span>
-              </i18n-t>
-            </div>
+          <DashboardBlock as="div">
+            <div class="flex flex-row justify-between items-center">
+              <div
+                v-if="
+                  (sheetLoading && !writing) || (loading && books.length === 0)
+                "
+                class="skeleton h-5 w-40 md:w-48"
+              />
+              <div v-else>
+                <i18n-t
+                  keypath="pagination.text"
+                  tag="p"
+                  class="text-xs sm:text-sm text-gray-700 dark:text-gray-300"
+                  scope="global"
+                >
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.current_page || 1 }}
+                  </span>
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.total_pages || 1 }}
+                  </span>
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.total_results || 0 }}
+                  </span>
+                </i18n-t>
+              </div>
 
-            <div class="-mr-2 -my-1">
-              <RadioGroup v-model="viewMode" :disabled="loading || writing">
-                <RadioGroupLabel class="sr-only">
-                  {{ t('dashboard.library.filters.viewMode.label') }}
-                </RadioGroupLabel>
-                <div class="flex space-x-1 relative">
-                  <div
-                    aria-hidden="true"
-                    :class="[
-                      'w-9 h-9 rounded-md bg-primary-100 dark:bg-gray-600/50 absolute left-0 top-0',
-                      'motion-safe:transition-transform',
-                      viewMode === 'grid,comfortable' ? 'translate-x-10' : '',
-                      viewMode === 'grid,compact' ? 'translate-x-20' : ''
-                    ]"
-                  />
-                  <RadioGroupOption
-                    value="table"
-                    class="view-button has-ring-focus z-10 !ml-0"
-                    :title="t('dashboard.library.filters.viewMode.table')"
-                  >
-                    <span class="sr-only">
-                      {{ t('dashboard.library.filters.viewMode.table') }}
-                    </span>
-                    <span aria-hidden="true">
-                      <TableCellsIcon class="h-5 w-5" />
-                    </span>
-                  </RadioGroupOption>
-                  <RadioGroupOption
-                    value="grid,comfortable"
-                    class="view-button has-ring-focus z-10"
-                    :title="
-                      t('dashboard.library.filters.gridMode.comfortableGrid')
-                    "
-                  >
-                    <span class="sr-only">
-                      {{
+              <div class="-mr-2 -my-1">
+                <RadioGroup v-model="viewMode" :disabled="loading || writing">
+                  <RadioGroupLabel class="sr-only">
+                    {{ t('dashboard.library.filters.viewMode.label') }}
+                  </RadioGroupLabel>
+                  <div class="flex space-x-1 relative">
+                    <div
+                      aria-hidden="true"
+                      :class="[
+                        'w-9 h-9 rounded-md bg-primary-100 dark:bg-gray-600/50 absolute left-0 top-0',
+                        'motion-safe:transition-transform',
+                        viewMode === 'grid,comfortable' ? 'translate-x-10' : '',
+                        viewMode === 'grid,compact' ? 'translate-x-20' : ''
+                      ]"
+                    />
+                    <RadioGroupOption
+                      value="table"
+                      class="view-button has-ring-focus z-10 !ml-0"
+                      :title="t('dashboard.library.filters.viewMode.table')"
+                    >
+                      <span class="sr-only">
+                        {{ t('dashboard.library.filters.viewMode.table') }}
+                      </span>
+                      <span aria-hidden="true">
+                        <TableCellsIcon class="h-5 w-5" />
+                      </span>
+                    </RadioGroupOption>
+                    <RadioGroupOption
+                      value="grid,comfortable"
+                      class="view-button has-ring-focus z-10"
+                      :title="
                         t('dashboard.library.filters.gridMode.comfortableGrid')
-                      }}
-                    </span>
-                    <span aria-hidden="true">
-                      <Squares2X2Icon class="h-5 w-5" />
-                    </span>
-                  </RadioGroupOption>
-                  <RadioGroupOption
-                    value="grid,compact"
-                    class="view-button has-ring-focus z-10"
-                    :title="t('dashboard.library.filters.gridMode.compactGrid')"
-                  >
-                    <span class="sr-only">
-                      {{ t('dashboard.library.filters.gridMode.compactGrid') }}
-                    </span>
-                    <span aria-hidden="true">
-                      <SquaresPlusIcon class="h-5 w-5" />
-                    </span>
-                  </RadioGroupOption>
-                </div>
-              </RadioGroup>
+                      "
+                    >
+                      <span class="sr-only">
+                        {{
+                          t(
+                            'dashboard.library.filters.gridMode.comfortableGrid'
+                          )
+                        }}
+                      </span>
+                      <span aria-hidden="true">
+                        <Squares2X2Icon class="h-5 w-5" />
+                      </span>
+                    </RadioGroupOption>
+                    <RadioGroupOption
+                      value="grid,compact"
+                      class="view-button has-ring-focus z-10"
+                      :title="
+                        t('dashboard.library.filters.gridMode.compactGrid')
+                      "
+                    >
+                      <span class="sr-only">
+                        {{
+                          t('dashboard.library.filters.gridMode.compactGrid')
+                        }}
+                      </span>
+                      <span aria-hidden="true">
+                        <SquaresPlusIcon class="h-5 w-5" />
+                      </span>
+                    </RadioGroupOption>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
-          </div>
+          </DashboardBlock>
 
           <div>
             <FadeTransition>
@@ -468,102 +474,103 @@ meta:
             </FadeTransition>
           </div>
 
-          <div
-            v-if="paginationInfo.total_pages > 1"
-            class="bg-block dark:bg-block-dark p-4 rounded-xl flex flex-col md:flex-row md:justify-between items-center"
-          >
+          <DashboardBlock v-if="paginationInfo.total_pages > 1" as="div">
             <div
-              v-if="
-                (sheetLoading && !writing) || (loading && books.length === 0)
-              "
-              class="skeleton h-5 w-40 md:w-48"
-            />
-            <div v-else>
-              <i18n-t
-                keypath="pagination.text"
-                tag="p"
-                class="text-sm text-gray-700 dark:text-gray-300 mb-4 md:mb-0"
-                scope="global"
-              >
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.current_page }}
-                </span>
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.total_pages }}
-                </span>
-                <span class="font-semibold dark:text-gray-100">
-                  {{ paginationInfo.total_results }}
-                </span>
-              </i18n-t>
-            </div>
-
-            <nav
-              role="navigation"
-              aria-label="Paginação do conteúdo"
-              class="w-full sm:hidden"
+              class="flex flex-col md:flex-row md:justify-between items-center"
             >
-              <ul class="flex justify-center space-x-4">
-                <li>
-                  <div
-                    v-if="
-                      (sheetLoading && !writing) ||
-                      (loading && books.length === 0)
-                    "
-                    class="skeleton h-9 w-28"
-                  />
-                  <Button
-                    v-else
-                    :disabled="
-                      !paginationInfo.has_previous_page || loading || writing
-                    "
-                    @click.stop="handlePage(paginationInfo.current_page - 1)"
-                  >
-                    <template #left="{ iconClass }">
-                      <ChevronLeftIcon :class="iconClass" />
-                    </template>
-                    <span>{{ t('pagination.previous') }}</span>
-                  </Button>
-                </li>
-
-                <li>
-                  <div
-                    v-if="
-                      (sheetLoading && !writing) ||
-                      (loading && books.length === 0)
-                    "
-                    class="skeleton h-9 w-28"
-                  />
-                  <Button
-                    v-else
-                    :disabled="
-                      !paginationInfo.has_next_page || loading || writing
-                    "
-                    @click.stop="handlePage(paginationInfo.current_page + 1)"
-                  >
-                    <span>{{ t('pagination.next') }}</span>
-                    <template #right="{ iconClass }">
-                      <ChevronRightIcon :class="iconClass" />
-                    </template>
-                  </Button>
-                </li>
-              </ul>
-            </nav>
-
-            <div
-              v-if="
-                (sheetLoading && !writing) || (loading && books.length === 0)
-              "
-              class="skeleton h-10 w-60 hidden sm:block"
-            />
-            <div v-else class="hidden sm:block">
-              <Paginator
-                v-if="paginationInfo.total_pages > 1"
-                :pagination-info="paginationInfo"
-                :enabled="!loading && !writing"
-                @page="handlePage"
+              <div
+                v-if="
+                  (sheetLoading && !writing) || (loading && books.length === 0)
+                "
+                class="skeleton h-5 w-40 md:w-48"
               />
+              <div v-else>
+                <i18n-t
+                  keypath="pagination.text"
+                  tag="p"
+                  class="text-sm text-gray-700 dark:text-gray-300 mb-4 md:mb-0"
+                  scope="global"
+                >
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.current_page }}
+                  </span>
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.total_pages }}
+                  </span>
+                  <span class="font-semibold dark:text-gray-100">
+                    {{ paginationInfo.total_results }}
+                  </span>
+                </i18n-t>
+              </div>
+
+              <nav
+                role="navigation"
+                aria-label="Paginação do conteúdo"
+                class="w-full sm:hidden"
+              >
+                <ul class="flex justify-center space-x-4">
+                  <li>
+                    <div
+                      v-if="
+                        (sheetLoading && !writing) ||
+                        (loading && books.length === 0)
+                      "
+                      class="skeleton h-9 w-28"
+                    />
+                    <Button
+                      v-else
+                      :disabled="
+                        !paginationInfo.has_previous_page || loading || writing
+                      "
+                      @click.stop="handlePage(paginationInfo.current_page - 1)"
+                    >
+                      <template #left="{ iconClass }">
+                        <ChevronLeftIcon :class="iconClass" />
+                      </template>
+                      <span>{{ t('pagination.previous') }}</span>
+                    </Button>
+                  </li>
+
+                  <li>
+                    <div
+                      v-if="
+                        (sheetLoading && !writing) ||
+                        (loading && books.length === 0)
+                      "
+                      class="skeleton h-9 w-28"
+                    />
+                    <Button
+                      v-else
+                      :disabled="
+                        !paginationInfo.has_next_page || loading || writing
+                      "
+                      @click.stop="handlePage(paginationInfo.current_page + 1)"
+                    >
+                      <span>{{ t('pagination.next') }}</span>
+                      <template #right="{ iconClass }">
+                        <ChevronRightIcon :class="iconClass" />
+                      </template>
+                    </Button>
+                  </li>
+                </ul>
+              </nav>
+
+              <div
+                v-if="
+                  (sheetLoading && !writing) || (loading && books.length === 0)
+                "
+                class="skeleton h-10 w-60 hidden sm:block"
+              />
+              <div v-else class="hidden sm:block">
+                <Paginator
+                  v-if="paginationInfo.total_pages > 1"
+                  :pagination-info="paginationInfo"
+                  :enabled="!loading && !writing"
+                  @page="handlePage"
+                />
+              </div>
             </div>
-          </div>
+          </DashboardBlock>
         </section>
 
         <section

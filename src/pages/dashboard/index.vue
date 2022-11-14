@@ -213,20 +213,11 @@ meta:
 
     <div class="flex-1">
       <div class="h-full max-w-7xl mx-auto py-6 px-4 sm:px-6">
-        <section
+        <DashboardBlock
           v-if="!sheetIsEmpty"
-          class="bg-block dark:bg-block-dark p-4 rounded-xl"
+          :title="t('dashboard.home.overview.title')"
         >
-          <h2
-            id="overview-title"
-            class="font-medium font-display text-md sm:text-lg dark:text-gray-200"
-          >
-            {{ t('dashboard.home.overview.title') }}
-          </h2>
-
-          <div
-            class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
               :title="t('dashboard.home.overview.stats.count')"
               :value="n(stats?.count || 0.0, 'integer')"
@@ -281,7 +272,7 @@ meta:
               </template>
             </StatCard>
           </div>
-        </section>
+        </DashboardBlock>
 
         <!-- Next reads -->
         <BookCarousel

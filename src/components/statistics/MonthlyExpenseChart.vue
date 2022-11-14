@@ -151,17 +151,7 @@ const expenses = computed(() => ({
 </script>
 
 <template>
-  <section
-    class="bg-block dark:bg-block-dark rounded-xl p-4"
-    aria-labelledby="monthly-expense-title"
-  >
-    <h2
-      id="monthly-expense-title"
-      class="font-medium font-display text-gray-900 dark:text-gray-100 text-md sm:text-lg"
-    >
-      {{ t('dashboard.stats.monthlyExpenseTitle') }}
-    </h2>
-
+  <DashboardBlock :title="t('dashboard.stats.monthlyExpenseTitle')">
     <div class="bg-white dark:bg-gray-900 px-2 py-3 mt-4 rounded-lg">
       <div
         class="aspect-[16/10] md:aspect-[16/8] flex items-center justify-center"
@@ -186,7 +176,7 @@ const expenses = computed(() => ({
         </FadeTransition>
       </div>
     </div>
-  </section>
+  </DashboardBlock>
 </template>
 
 <style lang="postcss">

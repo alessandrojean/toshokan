@@ -114,19 +114,16 @@ function handleReadToday(book: Book) {
 </script>
 
 <template>
-  <section
-    v-if="(items?.length ?? 0) > 0 || loading"
-    class="bg-block dark:bg-block-dark p-4 rounded-xl"
-  >
-    <div class="flex justify-between items-center w-full">
-      <h2
-        class="font-medium font-display text-md sm:text-lg dark:text-gray-200"
-      >
-        {{ title }}
-      </h2>
+  <DashboardBlock v-if="(items?.length ?? 0) > 0 || loading">
+    <template #title="{ titleClasses }">
+      <div class="flex justify-between items-center w-full">
+        <h2 :class="titleClasses">
+          {{ title }}
+        </h2>
 
-      <slot name="actions" />
-    </div>
+        <slot name="actions" />
+      </div>
+    </template>
 
     <ul
       v-if="!loading"
@@ -191,5 +188,5 @@ function handleReadToday(book: Book) {
         />
       </div>
     </div>
-  </section>
+  </DashboardBlock>
 </template>

@@ -42,9 +42,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    class="bg-block dark:bg-block-dark p-4 rounded-xl border dark:border-gray-700"
-  >
+  <DashboardBlock class="border dark:border-gray-700">
     <div v-if="loading" :class="['grid gap-2.5 sm:gap-4', gridColumns[kind]]">
       <BookCard
         v-for="tempBook in skeletonItems"
@@ -73,5 +71,5 @@ defineExpose({
         </BookCard>
       </li>
     </ul>
-  </div>
+  </DashboardBlock>
 </template>

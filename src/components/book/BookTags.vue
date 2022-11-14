@@ -52,12 +52,7 @@ const groupedTags = computed(() => {
 </script>
 
 <template>
-  <section
-    class="bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition"
-  >
-    <h3 class="text-md sm:text-lg font-medium font-display dark:text-gray-100">
-      {{ t('book.properties.tags') }}
-    </h3>
+  <DashboardBlock :title="t('book.properties.tags')">
     <ul
       v-if="!loading && tags?.length && !groupedTags"
       class="flex flex-wrap gap-2 mt-4"
@@ -115,5 +110,5 @@ const groupedTags = computed(() => {
         />
       </div>
     </div>
-  </section>
+  </DashboardBlock>
 </template>

@@ -69,20 +69,18 @@ function handleContainerClick(event: MouseEvent) {
 </script>
 
 <template>
-  <section
+  <DashboardBlock
     v-if="markdownRendered?.length || emptyMessage || loading"
     :class="[
-      'book-markdown bg-block dark:bg-block-dark p-4 rounded-xl relative motion-safe:transition overflow-hidden',
+      'book-markdown relative motion-safe:transition overflow-hidden',
       collapsed && showReadMore
         ? 'h-52 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 animate-hover'
         : ''
     ]"
     ref="content"
+    :title="title"
     @click="handleContainerClick"
   >
-    <h3 class="text-md sm:text-lg font-medium font-display dark:text-gray-100">
-      {{ title }}
-    </h3>
     <div
       v-if="!loading"
       v-html="markdownRendered"
@@ -125,7 +123,7 @@ function handleContainerClick(event: MouseEvent) {
         </Button>
       </div>
     </FadeTransition>
-  </section>
+  </DashboardBlock>
 </template>
 
 <style lang="postcss" scoped>
