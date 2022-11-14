@@ -260,6 +260,7 @@ meta:
 
         <div class="book-synopsis flex flex-col gap-4 sm:gap-6">
           <BookNavigator
+            v-if="book?.titleParts?.number || !showBookInfo"
             :loading="!showBookInfo || collectionLoading"
             :book="book"
             :collection="collection"
