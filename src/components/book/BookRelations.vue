@@ -74,38 +74,3 @@ function randomSize() {
     </div>
   </section>
 </template>
-
-<style lang="postcss" scoped>
-.book-external-link {
-  @apply flex items-center px-2 py-1
-    space-x-1.5 rounded-md border
-    bg-white dark:bg-gray-700
-    text-gray-600 dark:text-gray-300
-    text-sm font-medium
-    motion-safe:transition-colors;
-
-  &:where(:hover, :focus-visible) {
-    @apply text-gray-800 dark:text-gray-100;
-
-    svg {
-      @apply text-gray-600 dark:text-gray-300;
-    }
-  }
-
-  &:hover {
-    @apply bg-gray-100 dark:bg-gray-600;
-  }
-
-  &:focus-visible {
-    @apply dark:ring-offset-gray-900;
-  }
-
-  .icon svg {
-    @apply w-4 h-4;
-  }
-
-  svg {
-    @apply text-gray-500 dark:text-gray-400;
-  }
-}
-</style>
