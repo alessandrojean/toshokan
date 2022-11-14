@@ -13,5 +13,5 @@ export default function useAuthorsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getAuthors(sheetId.value!))
   }
 
-  return useQuery(['authors'], fetcher, { enabled })
+  return useQuery(['authors', { sheetId }], fetcher, { enabled })
 }

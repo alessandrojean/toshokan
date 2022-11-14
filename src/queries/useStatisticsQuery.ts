@@ -13,7 +13,7 @@ export default function useStatisticsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getStatistics(sheetId.value!))
   }
 
-  const query = useQuery(['statistics'], fetcher, { enabled })
+  const query = useQuery(['statistics', { sheetId }], fetcher, { enabled })
 
   watch(query.data, (newData) => {
     sheetStore.updateIsEmpty(newData?.count === 0)

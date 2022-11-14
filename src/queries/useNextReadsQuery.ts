@@ -13,5 +13,5 @@ export default function useNextReadsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getNextReads(sheetId.value!))
   }
 
-  return useQuery(['next-reads'], fetcher, { enabled })
+  return useQuery(['next-reads', { sheetId }], fetcher, { enabled })
 }

@@ -13,7 +13,7 @@ export default function useTimeZoneQuery({ enabled }: UseQueryOptions) {
     return await fetch(getTimeZone(sheetId.value!))
   }
 
-  return useQuery(['timezone'], fetcher, {
+  return useQuery(['timezone', { sheetId }], fetcher, {
     enabled,
     initialData: {
       name: 'America/Sao_Paulo',

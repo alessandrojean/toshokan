@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
@@ -7,26 +8,30 @@ import Book from '@/model/Book'
 
 export default function useBulkEditBookMutation() {
   const sheetStore = useSheetStore()
+  const sheetId = computed(() => sheetStore.sheetId)
   const queryClient = useQueryClient()
 
   async function mutate(books: Book[]) {
-    return await fetch(bulkUpdateBooks(sheetStore.sheetId!, books))
+    return await fetch(bulkUpdateBooks(sheetId.value!, books))
   }
 
   return useMutation(mutate, {
     onSuccess(_, books) {
       books.forEach((book) => {
-        queryClient.setQueryData(['book', book.id], book)
+        queryClient.setQueryData(['book', { bookId: book.id, sheetId }], book)
       })
 
-      queryClient.setQueriesData<{ books: Book[] }>(['books'], (oldData) => {
-        return {
-          ...oldData,
-          books: (oldData?.books ?? []).map((oldBook) => {
-            return books.find(({ id }) => id === oldBook.id) || oldBook
-          })
+      queryClient.setQueriesData<{ books: Book[] }>(
+        ['books', { sheetId }],
+        (oldData) => {
+          return {
+            ...oldData,
+            books: (oldData?.books ?? []).map((oldBook) => {
+              return books.find(({ id }) => id === oldBook.id) || oldBook
+            })
+          }
         }
-      })
+      )
     },
     onSettled() {
       queryClient.invalidateQueries(['latest-readings'])

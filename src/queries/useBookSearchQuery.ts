@@ -36,7 +36,7 @@ export default function useBookSearchQuery(
   }
 
   return useQuery(
-    ['book-search', { query, sortBy, sortDirection, page }],
+    ['book-search', { query, sortBy, sortDirection, page, sheetId }],
     fetcher,
     { enabled, keepPreviousData }
   )

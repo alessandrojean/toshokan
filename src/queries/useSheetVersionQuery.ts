@@ -13,7 +13,7 @@ export default function useSheetVersionQuery({ enabled }: UseQueryOptions) {
     return await fetch(getVersion(sheetId.value!))
   }
 
-  return useQuery(['sheet-version'], fetcher, {
+  return useQuery(['sheet-version', { sheetId }], fetcher, {
     enabled,
     initialData: 0
   })

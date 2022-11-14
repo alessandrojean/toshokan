@@ -20,5 +20,5 @@ export default function useLastAddedQuery({ enabled }: UseQueryOptions) {
     return result?.books
   }
 
-  return useQuery(['last-added'], fetcher, { enabled })
+  return useQuery(['last-added', { sheetId }], fetcher, { enabled })
 }

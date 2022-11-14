@@ -15,5 +15,5 @@ export default function useGroupsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getGroups(sheetId.value!))
   }
 
-  return useQuery(['groups'], fetcher, { enabled })
+  return useQuery(['groups', { sheetId }], fetcher, { enabled })
 }

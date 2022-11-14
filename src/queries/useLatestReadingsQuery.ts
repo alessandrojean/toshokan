@@ -13,5 +13,5 @@ export default function useLatestReadingsQuery({ enabled }: UseQueryOptions) {
     return await fetch(getLatestReadings(sheetId.value!, { limit: 6 }))
   }
 
-  return useQuery(['latest-readings'], fetcher, { enabled })
+  return useQuery(['latest-readings', { sheetId }], fetcher, { enabled })
 }

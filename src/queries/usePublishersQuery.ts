@@ -13,5 +13,5 @@ export default function usePublishersQuery({ enabled }: UseQueryOptions) {
     return await fetch(getPublishers(sheetId.value!))
   }
 
-  return useQuery(['publishers'], fetcher, { enabled })
+  return useQuery(['publishers', { sheetId }], fetcher, { enabled })
 }

@@ -16,5 +16,5 @@ export default function useBookExistsQuery(
     return await fetch(getBookByCode(sheetId.value!, isbn.value))
   }
 
-  return useQuery(['book-exists', isbn], fetcher, { enabled })
+  return useQuery(['book-exists', { isbn, sheetId }], fetcher, { enabled })
 }

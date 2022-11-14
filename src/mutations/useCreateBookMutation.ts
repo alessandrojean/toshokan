@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
@@ -7,15 +8,16 @@ import Book from '@/model/Book'
 
 export default function useCreateBookMutation() {
   const sheetStore = useSheetStore()
+  const sheetId = computed(() => sheetStore.sheetId)
   const queryClient = useQueryClient()
 
   async function mutate(book: Book) {
-    return await fetch(insertBook(sheetStore.sheetId!, book))
+    return await fetch(insertBook(sheetId.value!, book))
   }
 
   return useMutation(mutate, {
     onSuccess(_, book) {
-      queryClient.setQueryData(['book', book.id], book)
+      queryClient.setQueryData(['book', { bookId: book.id, sheetId }], book)
     },
     onSettled() {
       queryClient.invalidateQueries(['last-added'])

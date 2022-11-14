@@ -16,5 +16,5 @@ export default function useBookQuery(
     return await fetch(getBookById(sheetId.value!, bookId.value))
   }
 
-  return useQuery(['book', bookId], fetcher, { enabled })
+  return useQuery(['book', { bookId, sheetId }], fetcher, { enabled })
 }

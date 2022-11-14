@@ -14,10 +14,16 @@ export default function useBookCollectionQuery(
   const sheetId = computed(() => sheetStore.sheetId)
 
   async function fetcher() {
-    return await fetch(getBooksFromCollection(sheetId.value!, book.value!))
+    if (!book.value) {
+      return undefined
+    }
+
+    return await fetch(getBooksFromCollection(sheetId.value!, book.value))
   }
 
   const bookTitle = computed(() => book.value?.titleParts?.title + ' #')
 
-  return useQuery(['book-collection', bookTitle], fetcher, { enabled })
+  return useQuery(['book-collection', { bookTitle, sheetId }], fetcher, {
+    enabled
+  })
 }

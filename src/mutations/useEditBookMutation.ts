@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 import { useSheetStore } from '@/stores/sheet'
@@ -7,23 +8,27 @@ import Book from '@/model/Book'
 
 export default function useEditBookMutation() {
   const sheetStore = useSheetStore()
+  const sheetId = computed(() => sheetStore.sheetId)
   const queryClient = useQueryClient()
 
   async function mutate(book: Book) {
-    return await fetch(updateBook(sheetStore.sheetId!, book))
+    return await fetch(updateBook(sheetId.value!, book))
   }
 
   return useMutation(mutate, {
     onSuccess(_, book) {
-      queryClient.setQueriesData<{ books: Book[] }>(['books'], (oldData) => {
-        return {
-          ...oldData,
-          books: (oldData?.books ?? []).map((oldBook) => {
-            return oldBook.id === book.id ? book : oldBook
-          })
+      queryClient.setQueriesData<{ books: Book[] }>(
+        ['books', { sheetId }],
+        (oldData) => {
+          return {
+            ...oldData,
+            books: (oldData?.books ?? []).map((oldBook) => {
+              return oldBook.id === book.id ? book : oldBook
+            })
+          }
         }
-      })
-      queryClient.setQueryData(['book', book.id], book)
+      )
+      queryClient.setQueryData(['book', { bookId: book.id, sheetId }], book)
     },
     onSettled() {
       queryClient.invalidateQueries(['last-added'])

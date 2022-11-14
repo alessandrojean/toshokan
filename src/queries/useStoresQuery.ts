@@ -13,5 +13,5 @@ export default function useStoresQuery({ enabled }: UseQueryOptions) {
     return await fetch(getStores(sheetId.value!))
   }
 
-  return useQuery(['stores'], fetcher, { enabled })
+  return useQuery(['stores', { sheetId }], fetcher, { enabled })
 }

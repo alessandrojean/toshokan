@@ -48,7 +48,10 @@ export default function useBooksQuery(
   }
 
   return useQuery(
-    ['books', { favorites, futureItems, groups, page, sortBy, sortDirection }],
+    [
+      'books',
+      { favorites, futureItems, groups, page, sortBy, sortDirection, sheetId }
+    ],
     fetcher,
     { enabled }
   )
