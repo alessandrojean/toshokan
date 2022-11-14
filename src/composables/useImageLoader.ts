@@ -11,7 +11,7 @@ export default function useImageLoader(
   const imageWidth = ref(0)
   const imageHeight = ref(0)
   const imageAspectRatio = computed(() => {
-    return imageWidth.value > 0 && imageHeight.value > 0
+    return imageWidth.value > 0 && imageHeight.value > 0 && !imageHasError.value
       ? `${imageWidth.value} / ${imageHeight.value}`
       : aspectRatioDefault
   })
