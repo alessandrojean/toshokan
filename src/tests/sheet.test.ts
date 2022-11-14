@@ -18,6 +18,7 @@ import Book, {
 } from '@/model/Book'
 import SheetService from '@/services/sheet'
 import { PER_PAGE } from '@/services/sheet/constants'
+import { TriState } from '@/types'
 
 describe('Sheet service', () => {
   const setQueryMock = vi.fn()
@@ -344,7 +345,9 @@ describe('Sheet service', () => {
 
     it('Should build the query correctly (with future items)', async () => {
       const { CREATED_AT, STATUS } = CollectionColumns
-      await SheetService.getBooks('TEST_SHEET_ID', 1, { futureItems: 'only' })
+      await SheetService.getBooks('TEST_SHEET_ID', 1, {
+        futureItems: TriState.ONLY
+      })
 
       expect(queryToString).toHaveBeenCalled()
       expect(queryToString.mock.instances[0].toObject()).toMatchObject({
@@ -357,7 +360,9 @@ describe('Sheet service', () => {
 
       queryToString.mockClear()
 
-      await SheetService.getBooks('TEST_SHEET_ID', 1, { futureItems: 'hide' })
+      await SheetService.getBooks('TEST_SHEET_ID', 1, {
+        futureItems: TriState.HIDE
+      })
       expect(queryToString.mock.instances[0].toObject()).toMatchObject({
         where: {
           restrictions: [[STATUS, '!=', STATUS_FUTURE]]
@@ -369,7 +374,9 @@ describe('Sheet service', () => {
 
     it('Should build the query correctly (with favorites)', async () => {
       const { CREATED_AT, FAVORITE } = CollectionColumns
-      await SheetService.getBooks('TEST_SHEET_ID', 1, { favorites: 'only' })
+      await SheetService.getBooks('TEST_SHEET_ID', 1, {
+        favorites: TriState.ONLY
+      })
 
       expect(queryToString).toHaveBeenCalled()
       expect(queryToString.mock.instances[0].toObject()).toMatchObject({
