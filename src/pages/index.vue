@@ -104,8 +104,8 @@ meta:
                 <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
               </div>
             </div>
-            <MobileLibrary class="md:hidden w-full h-full" />
-            <Dashboard class="hidden md:block w-full h-full" />
+            <WireframeMobileLibrary class="md:hidden w-full h-full" />
+            <WireframeDashboard class="hidden md:block w-full h-full" />
           </figure>
         </div>
       </section>
@@ -126,7 +126,7 @@ meta:
 
       <section class="functionality">
         <figure>
-          <CreateBookDialogWireframe />
+          <WireframeCreateBookDialog />
         </figure>
 
         <div class="functionality-description">
@@ -199,7 +199,7 @@ meta:
           </Button>
         </div>
         <figure class="-mt-8 md:-mt-5 h-80 lg:h-[25rem]">
-          <DesktopLibrary
+          <WireframeDesktopLibrary
             class="w-[200%] sm:w-[150%] md:w-[200%] lg:w-[150%] h-auto rounded-xl translate-y-10 md:translate-y-16 translate-x-16"
           />
         </figure>
