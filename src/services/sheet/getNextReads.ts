@@ -6,22 +6,35 @@ import Book, {
 } from '@/model/Book'
 import buildSheetUrl from './buildSheetUrl'
 
+export interface GetNextReadsOptions {
+  threshold?: number
+}
+
 /**
  * Gets the next books to read, similar to 'continue watching'
  * section of the streaming services.
- *
- * @param {string} sheetId The sheet to perform the operation
- * @returns {Promise<Book[]>} The next books to read
  */
-export default async function getNextReads(sheetId: string): Promise<Book[]> {
+export default async function getNextReads(
+  sheetId: string,
+  options?: GetNextReadsOptions
+): Promise<Book[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { TITLE, READ_AT, UPDATED_AT, GROUP, PUBLISHER, STATUS } =
     CollectionColumns
-  const lastReadsQuery = new QueryBuilder(sheetUrl)
+  let lastReadsQueryBuilder = new QueryBuilder(sheetUrl)
     .where(READ_AT)
     .andWhere(STATUS, STATUS_READ)
-    .andWhere(`dateDiff(now(), ${READ_AT})`, '<=', 6 * 30) // ~6 months
+
+  if (options?.threshold) {
+    lastReadsQueryBuilder = lastReadsQueryBuilder.andWhere(
+      `dateDiff(now(), ${READ_AT})`,
+      '<=',
+      options.threshold
+    )
+  }
+
+  const lastReadsQuery = lastReadsQueryBuilder
     .orderBy([READ_AT, 'desc'], [UPDATED_AT, 'desc'], [TITLE, 'desc'])
     .build()
 
@@ -83,5 +96,4 @@ export default async function getNextReads(sheetId: string): Promise<Book[]> {
     .filter((tuple) => tuple.next !== undefined)
     .sort((a, b) => b.readAt.getTime() - a.readAt.getTime())
     .map((tuple) => tuple.next as Book)
-    .slice(0, 6)
 }

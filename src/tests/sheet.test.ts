@@ -204,7 +204,7 @@ describe('Sheet service', () => {
 
   it('Should build the next reads query correctly', async () => {
     const { STATUS, READ_AT, TITLE, UPDATED_AT } = CollectionColumns
-    await SheetService.getNextReads('TEST_SHEET_ID')
+    await SheetService.getNextReads('TEST_SHEET_ID', { threshold: 6 * 30 })
 
     expect(queryToString).toHaveBeenCalled()
     expect(queryToString.mock.instances[0].toObject()).toMatchObject({

@@ -710,6 +710,8 @@ dashboard:
     title: Leituras
     year: Ano
     month: Mês
+    nextReads: Próximas leituras
+    history: Histórico
   sheetChooser:
     title: Escolha uma planilha
     description: Você pode visualizar e editar outras planilhas compartilhadas.

@@ -705,6 +705,8 @@ dashboard:
     title: Readings
     year: Year
     month: Month
+    nextReads: Next reads
+    history: History
   sheetChooser:
     title: Pick a sheet
     description: You can view and edit other sheets shared with you.

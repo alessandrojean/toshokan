@@ -48,7 +48,7 @@ const { isLoading: latestReadingsLoading, data: latestReadingsItems } =
 
 // eslint-disable-next-line prettier/prettier
 const { isLoading: nextReadsLoading, data: nextReadsItems } =
-  useNextReadsQuery({ enabled })
+  useNextReadsQuery({ limit: 6 }, { enabled })
 
 const isDev = ref(import.meta.env.DEV)
 const queryClient = useQueryClient()

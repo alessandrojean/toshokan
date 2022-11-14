@@ -52,7 +52,7 @@ const { t } = useI18n({ useScope: 'global' })
     <ul class="flex flex-col sm:flex-row gap-2">
       <li v-if="previous" class="flex-1 shrink-0 min-w-0">
         <RouterLink
-          class="flex gap-2 items-center p-4 border dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-800/50 rounded-md group hover:shadow-md hover:-translate-y-0.5 motion-safe:transition will-change-transform"
+          class="flex gap-2 items-center p-4 border dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-800/50 rounded-md group hover:shadow-md hover:-translate-y-0.5 motion-safe:transition will-change-transform has-ring-focus"
           :to="{
             name: 'dashboard-library-book-id',
             params: { id: previous.id }
@@ -79,7 +79,7 @@ const { t } = useI18n({ useScope: 'global' })
       </li>
       <li v-if="next" class="flex-1 shrink-0 min-w-0">
         <RouterLink
-          class="flex gap-2 items-center p-4 border dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-800/50 rounded-md group hover:shadow-md hover:-translate-y-0.5 motion-safe:transition will-change-transform"
+          class="flex gap-2 items-center p-4 border dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-800/50 rounded-md group hover:shadow-md hover:-translate-y-0.5 motion-safe:transition will-change-transform has-ring-focus"
           :to="{ name: 'dashboard-library-book-id', params: { id: next.id } }"
         >
           <div class="flex-1 shrink-0 min-w-0">
