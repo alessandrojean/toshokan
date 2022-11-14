@@ -5,6 +5,7 @@ module.exports = {
     browser: true,
     node: true
   },
+  ignorePatterns: ['src/auto-imports.d.ts', 'src/components.d.ts'],
   extends: [
     'plugin:vue/vue3-essential',
     'prettier',
