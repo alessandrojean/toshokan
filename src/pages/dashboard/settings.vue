@@ -2,6 +2,7 @@
 import {
   computed,
   FunctionalComponent,
+  Ref,
   ref,
   watch,
   type WritableComputedRef
@@ -60,12 +61,6 @@ const sections = computed<Item[]>(() => {
   return buttons
 })
 
-const activeTab = ref(0)
-
-function handleTabChange(newIndex: number) {
-  activeTab.value = newIndex
-}
-
 interface PreferenceBase {
   key: string
   title: string
@@ -101,6 +96,7 @@ type PreferenceGroup = {
   key: string
   title: string
   preferences: Preference[]
+  hide?: boolean
 }
 
 const settingsStore = useSettingsStore()
@@ -281,6 +277,7 @@ const groups = computed<PreferenceGroup[]>(() => [
   {
     key: 'development',
     title: t('dashboard.settings.development.title'),
+    hide: !isDev.value,
     preferences: [
       {
         key: 'use-dev-sheet',
@@ -377,98 +374,95 @@ meta:
           </aside>
         </div>
         <div class="grow min-w-0 space-y-16 md:-mt-3">
-          <div
-            :id="group.key"
-            class="w-full scroll-mt-20"
-            v-for="group in groups"
-            :key="group.key"
-          >
-            <h2
-              class="text-lg sm:text-xl font-medium font-display sticky top-16 bg-white dark:bg-gray-900 py-3 border-b dark:border-b-gray-700 z-10"
-            >
-              {{ group.title }}
-            </h2>
-            <Preference
-              v-for="preference in group.preferences"
-              :key="preference.key"
-              :control-id="preference.controlId"
-              :title="preference.title"
-              :description="preference.description"
-              :always-horizontal="preference.type === 'switch'"
-            >
-              <LocaleSelector
-                v-if="preference.type === 'locale'"
-                v-model="locale"
-                class="w-56"
-              />
-              <select
-                v-else-if="preference.type === 'select'"
-                class="select w-44 h-auto"
-                :id="preference.controlId"
-                @change="updateSelectPreference(preference, $event)"
+          <template v-for="group in groups" :key="group.key">
+            <div v-if="!group.hide" :id="group.key" class="w-full scroll-mt-20">
+              <h2
+                class="text-lg sm:text-xl font-medium font-display sticky top-16 bg-white dark:bg-gray-900 py-3 border-b dark:border-b-gray-700 z-10"
               >
-                <option
-                  v-for="option in preference.options"
-                  :key="option.value"
-                  :value="option.value"
-                  :selected="option.value === preference.modelValue.value"
+                {{ group.title }}
+              </h2>
+              <Preference
+                v-for="preference in group.preferences"
+                :key="preference.key"
+                :control-id="preference.controlId"
+                :title="preference.title"
+                :description="preference.description"
+                :always-horizontal="preference.type === 'switch'"
+              >
+                <LocaleSelector
+                  v-if="preference.type === 'locale'"
+                  v-model="locale"
+                  class="w-56"
+                />
+                <select
+                  v-else-if="preference.type === 'select'"
+                  class="select w-44 h-auto"
+                  :id="preference.controlId"
+                  @change="updateSelectPreference(preference, $event)"
                 >
-                  {{ option.title }}
-                </option>
-              </select>
-              <SwitchGroup as="div" v-else-if="preference.type === 'switch'">
-                <SwitchLabel class="sr-only">
-                  {{ preference.title }}
-                </SwitchLabel>
-                <Switch
-                  :model-value="preference.modelValue.value"
-                  @update:model-value="
-                    updateSwitchPreference(preference, $event)
-                  "
-                  :class="
-                    preference.modelValue.value
-                      ? 'bg-primary-600 dark:bg-primary-500'
-                      : 'bg-gray-200 dark:bg-gray-600'
-                  "
-                  class="relative inline-flex items-center h-8 rounded-full w-14 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
-                >
-                  <div
-                    aria-hidden="true"
+                  <option
+                    v-for="option in preference.options"
+                    :key="option.value"
+                    :value="option.value"
+                    :selected="option.value === preference.modelValue.value"
+                  >
+                    {{ option.title }}
+                  </option>
+                </select>
+                <SwitchGroup as="div" v-else-if="preference.type === 'switch'">
+                  <SwitchLabel class="sr-only">
+                    {{ preference.title }}
+                  </SwitchLabel>
+                  <Switch
+                    :model-value="preference.modelValue.value"
+                    @update:model-value="
+                      updateSwitchPreference(preference, $event)
+                    "
                     :class="
                       preference.modelValue.value
-                        ? 'translate-x-7 dark:bg-white'
-                        : 'translate-x-1 dark:bg-gray-100'
+                        ? 'bg-primary-600 dark:bg-primary-500'
+                        : 'bg-gray-200 dark:bg-gray-600'
                     "
-                    class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                    class="relative inline-flex items-center h-8 rounded-full w-14 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
                   >
-                    <CheckIcon
-                      :class="[
-                        'w-4 h-4 motion-safe:transition-opacity duration-200 ease-in-out',
-                        'text-primary-600 dark:text-primary-500',
+                    <div
+                      aria-hidden="true"
+                      :class="
                         preference.modelValue.value
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      ]"
-                    />
-                  </div>
-                </Switch>
-              </SwitchGroup>
-              <Button
-                v-else-if="preference.type === 'action'"
-                v-bind="preference.buttonProps"
-                :id="preference.controlId"
-                @click="preference.action"
-              >
-                <template #left="{ iconClass }" v-if="preference.leftIcon">
-                  <component :is="preference.leftIcon" :class="iconClass" />
-                </template>
-                <template #right="{ iconClass }" v-if="preference.rightIcon">
-                  <component :is="preference.rightIcon" :class="iconClass" />
-                </template>
-                <span>{{ preference.buttonTitle }}</span>
-              </Button>
-            </Preference>
-          </div>
+                          ? 'translate-x-7 dark:bg-white'
+                          : 'translate-x-1 dark:bg-gray-100'
+                      "
+                      class="motion-safe:transition-transform duration-200 ease-in-out inline-block w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                    >
+                      <CheckIcon
+                        :class="[
+                          'w-4 h-4 motion-safe:transition-opacity duration-200 ease-in-out',
+                          'text-primary-600 dark:text-primary-500',
+                          preference.modelValue.value
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        ]"
+                      />
+                    </div>
+                  </Switch>
+                </SwitchGroup>
+                <Button
+                  v-else-if="preference.type === 'action'"
+                  v-bind="preference.buttonProps"
+                  :id="preference.controlId"
+                  @click="preference.action"
+                >
+                  <template #left="{ iconClass }" v-if="preference.leftIcon">
+                    <component :is="preference.leftIcon" :class="iconClass" />
+                  </template>
+                  <template #right="{ iconClass }" v-if="preference.rightIcon">
+                    <component :is="preference.rightIcon" :class="iconClass" />
+                  </template>
+                  <span>{{ preference.buttonTitle }}</span>
+                </Button>
+              </Preference>
+            </div>
+          </template>
         </div>
       </div>
     </div>
