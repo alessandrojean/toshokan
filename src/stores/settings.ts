@@ -59,8 +59,8 @@ window
 const isDevEnvironment = !!import.meta.env.DEV
 
 export type SpoilerMode = {
-  cover: boolean
-  synopsis: boolean
+  cover?: boolean
+  synopsis?: boolean
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -88,9 +88,9 @@ export const useSettingsStore = defineStore('settings', {
     },
 
     updateSpoilerMode(spoilerMode: SpoilerMode) {
-      this.spoilerMode.cover = spoilerMode.cover || this.spoilerMode.cover
+      this.spoilerMode.cover = spoilerMode.cover ?? this.spoilerMode.cover
       this.spoilerMode.synopsis =
-        spoilerMode.synopsis || this.spoilerMode.synopsis
+        spoilerMode.synopsis ?? this.spoilerMode.synopsis
     },
 
     updateTheme(theme: Theme) {

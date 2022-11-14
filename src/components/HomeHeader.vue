@@ -79,7 +79,7 @@ const { t } = useI18n({ useScope: 'global' })
           >
             <ArrowLeftOnRectangleIcon :class="[iconClass, 'rotate-180']" />
           </Button>
-          <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
+          <ProfileMenu v-if="authenticated" class="ml-3" light />
         </div>
       </div>
     </div>

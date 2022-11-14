@@ -14,7 +14,6 @@ export const ChangeTitleKey: InjectionKey<ChangeTitle> = Symbol('changeTitle')
 
 export type ShowAsideDialog = () => void
 export type ShowSearchDialog = (query?: string) => void
-export type ShowSettingsDialog = (delay?: number) => void
 export type DisableSearchShortcut = () => void
 export type EnableSearchShortcut = () => void
 export type SetNavbarTransparent = (value: boolean) => void
@@ -24,9 +23,6 @@ export const ShowAsideDialogKey: InjectionKey<ShowAsideDialog> =
 
 export const ShowSearchDialogKey: InjectionKey<ShowSearchDialog> =
   Symbol('showSearchDialog')
-
-export const ShowSettingsDialogKey: InjectionKey<ShowSettingsDialog> =
-  Symbol('showSettingsDialog')
 
 export const DisableSearchShortcutKey: InjectionKey<DisableSearchShortcut> =
   Symbol('disableSearchShortcut')

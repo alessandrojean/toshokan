@@ -85,7 +85,7 @@ const authorized = computed(() => authStore.authorized)
             {{ t('home.header.signIn') }}
           </span>
         </Button>
-        <ProfileMenu v-if="authenticated" class="ml-3" light hide-settings />
+        <ProfileMenu v-if="authenticated" class="ml-3" light />
       </div>
     </div>
   </header>

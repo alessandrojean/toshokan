@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { toRefs, AnchorHTMLAttributes } from 'vue'
+import { toRefs } from 'vue'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
 

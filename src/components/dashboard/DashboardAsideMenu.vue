@@ -91,7 +91,7 @@ const items = computed<Item[]>(() => [
     key: 'settings',
     label: t('dashboard.header.links.settings'),
     icon: Cog8ToothIcon,
-    to: { name: 'index' }
+    to: { name: 'dashboard-settings' }
   },
   {
     key: 'help-center',

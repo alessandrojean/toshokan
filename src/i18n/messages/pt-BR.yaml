@@ -619,6 +619,7 @@ dashboard:
   settings:
     title: Configurações
     save: Salvar
+    navigateTo: Navegar para
     appearence:
       title: Aparência
       description: Atualize suas configurações de aparência.

@@ -611,6 +611,7 @@ dashboard:
   settings:
     title: Settings
     save: Save
+    navigateTo: Navigate to
     appearence:
       title: Appearence
       description: Update your appearence settings.

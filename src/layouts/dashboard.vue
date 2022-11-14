@@ -12,8 +12,7 @@ import {
   EnableSearchShortcutKey,
   SetNavbarTransparentKey,
   ShowAsideDialogKey,
-  ShowSearchDialogKey,
-  ShowSettingsDialogKey
+  ShowSearchDialogKey
 } from '@/symbols'
 
 import BetaWarning from '@/components/BetaWarning.vue'
@@ -24,7 +23,6 @@ import DashboardFooter from '@/components/dashboard/DashboardFooter.vue'
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar.vue'
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import SearchDialog from '@/components/dialogs/SearchDialog.vue'
-import SettingsDialog from '@/components/dialogs/SettingsDialog.vue'
 
 const authStore = useAuthStore()
 const mainStore = useStore()
@@ -122,20 +120,6 @@ onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown)
 })
 
-const settingsDialogIsOpen = ref(false)
-
-function showSettingsDialog(delay = 200) {
-  setTimeout(() => {
-    settingsDialogIsOpen.value = true
-  }, delay)
-}
-
-function closeSettingsDialog() {
-  settingsDialogIsOpen.value = false
-}
-
-provide(ShowSettingsDialogKey, showSettingsDialog)
-
 const route = useRoute()
 
 const asideDialogOpen = ref(false)
@@ -205,11 +189,6 @@ const shared = computed(() => sheetStore.shared)
       ref="searchDialog"
       :is-open="searchDialogIsOpen"
       @close="closeSearchDialog"
-    />
-
-    <SettingsDialog
-      :is-open="settingsDialogIsOpen"
-      @close="closeSettingsDialog"
     />
 
     <BetaWarning />
