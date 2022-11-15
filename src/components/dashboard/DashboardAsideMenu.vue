@@ -6,7 +6,7 @@ import {
   BookOpenIcon,
   BookmarkIcon,
   ChevronDoubleLeftIcon,
-  ClockIcon,
+  // ClockIcon,
   Cog8ToothIcon,
   HomeIcon,
   LifebuoyIcon,
@@ -62,13 +62,13 @@ const items = computed<Item[]>(() => [
     icon: BookmarkIcon,
     to: { name: 'dashboard-readings' }
   },
-  {
-    key: 'history',
-    label: t('dashboard.header.links.history.title'),
-    // TODO: Replace with counter clockwise icon.
-    icon: ClockIcon,
-    to: { name: 'index' }
-  },
+  // {
+  //   key: 'history',
+  //   label: t('dashboard.header.links.history.title'),
+  //   // TODO: Replace with counter clockwise icon.
+  //   icon: ClockIcon,
+  //   to: { name: 'index' }
+  // },
   {
     key: 'statistics',
     label: t('dashboard.header.links.statistics'),
