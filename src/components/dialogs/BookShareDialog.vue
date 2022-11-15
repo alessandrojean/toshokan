@@ -82,7 +82,7 @@ watch(open, (isOpen) => {
 })
 
 watch([open, anonymous], async () => {
-  if (!book.value || !open.value) {
+  if ((!book.value && !data.value) || !open.value) {
     return
   }
 
@@ -91,7 +91,7 @@ watch([open, anonymous], async () => {
   }
 
   const fileSingle =
-    data.value ?? generateFileSingle(book.value, version.value, owner.value)
+    data.value ?? generateFileSingle(book.value!, version.value, owner.value)
   const blobSingle = new Blob([fileSingle], { type: 'application/gzip' })
   const bookSingle = parseFileSingle(fileSingle)
   const bookOwner = anonymous.value ? null : bookSingle.owner
@@ -197,7 +197,7 @@ function handleAnonymousChange(event: Event) {
         leave-to="opacity-0 scale-95"
       >
         <DialogPanel
-          class="flex flex-col md:inline-block w-full max-w-2xl lg:max-w-3xl px-6 py-4 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
+          class="flex flex-col md:inline-block w-full max-w-2xl lg:max-w-3xl px-6 py-4 my-8 overflow-hidden md:overflow-visible text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg space-y-3 ring-1 ring-black/5"
         >
           <div class="flex justify-between items-center flex-shrink-0">
             <DialogTitle
@@ -260,7 +260,7 @@ function handleAnonymousChange(event: Event) {
 
               <div
                 v-if="showUrlCopier && shareUrl.length > 0"
-                class="mt-8 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 p-1.5 rounded-md hidden md:flex focus-within:ring-2 focus-within:ring-primary-600 dark:focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-gray-800 motion-safe:transition-shadow"
+                class="mt-8 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 p-1.5 rounded-md hidden md:flex md:items-center focus-within:ring-2 focus-within:ring-primary-600 dark:focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-gray-800 motion-safe:transition-shadow"
               >
                 <input
                   type="text"
