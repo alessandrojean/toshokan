@@ -70,7 +70,12 @@ onMounted(() => {
     </FadeTransition>
 
     <div
-      class="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-white/40 sm:from-gray-900/80 via-white/70 sm:via-gray-900/60 to-white sm:to-gray-900/20"
+      :class="[
+        'absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r',
+        'from-white/40 sm:from-gray-900/80 dark:from-gray-800 sm:dark:from-gray-900/80',
+        'via-white/70 sm:via-gray-900/60 dark:via-gray-900/60 sm:dark:via-gray-900/60',
+        'to-white sm:to-gray-900/20 dark:to-gray-900 sm:dark:to-gray-900/20'
+      ]"
     />
   </div>
 </template>

@@ -5,7 +5,7 @@ import {
   BookmarkIcon as BookmarkSolidIcon,
   PencilIcon,
   StarIcon as StarSolidIcon
-} from '@heroicons/vue/20/solid'
+} from '@heroicons/vue/24/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
   ShareIcon,
@@ -42,46 +42,42 @@ const { t } = useI18n({ useScope: 'global' })
 const disabled = computed(() => loading.value || editing.value)
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
+const editIconOnly = breakpoints.smaller('md')
 const iconOnly = breakpoints.smaller('2xl')
+const large = breakpoints.greaterOrEqual('sm')
 </script>
 
 <template>
-  <div class="flex w-full justify-center sm:justify-start h-12" v-if="canEdit">
+  <div
+    class="flex w-full justify-center sm:justify-start items-center"
+    v-if="canEdit"
+  >
     <Button
       v-if="!loading"
-      class="sm:hidden"
-      size="large"
+      :size="large ? 'large' : 'normal'"
       @click="$emit('click:edit', $event)"
       :disabled="disabled"
-      icon-only
+      :icon-only="editIconOnly"
+      :kind="editIconOnly ? 'default' : 'primary'"
       :title="t('dashboard.details.header.edit')"
-      v-slot="{ iconClass }"
     >
-      <PencilIcon :class="iconClass" />
-    </Button>
-
-    <Button
-      v-if="!loading"
-      class="hidden sm:flex"
-      kind="primary"
-      size="large"
-      @click="$emit('click:edit', $event)"
-      :disabled="disabled"
-    >
-      <template #left="{ iconClass }">
+      <template #left="{ iconClass }" v-if="!editIconOnly">
         <PencilIcon :class="iconClass" />
       </template>
-      <span>{{ t('dashboard.details.header.edit') }}</span>
+      <template #default v-if="!editIconOnly">
+        <span>
+          {{ t('dashboard.details.header.edit') }}
+        </span>
+      </template>
+      <template #default="{ iconClass }" v-else>
+        <PencilIcon :class="iconClass" />
+      </template>
     </Button>
-    <div
-      v-else
-      class="hidden sm:block skeleton flex-1 md:flex-initial md:w-28 h-11"
-    />
 
     <Button
       v-if="!loading && !book!.isFuture"
       class="ml-2"
-      size="large"
+      :size="large ? 'large' : 'normal'"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
@@ -109,7 +105,7 @@ const iconOnly = breakpoints.smaller('2xl')
     <Button
       v-if="!loading"
       class="ml-2"
-      size="large"
+      :size="large ? 'large' : 'normal'"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
@@ -141,7 +137,7 @@ const iconOnly = breakpoints.smaller('2xl')
     <Button
       v-if="!loading"
       class="ml-2"
-      size="large"
+      :size="large ? 'large' : 'normal'"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.share')"
@@ -163,7 +159,7 @@ const iconOnly = breakpoints.smaller('2xl')
     <Button
       v-if="!loading"
       class="ml-2"
-      size="large"
+      :size="large ? 'large' : 'normal'"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.delete')"

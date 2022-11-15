@@ -31,7 +31,7 @@ const lastSeparator = computed(() => {
   <div class="flex flex-col sm:h-56 text-gray-700 sm:text-white/80 2xl:pr-52">
     <h2
       v-if="!loading"
-      class="pt-3 text-gray-900 sm:text-white/95 text-xl sm:text-2xl md:text-3xl font-display font-medium"
+      class="pt-3 text-gray-900 sm:text-white/95 dark:text-white/95 text-xl sm:text-2xl md:text-3xl font-display font-medium"
     >
       {{ book!.titleParts.main }}
     </h2>
@@ -43,14 +43,17 @@ const lastSeparator = computed(() => {
 
     <p
       v-if="!loading && book!.titleParts.subtitle"
-      class="font-display text-md sm:text-lg md:text-xl -mt-1 mb-2"
+      class="font-display text-md sm:text-lg sm:text-white/80 dark:text-white/80 md:text-xl -mt-1 mb-2"
     >
       {{ book!.titleParts.subtitle }}
     </p>
 
     <div class="flex-grow hidden sm:block" aria-hidden="true" />
 
-    <p v-if="!loading" class="text-sm md:text-base sm:text-white/90">
+    <p
+      v-if="!loading"
+      class="text-sm md:text-base sm:text-white/90 dark:text-white/90"
+    >
       <template v-for="(author, idx) of book!.authors" :key="idx">
         <a
           href="#"

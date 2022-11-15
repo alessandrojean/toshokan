@@ -221,7 +221,7 @@ const {
     }
 
     & .btn-icon {
-      @apply h-5 w-5;
+      @apply h-6 w-6;
     }
 
     .btn-left .btn-icon {
