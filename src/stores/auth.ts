@@ -14,7 +14,6 @@ const SCOPES = [
 ] as const
 
 type OAuthTokenClient = google.accounts.oauth2.TokenClient
-type TokenResponse = google.accounts.oauth2.TokenResponse
 
 type Credential = {
   name: string

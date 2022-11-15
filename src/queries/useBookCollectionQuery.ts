@@ -15,7 +15,7 @@ export default function useBookCollectionQuery(
 
   async function fetcher() {
     if (!book.value) {
-      return undefined
+      return null
     }
 
     return await fetch(getBooksFromCollection(sheetId.value!, book.value))
