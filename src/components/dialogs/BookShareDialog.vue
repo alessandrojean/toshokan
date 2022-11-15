@@ -21,7 +21,7 @@ import {
 
 export interface BookShareDialogProps {
   modelValue: boolean
-  book: Book | null | undefined
+  book?: Book | null | undefined
   data?: Uint8Array
   version: number
   showUrlCopier?: boolean

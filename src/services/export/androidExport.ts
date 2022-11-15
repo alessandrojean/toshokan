@@ -62,7 +62,7 @@ function mapBookToMessage(
   sheetVersion: number,
   owner: ToshokanOwner | undefined | null
 ): ToshokanBook {
-  return new ToshokanBook({
+  return ToshokanBook.fromObject({
     code: book.code!.trim(),
     group: book.group!.trim(),
     title: book.title!.trim(),
