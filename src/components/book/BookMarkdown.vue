@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DashboardBlock from '@/components/dashboard/DashboardBlock.vue'
 import type { UseMarkdownOptions } from '@/composables/useMarkdown'
 
 export interface BookButtonsProps {
@@ -36,7 +37,7 @@ const markdownRendered = computed(() => {
 
 const collapsed = ref(true)
 const showReadMore = ref(false)
-const content = ref<HTMLElement>()
+const content = ref<InstanceType<typeof DashboardBlock>>()
 const breakpoint = 208 // h-52
 
 async function handleReadMore() {
@@ -46,7 +47,7 @@ async function handleReadMore() {
     collapsed.value = true
     showReadMore.value = false
   } else {
-    showReadMore.value = (content.value?.offsetHeight ?? 0) > breakpoint
+    showReadMore.value = (content.value?.$el?.offsetHeight ?? 0) > breakpoint
     collapsed.value = showReadMore.value
   }
 }
