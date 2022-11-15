@@ -62,7 +62,7 @@ watch(open, (newOpen) => {
               class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
             />
 
-            <div class="absolute w-10 h-10 -right-12 -top-1">
+            <div class="hidden sm:block absolute w-10 h-10 -right-12 -top-1">
               <button
                 type="button"
                 class="close-button"
@@ -86,7 +86,7 @@ watch(open, (newOpen) => {
 
 <style lang="postcss" scoped>
 .dialog {
-  @apply fixed inset-0 z-20 md:p-12 lg:p-24
+  @apply fixed inset-0 z-20 p-6 md:p-12 lg:p-24
     flex flex-col items-center justify-center;
 }
 

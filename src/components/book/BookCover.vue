@@ -82,7 +82,10 @@ const { t } = useI18n({ useScope: 'global' })
 
 <template>
   <figure
-    class="group aspect-[var(--aspect)] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800 relative shadow-md"
+    :class="[
+      'group aspect-[var(--aspect)] rounded-xl overflow-hidden',
+      'bg-gray-200 dark:bg-gray-800 relative shadow-md'
+    ]"
     :style="{ aspectRatio: imageAspectRatio }"
   >
     <FadeTransition>
@@ -113,7 +116,7 @@ const { t } = useI18n({ useScope: 'global' })
 
     <button
       v-if="showBookCover"
-      class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 motion-safe:transition-opacity"
+      class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none motion-safe:transition-opacity"
       type="button"
       :title="t('dashboard.details.zoom.view')"
       @click="openDialog"

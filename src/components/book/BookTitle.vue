@@ -57,7 +57,7 @@ const lastSeparator = computed(() => {
       <template v-for="(author, idx) of book!.authors" :key="idx">
         <a
           href="#"
-          class="author has-ring-focus"
+          class="author"
           :title="t('dashboard.search.searchBy', [author])"
           @click.prevent="$emit('click:author', author)"
         >
@@ -80,8 +80,9 @@ const lastSeparator = computed(() => {
 
 <style lang="postcss" scoped>
 .author {
-  @apply font-medium hocus:text-white relative sm:text-white/95
+  @apply font-medium hocus:text-white relative sm:text-white/95 rounded-sm
     hocus:underline hocus:underline-offset-2 hocus:decoration-2
-    hocus:decoration-white/70;
+    hocus:decoration-white/70 focus:outline-none focus-visible:outline
+    focus-visible:outline-white/80 focus-visible:outline-2;
 }
 </style>

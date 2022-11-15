@@ -6,7 +6,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
 
 export interface BookNavigatorProps {
   book?: Book | null
-  collection?: Book[]
+  collection?: Book[] | null
   loading?: boolean
 }
 
@@ -25,7 +25,7 @@ const bookIdx = computed(() => {
 })
 
 const previous = computed(() => {
-  if (bookIdx.value === -1) {
+  if (bookIdx.value === -1 || !collection.value) {
     return null
   }
 
@@ -35,7 +35,7 @@ const previous = computed(() => {
 })
 
 const next = computed(() => {
-  if (bookIdx.value === -1) {
+  if (bookIdx.value === -1 || !collection.value) {
     return null
   }
 

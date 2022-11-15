@@ -80,19 +80,19 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
             @click="showSearchDialog()"
           >
             <span aria-hidden="true">
-              <MagnifyingGlassIcon class="w-4 h-4" />
+              <MagnifyingGlassIcon class="w-5 h-5" />
             </span>
             <span class="text-sm w-56 text-left">
               {{ t('dashboard.header.search.placeholder') }}
             </span>
             <span
               aria-hidden="true"
-              class="ctrl-k motion-safe:transition-colors motion-safe:duration-300 text-gray-300 group-hover:text-gray-200 group-focus-visible:text-gray-200 text-xs leading-5 px-1.5 border border-gray-500 group-hover:border-gray-400 group-focus-visible:border-gray-400 bg-gray-700 group-hover:bg-gray-700 group-focus-visible:bg-gray-700 rounded-md"
+              class="ctrl-k motion-safe:transition-colors motion-safe:duration-300 text-gray-300 text-xs leading-5 px-1.5 bg-gray-800 rounded-md"
             >
               <kbd class="font-sans">
-                <abbr title="Control" class="no-underline" v-if="!isMac"
-                  >{{ t('dashboard.header.search.ctrl') }}&nbsp;</abbr
-                >
+                <abbr title="Control" class="no-underline" v-if="!isMac">
+                  {{ t('dashboard.header.search.ctrl') }}&nbsp;
+                </abbr>
                 <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
               </kbd>
               <kbd class="font-sans">K</kbd>
@@ -162,15 +162,15 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
   .fake-search-input {
     @apply hidden lg:flex items-center pl-3 pr-2 py-2 mr-2
-      bg-gray-700 rounded-lg space-x-2
-      text-gray-300/80 motion-safe:transition-colors motion-safe:duration-300;
+      bg-gray-700 rounded-lg space-x-3 text-gray-300/80
+      motion-safe:transition-colors motion-safe:duration-300;
 
     &:where(:hover, :focus-visible) {
-      @apply bg-gray-600 text-gray-300;
+      @apply bg-gray-600 text-gray-200;
     }
 
     &:focus-visible {
-      @apply ring-offset-gray-800;
+      @apply ring-offset-gray-800 ring-primary-500;
     }
   }
 
@@ -182,7 +182,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
     &:where(:hover, :focus-visible) {
       @apply bg-white/90 supports-backdrop-blur:bg-white/80
         dark:bg-gray-900/80 dark:supports-backdrop-blur:bg-gray-900/70
-        text-gray-800 dark:text-gray-300;
+        text-gray-800 dark:text-gray-300 ring-primary-400;
     }
 
     .ctrl-k {

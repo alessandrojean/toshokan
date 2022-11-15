@@ -91,6 +91,7 @@ function handleContainerClick(event: MouseEvent) {
         'show-on-hover': blur && !showReadMore && markdownRendered?.length
       }"
       class="mt-3 prose prose-sm sm:prose-base dark:prose-invert max-w-none motion-safe:transition"
+      :inert="showReadMore && collapsed"
     />
     <div v-else class="flex flex-col space-y-2 mt-3" aria-hidden="true">
       <div class="skeleton w-full h-5"></div>

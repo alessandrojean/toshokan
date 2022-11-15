@@ -87,6 +87,10 @@ const {
     focus:outline-none
     disabled:cursor-default disabled:opacity-50;
 
+  &:focus-visible {
+    @apply !ring-offset-white dark:!ring-offset-gray-900;
+  }
+
   &.btn-icon-only {
     @apply justify-center;
   }
