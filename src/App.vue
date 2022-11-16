@@ -50,7 +50,7 @@ watch(
 )
 
 watch(locale, (newLocale) => {
-  changeTitle(route.meta.title)
+  changeTitle(t(route.meta.title))
   document.documentElement.lang = newLocale
   localStorage.setItem('locale', newLocale)
 })
