@@ -72,9 +72,9 @@ meta:
           <TabList class="flex gap-6 -mt-3" v-slot="{ selectedIndex }">
             <Tab
               :class="[
-                'font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
+                'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 0
-                  ? 'border-b-primary-600 text-primary-700'
+                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-400'
                   : 'border-b-transparent text-gray-600'
               ]"
             >
@@ -82,9 +82,9 @@ meta:
             </Tab>
             <Tab
               :class="[
-                'font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
+                'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 1
-                  ? 'border-b-primary-600 text-primary-700'
+                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-400'
                   : 'border-b-transparent text-gray-600'
               ]"
             >

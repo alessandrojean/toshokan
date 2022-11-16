@@ -52,13 +52,15 @@ const years = computed(() => {
   return [...new Set(all ?? [])]
 })
 
-const months = computed(() => {
+function monthsInYear(year: number) {
   const inYear = monthsYears.value?.filter(
-    (monthYear) => monthYear.year === selectedYear.value
+    (monthYear) => monthYear.year === year
   )
 
   return inYear?.map((monthYear) => monthYear.month) ?? []
-})
+}
+
+const months = computed(() => monthsInYear(selectedYear.value))
 
 watch(monthsYears, (monthsYears) => {
   const last = monthsYears?.[monthsYears.length - 1]
@@ -95,6 +97,14 @@ watch([selectedMonth, selectedYear], ([month, year]) => {
   emit('change', monthYear)
 })
 
+function handleSelectChange(event: Event) {
+  const select = event.target as HTMLSelectElement
+  const [year, month] = select.value.split('-')
+
+  selectedYear.value = parseInt(year, 10)
+  selectedMonth.value = parseInt(month, 10)
+}
+
 const monthFormatter = computed(() => {
   return new Intl.DateTimeFormat(locale.value, { month: 'short' })
 })
@@ -112,6 +122,12 @@ watch(readBooks, (readBooks) => {
     selectedMonth.value = months.value[months.value.length - 1]
   }
 })
+
+function monthYearName(month: number, year: number) {
+  const name = d(new Date(Date.UTC(year, month)), 'monthYear')
+
+  return name.charAt(0).toUpperCase() + name.slice(1)
+}
 </script>
 
 <route lang="yaml">
@@ -208,6 +224,25 @@ meta:
     </div>
 
     <div class="grow">
+      <div class="md:hidden mb-6" v-if="!loading && monthsYears">
+        <label for="month-select" class="sr-only">
+          {{ t('dashboard.readings.month') }}
+        </label>
+
+        <select id="month-select" class="select" @change="handleSelectChange">
+          <optgroup v-for="year in years" :key="year" :label="year.toString()">
+            <option
+              v-for="month in monthsInYear(year)"
+              :key="month.toString()"
+              :value="`${year}-${month}`"
+              :selected="selectedMonth === month && selectedYear === year"
+            >
+              {{ monthYearName(month, year) }}
+            </option>
+          </optgroup>
+        </select>
+      </div>
+
       <BookGrid
         :items="readBooks?.[selectedMonth]"
         kind="readings"
@@ -222,7 +257,7 @@ meta:
       >
         <template v-if="!readBooksLoading && !loading" #actions="{ book }">
           <div
-            class="bg-white select-none dark:bg-gray-600 text-sm shadow-lg rounded-full px-2 py-0.5 mt-1"
+            class="bg-white select-none dark:bg-gray-600 text-xs sm:text-sm shadow-lg rounded-full px-2 py-0.5 mt-1"
           >
             {{ d(book.readAt!, 'dayMonth') }}
           </div>
