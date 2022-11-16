@@ -196,6 +196,7 @@ const activeElement = useActiveElement()
 
 watch(booksFetching, (value) => {
   if (value) {
+    // @ts-ignore
     lastFocus.value = activeElement.value
     lastFocus.value?.blur()
   }

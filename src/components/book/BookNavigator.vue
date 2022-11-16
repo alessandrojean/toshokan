@@ -31,7 +31,7 @@ const previous = computed(() => {
 
   const previousIdx = bookIdx.value - 1
 
-  return previousIdx >= 0 ? collection.value[previousIdx] : null
+  return previousIdx >= 0 ? collection.value![previousIdx] : null
 })
 
 const next = computed(() => {
@@ -41,7 +41,7 @@ const next = computed(() => {
 
   const nextIdx = bookIdx.value + 1
 
-  return nextIdx < collection.value.length ? collection.value[nextIdx] : null
+  return nextIdx < collection.value!.length ? collection.value![nextIdx] : null
 })
 
 const { t } = useI18n({ useScope: 'global' })

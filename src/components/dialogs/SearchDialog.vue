@@ -129,6 +129,7 @@ const activeElement = useActiveElement()
 
 watch(isFetching, async (newIsFetching) => {
   if (newIsFetching) {
+    // @ts-ignore
     lastFocus.value = activeElement.value
     lastFocus.value?.blur()
 
