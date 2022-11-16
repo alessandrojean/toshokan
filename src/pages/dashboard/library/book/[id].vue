@@ -212,7 +212,7 @@ meta:
             v-if="book?.isbnData"
             :src="book.isbnData.flagUrl.rectangle"
             :alt="t('dashboard.details.flag', { region })"
-            class="inline-block z-10 w-6 aspect-[3/2] rounded-sm shadow absolute right-3 bottom-3 pointer-events-none"
+            class="inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3 pointer-events-none"
           />
         </BookCover>
 

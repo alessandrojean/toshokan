@@ -74,8 +74,8 @@ meta:
               :class="[
                 'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 0
-                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-400'
-                  : 'border-b-transparent text-gray-600'
+                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-100'
+                  : 'border-b-transparent text-gray-600 dark:text-gray-400'
               ]"
             >
               {{ t('dashboard.readings.nextReads') }}
@@ -84,8 +84,8 @@ meta:
               :class="[
                 'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 1
-                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-400'
-                  : 'border-b-transparent text-gray-600'
+                  ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-100'
+                  : 'border-b-transparent text-gray-600 dark:text-gray-400'
               ]"
             >
               {{ t('dashboard.readings.history') }}

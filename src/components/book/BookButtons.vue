@@ -44,7 +44,6 @@ const disabled = computed(() => loading.value || editing.value)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const editIconOnly = breakpoints.smaller('md')
 const iconOnly = breakpoints.smaller('2xl')
-const large = breakpoints.greaterOrEqual('sm')
 </script>
 
 <template>
@@ -54,7 +53,7 @@ const large = breakpoints.greaterOrEqual('sm')
   >
     <Button
       v-if="!loading"
-      :size="large ? 'large' : 'normal'"
+      size="large"
       @click="$emit('click:edit', $event)"
       :disabled="disabled"
       :icon-only="editIconOnly"
@@ -77,7 +76,7 @@ const large = breakpoints.greaterOrEqual('sm')
     <Button
       v-if="!loading && !book!.isFuture"
       class="ml-2"
-      :size="large ? 'large' : 'normal'"
+      size="large"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
@@ -105,7 +104,7 @@ const large = breakpoints.greaterOrEqual('sm')
     <Button
       v-if="!loading"
       class="ml-2"
-      :size="large ? 'large' : 'normal'"
+      size="large"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
@@ -137,7 +136,7 @@ const large = breakpoints.greaterOrEqual('sm')
     <Button
       v-if="!loading"
       class="ml-2"
-      :size="large ? 'large' : 'normal'"
+      size="large"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.share')"
@@ -159,7 +158,7 @@ const large = breakpoints.greaterOrEqual('sm')
     <Button
       v-if="!loading"
       class="ml-2"
-      :size="large ? 'large' : 'normal'"
+      size="large"
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="t('dashboard.details.header.options.delete')"

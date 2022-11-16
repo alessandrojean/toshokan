@@ -38,7 +38,7 @@ const lastSeparator = computed(() => {
     <div
       v-else
       aria-hidden="true"
-      class="mt-3 skeleton w-72 h-8 mb-2 bg-white/50 dark:bg-white/30"
+      class="mt-3 skeleton w-44 sm:w-72 h-8 mb-2 bg-white/50 dark:bg-white/30"
     />
 
     <p
@@ -72,7 +72,7 @@ const lastSeparator = computed(() => {
     </p>
     <div
       v-else
-      class="skeleton h-6 w-44 bg-white/50 dark:bg-white/30"
+      class="skeleton h-6 w-40 bg-white/50 dark:bg-white/30"
       aria-hidden="true"
     />
   </div>
