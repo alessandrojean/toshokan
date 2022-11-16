@@ -172,7 +172,6 @@ const collapsed = useLocalStorage('aside-collapsed', false)
                   :active="
                     active(item.active, item.exact, isExactActive, isActive)
                   "
-                  :icon-only="collapsed"
                   @click="
                     item.external
                       ? navigate($event)

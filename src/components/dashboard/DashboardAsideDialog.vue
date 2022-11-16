@@ -16,16 +16,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { isOpen, libraryGroups } = toRefs(props)
 
 const { t } = useI18n({ useScope: 'global' })
-
-function handleNavigate(route: RouteLocation) {
-  // Handle the case where the buttons have childrens and are
-  // rendered as disposables. In this case we don't want the
-  // dialog to be closed immediately as the user may want to
-  // navigate to a inner item after the disclosure panel is open.
-  if (route.name !== 'dashboard-library') {
-    emit('close')
-  }
-}
 </script>
 
 <script lang="ts">
@@ -61,7 +51,7 @@ export default { inheritAttrs: false }
             <DashboardAsideMenu
               :library-groups="libraryGroups"
               v-bind="$attrs"
-              @navigate="handleNavigate"
+              @navigate="$emit('close')"
             >
               <template #logo>
                 <DialogTitle>
