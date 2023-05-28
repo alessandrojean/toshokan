@@ -100,7 +100,7 @@
     "eslint-plugin-vue": "9.7.0",
     "git-describe": "4.1.1",
     "husky": "8.0.2",
-    "jsdom": "20.0.2",
+    "jsdom": "22.1.0",
     "postcss": "8.4.19",
     "postcss-loader": "7.0.1",
     "prettier": "2.7.1",
