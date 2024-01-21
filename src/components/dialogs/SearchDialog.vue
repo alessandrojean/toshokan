@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import PaginatorUtil from 'paginator'
 import { useActiveElement, useDebounceFn } from '@vueuse/core'
+import PaginatorUtil from 'paginator'
 
 import { useI18n } from '@/i18n'
 import { PER_PAGE } from '@/services/sheet/constants'
 import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 import {
-  BarsArrowUpIcon,
-  BarsArrowDownIcon,
-  XMarkIcon
+BarsArrowDownIcon,
+BarsArrowUpIcon,
+XMarkIcon
 } from '@heroicons/vue/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
@@ -396,6 +396,8 @@ const state = ref<State>('history')
                 'py-4 px-5 flex items-center space-x-3 md:space-x-4 shrink-0',
                 'border-b border-gray-300 dark:border-gray-600 relative overflow-y-hidden'
               ]"
+              autocomplete="off"
+              @submit.prevent="search(searchInput!!.value)"
             >
               <span aria-hidden="true" class="w-6 h-6 relative">
                 <MagnifyingGlassIcon
@@ -415,6 +417,7 @@ const state = ref<State>('history')
                     ref="searchInput"
                     class="search-input"
                     spellcheck="false"
+                    autocorrect="off"
                     role="combobox"
                     aria-controls="search-options"
                     aria-labelledby="search-label"
