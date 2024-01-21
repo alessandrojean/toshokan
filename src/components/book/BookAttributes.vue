@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
 import type { MonetaryValue } from '@/model/Book'
+import Book from '@/model/Book'
 import type { SheetTimezone } from '@/services/sheet/getTimeZone'
+import { hyphenate } from '@/util/isbn'
 
 import {
-  ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon
+ArrowTrendingDownIcon,
+ArrowTrendingUpIcon
 } from '@heroicons/vue/20/solid'
 
 export interface BookButtonsProps {
@@ -88,7 +89,8 @@ const metadata = computed(() => {
     },
     {
       title: book.value?.codeType ?? t('book.properties.code'),
-      value: book.value?.code
+      value: book.value?.codeType === 'ISBN-10' || book.value?.codeType === 'ISBN-13'
+        ? hyphenate(book.value!!.code!!) : book.value?.code
     },
     {
       title: t('book.properties.publisher'),

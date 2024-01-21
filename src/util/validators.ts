@@ -1,4 +1,5 @@
 import { helpers } from '@vuelidate/validators'
+import ISBN from 'isbn3'
 
 export function decimalComma(digits: number) {
   return helpers.regex(new RegExp(`^\\d+([\\,\\.]\\d{1,${digits}})?$`))
@@ -6,32 +7,8 @@ export function decimalComma(digits: number) {
 
 export const dimension = decimalComma(2)
 
-export function isbn(isbn?: string) {
-  isbn = isbn?.replace(/-/g, '') ?? ''
-
-  if (isbn.length !== 10 && isbn.length !== 13) {
-    return false
-  }
-
-  if (!isbn.match(/^(978|979)[0-9]{10}$|^[0-9]{9}[0-9xX]{1}$/)) {
-    return false
-  }
-
-  if (isbn.length === 10) {
-    const sum = isbn
-      .split('')
-      .map((d, i) => (10 - i) * (d === 'X' ? 10 : parseInt(d, 10)))
-      .reduce((acm, cv) => acm + cv)
-
-    return sum % 11 === 0
-  }
-
-  const sum = isbn
-    .split('')
-    .map((d, i) => ((i + 1) % 2 === 0 ? 3 : 1) * parseInt(d, 10))
-    .reduce((acm, cv) => acm + cv)
-
-  return sum % 10 === 0
+export function isbn(isbn?: string): boolean {
+  return isbn !== null && isbn !== undefined && ISBN.parse(isbn) !== null
 }
 
 export function issn(issn?: string) {

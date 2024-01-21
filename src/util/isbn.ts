@@ -1,3 +1,4 @@
+import ISBN from 'isbn3'
 import { getFlagUrl } from '.'
 import { isbn as isValidIsbn } from './validators'
 
@@ -12,14 +13,11 @@ export function convertIsbn13ToIsbn10(isbn13?: string) {
     return isbn13
   }
 
-  const equalPart = isbn13.slice(3, -1)
-  const sum = equalPart
-    .split('')
-    .map((d, i) => parseInt(d, 10) * (i + 1))
-    .reduce((acm, crr) => acm + crr, 0)
-  const lastDigit = sum % 11
+  return ISBN.asIsbn10(isbn13)
+}
 
-  return equalPart + (lastDigit === 10 ? 'X' : lastDigit)
+export function hyphenate(isbn: string): string | null {
+  return isValidIsbn(isbn) ? ISBN.hyphenate(isbn) : null
 }
 
 // TODO: handle additional cases.
