@@ -3,10 +3,10 @@ import Book from '@/model/Book'
 import type { SpoilerMode } from '@/stores/settings'
 
 import {
-  ExclamationCircleIcon,
-  EyeIcon,
-  MagnifyingGlassPlusIcon,
-  PhotoIcon
+ExclamationCircleIcon,
+EyeIcon,
+MagnifyingGlassPlusIcon,
+PhotoIcon
 } from '@heroicons/vue/24/outline'
 
 export interface BookCoverProps {
@@ -116,7 +116,7 @@ const { t } = useI18n({ useScope: 'global' })
 
     <button
       v-if="showBookCover"
-      class="z-10 bg-gray-900/60 flex items-center justify-center absolute inset-0 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none motion-safe:transition-opacity"
+      class="z-10 bg-gray-900/60 flex items-center justify-center absolute w-full h-full inset-0 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:outline-none motion-safe:transition-opacity"
       type="button"
       :title="t('dashboard.details.zoom.view')"
       @click="openDialog"
