@@ -21,8 +21,8 @@ dependencies:
     specifier: 0.5.8
     version: 0.5.8(tailwindcss@3.2.4)
   '@tanstack/vue-query':
-    specifier: 4.17.0
-    version: 4.17.0(vue@3.2.45)
+    specifier: 5.17.19
+    version: 5.17.19(vue@3.2.45)
   '@vuelidate/core':
     specifier: 2.0.0
     version: 2.0.0(vue@3.2.45)
@@ -3811,24 +3811,24 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core@4.15.1:
-    resolution: {integrity: sha512-+UfqJsNbPIVo0a9ANW0ZxtjiMfGLaaoIaL9vZeVycvmBuWywJGtSi7fgPVMCPdZQFOzMsaXaOsDtSKQD5xLRVQ==}
+  /@tanstack/query-core@5.17.19:
+    resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
     dev: false
 
-  /@tanstack/vue-query@4.17.0(vue@3.2.45):
-    resolution: {integrity: sha512-0yvehdeEhNlqyhPp1v+8gTe9wTGqsT+sy3aoLokUoTJ6wt9gBslAtunWAIyXob/SNblkVJjY9Isr1vEWvdZl8g==}
+  /@tanstack/vue-query@5.17.19(vue@3.2.45):
+    resolution: {integrity: sha512-8LsQmOy44qV1FxAPukjhdEYvcDoRq4P+PRkKeig7EsdfgaopxhSH+/GpxyDZiyEfU2Rg/JYQ3p88ufQYV424Sw==}
     peerDependencies:
       '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
+      vue: ^2.6.0 || ^3.3.0
     peerDependenciesMeta:
       '@vue/composition-api':
         optional: true
     dependencies:
       '@tanstack/match-sorter-utils': 8.11.7
-      '@tanstack/query-core': 4.15.1
+      '@tanstack/query-core': 5.17.19
       '@vue/devtools-api': 6.5.1
       vue: 3.2.45
-      vue-demi: 0.13.11(vue@3.2.45)
+      vue-demi: 0.14.6(vue@3.2.45)
     dev: false
 
   /@testing-library/dom@8.20.1:
@@ -10858,6 +10858,7 @@ packages:
       react: 16.14.0
       scheduler: 0.19.1
     dev: true
+    bundledDependencies: false
 
   /react-dom@18.2.0(react@18.2.0):
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
@@ -10911,6 +10912,7 @@ packages:
       object-assign: 4.1.1
       prop-types: 15.8.1
     dev: true
+    bundledDependencies: false
 
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
