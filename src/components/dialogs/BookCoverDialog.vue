@@ -24,6 +24,15 @@ const enableSearchShortcut = injectStrict(EnableSearchShortcutKey, () => {})
 watch(open, (newOpen) => {
   newOpen ? disableSearchShortcut() : enableSearchShortcut()
 })
+
+const aspectRatio = ref('2 / 3')
+const imageEl = ref<HTMLImageElement>()
+
+function onImageLoad() {
+  if (imageEl.value) {
+    aspectRatio.value = `${imageEl.value.naturalWidth} / ${imageEl.value.naturalHeight}`
+  }
+}
 </script>
 
 <template>
@@ -51,7 +60,10 @@ watch(open, (newOpen) => {
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogPanel class="dialog-content">
+          <DialogPanel
+            class="dialog-content"
+            :style="{ '--aspect-ratio': aspectRatio }"
+          >
             <DialogTitle as="h3" class="sr-only">
               {{ t('dashboard.details.zoom.title') }}
             </DialogTitle>
@@ -60,6 +72,8 @@ watch(open, (newOpen) => {
               :src="coverUrl"
               alt=""
               class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
+              ref="imageEl"
+              @load="onImageLoad"
             />
 
             <div class="hidden sm:block absolute w-10 h-10 -right-12 -top-1">
@@ -93,7 +107,7 @@ watch(open, (newOpen) => {
 .dialog-content {
   @apply relative flex flex-col items-center align-middle
     min-w-0 max-w-full min-h-0 max-h-full overflow-visible
-    text-left bg-white dark:bg-gray-800
+    text-left bg-white dark:bg-gray-800 w-fit h-fit aspect-[var(--aspect-ratio)]
     shadow-xl rounded-xl ring-1 ring-black/5;
 }
 
