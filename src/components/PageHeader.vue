@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {
-  BuildingLibraryIcon,
-  ArrowLeftOnRectangleIcon
+ArrowLeftStartOnRectangleIcon,
+BuildingLibraryIcon
 } from '@heroicons/vue/20/solid'
 
 const { t } = useI18n({ useScope: 'global' })
@@ -70,7 +70,7 @@ const authorized = computed(() => authStore.authorized)
           v-if="!authenticated"
         >
           <span aria-hidden="true">
-            <ArrowLeftOnRectangleIcon class="w-5 h-5 rotate-180" />
+            <ArrowLeftStartOnRectangleIcon class="w-5 h-5 rotate-180" />
           </span>
           <span class="sr-only">
             {{ t('home.header.signIn') }}

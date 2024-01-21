@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import {
-  Cog8ToothIcon,
-  ChevronDownIcon,
-  ArrowLeftOnRectangleIcon,
-  QuestionMarkCircleIcon
-} from '@heroicons/vue/20/solid'
+ArrowLeftStartOnRectangleIcon,
+Cog8ToothIcon,
+QuestionMarkCircleIcon
+} from '@heroicons/vue/16/solid'
+import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 export interface ProfileMenuProps {
   light?: boolean
@@ -81,7 +81,7 @@ function signOut() {
             >
               <span aria-hidden="true">
                 <Cog8ToothIcon
-                  class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400"
+                  class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400"
                 />
               </span>
               {{ t('dashboard.header.menu.settings') }}
@@ -99,7 +99,7 @@ function signOut() {
             >
               <span aria-hidden="true">
                 <QuestionMarkCircleIcon
-                  class="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400"
+                  class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400"
                 />
               </span>
               {{ t('dashboard.header.menu.help') }}
@@ -112,13 +112,13 @@ function signOut() {
               type="button"
               :class="[
                 active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                'group flex items-start w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
               ]"
               @click.stop="signOut"
             >
               <span aria-hidden="true">
-                <ArrowLeftOnRectangleIcon
-                  class="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
+                <ArrowLeftStartOnRectangleIcon
+                  class="w-4 h-4 mr-3 text-red-500 group-hover:text-red-600 dark:text-red-400 dark:group-hover:text-red-500"
                 />
               </span>
               {{ t('dashboard.header.menu.signOut') }}

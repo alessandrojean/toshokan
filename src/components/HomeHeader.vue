@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
-import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
+import { ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/solid'
 
 const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)
@@ -68,7 +68,7 @@ const { t } = useI18n({ useScope: 'global' })
             v-if="!authenticated"
             v-slot="{ iconClass }"
           >
-            <ArrowLeftOnRectangleIcon :class="[iconClass, 'rotate-180']" />
+            <ArrowLeftStartOnRectangleIcon :class="[iconClass, 'rotate-180']" />
           </Button>
           <ProfileMenu v-if="authenticated" class="ml-3" light />
         </div>
