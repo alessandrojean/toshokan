@@ -84,21 +84,13 @@ watch(open, (newOpen) => {
           </p>
 
           <div class="flex items-center justify-center p-6">
-            <div
-              class="w-48 h-48 relative rounded overflow-hidden border border-gray-300 dark:border-0 bg-white p-1 dark:opacity-90"
-            >
+            <a href='https://ko-fi.com/F1F2FRCOX' target='_blank'>
               <img
-                src="@/assets/donations/qrcode-picpay.svg"
-                class="w-full h-full"
-              />
-
-              <div
-                aria-hidden="true"
-                class="p-2 bg-picpay absolute right-0 bottom-0 rounded-tl-xl"
+                class="h-[36px] border-none"
+                src='https://storage.ko-fi.com/cdn/kofi3.png?v=3'
+                alt='Buy Me a Coffee at ko-fi.com'
               >
-                <PicPayIcon class="w-6 h-6 text-white" />
-              </div>
-            </div>
+            </a>
           </div>
         </DialogPanel>
       </TransitionChild>
