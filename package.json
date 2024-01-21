@@ -2,9 +2,6 @@
   "name": "toshokan",
   "version": "0.3.2",
   "private": true,
-  "engines": {
-    "node": "21.x"
-  },
   "scripts": {
     "build": "vue-tsc && vite build",
     "dev": "vite",
