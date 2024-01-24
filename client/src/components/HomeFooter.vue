@@ -1,22 +1,26 @@
 <script lang="ts" setup>
-import type { RouteLocationRaw } from 'vue-router'
 import { useI18n } from '@/i18n'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
 interface Link {
-  route: RouteLocationRaw
+  href: string
   text: string
 }
 
+const baseUrl = computed(() => {
+  const localePath = locale.value === 'pt-BR' ? '/pt' : ''
+  return 'https://alessandrojean.github.io/toshokan' + localePath
+})
+
 const links = computed<Link[]>(() => [
-  { route: '/help/general/accessibility', text: t('footer.links.a11y') },
-  { route: '/help/guide/instructions', text: t('footer.links.instructions') },
+  { href: `${baseUrl.value}/general/accessibility`, text: t('footer.links.a11y') },
+  { href: `${baseUrl.value}/guides/instructions`, text: t('footer.links.instructions') },
   {
-    route: '/help/general/privacy-policy',
+    href: `${baseUrl.value}/general/privacy-policy`,
     text: t('footer.links.privacyPolicy'),
   },
-  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') },
+  { href: `${baseUrl.value}/general/terms-of-use`, text: t('footer.links.termsOfUse') },
 ])
 </script>
 
@@ -29,9 +33,9 @@ const links = computed<Link[]>(() => [
     <nav>
       <ul>
         <li v-for="(link, i) of links" :key="i">
-          <RouterLink :to="link.route">
+          <a :href="link.href" target="_blank">
             {{ link.text }}
-          </RouterLink>
+          </a>
         </li>
       </ul>
     </nav>

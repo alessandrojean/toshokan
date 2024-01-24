@@ -32,29 +32,3 @@ export const EnableSearchShortcutKey: InjectionKey<EnableSearchShortcut>
 
 export const SetNavbarTransparentKey: InjectionKey<SetNavbarTransparent>
   = Symbol('setNavbarTransparent')
-
-/**
- * Help
- */
-
-export type RebuildPageContents = (resetPosition?: boolean) => void
-export interface DocumentationPage {
-  order: number
-  slug: string
-  locale: string
-  title: string
-  content: () => Promise<string>
-}
-export interface DocumentationCategory {
-  order: number
-  category: string
-  pages: DocumentationPage[]
-}
-export type Documentation = DocumentationCategory[]
-
-export const RebuildPageContentsKey: InjectionKey<RebuildPageContents> = Symbol(
-  'rebuildPageContents',
-)
-
-export const DocumentationKey: InjectionKey<Documentation>
-  = Symbol('documentation')

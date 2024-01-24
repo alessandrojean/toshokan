@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<ProfileMenuProps>(), {
 
 const { light, transparent } = toRefs(props)
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const authStore = useAuthStore()
 
 const profileImageUrl = computed(() => authStore.profileImageUrl)
@@ -26,6 +26,11 @@ const profileImageUrl = computed(() => authStore.profileImageUrl)
 function signOut() {
   authStore.signOut()
 }
+
+const instructionsLink = computed(() => {
+  const localePath = locale.value === 'pt-BR' ? 'pt/' : ''
+  return `https://alessandrojean.github.io/toshokan/${localePath}guides/instructions`
+})
 </script>
 
 <template>
@@ -88,8 +93,9 @@ function signOut() {
             </RouterLink>
           </MenuItem>
           <MenuItem v-slot="{ active }">
-            <RouterLink
-              to="/help/guide/instructions"
+            <a
+              target="_blank"
+              :href="instructionsLink"
               :class="[
                 active
                   ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
@@ -103,7 +109,7 @@ function signOut() {
                 />
               </span>
               {{ t('dashboard.header.menu.help') }}
-            </RouterLink>
+            </a>
           </MenuItem>
         </div>
         <div class="pt-1">
