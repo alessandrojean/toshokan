@@ -259,9 +259,6 @@ devDependencies:
   git-describe:
     specifier: 4.1.1
     version: 4.1.1
-  husky:
-    specifier: 8.0.3
-    version: 8.0.3
   jsdom:
     specifier: 24.0.0
     version: 24.0.0
@@ -2657,8 +2654,8 @@ packages:
       '@types/gapi.client.discovery-v1': 0.0.4
     dev: false
 
-  /@maxim_mazurok/gapi.client.sheets-v4@0.0.20240102:
-    resolution: {integrity: sha512-P8sxU5sPlqPjGURyzUP867Rw+ygFe5oSXCcD6eL9nkifMyzEC1EXY/rxZNmUQJ3IW2tDJ4xRBa/fv1K+5HmjOA==}
+  /@maxim_mazurok/gapi.client.sheets-v4@0.0.20240116:
+    resolution: {integrity: sha512-CMBiBXwn3SA5kbMPPaABcb2jIa+1nYwljDCFvmYgGLPcHJ4AXGZRYrRc9O2dbGp9ocyxDD4+ijFoHTPy5sJ5HQ==}
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -5571,7 +5568,7 @@ packages:
   /@types/gapi.client.sheets-v4@0.0.4:
     resolution: {integrity: sha512-6kTJ7aDMAElfdQV1XzVJmZWjgbibpa84DMuKuaN8Cwqci/dkglPyHXKvsGrRugmuYvgFYr35AQqwz6j3q8R0dw==}
     dependencies:
-      '@maxim_mazurok/gapi.client.sheets-v4': 0.0.20240102
+      '@maxim_mazurok/gapi.client.sheets-v4': 0.0.20240116
     dev: false
 
   /@types/gapi.client@1.0.8:
@@ -10174,12 +10171,6 @@ packages:
   /human-signals@5.0.0:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
-
-  /husky@8.0.3:
-    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: true
 
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}

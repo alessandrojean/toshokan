@@ -41,7 +41,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
+        working-directory: client
       - name: Run tests
         run: pnpm test
+        working-directory: client
       - name: Run build
         run: pnpm build
+        working-directory: client

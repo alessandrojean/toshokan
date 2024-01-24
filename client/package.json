@@ -106,7 +106,6 @@
     "eslint-plugin-storybook": "0.6.15",
     "eslint-plugin-vue": "9.20.1",
     "git-describe": "4.1.1",
-    "husky": "8.0.3",
     "jsdom": "24.0.0",
     "postcss": "8.4.33",
     "postcss-loader": "8.0.0",
