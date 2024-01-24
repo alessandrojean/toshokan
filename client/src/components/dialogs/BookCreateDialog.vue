@@ -220,6 +220,7 @@ const { data: timeZone } = useTimeZoneQuery({
 })
 
 function formatPrice({ value, currency }: MonetaryValue) {
+  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
@@ -558,14 +559,14 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery({
                     <template #synopsis="{ value }">
                       <div
                         class="prose prose-sm dark:prose-invert leading-normal"
-                        v-html="renderMarkdown(value)"
+                        v-html="renderMarkdown(value ?? '')"
                       />
                     </template>
 
                     <template #notes="{ value }">
                       <div
                         class="prose prose-sm dark:prose-invert leading-normal"
-                        v-html="renderMarkdown(value)"
+                        v-html="renderMarkdown(value ?? '')"
                       />
                     </template>
                   </DescriptionList>

@@ -116,6 +116,7 @@ const expenses = computed(() => ({
     yaxis: {
       labels: {
         formatter: (value) => {
+          // @ts-ignore
           return n(value, 'currency', {
             currency: stats.value!.money?.currency ?? 'USD',
           })

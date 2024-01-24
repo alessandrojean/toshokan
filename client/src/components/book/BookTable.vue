@@ -91,6 +91,7 @@ function currency(currency: string) {
 function value(currencyValue: string, value: number) {
   const currencySymbol = currency(currencyValue)
 
+  // @ts-ignore
   return n(value, 'currency', { currency: currencyValue })
     .replace(currencySymbol, '')
     .trim()
@@ -397,7 +398,7 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   if (topCheckbox.value) {
     topCheckbox.value.indeterminate
       = selection.value.length > 0
-      && selection.value.length < (items.value?.length ?? '')
+      && selection.value.length < (items.value?.length ?? 0)
   }
 
   nextTick(() => focus())

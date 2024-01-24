@@ -5,7 +5,7 @@ import {
 import type {
   DefaultDateTimeFormatSchema,
   DefaultNumberFormatSchema,
-  type UseI18nOptions,
+  UseI18nOptions,
 } from 'vue-i18n'
 
 import messages from '@intlify/unplugin-vue-i18n/messages'
@@ -56,6 +56,8 @@ export default createI18n<object, Locale>({
   numberFormats,
   messages: messages as Record<Locale, any>,
 })
+
+useI18nBroken
 
 export function useI18n(options: UseI18nOptions) {
   const i18n = useI18nBroken(options)

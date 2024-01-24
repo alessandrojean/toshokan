@@ -238,6 +238,7 @@ meta:
             <StatCard
               :title="t('dashboard.home.overview.stats.totalExpense')"
               :value="
+                // @ts-ignore
                 n(stats?.money?.totalSpentPaid || 0.0, 'currency', {
                   currency: stats?.money?.currency || 'USD',
                 })
@@ -255,6 +256,7 @@ meta:
             <StatCard
               :title="t('dashboard.home.overview.stats.totalSavings')"
               :value="
+                // @ts-ignore
                 n(stats?.money?.saved || 0.0, 'currency', {
                   currency: stats?.money?.currency || 'USD',
                 })

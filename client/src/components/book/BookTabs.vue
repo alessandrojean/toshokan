@@ -92,6 +92,7 @@ function formatPrice(price: MonetaryValue | null | undefined) {
 
   const { value, currency } = price
 
+  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 

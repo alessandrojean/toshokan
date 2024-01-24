@@ -290,12 +290,12 @@ function updateSwitchPreference(preference: SwitchPreference, value: boolean) {
 const queryClient = useQueryClient()
 
 watch(locale, () => {
-  queryClient.invalidateQueries(['statistics'])
-  queryClient.invalidateQueries(['last-added'])
-  queryClient.invalidateQueries(['latest-readings'])
-  queryClient.invalidateQueries(['books'])
-  queryClient.invalidateQueries(['book'])
-  queryClient.invalidateQueries(['reading-months'])
+  queryClient.invalidateQueries({ queryKey: ['statistics'] })
+  queryClient.invalidateQueries({ queryKey: ['last-added'] })
+  queryClient.invalidateQueries({ queryKey: ['latest-readings'] })
+  queryClient.invalidateQueries({ queryKey: ['books'] })
+  queryClient.invalidateQueries({ queryKey: ['book'] })
+  queryClient.invalidateQueries({ queryKey: ['reading-months'] })
 })
 
 watch(useDevSheet, async () => {

@@ -116,7 +116,7 @@ function handleKeydown(event: KeyboardEvent) {
           :disabled="!paginationInfo.has_previous_page || !enabled"
           :tabindex="tabIndex(0)"
           @click.stop="changePage(1)"
-          @keydown="handleKeydown($event, 0)"
+          @keydown="handleKeydown($event)"
         >
           <span class="sr-only">{{ t('pagination.firstPage') }}</span>
           <span aria-hidden="true">
@@ -132,7 +132,7 @@ function handleKeydown(event: KeyboardEvent) {
           :disabled="!paginationInfo.has_previous_page || !enabled"
           :tabindex="tabIndex(1)"
           @click.stop="changePage(paginationInfo.previous_page)"
-          @keydown="handleKeydown($event, 1)"
+          @keydown="handleKeydown($event)"
         >
           <span class="sr-only">{{ t('pagination.previousPage') }}</span>
           <span aria-hidden="true">
@@ -152,7 +152,7 @@ function handleKeydown(event: KeyboardEvent) {
           :disabled="!enabled"
           :tabindex="tabIndex(pageIdx + 1)"
           @click.stop="changePage(paginationInfo.first_page + pageIdx - 1)"
-          @keydown="handleKeydown($event, pageIdx + 1)"
+          @keydown="handleKeydown($event)"
         >
           <span v-if="isCurrent(pageIdx)" class="sr-only">
             {{ t('pagination.current') }}
@@ -171,7 +171,7 @@ function handleKeydown(event: KeyboardEvent) {
           :disabled="!paginationInfo.has_next_page || !enabled"
           :tabindex="tabIndex(links + 2)"
           @click.stop="changePage(paginationInfo.next_page)"
-          @keydown="handleKeydown($event, links + 2)"
+          @keydown="handleKeydown($event)"
         >
           <span class="sr-only">{{ t('pagination.nextPage') }}</span>
           <span aria-hidden="true">
@@ -187,7 +187,7 @@ function handleKeydown(event: KeyboardEvent) {
           :disabled="!paginationInfo.has_next_page || !enabled"
           :tabindex="tabIndex(links + 3)"
           @click.stop="changePage(paginationInfo.total_pages)"
-          @keydown="handleKeydown($event, links + 3)"
+          @keydown="handleKeydown($event)"
         >
           <span class="sr-only">{{ t('pagination.lastPage') }}</span>
           <span aria-hidden="true">

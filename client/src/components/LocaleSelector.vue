@@ -49,7 +49,7 @@ const localeFlags: Record<Locale, string> = {
           @change="
             $emit(
               'update:modelValue',
-              ($event.target! as HTMLSelectElement).value,
+              ($event.target! as HTMLSelectElement).value as Locale,
             )
           "
         >

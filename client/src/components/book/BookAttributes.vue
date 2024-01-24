@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<BookButtonsProps>(), {
   timeZone: undefined,
 })
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'click:publisher', publisher: string): void
   (e: 'click:group', group: string): void
   (e: 'click:store', store: string): void
@@ -37,6 +37,7 @@ function formatPrice(price: MonetaryValue | null | undefined) {
 
   const { value, currency } = price
 
+  // @ts-ignore missing types
   return n(value, 'currency', { currency })
 }
 
@@ -96,12 +97,14 @@ const metadata = computed(() => {
       key: 'publisher',
       value: book.value?.publisher,
       searchable: true,
+      event: 'click:publisher',
     },
     {
       title: t('book.properties.group'),
       key: 'group',
       value: book.value?.group,
       searchable: true,
+      event: 'click:group',
     },
     {
       title: t('book.properties.dimensions'),
@@ -135,6 +138,7 @@ const metadata = computed(() => {
       key: 'store',
       value: book.value?.store,
       searchable: true,
+      event: 'click:store'
     },
     {
       title: t('book.properties.boughtAt'),
@@ -148,6 +152,16 @@ const metadata = computed(() => {
     },
   ]
 })
+
+function search(key: string, query: string) {
+  if (key === 'group') {
+    emit('click:group', query)
+  } else if (key === 'publisher') {
+    emit('click:publisher', query)
+  } else if (key === 'store') {
+    emit('click:store', query)
+  }
+}
 </script>
 
 <template>
@@ -175,7 +189,7 @@ const metadata = computed(() => {
               href="#"
               class="search-link has-ring-focus"
               :title="t('dashboard.search.searchBy', [mt.value])"
-              @click.prevent="$emit(`click:${mt.key}`, mt.value!)"
+              @click.prevent="search(mt.key, mt.value!)"
             >
               {{ mt.value }}
             </a>
