@@ -1,17 +1,22 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getStores from '@/services/sheet/getStores'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export default function useStoresQuery({ enabled }: UseQueryOptions) {
+type GetStoresReturn = Awaited<ReturnType<typeof getStores>> | undefined
+type UseStoresQueryOptions<S> = UseQueryOptions<GetStoresReturn, Error, S>
+
+export default function useStoresQuery<S = GetStoresReturn>(options: UseStoresQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getStores(sheetId.value!))
-  }
-
-  return useQuery(['stores', { sheetId }], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['stores', { sheetId }],
+    queryFn: async () => {
+      return await fetch(getStores(sheetId.value!))
+    },
+    ...options,
+  })
 }

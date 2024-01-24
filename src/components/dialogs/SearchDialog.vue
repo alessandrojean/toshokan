@@ -2,16 +2,16 @@
 import { useActiveElement, useDebounceFn } from '@vueuse/core'
 import PaginatorUtil from 'paginator'
 
+import { keepPreviousData, useQueryClient } from '@tanstack/vue-query'
+import {
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
+  XMarkIcon,
+} from '@heroicons/vue/20/solid'
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { useI18n } from '@/i18n'
 import { PER_PAGE } from '@/services/sheet/constants'
 import { createSearchKeywords } from '@/services/sheet/searchBooks'
-
-import {
-BarsArrowDownIcon,
-BarsArrowUpIcon,
-XMarkIcon
-} from '@heroicons/vue/20/solid'
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps<{ isOpen: boolean }>()
 
@@ -41,12 +41,12 @@ const dialogContent = ref(null)
 
 const sortBy = computed({
   get: () => searchStore.sortBy,
-  set: (val) => searchStore.updateSort({ sortBy: val })
+  set: val => searchStore.updateSort({ sortBy: val }),
 })
 
 const sortDirection = computed({
   get: () => searchStore.sortDirection,
-  set: (val) => searchStore.updateSort({ sortDirection: val })
+  set: val => searchStore.updateSort({ sortDirection: val }),
 })
 
 const searchEnabled = computed(() => {
@@ -57,19 +57,24 @@ const {
   isLoading: searchLoading,
   data: searchData,
   isFetching,
-  isPreviousData,
-  remove
-} = useBookSearchQuery(
-  {
-    query: searchQuery,
-    sortBy,
-    sortDirection,
-    page: computed(() => searchStore.page)
-  },
-  { enabled: searchEnabled, keepPreviousData: true }
-)
+} = useBookSearchQuery({
+  query: searchQuery,
+  sortBy,
+  sortDirection,
+  page: computed(() => searchStore.page),
+  enabled: searchEnabled,
+  placeholderData: keepPreviousData,
+})
+const queryClient = useQueryClient()
 
 const searchResults = computed(() => searchData.value?.results)
+const resultsList = ref<HTMLUListElement>()
+const historyList = ref<HTMLUListElement>()
+const searchItemFocused = ref(0)
+const historyItemFocused = ref(0)
+
+type State = 'history' | 'results' | 'empty_results'
+const state = ref<State>('history')
 
 watch(searchData, (newData) => {
   if (newData !== undefined) {
@@ -86,7 +91,7 @@ watch(searchData, (newData) => {
 
     const pagination = new PaginatorUtil(PER_PAGE, 4).build(
       newData.total,
-      searchStore.page
+      searchStore.page,
     )
 
     searchStore.updatePagination(pagination)
@@ -96,7 +101,7 @@ watch(searchData, (newData) => {
 })
 
 async function clearSearch(focusOnInput?: boolean) {
-  remove()
+  queryClient.removeQueries({ queryKey: ['book-search'] })
 
   searchInputValue.value = ''
   searchQuery.value = ''
@@ -129,7 +134,6 @@ const activeElement = useActiveElement()
 
 watch(isFetching, async (newIsFetching) => {
   if (newIsFetching) {
-    // @ts-ignore
     lastFocus.value = activeElement.value
     lastFocus.value?.blur()
 
@@ -139,8 +143,8 @@ watch(isFetching, async (newIsFetching) => {
   await nextTick()
 
   if (
-    lastFocus.value?.classList.contains('history-item') ||
-    lastFocus.value?.classList.contains('pag-button')
+    lastFocus.value?.classList.contains('history-item')
+    || lastFocus.value?.classList.contains('pag-button')
   ) {
     setTimeout(() => {
       focusOnResults()
@@ -149,17 +153,6 @@ watch(isFetching, async (newIsFetching) => {
     lastFocus.value?.focus()
   }
 })
-
-function createDebounce() {
-  let timeout: ReturnType<typeof setTimeout>
-
-  return function (fn: Function, delayMs?: number) {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      fn()
-    }, delayMs ?? 1000)
-  }
-}
 
 watch(searchQuery, async (newQuery, oldQuery) => {
   if (newQuery.length === 0 && oldQuery.length > 0) {
@@ -181,14 +174,14 @@ const sortProperties = computed(() => {
     { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
     { attr: 'labelPrice.value', title: t('book.properties.labelPrice') },
     { attr: 'createdAt', title: t('book.properties.createdAt') },
-    { attr: 'updatedAt', title: t('book.properties.updatedAt') }
+    { attr: 'updatedAt', title: t('book.properties.updatedAt') },
   ]
 
   return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
 })
 
 function removeHistoryItem(item: string) {
-  const newHistory = searchHistory.value.filter((s) => s !== item)
+  const newHistory = searchHistory.value.filter(s => s !== item)
 
   searchStore.updateHistory(newHistory)
 }
@@ -200,13 +193,8 @@ async function handlePageChange(page: number) {
 const shared = computed(() => sheetStore.shared)
 const owner = computed(() => ({
   displayName: sheetStore.ownerDisplayName,
-  pictureUrl: sheetStore.ownerPictureUrl
+  pictureUrl: sheetStore.ownerPictureUrl,
 }))
-
-const resultsList = ref<HTMLUListElement>()
-const historyList = ref<HTMLUListElement>()
-const searchItemFocused = ref(0)
-const historyItemFocused = ref(0)
 
 function handleSearchItemKeydown(event: KeyboardEvent) {
   if (!resultsList.value || searchLoading.value) {
@@ -216,7 +204,7 @@ function handleSearchItemKeydown(event: KeyboardEvent) {
   const nextValue = handleItemKeydown(
     event,
     searchItemFocused.value,
-    searchResults.value!.length
+    searchResults.value!.length,
   )
 
   if (nextValue === null) {
@@ -245,7 +233,7 @@ function handleHistoryItemKeydown(event: KeyboardEvent) {
     const nextValue = handleItemKeydown(
       event,
       historyItemFocused.value,
-      searchHistory.value.length
+      searchHistory.value.length,
     )
 
     if (nextValue === null) {
@@ -263,7 +251,7 @@ function handleHistoryItemKeydown(event: KeyboardEvent) {
 function handleItemKeydown(
   event: KeyboardEvent,
   focused: number,
-  totalItems: number
+  totalItems: number,
 ) {
   const allowedKeys = ['ArrowUp', 'ArrowDown', 'Home', 'End']
   const { key } = event
@@ -302,9 +290,9 @@ function focusOnElement(container: Element, i: number) {
 
 function focusOnResults() {
   if (
-    !searchLoading.value &&
-    searchedTerm.value.length > 0 &&
-    searchResults.value!.length > 0
+    !searchLoading.value
+    && searchedTerm.value.length > 0
+    && searchResults.value!.length > 0
   ) {
     focusOnElement(resultsList.value!, searchItemFocused.value)
   } else if (searchHistory.value.length > 0) {
@@ -314,17 +302,17 @@ function focusOnResults() {
 
 const searchKeywordsRegex = computed(() => {
   return new RegExp(
-    '^-?(?:' + Object.keys(createSearchKeywords()).join('|') + ')'
+    `^-?(?:${Object.keys(createSearchKeywords()).join('|')})`,
   )
 })
 
 // https://github.com/nepsilon/search-query-parser/blob/master/lib/search-query-parser.js
-const KEYWORDS_REGEX =
-  /(\S+:'(?:[^'\\]|\\.)*'?)|(\S+:"(?:[^"\\]|\\.)*"?)|\S+:\S+/g
-const KEYWORD_INCLUDE_TEMPLATE =
-  '<span class="keyword keyword-included">$&</span>'
-const KEYWORD_EXCLUDE_TEMPLATE =
-  '<span class="keyword keyword-excluded">$&</span>'
+const KEYWORDS_REGEX
+  = /(\S+:'(?:[^'\\]|\\.)*'?)|(\S+:"(?:[^"\\]|\\.)*"?)|\S+:\S+/g
+const KEYWORD_INCLUDE_TEMPLATE
+  = '<span class="keyword keyword-included">$&</span>'
+const KEYWORD_EXCLUDE_TEMPLATE
+  = '<span class="keyword keyword-excluded">$&</span>'
 
 const { escapeHtml } = useMarkdown()
 
@@ -339,8 +327,8 @@ const inputRendererHtml = computed(() => {
   return escapeHtml(searchInputValue.value)
     .replace(/&quot;/g, '"')
     .replace(KEYWORDS_REGEX, (string) => {
-      const template =
-        string.charAt(0) === '-'
+      const template
+        = string.charAt(0) === '-'
           ? KEYWORD_EXCLUDE_TEMPLATE
           : KEYWORD_INCLUDE_TEMPLATE
       return string.match(searchKeywordsRegex.value)
@@ -349,9 +337,6 @@ const inputRendererHtml = computed(() => {
     })
     .replace(/<\/span>(.*?)<span/g, '</span><span>$1</span><span')
 })
-
-type State = 'history' | 'results' | 'empty_results'
-const state = ref<State>('history')
 </script>
 
 <template>
@@ -394,7 +379,7 @@ const state = ref<State>('history')
             <form
               :class="[
                 'py-4 px-5 flex items-center space-x-3 md:space-x-4 shrink-0',
-                'border-b border-gray-300 dark:border-gray-600 relative overflow-y-hidden'
+                'border-b border-gray-300 dark:border-gray-600 relative overflow-y-hidden',
               ]"
               autocomplete="off"
               @submit.prevent="search(searchInput!!.value)"
@@ -406,22 +391,22 @@ const state = ref<State>('history')
               </span>
 
               <div class="flex-1 search-input-wrapper">
-                <label for="search-input" id="search-label" class="sr-only">
+                <label id="search-label" for="search-input" class="sr-only">
                   {{ t('dashboard.search.label') }}
                 </label>
 
                 <div class="relative">
                   <input
-                    type="search"
                     id="search-input"
                     ref="searchInput"
+                    v-model="searchInputValue"
+                    type="search"
                     class="search-input"
                     spellcheck="false"
                     autocorrect="off"
                     role="combobox"
                     aria-controls="search-options"
                     aria-labelledby="search-label"
-                    v-model="searchInputValue"
                     :placeholder="t('dashboard.search.placeholder')"
                     :disabled="(searchLoading && searchEnabled) || !isOpen"
                     @input="handleInput"
@@ -430,22 +415,22 @@ const state = ref<State>('history')
                     "
                     @keyup.arrow-down.exact.prevent="focusOnResults"
                     @scroll="syncScroll"
-                  />
+                  >
 
                   <div
-                    class="input-renderer"
-                    ref="inputRenderer"
-                    v-html="inputRendererHtml"
                     v-if="searchInputValue.length > 0"
+                    ref="inputRenderer"
+                    class="input-renderer"
+                    v-html="inputRendererHtml"
                   />
                 </div>
               </div>
 
               <FadeTransition>
                 <button
+                  v-if="!searchLoading && searchQuery.length > 0"
                   type="reset"
                   class="clear-button has-ring-focus dark:focus-visible:ring-offset-gray-800"
-                  v-if="!searchLoading && searchQuery.length > 0"
                   @click="clearSearch(true)"
                 >
                   <span aria-hidden="true">
@@ -458,8 +443,8 @@ const state = ref<State>('history')
               </FadeTransition>
 
               <Avatar
-                class="shrink-0"
                 v-if="shared"
+                class="shrink-0"
                 :picture-url="owner.pictureUrl"
                 :shared="shared"
                 small
@@ -473,20 +458,20 @@ const state = ref<State>('history')
                 <span class="sr-only">
                   {{ t('dashboard.search.close') }}
                 </span>
-                <kbd aria-hidden="true" class="font-sans"> esc </kbd>
+                <kbd aria-hidden="true" class="font-sans-safe"> esc </kbd>
               </button>
             </form>
 
             <FadeTransition>
               <div
                 v-if="state === 'results'"
-                tabindex="-1"
                 ref="results"
+                tabindex="-1"
                 class="results"
               >
                 <div class="grow min-h-0 overflow-y-auto pt-5">
                   <div class="results-header">
-                    <h3 class="title" id="results-header">
+                    <h3 id="results-header" class="title">
                       {{ t('dashboard.search.results') }}
                     </h3>
 
@@ -497,9 +482,9 @@ const state = ref<State>('history')
                         </label>
 
                         <select
-                          class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
-                          v-model="sortBy"
                           id="search-sort-by"
+                          v-model="sortBy"
+                          class="relative focus:z-10 select rounded-r-none w-full py-1.5 px-2.5"
                           :disabled="searchLoading"
                         >
                           <option
@@ -513,19 +498,19 @@ const state = ref<State>('history')
                       </div>
 
                       <Button
+                        v-slot="{ iconClass }"
                         :disabled="searchLoading"
                         size="small"
                         class="!px-2 !rounded-l-none !rounded-r-md"
                         icon-only
-                        @click="toggleSortDirection"
                         :title="
                           t(
                             sortDirection === 'asc'
                               ? 'dashboard.library.filters.sortDirection.asc'
-                              : 'dashboard.library.filters.sortDirection.desc'
+                              : 'dashboard.library.filters.sortDirection.desc',
                           )
                         "
-                        v-slot="{ iconClass }"
+                        @click="toggleSortDirection"
                       >
                         <BarsArrowUpIcon
                           v-if="sortDirection === 'asc'"
@@ -537,9 +522,9 @@ const state = ref<State>('history')
                   </div>
 
                   <ul
-                    class="divide-y divide-gray-200 dark:divide-gray-700 mt-3"
-                    ref="resultsList"
                     id="search-options"
+                    ref="resultsList"
+                    class="divide-y divide-gray-200 dark:divide-gray-700 mt-3"
                     aria-labelledby="results-header"
                     role="listbox"
                   >
@@ -577,7 +562,7 @@ const state = ref<State>('history')
                       {{
                         t(
                           'dashboard.search.resultCount',
-                          searchPagination?.total_results || 0
+                          searchPagination?.total_results || 0,
                         )
                       }}
                     </p>
@@ -613,14 +598,14 @@ const state = ref<State>('history')
                 v-else-if="state === 'history' && searchHistory.length > 0"
                 class="history"
               >
-                <h3 class="title px-5" id="history-header">
+                <h3 id="history-header" class="title px-5">
                   {{ t('dashboard.search.history') }}
                 </h3>
 
                 <ul
-                  class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700"
-                  ref="historyList"
                   id="search-options"
+                  ref="historyList"
+                  class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700"
                   aria-labelledby="history-header"
                   role="listbox"
                 >
@@ -773,7 +758,7 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 .title {
-  @apply text-gray-700 dark:text-gray-200 font-semibold font-display;
+  @apply text-gray-700 dark:text-gray-200 font-semibold font-display-safe;
 }
 
 .no-results,

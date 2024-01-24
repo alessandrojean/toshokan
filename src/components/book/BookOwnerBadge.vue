@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-
 import { UserGroupIcon } from '@heroicons/vue/20/solid'
+import { useI18n } from '@/i18n'
 
 const { t } = useI18n({ useScope: 'global' })
 const sheetStore = useSheetStore()

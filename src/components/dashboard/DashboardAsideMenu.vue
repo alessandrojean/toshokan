@@ -10,7 +10,7 @@ import {
   Cog8ToothIcon,
   HomeIcon,
   LifebuoyIcon,
-  PresentationChartBarIcon
+  PresentationChartBarIcon,
 } from '@heroicons/vue/24/outline'
 
 export interface Item {
@@ -28,8 +28,8 @@ export interface AsideMenuProps {
   dark?: boolean
 }
 
-const props = withDefaults(defineProps<AsideMenuProps>(), {
-  collapsible: false
+withDefaults(defineProps<AsideMenuProps>(), {
+  collapsible: false,
 })
 
 const emit = defineEmits<{ (e: 'navigate', location: RouteLocation): void }>()
@@ -43,7 +43,7 @@ const items = computed<Item[]>(() => [
     label: t('dashboard.header.links.dashboard'),
     icon: HomeIcon,
     to: { name: 'dashboard' },
-    exact: true
+    exact: true,
   },
   {
     key: 'library',
@@ -52,15 +52,15 @@ const items = computed<Item[]>(() => [
     to: { name: 'dashboard-library' },
     active: computed(() => {
       return String(router.currentRoute.value.name).includes(
-        'dashboard-library'
+        'dashboard-library',
       )
-    })
+    }),
   },
   {
     key: 'readings',
     label: t('dashboard.header.links.readings'),
     icon: BookmarkIcon,
-    to: { name: 'dashboard-readings' }
+    to: { name: 'dashboard-readings' },
   },
   // {
   //   key: 'history',
@@ -73,31 +73,31 @@ const items = computed<Item[]>(() => [
     key: 'statistics',
     label: t('dashboard.header.links.statistics'),
     icon: PresentationChartBarIcon,
-    to: { name: 'dashboard-statistics' }
+    to: { name: 'dashboard-statistics' },
   },
   {
     key: 'settings',
     label: t('dashboard.header.links.settings'),
     icon: Cog8ToothIcon,
-    to: { name: 'dashboard-settings' }
+    to: { name: 'dashboard-settings' },
   },
   {
     key: 'help-center',
     label: t('dashboard.header.links.help'),
     icon: LifebuoyIcon,
     to: '/help/guide/instructions',
-    external: true
-  }
+    external: true,
+  },
 ])
 
 function active(
   active: undefined | (() => boolean) | ComputedRef<boolean>,
   exact: boolean | undefined,
   isExactActive: boolean,
-  isActive: boolean
+  isActive: boolean,
 ): boolean {
-  const activeResult =
-    active && (typeof active === 'function' ? active() : active.value)
+  const activeResult
+    = active && (typeof active === 'function' ? active() : active.value)
 
   return activeResult ?? ((exact && isExactActive) || (!exact && isActive))
 }
@@ -116,7 +116,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
     :class="[
       'box-content bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-hidden shadow',
       'motion-safe:transition-all',
-      collapsed ? 'w-16' : 'w-72'
+      collapsed ? 'w-16' : 'w-72',
     ]"
   >
     <div class="flex flex-col min-h-0 h-full">
@@ -125,7 +125,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
           :class="[
             'px-3.5 flex justify-between items-center h-16 w-[18rem] box-border',
             'motion-safe:transition-transform origin-right',
-            collapsed ? '-translate-x-[13.85rem]' : ''
+            collapsed ? '-translate-x-[13.85rem]' : '',
           ]"
         >
           <slot name="logo">
@@ -134,10 +134,10 @@ const collapsed = useLocalStorage('aside-collapsed', false)
 
           <Button
             v-if="collapsible"
+            v-slot="{ iconClass }"
             class="w-10 h-10"
             kind="ghost"
             icon-only
-            v-slot="{ iconClass }"
             :aria-controls="$attrs.id"
             :aria-expanded="!collapsed"
             :title="
@@ -148,7 +148,7 @@ const collapsed = useLocalStorage('aside-collapsed', false)
             @click="collapsed = !collapsed"
           >
             <ChevronDoubleLeftIcon
-              :class="[iconClass, 'collapse-icon', { collapsed: collapsed }]"
+              :class="[iconClass, 'collapse-icon', { collapsed }]"
             />
           </Button>
         </div>
@@ -156,14 +156,14 @@ const collapsed = useLocalStorage('aside-collapsed', false)
           <ul
             :class="[
               'space-y-1.5',
-              collapsed ? 'flex flex-col items-center' : ''
+              collapsed ? 'flex flex-col items-center' : '',
             ]"
           >
             <li v-for="item in items" :key="item.key" class="w-full">
               <RouterLink
+                v-slot="{ href, isActive, isExactActive, navigate, route }"
                 custom
                 :to="item.to"
-                v-slot="{ href, isActive, isExactActive, navigate, route }"
               >
                 <DashboardAsideButton
                   :item="item"

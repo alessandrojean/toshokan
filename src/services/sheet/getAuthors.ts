@@ -18,8 +18,8 @@ export default async function getAuthors(sheetId: string): Promise<string[]> {
 
   const dataTable = await query.send()
 
-  const allAuthors = dataTable.asArray.flatMap((rowData) =>
-    rowData[0].split(/;\s+/g)
+  const allAuthors = dataTable.asArray.flatMap(rowData =>
+    rowData[0].split(/;\s+/g),
   )
 
   return Array.from(new Set(allAuthors)).sort()

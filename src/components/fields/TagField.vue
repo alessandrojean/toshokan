@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import Draggable from 'vuedraggable'
 import type { HTMLAttributes } from 'vue'
-import type { BaseFieldProps } from './BaseField.vue'
-
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/20/solid'
+import type { BaseFieldProps } from './BaseField.vue'
 
 export interface TagFieldProps extends BaseFieldProps {
   breakCharacter?: string
@@ -20,21 +19,21 @@ export interface TagFieldProps extends BaseFieldProps {
 const props = withDefaults(defineProps<TagFieldProps>(), {
   breakCharacter: ',',
   inputType: 'text',
-  required: false
+  required: false,
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string[]): void
 }>()
 
-const { breakCharacter, error, modelValue, suggestions, label, required } =
-  toRefs(props)
+const { breakCharacter, error, modelValue, suggestions, label, required }
+  = toRefs(props)
 
 const hasError = computed(() => {
   return error?.value ? (unref(error.value)?.length ?? 0) > 0 : false
 })
 const hasList = computed(
-  () => suggestions?.value && suggestions.value.length > 0
+  () => suggestions?.value && suggestions.value.length > 0,
 )
 
 const tempTag = ref('')
@@ -49,9 +48,9 @@ function addTag(onInput?: boolean) {
   const newTag = onInput === true ? tempTag.value.slice(0, -1) : tempTag.value
 
   if (
-    newTag.length > 0 &&
-    newTag.trim().length > 0 &&
-    !modelValue!.value!.includes(newTag.trim())
+    newTag.length > 0
+    && newTag.trim().length > 0
+    && !modelValue!.value!.includes(newTag.trim())
   ) {
     emit('update:modelValue', modelValue!.value!.concat([newTag.trim()]))
   }
@@ -99,16 +98,16 @@ function handleBackspace(event: KeyboardEvent) {
 
 <template>
   <BaseField
+    v-slot="{ inputId, ariaDescribedBy }"
     class="tag-field"
     :label="label"
     :error="error"
     :required="required"
-    v-slot="{ inputId, ariaDescribedBy }"
   >
     <div
       :class="[
         'input group px-0 pb-0',
-        modelValue!.length > 0 ? 'filled' : 'pt-0'
+        modelValue!.length > 0 ? 'filled' : 'pt-0',
       ]"
       @click.self="input?.focus?.()"
     >
@@ -118,11 +117,11 @@ function handleBackspace(event: KeyboardEvent) {
         ghost-class="ghost"
         drag-class="cursor-grabbing"
         handle=".handle"
-        :modelValue="modelValue ?? []"
+        :model-value="modelValue ?? []"
         :item-key="(tag: string) => tag"
         :disabled="modelValue!.length === 1"
         @click.self="input?.focus?.()"
-        @update:modelValue="handleDragAndDrop"
+        @update:model-value="handleDragAndDrop"
       >
         <template #item="{ element: tag, index }">
           <li
@@ -158,27 +157,27 @@ function handleBackspace(event: KeyboardEvent) {
           'px-3 border-t',
           modelValue!.length > 0
             ? 'mt-2 dark:border-gray-600 group-hover:border-gray-300 dark:group-hover:border-gray-500 group-focus-within:border-dashed group-focus-within:!border-primary-400'
-            : 'border-transparent'
+            : 'border-transparent',
         ]"
       >
         <input
-          v-model="tempTag"
-          ref="input"
-          :class="['input', inputClass]"
           :id="inputId"
+          ref="input"
+          v-model="tempTag"
+          :class="['input', inputClass]"
           :placeholder="placeholder"
           :aria-describedby="ariaDescribedBy"
           :aria-invalid="hasError"
-          :list="hasList ? inputId + '-list' : undefined"
+          :list="hasList ? `${inputId}-list` : undefined"
           @keydown.enter.prevent="addTag()"
           @keydown.backspace="handleBackspace"
           @input="flushTag"
-        />
+        >
       </div>
     </div>
 
     <template v-if="hasList">
-      <datalist :id="inputId + '-list'">
+      <datalist :id="`${inputId}-list`">
         <option v-for="option of suggestions" :key="option" :value="option">
           {{ option }}
         </option>

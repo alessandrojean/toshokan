@@ -1,11 +1,11 @@
-import i18n from '@/i18n'
 import QueryBuilder from './QueryBuilder'
 import DataTable from './DataTable'
+import i18n from '@/i18n'
 import { STATUS_CODE_TIMEOUT, STATUS_CODE_UNAUTHORIZED } from '@/util/gapi'
 
 type GoogleQuery = google.visualization.Query
 
-type QueryConstructorOptions = {
+interface QueryConstructorOptions {
   builderObj: ReturnType<QueryBuilder['toObject']> | null
   queryString: string
 }
@@ -29,7 +29,7 @@ export default class Query {
    */
   constructor(
     dataSourceUrl: string,
-    { builderObj, queryString }: QueryConstructorOptions
+    { builderObj, queryString }: QueryConstructorOptions,
   ) {
     this.#builderObj = builderObj ? structuredClone(builderObj) : null
 
@@ -49,24 +49,26 @@ export default class Query {
           const reasons = response.getReasons()
 
           if (reasons.includes('invalid_query')) {
+            // eslint-disable-next-line prefer-promise-reject-errors
             reject({
               message: i18n.global.t('errors.badQuery', {
-                error: response.getMessage()
+                error: response.getMessage(),
               }),
               detailedMessage: response.getDetailedMessage(),
-              reasons
+              reasons,
             })
 
             return
           }
 
+          // eslint-disable-next-line prefer-promise-reject-errors
           reject({
             message: response.getMessage(),
             detailedMessage: response.getDetailedMessage(),
             status: reasons.includes('access_denied')
               ? STATUS_CODE_UNAUTHORIZED
               : STATUS_CODE_TIMEOUT,
-            reasons
+            reasons,
           })
 
           return

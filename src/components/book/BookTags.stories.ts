@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookTags from './BookTags.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 export default {
   title: 'Components/Book/Tags',
@@ -8,51 +7,51 @@ export default {
   args: {
     group: false,
     loading: false,
-    tags: [...Array.from({ length: 20 }).keys()].map((i) => `Tag ${i + 1}`)
+    tags: [...Array.from({ length: 20 }).keys()].map(i => `Tag ${i + 1}`),
   },
   argTypes: {
     tags: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="md:p-6 md:w-3/5"><story/></div>'
-    })
-  ]
+      template: '<div class="md:p-6 md:w-3/5"><story/></div>',
+    }),
+  ],
 } as Meta<typeof BookTags>
 
 export const Default: StoryObj<typeof BookTags> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookTags },
     setup: () => ({ args }),
-    template: '<BookTags v-bind="args" />'
-  })
+    template: '<BookTags v-bind="args" />',
+  }),
 }
 
 export const Loading: StoryObj<typeof BookTags> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookTags },
     setup: () => ({ args }),
-    template: '<BookTags v-bind="args" />'
+    template: '<BookTags v-bind="args" />',
   }),
-  args: { loading: true }
+  args: { loading: true },
 }
 
 export const Empty: StoryObj<typeof BookTags> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookTags },
     setup: () => ({ args }),
-    template: '<BookTags v-bind="args" />'
+    template: '<BookTags v-bind="args" />',
   }),
-  args: { tags: [] }
+  args: { tags: [] },
 }
 
 export const Groups: StoryObj<typeof BookTags> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookTags },
     setup: () => ({ args }),
-    template: '<BookTags v-bind="args" />'
+    template: '<BookTags v-bind="args" />',
   }),
   args: {
     group: true,
@@ -60,7 +59,7 @@ export const Groups: StoryObj<typeof BookTags> = {
       'group: tag1',
       'group: tag2',
       'another group: tag1',
-      'yet another group: tag3'
-    ]
-  }
+      'yet another group: tag3',
+    ],
+  },
 }

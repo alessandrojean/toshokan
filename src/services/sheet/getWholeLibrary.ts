@@ -10,7 +10,7 @@ import Book from '@/model/Book'
  * @returns {Promise<Book[]>} The library books
  */
 export default async function getWholeLibrary(
-  sheetId: string
+  sheetId: string,
 ): Promise<Book[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 

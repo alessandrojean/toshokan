@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   link: false,
   rounded: false,
   size: 'normal',
-  type: 'button'
+  type: 'button',
 })
 
 const {
@@ -31,7 +31,7 @@ const {
   type,
   size,
   iconOnly,
-  as: component
+  as: component,
 } = toRefs(props)
 </script>
 
@@ -43,38 +43,38 @@ const {
       {
         'btn-rounded': rounded,
         'btn-link': link,
-        'btn-icon-only': iconOnly
-      }
+        'btn-icon-only': iconOnly,
+      },
     ]"
     :disabled="disabled"
     :type="type"
   >
     <span v-if="$slots.left" class="btn-left">
-      <slot name="left" iconClass="btn-icon" />
+      <slot name="left" icon-class="btn-icon" />
     </span>
-    <slot iconClass="btn-icon" />
+    <slot icon-class="btn-icon" />
     <span v-if="$slots.right" class="btn-right">
-      <slot name="right" iconClass="btn-icon" />
+      <slot name="right" icon-class="btn-icon" />
     </span>
   </button>
   <component
-    v-else
     :is="component"
+    v-else
     :class="[
       `btn btn-${size} btn-${kind} has-ring-focus`,
       {
         'btn-rounded': rounded,
         'btn-link': link,
-        'btn-icon-only': iconOnly
-      }
+        'btn-icon-only': iconOnly,
+      },
     ]"
   >
     <span v-if="$slots.left" class="btn-left">
-      <slot name="left" iconClass="btn-icon" />
+      <slot name="left" icon-class="btn-icon" />
     </span>
-    <slot iconClass="btn-icon" />
+    <slot icon-class="btn-icon" />
     <span v-if="$slots.right" class="btn-right">
-      <slot name="right" iconClass="btn-icon" />
+      <slot name="right" icon-class="btn-icon" />
     </span>
   </component>
 </template>

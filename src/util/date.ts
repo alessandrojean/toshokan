@@ -31,9 +31,9 @@ export function formatDateToSheet(date: Date) {
 
 export function formatDateTimeToSheet(date: Date) {
   return (
-    formatDateToSheet(date) +
-    ' + ' +
-    `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
+    `${formatDateToSheet(date)
+    } + `
+    + `TIME(${date.getUTCHours()}, ${date.getUTCMinutes()}, ${date.getUTCSeconds()})`
   )
 }
 

@@ -33,7 +33,7 @@ const stepText = computed(() => {
         modelValue > i + 1 ? 'bg-primary-100' : '',
         modelValue === i + 1
           ? 'bg-white ring-primary-400'
-          : 'ring-primary-600 dark:ring-primary-500'
+          : 'ring-primary-600 dark:ring-primary-500',
       ]"
       aria-hidden="true"
     />

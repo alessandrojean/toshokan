@@ -13,7 +13,7 @@ export interface ReadingMonthYear {
  * Gets all the months and years of read books.
  */
 export default async function getReadingMonths(
-  sheetId: string
+  sheetId: string,
 ): Promise<ReadingMonthYear[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 
@@ -28,10 +28,10 @@ export default async function getReadingMonths(
   const dataTable = await query.send()
 
   return dataTable.asArray
-    .map((row) => ({
+    .map(row => ({
       month: row[1] + 1,
       year: row[0],
-      count: row[2]
+      count: row[2],
     }))
-    .filter((monthYear) => monthYear.count > 0)
+    .filter(monthYear => monthYear.count > 0)
 }

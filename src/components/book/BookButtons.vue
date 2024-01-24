@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
-
 import {
   BookmarkIcon as BookmarkSolidIcon,
   PencilIcon,
-  StarIcon as StarSolidIcon
+  StarIcon as StarSolidIcon,
 } from '@heroicons/vue/24/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
   ShareIcon,
   StarIcon as StarOutlineIcon,
-  TrashIcon
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
+import type Book from '@/model/Book'
 
 export interface BookButtonsProps {
   book?: Book | null
@@ -24,7 +23,7 @@ const props = withDefaults(defineProps<BookButtonsProps>(), {
   book: undefined,
   canEdit: true,
   editing: false,
-  loading: false
+  loading: false,
 })
 
 defineEmits<{
@@ -48,27 +47,27 @@ const iconOnly = breakpoints.smaller('2xl')
 
 <template>
   <div
-    class="flex w-full justify-center sm:justify-start items-center"
     v-if="canEdit"
+    class="flex w-full justify-center sm:justify-start items-center"
   >
     <Button
       v-if="!loading"
       size="large"
-      @click="$emit('click:edit', $event)"
       :disabled="disabled"
       :icon-only="editIconOnly"
       :kind="editIconOnly ? 'default' : 'primary'"
       :title="t('dashboard.details.header.edit')"
+      @click="$emit('click:edit', $event)"
     >
-      <template #left="{ iconClass }" v-if="!editIconOnly">
+      <template v-if="!editIconOnly" #left="{ iconClass }">
         <PencilIcon :class="iconClass" />
       </template>
-      <template #default v-if="!editIconOnly">
+      <template v-if="!editIconOnly" #default>
         <span>
           {{ t('dashboard.details.header.edit') }}
         </span>
       </template>
-      <template #default="{ iconClass }" v-else>
+      <template v-else #default="{ iconClass }">
         <PencilIcon :class="iconClass" />
       </template>
     </Button>
@@ -80,22 +79,22 @@ const iconOnly = breakpoints.smaller('2xl')
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
-          t('dashboard.details.header.options.markAs', {
-            status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase()
-          })
-        "
+        t('dashboard.details.header.options.markAs', {
+          status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase(),
+        })
+      "
       @click="$emit('click:toggleStatus', $event)"
     >
-      <template #left="{ iconClass }" v-if="!iconOnly">
+      <template v-if="!iconOnly" #left="{ iconClass }">
         <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
         <BookmarkOutlineIcon v-else :class="iconClass" />
       </template>
-      <template #default v-if="!iconOnly">
+      <template v-if="!iconOnly" #default>
         <span>
           {{ book!.isRead ? t('book.read') : t('book.unread') }}
         </span>
       </template>
-      <template #default="{ iconClass }" v-else>
+      <template v-else #default="{ iconClass }">
         <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
         <BookmarkOutlineIcon v-else :class="iconClass" />
       </template>
@@ -108,26 +107,26 @@ const iconOnly = breakpoints.smaller('2xl')
       :icon-only="iconOnly"
       :disabled="disabled"
       :title="
-          t(
-            `dashboard.details.header.options.${
-              book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
-            }`
-          )
-        "
+        t(
+          `dashboard.details.header.options.${
+            book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
+          }`,
+        )
+      "
       @click="$emit('click:toggleFavorite', $event)"
     >
-      <template #left="{ iconClass }" v-if="!iconOnly">
+      <template v-if="!iconOnly" #left="{ iconClass }">
         <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
         <StarOutlineIcon v-else :class="iconClass" />
       </template>
-      <template #default v-if="!iconOnly">
+      <template v-if="!iconOnly" #default>
         <span>
           {{
             book!.favorite ? t('book.inFavorites') : t('book.addToFavorites')
           }}
         </span>
       </template>
-      <template #default="{ iconClass }" v-else>
+      <template v-else #default="{ iconClass }">
         <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
         <StarOutlineIcon v-else :class="iconClass" />
       </template>
@@ -142,15 +141,15 @@ const iconOnly = breakpoints.smaller('2xl')
       :title="t('dashboard.details.header.options.share')"
       @click="$emit('click:share', $event)"
     >
-      <template #left="{ iconClass }" v-if="!iconOnly">
+      <template v-if="!iconOnly" #left="{ iconClass }">
         <ShareIcon :class="iconClass" />
       </template>
-      <template #default v-if="!iconOnly">
+      <template v-if="!iconOnly" #default>
         <span>
           {{ t('dashboard.details.header.options.share') }}
         </span>
       </template>
-      <template #default="{ iconClass }" v-else>
+      <template v-else #default="{ iconClass }">
         <ShareIcon :class="iconClass" />
       </template>
     </Button>
@@ -164,15 +163,15 @@ const iconOnly = breakpoints.smaller('2xl')
       :title="t('dashboard.details.header.options.delete')"
       @click="$emit('click:delete', $event)"
     >
-      <template #left="{ iconClass }" v-if="!iconOnly">
+      <template v-if="!iconOnly" #left="{ iconClass }">
         <TrashIcon :class="iconClass" />
       </template>
-      <template #default v-if="!iconOnly">
+      <template v-if="!iconOnly" #default>
         <span>
           {{ t('dashboard.details.header.options.delete') }}
         </span>
       </template>
-      <template #default="{ iconClass }" v-else>
+      <template v-else #default="{ iconClass }">
         <TrashIcon :class="iconClass" />
       </template>
     </Button>

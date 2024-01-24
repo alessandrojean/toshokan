@@ -1,18 +1,21 @@
-import { computed, type Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import { type Ref, computed } from 'vue'
 
+import type Book from '@/model/Book'
 import { findCovers } from '@/services/cover'
-import Book from '@/model/Book'
 
-export default function useCoverQuery(
-  book: Ref<Book>,
-  { enabled }: UseQueryOptions = {}
-) {
-  const bookCode = computed(() => book.value?.code)
+type FindCoversReturn = Awaited<ReturnType<typeof findCovers>> | undefined
+type UseCoverQueryOptions<S> = UseQueryOptions<FindCoversReturn, Error, S> &
+  { book: Ref<Book> }
 
-  async function fetcher() {
-    return await findCovers(book.value)
-  }
+export default function useCoverQuery<S = FindCoversReturn>(options: UseCoverQueryOptions<S>) {
+  const bookCode = computed(() => options.book.value?.code)
 
-  return useQuery(['book-cover', bookCode], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['book-cover', bookCode],
+    queryFn: async () => {
+      return await findCovers(options.book.value)
+    },
+    ...options,
+  })
 }

@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import type { _RouterLinkI } from 'vue-router'
 
-import Book from '@/model/Book'
-import type { GridMode, SpoilerMode } from '@/stores/settings'
-
+import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
 import {
   BookOpenIcon,
   ExclamationCircleIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
 } from '@heroicons/vue/24/outline'
-import { BookmarkIcon, ClockIcon } from '@heroicons/vue/20/solid'
+import type Book from '@/model/Book'
+import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 export interface BookCardProps {
   blurNsfw?: boolean
@@ -31,9 +30,9 @@ const props = withDefaults(defineProps<BookCardProps>(), {
   mode: 'comfortable',
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
+    synopsis: false,
   }),
-  tabindex: undefined
+  tabindex: undefined,
 })
 
 const { book, loading, mode, spoilerMode, blurNsfw } = toRefs(props)
@@ -47,8 +46,8 @@ const thumbnailUrl = computed(() => {
 
 const loadedCard = ref<HTMLDivElement | InstanceType<_RouterLinkI>>()
 
-const { imageHasError, imageLoading, setupObserver, observerCreated } =
-  useImageLazyLoader(thumbnailUrl, loadedCard)
+const { imageHasError, imageLoading, setupObserver, observerCreated }
+  = useImageLazyLoader(thumbnailUrl, loadedCard)
 
 const volume = computed(() => {
   if (!book.value) {
@@ -76,8 +75,8 @@ watch(loading, (newValue) => {
 
 const blurCover = computed(() => {
   return (
-    (spoilerMode.value.cover && !book.value?.isRead) ||
-    (blurNsfw.value && book.value?.isNsfw)
+    (spoilerMode.value.cover && !book.value?.isRead)
+    || (blurNsfw.value && book.value?.isNsfw)
   )
 })
 </script>
@@ -95,25 +94,25 @@ const blurCover = computed(() => {
         v-if="mode === 'compact' && !imageOnly"
         class="absolute top-0 left-0 w-full h-full flex items-start justify-end flex-col pb-2 px-2 lg:pb-3 lg:px-3 space-y-2"
       >
-        <div class="bg-gray-50 dark:bg-gray-500 h-4 w-3/4 rounded"></div>
-        <div class="bg-gray-50 dark:bg-gray-500 h-3 w-1/2 rounded"></div>
+        <div class="bg-gray-50 dark:bg-gray-500 h-4 w-3/4 rounded" />
+        <div class="bg-gray-50 dark:bg-gray-500 h-3 w-1/2 rounded" />
       </div>
     </div>
     <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3 space-y-1">
-      <div class="skeleton h-4 w-3/4 rounded"></div>
-      <div class="skeleton h-3 w-1/2 rounded"></div>
+      <div class="skeleton h-4 w-3/4 rounded" />
+      <div class="skeleton h-3 w-1/2 rounded" />
     </div>
   </div>
   <component
-    v-else
     :is="imageOnly ? 'div' : 'RouterLink'"
+    v-else
+    ref="loadedCard"
     :to="
       !imageOnly
         ? { name: 'dashboard-library-book-id', params: { id: book?.id ?? '' } }
         : undefined
     "
     class="book-link group focus:outline-none relative"
-    ref="loadedCard"
     :title="!imageOnly ? book?.title ?? '' : undefined"
     :aria-current="current && !imageOnly ? 'page' : undefined"
     :tabindex="!imageOnly ? tabindex : undefined"
@@ -124,9 +123,9 @@ const blurCover = computed(() => {
       :to="
         imageOnly
           ? {
-              name: 'dashboard-library-book-id',
-              params: { id: book?.id ?? '' }
-            }
+            name: 'dashboard-library-book-id',
+            params: { id: book?.id ?? '' },
+          }
           : undefined
       "
       class="book-card !outline-none has-ring-focus dark:focus-visible:ring-offset-gray-900"
@@ -144,7 +143,7 @@ const blurCover = computed(() => {
             v-if="loading || imageLoading || thumbnailUrl.length === 0"
             :class="[
               imageLoading ? 'motion-safe:animate-pulse' : '',
-              'w-10 h-10 text-gray-400 dark:text-gray-500'
+              'w-10 h-10 text-gray-400 dark:text-gray-500',
             ]"
             aria-hidden="true"
           />
@@ -157,7 +156,7 @@ const blurCover = computed(() => {
           <img
             :class="['book-cover', blurCover ? 'is-spoiler' : '']"
             :src="thumbnailUrl"
-          />
+          >
 
           <div
             v-if="blurCover"
@@ -203,13 +202,13 @@ const blurCover = computed(() => {
           :class="[
             'book-gradient absolute top-0 left-0 w-full h-full flex justify-end py-2 px-2 lg:pb-3 lg:px-3',
             imageOnly && imageHasError ? 'items-start' : 'items-end',
-            imageOnly ? 'image-only' : ''
+            imageOnly ? 'image-only' : '',
           ]"
         >
           <div class="inline-flex text-white w-full items-center">
             <div class="inline-flex flex-col grow min-w-0">
               <span
-                class="font-semibold font-display text-[0.8rem] sm:text-sm truncate max-w-full"
+                class="font-semibold font-display-safe text-[0.8rem] sm:text-sm truncate max-w-full"
               >
                 {{ book?.titleParts?.title }}
               </span>
@@ -237,7 +236,7 @@ const blurCover = computed(() => {
 
     <div v-if="mode === 'comfortable' && !imageOnly" class="mt-3">
       <p
-        class="text-[0.8rem] sm:text-sm font-display font-semibold truncate text-gray-900 dark:text-gray-200"
+        class="text-[0.8rem] sm:text-sm font-display-safe font-semibold truncate text-gray-900 dark:text-gray-200"
       >
         {{ book?.titleParts?.title }}
       </p>

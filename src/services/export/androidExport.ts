@@ -1,19 +1,20 @@
 import groupBy from 'lodash.groupby'
 import Pako from 'pako'
 
+import {
+  ToshokanBook,
+  ToshokanDimension,
+  ToshokanOwner,
+  ToshokanPrice,
+  ToshokanSheet,
+  ToshokanStatus,
+} from './schema/library'
 import getVersion from '@/services/sheet/getVersion'
 import getWholeLibrary from '@/services/sheet/getWholeLibrary'
 import { useAuthStore } from '@/stores/auth'
 import { useSheetStore } from '@/stores/sheet'
-import {
-  ToshokanSheet,
-  ToshokanOwner,
-  ToshokanBook,
-  ToshokanDimension,
-  ToshokanPrice,
-  ToshokanStatus
-} from './schema/library'
-import Book, { Status } from '@/model/Book'
+import type Book from '@/model/Book'
+import { Status } from '@/model/Book'
 
 const VERSION = 1
 const TIMEZONE_OFFSET = -3 * 60 // - 3 hours
@@ -47,20 +48,20 @@ export function parseFileSingle(fileDataGzipped: Uint8Array) {
 
   return ToshokanBook.toObject(message, {
     enums: String,
-    defaults: true
+    defaults: true,
   }) as ToshokanBook
 }
 
 const statusMap: Record<Status, ToshokanStatus> = {
   [Status.READ]: ToshokanStatus.READ,
   [Status.UNREAD]: ToshokanStatus.UNREAD,
-  [Status.FUTURE]: ToshokanStatus.FUTURE
+  [Status.FUTURE]: ToshokanStatus.FUTURE,
 }
 
 function mapBookToMessage(
   book: Book,
   sheetVersion: number,
-  owner: ToshokanOwner | undefined | null
+  owner: ToshokanOwner | undefined | null,
 ): ToshokanBook {
   return ToshokanBook.fromObject({
     code: book.code!.trim(),
@@ -80,41 +81,41 @@ function mapBookToMessage(
     synopsis: !book.synopsis?.length ? undefined : book.synopsis.trim(),
     notes: !book.notes?.length ? undefined : book.notes.trim(),
     tags: book.tags.map(
-      (tag) => tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+      tag => tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase(),
     ),
     createdAt: fixDateTimeZone(book.createdAt, true),
     updatedAt: fixDateTimeZone(book.updatedAt, true),
     sheetVersion,
-    owner
+    owner,
   })
 }
 
 export function generateFile(
   library: Book[],
   sheetVersion: number,
-  owner: ToshokanOwner | undefined | null
+  owner: ToshokanOwner | undefined | null,
 ) {
-  const authors = new Set(library.flatMap((book) => book.authors!))
+  const authors = new Set(library.flatMap(book => book.authors!))
   const tags = new Set(
     library.flatMap((book) => {
       return book.tags.map(
-        (tag) => tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+        tag => tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase(),
       )
-    })
+    }),
   )
 
   const sheet = new ToshokanSheet({
     version: VERSION,
-    sheetVersion: sheetVersion,
-    groups: Object.keys(groupBy(library, (book) => book.group!.trim())).sort(),
+    sheetVersion,
+    groups: Object.keys(groupBy(library, book => book.group!.trim())).sort(),
     tags: Array.from(tags).sort(),
     publishers: Object.keys(
-      groupBy(library, (book) => book.publisher!.trim())
+      groupBy(library, book => book.publisher!.trim()),
     ).sort(),
-    stores: Object.keys(groupBy(library, (book) => book.store!.trim())).sort(),
+    stores: Object.keys(groupBy(library, book => book.store!.trim())).sort(),
     authors: Array.from(authors).sort(),
-    library: library.map((book) => mapBookToMessage(book, sheetVersion, owner)),
-    owner
+    library: library.map(book => mapBookToMessage(book, sheetVersion, owner)),
+    owner,
   })
 
   const sheetEncoded = ToshokanSheet.encode(sheet).finish()
@@ -124,7 +125,7 @@ export function generateFile(
 export function generateFileSingle(
   book: Book,
   sheetVersion: number,
-  owner: ToshokanOwner | undefined | null
+  owner: ToshokanOwner | undefined | null,
 ) {
   const bookMessage = mapBookToMessage(book, sheetVersion, owner)
 
@@ -139,7 +140,7 @@ export default async function androidExport(anonymous?: boolean) {
   const authStore = useAuthStore()
   const owner = new ToshokanOwner({
     name: authStore.profileName!,
-    pictureUrl: authStore.profileImageUrl!
+    pictureUrl: authStore.profileImageUrl!,
   })
 
   const library = await getWholeLibrary(sheetId)
@@ -147,10 +148,10 @@ export default async function androidExport(anonymous?: boolean) {
   const file = generateFile(
     library,
     sheetVersion,
-    anonymous ? undefined : owner
+    anonymous ? undefined : owner,
   )
   const blob = new Blob([file], {
-    type: 'application/gzip'
+    type: 'application/gzip',
   })
   const url = URL.createObjectURL(blob)
 

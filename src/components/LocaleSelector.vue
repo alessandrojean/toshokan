@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { type Locale, useI18n } from '@/i18n'
-import { getFlagUrl } from '@/util'
-
 import {
   CheckIcon,
   ChevronUpDownIcon,
-  LanguageIcon
+  LanguageIcon,
 } from '@heroicons/vue/20/solid'
+import { type Locale, useI18n } from '@/i18n'
+import { getFlagUrl } from '@/util'
 
 export interface LocaleSelectorProps {
   modelValue: Locale
@@ -14,7 +13,7 @@ export interface LocaleSelectorProps {
 }
 
 withDefaults(defineProps<LocaleSelectorProps>(), {
-  top: false
+  top: false,
 })
 
 defineEmits<{
@@ -25,7 +24,7 @@ const { t, availableLocales } = useI18n({ useScope: 'global' })
 
 const localeFlags: Record<Locale, string> = {
   'pt-BR': 'BR',
-  'en-US': 'US'
+  'en-US': 'US',
 }
 </script>
 
@@ -50,7 +49,7 @@ const localeFlags: Record<Locale, string> = {
           @change="
             $emit(
               'update:modelValue',
-              ($event.target! as HTMLSelectElement).value
+              ($event.target! as HTMLSelectElement).value,
             )
           "
         >
@@ -82,7 +81,7 @@ const localeFlags: Record<Locale, string> = {
             :src="getFlagUrl(localeFlags[modelValue]).circle"
             aria-hidden="true"
             class="shrink-0 h-5 w-5 rounded-full"
-          />
+          >
           <span class="ml-2.5 block truncate">
             {{ t('app.localeName', {}, { locale: modelValue }) }}
           </span>
@@ -105,18 +104,18 @@ const localeFlags: Record<Locale, string> = {
           class="absolute z-10 w-56 bg-white dark:supports-backdrop-blur:bg-gray-700/80 dark:bg-gray-700 dark:backdrop-blur shadow-lg max-h-56 rounded-md py-1 text-base border border-gray-200 dark:border-gray-600 overflow-auto focus:outline-none sm:text-sm"
         >
           <ListboxOption
-            as="template"
             v-for="loc in availableLocales"
             :key="loc"
-            :value="loc"
             v-slot="{ active, selected }"
+            as="template"
+            :value="loc"
           >
             <li
               :class="[
                 active
                   ? 'text-white dark:text-gray-100 bg-primary-600 dark:bg-gray-600/50'
                   : 'text-gray-900 dark:text-gray-200',
-                'cursor-default select-none relative py-2 pl-3 pr-9 focus:outline-none'
+                'cursor-default select-none relative py-2 pl-3 pr-9 focus:outline-none',
               ]"
             >
               <div class="flex items-center">
@@ -124,11 +123,11 @@ const localeFlags: Record<Locale, string> = {
                   :src="getFlagUrl(localeFlags[loc as Locale]).circle"
                   aria-hidden="true"
                   class="shrink-0 h-5 w-5 rounded-full"
-                />
+                >
                 <span
                   :class="[
                     selected ? 'font-semibold' : 'font-normal',
-                    'ml-3 block truncate'
+                    'ml-3 block truncate',
                   ]"
                 >
                   {{ t('app.localeName', {}, { locale: loc }) }}
@@ -141,7 +140,7 @@ const localeFlags: Record<Locale, string> = {
                   active
                     ? 'text-white dark:text-gray-100'
                     : 'text-primary-600 dark:text-primary-400',
-                  'absolute inset-y-0 right-0 flex items-center pr-4'
+                  'absolute inset-y-0 right-0 flex items-center pr-4',
                 ]"
               >
                 <CheckIcon class="h-5 w-5" aria-hidden="true" />

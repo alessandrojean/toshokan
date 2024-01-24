@@ -1,4 +1,5 @@
-import getBooks, { GetBooksArgs } from './getBooks'
+import type { GetBooksArgs } from './getBooks'
+import getBooks from './getBooks'
 
 /**
  * Find books of a group.
@@ -13,7 +14,7 @@ export default function getBooksFromGroup(
   sheetId: string,
   group: string,
   page: number = 1,
-  options: GetBooksArgs = {}
+  options: GetBooksArgs = {},
 ) {
   return getBooks(sheetId, page, { ...options, groups: [group] })
 }

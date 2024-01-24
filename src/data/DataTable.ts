@@ -62,9 +62,9 @@ export default class DataTable implements Iterable<any[]> {
 
         return {
           value: this.getRow(row++),
-          done: false
+          done: false,
         }
-      }
+      },
     }
   }
 }

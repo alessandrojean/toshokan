@@ -16,14 +16,14 @@ const previousActive = ref(-1)
 function buildPageContents(resetPosition?: boolean) {
   const contents = Array.from(
     document.querySelectorAll<HTMLAnchorElement>(
-      '.table-of-contents ol > li > a'
-    )
+      '.table-of-contents ol > li > a',
+    ),
   )
 
   pageContents.value = contents.map((el, index) => ({
     id: el.hash,
     title: el.textContent!,
-    index
+    index,
   }))
 
   if (resetPosition) {
@@ -45,8 +45,8 @@ function setActiveLink() {
 
   // Page bottom, highlight last one.
   if (
-    pageContents.value.length > 0 &&
-    window.scrollY + window.innerHeight === document.body.offsetHeight
+    pageContents.value.length > 0
+    && window.scrollY + window.innerHeight === document.body.offsetHeight
   ) {
     active.value = pageContents.value.length - 1
     updateIndicator()
@@ -80,7 +80,7 @@ function getAnchorTop(anchor: Content) {
 function isAnchorActive(
   index: number,
   anchor: Content,
-  nextAnchor: Content
+  nextAnchor: Content,
 ): [boolean, number] {
   const scrollTop = window.scrollY
 
@@ -142,7 +142,7 @@ defineExpose({ buildPageContents })
 const list = ref<HTMLUListElement>()
 const indicator = reactive({
   top: 0,
-  height: 17
+  height: 17,
 })
 
 function updateIndicator() {
@@ -157,7 +157,7 @@ function updateIndicator() {
 }
 
 function handleClick(event: MouseEvent) {
-  const id = '#' + (event.target as HTMLAnchorElement).href.split('#')[1]
+  const id = `#${(event.target as HTMLAnchorElement).href.split('#')[1]}`
   const heading = document.querySelector<HTMLHeadingElement>(id)
 
   heading?.focus()
@@ -165,13 +165,13 @@ function handleClick(event: MouseEvent) {
 </script>
 
 <template>
-  <aside class="w-56 py-12 px-2" v-if="pageContents.length > 0">
+  <aside v-if="pageContents.length > 0" class="w-56 py-12 px-2">
     <nav class="sticky top-24 text-sm">
-      <p class="font-semibold font-display dark:text-gray-100">
+      <p class="font-semibold font-display-safe dark:text-gray-100">
         {{ t('about.onThisPage') }}
       </p>
       <div class="mt-5 relative">
-        <ul class="space-y-2.5 dark:text-gray-200" ref="list">
+        <ul ref="list" class="space-y-2.5 dark:text-gray-200">
           <li v-for="(header, idx) in pageContents" :key="header.id">
             <a
               :href="header.id"
@@ -179,7 +179,7 @@ function handleClick(event: MouseEvent) {
                 'has-ring-focus rounded',
                 idx === active
                   ? 'font-medium'
-                  : 'text-gray-500 dark:text-gray-400'
+                  : 'text-gray-500 dark:text-gray-400',
               ]"
               @click="handleClick"
             >
@@ -192,9 +192,9 @@ function handleClick(event: MouseEvent) {
           aria-hidden="true"
           class="indicator"
           :style="{
-            top: indicator.top + 'px',
-            height: indicator.height + 'px',
-            opacity: active === -1 ? '0' : '1'
+            top: `${indicator.top}px`,
+            height: `${indicator.height}px`,
+            opacity: active === -1 ? '0' : '1',
           }"
         />
       </div>

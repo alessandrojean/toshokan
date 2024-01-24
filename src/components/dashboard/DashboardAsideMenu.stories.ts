@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import DashboardAsideMenu from './DashboardAsideMenu.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 export default {
   title: 'Components/Dashboard/Aside Menu',
@@ -11,14 +10,14 @@ export default {
   //   })
   // ],
   parameters: {
-    layout: 'fullscreen'
-  }
+    layout: 'fullscreen',
+  },
 } as Meta<typeof DashboardAsideMenu>
 
 export const Default: StoryObj<typeof DashboardAsideMenu> = {
-  render: (args) => ({
+  render: args => ({
     components: { DashboardAsideMenu },
     setup: () => ({ args }),
-    template: '<DashboardAsideMenu v-bind="args" v-on="args" />'
-  })
+    template: '<DashboardAsideMenu v-bind="args" v-on="args" />',
+  }),
 }

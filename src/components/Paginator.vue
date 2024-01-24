@@ -5,7 +5,7 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
 } from '@heroicons/vue/20/solid'
 
 export interface PaginatorProps {
@@ -29,8 +29,8 @@ const { t } = useI18n({ useScope: 'global' })
 
 function isCurrent(idx: number) {
   return (
-    paginationInfo.value.current_page ===
-    paginationInfo.value.first_page + idx - 1
+    paginationInfo.value.current_page
+    === paginationInfo.value.first_page + idx - 1
   )
 }
 
@@ -52,14 +52,14 @@ watch(paginationInfo, (newPagination) => {
   focused.value = currentPage - firstPage + 2
 })
 
-function handleKeydown(event: KeyboardEvent, idx: number) {
+function handleKeydown(event: KeyboardEvent) {
   const allowedKeys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
   const { key } = event
   const {
     current_page: currentPage,
     first_page: firstPage,
     has_previous_page: hasPreviousPage,
-    has_next_page: hasNextPage
+    has_next_page: hasNextPage,
   } = paginationInfo.value
 
   if (key === 'Tab') {
@@ -76,8 +76,8 @@ function handleKeydown(event: KeyboardEvent, idx: number) {
   event.preventDefault()
 
   if (key === 'ArrowRight' && hasNextPage) {
-    focused.value =
-      focused.value + 1 >= links.value + 4
+    focused.value
+      = focused.value + 1 >= links.value + 4
         ? hasPreviousPage
           ? 0
           : 2
@@ -85,8 +85,8 @@ function handleKeydown(event: KeyboardEvent, idx: number) {
   } else if (key === 'ArrowRight') {
     focused.value = focused.value + 1 >= links.value + 2 ? 0 : focused.value + 1
   } else if (key === 'ArrowLeft' && hasPreviousPage) {
-    focused.value =
-      focused.value - 1 < 0
+    focused.value
+      = focused.value - 1 < 0
         ? hasNextPage
           ? links.value + 3
           : links.value + 1
@@ -108,7 +108,7 @@ function handleKeydown(event: KeyboardEvent, idx: number) {
 
 <template>
   <nav role="navigation" class="relative rounded-md shadow-sm">
-    <ul class="z-0 inline-flex -space-x-px" ref="paginator">
+    <ul ref="paginator" class="z-0 inline-flex -space-x-px">
       <li>
         <button
           type="button"
@@ -146,7 +146,7 @@ function handleKeydown(event: KeyboardEvent, idx: number) {
           type="button"
           :class="[
             isCurrent(pageIdx) ? 'is-current' : '',
-            'pag-button is-number has-ring-focus'
+            'pag-button is-number has-ring-focus',
           ]"
           :aria-current="isCurrent(pageIdx) ? 'page' : undefined"
           :disabled="!enabled"
@@ -154,7 +154,7 @@ function handleKeydown(event: KeyboardEvent, idx: number) {
           @click.stop="changePage(paginationInfo.first_page + pageIdx - 1)"
           @keydown="handleKeydown($event, pageIdx + 1)"
         >
-          <span class="sr-only" v-if="isCurrent(pageIdx)">
+          <span v-if="isCurrent(pageIdx)" class="sr-only">
             {{ t('pagination.current') }}
           </span>
           <span class="sr-only">

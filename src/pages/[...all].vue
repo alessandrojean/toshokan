@@ -15,13 +15,13 @@ meta:
 
 <template>
   <main
-    class="min-h-screen flex md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
     id="main-content"
+    class="min-h-screen flex md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
   >
     <div class="max-w-xl w-full">
       <header class="flex flex-col md:flex-row">
         <p
-          class="font-semibold font-display text-4xl text-primary-600 dark:text-primary-500"
+          class="font-semibold font-display-safe text-4xl text-primary-600 dark:text-primary-500"
         >
           404
         </p>
@@ -29,7 +29,7 @@ meta:
           <div
             class="md:border-l md:border-gray-200 dark:md:border-gray-700 md:pl-6 md:ml-6"
           >
-            <h2 class="font-semibold font-display text-4xl dark:text-gray-100">
+            <h2 class="font-semibold font-display-safe text-4xl dark:text-gray-100">
               {{ t('pageNotFound.title') }}
             </h2>
             <p class="mt-1 text-gray-500 dark:text-gray-400">
@@ -42,7 +42,7 @@ meta:
               kind="ghost"
               link
               :to="{
-                name: authenticated && authorized ? 'dashboard' : 'Home'
+                name: authenticated && authorized ? 'dashboard' : 'Home',
               }"
               class="-ml-3 group"
             >
@@ -50,7 +50,7 @@ meta:
                 <ArrowLeftIcon
                   :class="[
                     iconClass,
-                    'motion-safe:transition-transform group-hover:-translate-x-1'
+                    'motion-safe:transition-transform group-hover:-translate-x-1',
                   ]"
                 />
               </template>
@@ -59,7 +59,7 @@ meta:
                   t(
                     authenticated && authorized
                       ? 'pageNotFound.goBackDashboard'
-                      : 'pageNotFound.goBack'
+                      : 'pageNotFound.goBack',
                   )
                 }}
               </span>

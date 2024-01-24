@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import { useQueryClient } from '@tanstack/vue-query'
 
-import { injectStrict } from '@/util'
-import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 import {
   LockClosedIcon,
   LockOpenIcon,
   StarIcon,
-  UserGroupIcon
+  UserGroupIcon,
 } from '@heroicons/vue/24/outline'
-import { XMarkIcon } from '@heroicons/vue/20/solid'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/util'
 
 const props = defineProps<{ isOpen: boolean }>()
 
@@ -29,7 +28,7 @@ const selected = ref(sheetStore.sheetId!)
 const options = computed(() => sheetStore.options)
 
 const selectedSheet = computed(() => {
-  return options.value.find((file) => file.id === selected.value)
+  return options.value.find(file => file.id === selected.value)
 })
 
 function selectCurrent() {
@@ -112,14 +111,14 @@ watch(isOpen, (newIsOpen) => {
                     fill="currentColor"
                     fill-rule="evenodd"
                     opacity="0.503"
-                  ></path>
+                  />
                 </svg>
               </span>
             </div>
 
             <RadioGroup
-              class="flex-grow overflow-y-auto p-4 lg:p-6"
               v-model="selected"
+              class="flex-grow overflow-y-auto p-4 lg:p-6"
             >
               <RadioGroupLabel class="sr-only">
                 {{ t('dashboard.sheetChooser.label') }}
@@ -127,9 +126,9 @@ watch(isOpen, (newIsOpen) => {
 
               <div class="space-y-2">
                 <RadioGroupOption
-                  as="template"
                   v-for="option in options"
                   :key="option.id"
+                  as="template"
                   :value="option.id"
                 >
                   <div class="sheet has-input-focus">
@@ -175,8 +174,8 @@ watch(isOpen, (newIsOpen) => {
                       </div>
                       <RadioGroupDescription as="div" class="sheet-attributes">
                         <p
-                          class="sheet-starred"
                           v-if="!option.starred"
+                          class="sheet-starred"
                           :title="t('dashboard.sheetChooser.starred')"
                         >
                           <span aria-hidden="true">
@@ -187,8 +186,8 @@ watch(isOpen, (newIsOpen) => {
                           </span>
                         </p>
                         <p
-                          class="sheet-shared"
                           v-if="!option.ownedByMe"
+                          class="sheet-shared"
                           :title="t('dashboard.sheetChooser.sharedWithYou')"
                         >
                           <span aria-hidden="true">
@@ -264,7 +263,7 @@ watch(isOpen, (newIsOpen) => {
 }
 
 .dialog-title {
-  @apply text-lg font-medium font-display leading-6 text-white;
+  @apply text-lg font-medium font-display-safe leading-6 text-white;
 }
 
 .dialog-description {
@@ -350,7 +349,7 @@ watch(isOpen, (newIsOpen) => {
 }
 
 .sheet-name {
-  @apply text-sm font-medium font-display dark:text-gray-100
+  @apply text-sm font-medium font-display-safe dark:text-gray-100
     leading-none;
 }
 

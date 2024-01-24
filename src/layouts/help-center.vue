@@ -14,7 +14,7 @@ const authStore = useAuthStore()
 
 watch(
   () => authStore.started,
-  async () => await handleHash()
+  async () => await handleHash(),
 )
 onMounted(async () => await handleHash())
 
@@ -43,7 +43,7 @@ provide(RebuildPageContentsKey, rebuildPageContents)
 
 function groupBy<T, R extends string | number | symbol>(
   collection: T[],
-  predicate: (item: T) => R
+  predicate: (item: T) => R,
 ): Record<R, T[]> {
   return collection.reduce((record, item) => {
     const key = predicate(item)
@@ -70,27 +70,26 @@ const pages = Object.entries(files).map(([key, content]) => {
     categorySlug,
     pageOrder,
     pageSlug,
-    content
+    content,
   }
 })
 
-// eslint-disable-next-line prettier/prettier
 const docs: Documentation = Object
-  .entries(groupBy(pages, (item) => item.categorySlug))
+  .entries(groupBy(pages, item => item.categorySlug))
   .map<DocumentationCategory>(([category, pages]) => ({
     order: Number(pages[0].categoryOrder),
     category,
     pages: pages
-      .map((page) => ({
+      .map(page => ({
         order: Number(page.pageOrder),
         slug: page.pageSlug,
         locale: page.locale,
         title:
-          'app.routes.about.' +
-          page.pageSlug.replace(/-([a-z])/g, (g) => g[1].toUpperCase()),
-        content: page.content
+          `app.routes.about.${
+          page.pageSlug.replace(/-([a-z])/g, g => g[1].toUpperCase())}`,
+        content: page.content,
       }))
-      .sort((a, b) => a.order - b.order)
+      .sort((a, b) => a.order - b.order),
   }))
   .sort((a, b) => a.order - b.order)
 
@@ -107,7 +106,7 @@ provide(DocumentationKey, docs)
           <component :is="Component" :key="route.path" />
         </FadeTransition>
       </router-view>
-      <PageContents class="hidden xl:block" ref="pageContents" />
+      <PageContents ref="pageContents" class="hidden xl:block" />
     </div>
   </div>
 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { AsideMenuProps } from '@/components/dashboard/DashboardAsideMenu.vue'
-import type { RouteLocation } from 'vue-router'
 
 export interface DashboardAsideDialogProps extends AsideMenuProps {
   isOpen?: boolean
@@ -8,7 +7,7 @@ export interface DashboardAsideDialogProps extends AsideMenuProps {
 
 const props = withDefaults(defineProps<DashboardAsideDialogProps>(), {
   isOpen: false,
-  libraryGroups: () => []
+  libraryGroups: () => [],
 })
 
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -59,7 +58,7 @@ export default { inheritAttrs: false }
                 </DialogTitle>
               </template>
 
-              <template #footer v-if="$slots.footer">
+              <template v-if="$slots.footer" #footer>
                 <slot name="footer" />
               </template>
             </DashboardAsideMenu>

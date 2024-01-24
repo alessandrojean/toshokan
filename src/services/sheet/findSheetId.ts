@@ -21,7 +21,7 @@ export default async function findSheetId(useDevSheet: boolean = false) {
     q: `name='${fileName}' and mimeType='${SHEET_MIME_TYPE}'`,
     orderBy: 'starred',
     fields:
-      'files(capabilities/canEdit,id,modifiedTime,name,ownedByMe,owners(displayName,emailAddress,photoLink),starred)'
+      'files(capabilities/canEdit,id,modifiedTime,name,ownedByMe,owners(displayName,emailAddress,photoLink),starred)',
   })
 
   const response = await promisify(thenable)
@@ -32,10 +32,10 @@ export default async function findSheetId(useDevSheet: boolean = false) {
 
   const lastSheetOpened = localStorage.getItem('last_sheet_opened')
 
-  const sheet =
-    response.result.files!.find((sheet) => sheet.id === lastSheetOpened) ??
-    response.result.files!.find((sheet) => sheet.ownedByMe) ??
-    response.result.files![0]
+  const sheet
+    = response.result.files!.find(sheet => sheet.id === lastSheetOpened)
+    ?? response.result.files!.find(sheet => sheet.ownedByMe)
+    ?? response.result.files![0]
 
   return { sheet, options: response.result.files }
 }

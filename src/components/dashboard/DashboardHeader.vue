@@ -6,7 +6,7 @@ export interface SimpleHeaderProps {
 }
 
 withDefaults(defineProps<SimpleHeaderProps>(), {
-  loading: false
+  loading: false,
 })
 </script>
 
@@ -16,33 +16,33 @@ withDefaults(defineProps<SimpleHeaderProps>(), {
       <div
         :class="[
           'border-b dark:border-gray-700',
-          $slots.tabs ? 'pt-6' : 'py-6'
+          $slots.tabs ? 'pt-6' : 'py-6',
         ]"
       >
         <div class="md:flex md:items-center md:justify-between">
           <div class="flex-1 flex items-center space-x-4">
             <slot name="avatar" />
             <div>
-              <div v-if="loading" class="skeleton h-7 w-56"></div>
-              <slot name="title" v-else :title="title">
+              <div v-if="loading" class="skeleton h-7 w-56" />
+              <slot v-else name="title" :title="title">
                 <h1
-                  class="text-xl lg:text-2xl font-display font-semibold text-gray-900 dark:text-gray-100"
+                  class="text-xl lg:text-2xl font-display-safe font-semibold text-gray-900 dark:text-gray-100"
                 >
                   {{ title }}
                 </h1>
               </slot>
 
               <p
-                class="text-gray-500 dark:text-gray-400"
                 v-if="subtitle && !$slots.subtitle"
+                class="text-gray-500 dark:text-gray-400"
               >
                 {{ subtitle }}
               </p>
               <slot
-                name="subtitle"
                 v-else
+                name="subtitle"
                 :subtitle="subtitle"
-                subtitleClasses="text-gray-500 dark:text-gray-400"
+                subtitle-classes="text-gray-500 dark:text-gray-400"
               />
             </div>
           </div>

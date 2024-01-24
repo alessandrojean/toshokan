@@ -10,7 +10,7 @@ export interface BookTagsProps {
 const props = withDefaults(defineProps<BookTagsProps>(), {
   group: false,
   loading: false,
-  tags: () => []
+  tags: () => [],
 })
 
 defineEmits<{
@@ -29,8 +29,8 @@ function randomSize() {
 }
 
 const groupedTags = computed(() => {
-  const allTagsHaveGroups =
-    group.value && tags.value?.every((tag) => tag.includes(':'))
+  const allTagsHaveGroups
+    = group.value && tags.value?.every(tag => tag.includes(':'))
 
   if (allTagsHaveGroups !== true) {
     return null
@@ -64,7 +64,7 @@ const groupedTags = computed(() => {
           :title="t('dashboard.search.searchBy', [tag])"
           @click.prevent="$emit('click:tag', tag)"
         >
-          <span aria-hidden="true" class="bullet"></span>
+          <span aria-hidden="true" class="bullet" />
           <span>{{ tag }}</span>
         </a>
       </li>
@@ -73,22 +73,22 @@ const groupedTags = computed(() => {
       v-else-if="!loading && tags?.length && groupedTags"
       class="space-y-4 mt-2"
     >
-      <div v-for="(tags, group) in groupedTags" :key="group">
+      <div v-for="(groupTags, groupGroup) in groupedTags" :key="groupGroup">
         <p
           class="text-sm font-medium text-gray-600 dark:text-gray-300 first-letter:capitalize"
         >
-          {{ group }}
+          {{ groupGroup }}
         </p>
 
         <ul class="flex flex-wrap gap-2 mt-2">
-          <li v-for="tag in tags" :key="tag" class="block">
+          <li v-for="tag in groupTags" :key="tag" class="block">
             <a
               href="#"
               class="tag has-ring-focus block"
-              :title="t('dashboard.search.searchBy', [`${group}: ${tag}`])"
-              @click.prevent="$emit('click:tag', `${group}: ${tag}`)"
+              :title="t('dashboard.search.searchBy', [`${groupGroup}: ${tag}`])"
+              @click.prevent="$emit('click:tag', `${groupGroup}: ${tag}`)"
             >
-              <span aria-hidden="true" class="bullet"></span>
+              <span aria-hidden="true" class="bullet" />
               <span>{{ tag }}</span>
             </a>
           </li>

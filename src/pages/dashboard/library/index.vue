@@ -1,32 +1,28 @@
 <script lang="ts" setup>
 import { reactiveComputed, useActiveElement } from '@vueuse/core'
 import cloneDeep from 'lodash.clonedeep'
+import PaginatorUtil from 'paginator'
 import { z as zod } from 'zod'
-import { default as PaginatorUtil } from 'paginator'
-
-import type { GridMode, ViewMode } from '@/stores/settings'
-import { STATUS_READ } from '@/model/Book'
-import { TriState } from '@/types'
 
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   FunnelIcon,
-  PlusIcon
+  PlusIcon,
 } from '@heroicons/vue/20/solid'
 import {
   DocumentMagnifyingGlassIcon,
   ExclamationCircleIcon,
-  TableCellsIcon,
+  Squares2X2Icon,
   SquaresPlusIcon,
-  Squares2X2Icon
+  TableCellsIcon,
 } from '@heroicons/vue/24/outline'
+import { STATUS_READ } from '@/model/Book'
+import type { GridMode, ViewMode } from '@/stores/settings'
+import { TriState } from '@/types'
 
 import BookGrid from '@/components/book/BookGrid.vue'
-import BookTable, {
-  type MarkAsEvent,
-  type SortEvent,
-  type ToggleFavoriteEvent
+import BookTable, { type MarkAsEvent, type SortEvent, type ToggleFavoriteEvent,
 } from '@/components/book/BookTable.vue'
 import type { FilterState } from '@/components/dialogs/LibraryFiltersDialog.vue'
 
@@ -58,8 +54,8 @@ function castQueryValue(val?: unknown | unknown[]): unknown[] | undefined {
 const queryParamsSchema = zod.object({
   page: zod.string().regex(/^\d+$/).default('1').transform(Number),
   groups: zod.preprocess(
-    (val) => castQueryValue(val),
-    zod.string().array().optional()
+    val => castQueryValue(val),
+    zod.string().array().optional(),
   ),
   sortProperty: zod
     .enum([
@@ -71,12 +67,12 @@ const queryParamsSchema = zod.object({
       'paidPrice.value',
       'labelPrice.value',
       'createdAt',
-      'updatedAt'
+      'updatedAt',
     ])
     .default(SORT_PROPERTY_DEFAULT),
   sortDirection: zod.enum(['asc', 'desc']).default(SORT_DIRECTION_DEFAULT),
   favorites: zod.nativeEnum(TriState).default(FAVORITES_DEFAULT),
-  futureItems: zod.nativeEnum(TriState).default(FUTURE_ITEMS_DEFAULT)
+  futureItems: zod.nativeEnum(TriState).default(FUTURE_ITEMS_DEFAULT),
 })
 
 type QueryParams = zod.output<typeof queryParamsSchema>
@@ -95,13 +91,14 @@ const queryParams = reactiveComputed<QueryParams>(() => {
         sortProperty: 'createdAt',
         sortDirection: 'desc',
         favorites: TriState.INDIFERENT,
-        futureItems: TriState.HIDE
+        futureItems: TriState.HIDE,
       }
 })
-const { page, sortProperty, sortDirection, favorites, futureItems } =
-  toRefs(queryParams)
+const { page, sortProperty, sortDirection, favorites, futureItems }
+  = toRefs(queryParams)
 // https://github.com/vuejs/core/issues/6420
 const queryGroups = toRef(queryParams, 'groups')
+const selection = ref([] as number[])
 
 const viewMode = computed({
   get() {
@@ -109,7 +106,7 @@ const viewMode = computed({
       return 'table'
     }
 
-    return settingsStore.viewMode + ',' + settingsStore.gridMode
+    return `${settingsStore.viewMode},${settingsStore.gridMode}`
   },
   set(value) {
     const [viewMode, gridMode] = value.split(',')
@@ -121,7 +118,7 @@ const viewMode = computed({
     }
 
     selection.value = []
-  }
+  },
 })
 
 const sheetId = computed(() => sheetStore.sheetId)
@@ -129,50 +126,48 @@ const sheetLoading = computed(() => sheetStore.loading)
 
 const {
   mutate: bulkDeleteBooks,
-  isLoading: deleting,
-  isIdle: deletingIdle
+  isPending: deleting,
+  isIdle: deletingIdle,
 } = useBulkDeleteBookMutation()
 
 const {
   mutate: bulkUpdateBooks,
-  isLoading: updating,
-  isIdle: updatingIdle
+  isPending: updating,
+  isIdle: updatingIdle,
 } = useBulkEditBookMutation()
 
 const queriesEnabled = computed(() => {
   return (
-    !sheetLoading.value &&
-    sheetId.value !== null &&
-    deletingIdle.value &&
-    updatingIdle.value
+    !sheetLoading.value
+    && sheetId.value !== null
+    && deletingIdle.value
+    && updatingIdle.value
   )
 })
 
 const { data: groupsData, isLoading: groupsLoading } = useGroupsQuery({
-  enabled: queriesEnabled
+  enabled: queriesEnabled,
 })
 const groups = computed(() => {
-  const sheetGroups = (groupsData.value ?? []).map((g) => g.name)
+  const sheetGroups = (groupsData.value ?? []).map(g => g.name)
 
-  return queryGroups.value?.filter((g) => sheetGroups.includes(g))
+  return queryGroups.value?.filter(g => sheetGroups.includes(g))
 })
 
 const {
   data: booksData,
   isFetching: booksFetching,
-  isLoading: booksLoading
-} = useBooksQuery(
-  {
-    favorites,
-    futureItems,
-    groups,
-    page,
-    perPage: BOOKS_PER_PAGE,
-    sortBy: sortProperty,
-    sortDirection
-  },
-  { enabled: queriesEnabled }
-)
+  isLoading: booksLoading,
+} = useBooksQuery({
+  favorites,
+  futureItems,
+  groups,
+  page,
+  perPage: BOOKS_PER_PAGE,
+  sortBy: sortProperty,
+  sortDirection,
+  enabled: queriesEnabled,
+})
 
 const books = computed(() => booksData.value?.books ?? [])
 const totalResults = computed(() => booksData.value?.totalResults ?? 0)
@@ -196,7 +191,6 @@ const activeElement = useActiveElement()
 
 watch(booksFetching, (value) => {
   if (value) {
-    // @ts-ignore
     lastFocus.value = activeElement.value
     lastFocus.value?.blur()
   }
@@ -235,8 +229,8 @@ async function handleFilter(filters: FilterState) {
           ? filters.futureItems
           : undefined,
       groups:
-        filters.groups.length > 0 &&
-        filters.groups.length !== groupsData.value?.length
+        filters.groups.length > 0
+        && filters.groups.length !== groupsData.value?.length
           ? filters.groups
           : undefined,
       sortDirection:
@@ -247,8 +241,8 @@ async function handleFilter(filters: FilterState) {
         filters.sortProperty !== SORT_PROPERTY_DEFAULT
           ? filters.sortProperty
           : undefined,
-      page: 1
-    }
+      page: 1,
+    },
   })
 }
 
@@ -259,8 +253,8 @@ async function handleTableSort({ property, direction }: SortEvent) {
       ...route.query,
       sortProperty: property !== SORT_PROPERTY_DEFAULT ? property : undefined,
       sortDirection:
-        direction !== SORT_DIRECTION_DEFAULT ? direction : undefined
-    }
+        direction !== SORT_DIRECTION_DEFAULT ? direction : undefined,
+    },
   })
 }
 
@@ -276,9 +270,8 @@ function closeCreateDialog() {
 
 const canEdit = computed(() => sheetStore.canEdit)
 
-const selection = ref([] as number[])
 const booksToDelete = computed(() => {
-  return selection.value.map((idx) => books.value[idx])
+  return selection.value.map(idx => books.value[idx])
 })
 
 const deleteDialogOpen = ref(false)
@@ -289,7 +282,7 @@ function handleDeleteSelection() {
 
 function handleBulkMarkAs({ booksToEdit, newStatus }: MarkAsEvent) {
   const editedBooks = booksToEdit
-    .filter((book) => book.status !== newStatus)
+    .filter(book => book.status !== newStatus)
     .map((book) => {
       const clone = cloneDeep(toRaw(book))
       clone.status = newStatus
@@ -302,10 +295,10 @@ function handleBulkMarkAs({ booksToEdit, newStatus }: MarkAsEvent) {
 
 function handleBulkToggleFavorite({
   booksToEdit,
-  newFavorite
+  newFavorite,
 }: ToggleFavoriteEvent) {
   const editedBooks = booksToEdit
-    .filter((book) => book.favorite !== newFavorite)
+    .filter(book => book.favorite !== newFavorite)
     .map((book) => {
       const clone = cloneDeep(toRaw(book))
       clone.favorite = newFavorite
@@ -342,12 +335,12 @@ meta:
     <div class="flex-1">
       <FadeTransition>
         <section
+          v-if="
+            (sheetLoading || loading || writing || books.length > 0)
+              && !sheetIsEmpty
+          "
           class="h-full max-w-7xl mx-auto pt-4 sm:pt-6 px-4 sm:px-6 space-y-4 sm:space-y-6 !mb-6"
           aria-labelledby="results-title"
-          v-if="
-            (sheetLoading || loading || writing || books.length > 0) &&
-            !sheetIsEmpty
-          "
         >
           <DashboardBlock as="div">
             <div class="flex flex-row justify-between items-center">
@@ -388,7 +381,7 @@ meta:
                         'w-9 h-9 rounded-md bg-primary-100 dark:bg-gray-600/50 absolute left-0 top-0',
                         'motion-safe:transition-transform',
                         viewMode === 'grid,comfortable' ? 'translate-x-10' : '',
-                        viewMode === 'grid,compact' ? 'translate-x-20' : ''
+                        viewMode === 'grid,compact' ? 'translate-x-20' : '',
                       ]"
                     />
                     <RadioGroupOption
@@ -413,7 +406,7 @@ meta:
                       <span class="sr-only">
                         {{
                           t(
-                            'dashboard.library.filters.gridMode.comfortableGrid'
+                            'dashboard.library.filters.gridMode.comfortableGrid',
                           )
                         }}
                       </span>
@@ -513,8 +506,8 @@ meta:
                   <li>
                     <div
                       v-if="
-                        (sheetLoading && !writing) ||
-                        (loading && books.length === 0)
+                        (sheetLoading && !writing)
+                          || (loading && books.length === 0)
                       "
                       class="skeleton h-9 w-28"
                     />
@@ -535,8 +528,8 @@ meta:
                   <li>
                     <div
                       v-if="
-                        (sheetLoading && !writing) ||
-                        (loading && books.length === 0)
+                        (sheetLoading && !writing)
+                          || (loading && books.length === 0)
                       "
                       class="skeleton h-9 w-28"
                     />

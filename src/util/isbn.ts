@@ -1,6 +1,6 @@
 import ISBN from 'isbn3'
-import { getFlagUrl } from '.'
 import { isbn as isValidIsbn } from './validators'
+import { getFlagUrl } from '.'
 
 export function convertIsbn13ToIsbn10(isbn13?: string) {
   isbn13 = isbn13?.replace(/-/g, '') ?? ''
@@ -51,7 +51,7 @@ const REGISTRATION_GROUPS: Record<number, string[]> = {
   9974: ['UY', 'es'],
   99905: ['BO', 'es'],
   99954: ['BO', 'es'],
-  99974: ['BO', 'es']
+  99974: ['BO', 'es'],
 }
 
 export function getIsbnCountry(isbn: string) {
@@ -67,9 +67,9 @@ export function getIsbnCountry(isbn: string) {
       {
         countryCode: info[0],
         locale: info[1],
-        flagUrl: getFlagUrl(info[0])
-      }
-    ])
+        flagUrl: getFlagUrl(info[0]),
+      },
+    ]),
   )
 
   for (let i = 1; i <= 5; i++) {

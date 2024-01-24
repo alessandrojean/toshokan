@@ -2,10 +2,10 @@
 import { MoonIcon, SunIcon } from '@heroicons/vue/24/outline'
 
 import {
-  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
   ComputerDesktopIcon as ComputerDesktopIconSolid,
+  DevicePhoneMobileIcon as DevicePhoneMobileIconSolid,
   MoonIcon as MoonIconSolid,
-  SunIcon as SunIconSolid
+  SunIcon as SunIconSolid,
 } from '@heroicons/vue/20/solid'
 
 export interface ThemeToggleProps {
@@ -17,7 +17,7 @@ export interface ThemeToggleProps {
 const props = withDefaults(defineProps<ThemeToggleProps>(), {
   light: false,
   bottom: false,
-  transparent: false
+  transparent: false,
 })
 
 const { light, bottom, transparent } = toRefs(props)
@@ -27,7 +27,7 @@ const settingsStore = useSettingsStore()
 
 const theme = computed({
   get: () => settingsStore.theme,
-  set: (newTheme) => settingsStore.updateTheme(newTheme)
+  set: newTheme => settingsStore.updateTheme(newTheme),
 })
 
 const options = computed(() => [
@@ -36,12 +36,12 @@ const options = computed(() => [
   {
     key: THEME_SYSTEM,
     responsive: true,
-    menuIcon: [DevicePhoneMobileIconSolid, ComputerDesktopIconSolid]
-  }
+    menuIcon: [DevicePhoneMobileIconSolid, ComputerDesktopIconSolid],
+  },
 ])
 
 const currentOption = computed(() => {
-  return options.value.find((o) => o.key === theme.value)
+  return options.value.find(o => o.key === theme.value)
 })
 </script>
 
@@ -51,7 +51,7 @@ const currentOption = computed(() => {
     as="div"
     :class="[
       'relative flex items-center justify-center',
-      { light: light, transparent: transparent }
+      { light, transparent },
     ]"
   >
     <ListboxButton
@@ -60,7 +60,6 @@ const currentOption = computed(() => {
     >
       <span aria-hidden="true">
         <template v-if="theme === 'system'">
-          <!-- eslint-disable-next-line prettier/prettier -->
           <component
             :is="options[0].icon"
             class="w-6 h-6 dark:hidden system"
@@ -71,8 +70,8 @@ const currentOption = computed(() => {
           />
         </template>
         <component
-          v-else
           :is="currentOption!.icon"
+          v-else
           class="w-6 h-6 not-system"
         />
       </span>
@@ -92,15 +91,15 @@ const currentOption = computed(() => {
         <ListboxOption
           v-for="option in options"
           :key="option.key"
-          :value="option.key"
           v-slot="{ active }"
+          :value="option.key"
           as="template"
         >
           <li :class="active ? 'active' : ''" class="theme">
             <span aria-hidden="true">
               <component
-                v-if="!option.responsive"
                 :is="option.menuIcon"
+                v-if="!option.responsive"
                 class="w-5 h-5 mr-3"
               />
               <template v-else>
@@ -117,7 +116,7 @@ const currentOption = computed(() => {
               </template>
             </span>
             <span>
-              {{ t('dashboard.settings.appearence.theme.' + option.key) }}
+              {{ t(`dashboard.settings.appearence.theme.${option.key}`) }}
             </span>
           </li>
         </ListboxOption>

@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BaseField from './BaseField.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 export default {
   title: 'Components/Form/Field/Base',
@@ -9,17 +8,17 @@ export default {
     error: '',
     help: 'The help text',
     label: 'Label',
-    required: false
+    required: false,
   },
   argTypes: {
     error: {
-      control: { type: null }
+      control: { type: null },
     },
     default: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
-  decorators: [() => ({ template: '<div class="p-6 md:w-3/5"><story/></div>' })]
+  decorators: [() => ({ template: '<div class="p-6 md:w-3/5"><story/></div>' })],
 } as Meta<typeof BaseField>
 
 const fakeInputComponent = `
@@ -29,39 +28,39 @@ const fakeInputComponent = `
 `
 
 export const Default: StoryObj<typeof BaseField> = {
-  render: (args) => ({
+  render: args => ({
     components: { BaseField },
     setup: () => ({ args }),
     template: `
       <BaseField v-bind="args" v-on="args">
         ${fakeInputComponent}
       </BaseField>
-    `
-  })
+    `,
+  }),
 }
 
 export const Required: StoryObj<typeof BaseField> = {
-  render: (args) => ({
+  render: args => ({
     components: { BaseField },
     setup: () => ({ args }),
     template: `
       <BaseField v-bind="args" v-on="args">
         ${fakeInputComponent}
       </BaseField>
-    `
+    `,
   }),
-  args: { required: true }
+  args: { required: true },
 }
 
 export const InputOnly: StoryObj<typeof BaseField> = {
-  render: (args) => ({
+  render: args => ({
     components: { BaseField },
     setup: () => ({ args }),
     template: `
       <BaseField v-bind="args" v-on="args">
         ${fakeInputComponent}
       </BaseField>
-    `
+    `,
   }),
-  args: { required: true, label: '', help: '' }
+  args: { required: true, label: '', help: '' },
 }

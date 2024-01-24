@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
-import type { SpoilerMode } from '@/stores/settings'
-
 import {
-ExclamationCircleIcon,
-EyeIcon,
-MagnifyingGlassPlusIcon,
-PhotoIcon
+  ExclamationCircleIcon,
+  EyeIcon,
+  MagnifyingGlassPlusIcon,
+  PhotoIcon,
 } from '@heroicons/vue/24/outline'
+import type Book from '@/model/Book'
+import type { SpoilerMode } from '@/stores/settings'
 
 export interface BookCoverProps {
   blurNsfw?: boolean
@@ -23,8 +22,8 @@ const props = withDefaults(defineProps<BookCoverProps>(), {
   loading: false,
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const { book, loading, spoilerMode, blurNsfw } = toRefs(props)
@@ -37,15 +36,15 @@ const coverUrl = computed(() => {
   return book.value.coverUrl || ''
 })
 
-const { imageHasError, imageLoading, imageAspectRatio, loadImage } =
-  useImageLoader(coverUrl)
-
-const showBookCover = computed(() => {
-  return !imageHasError.value && !imageLoading.value && showBookInfo.value
-})
+const { imageHasError, imageLoading, imageAspectRatio, loadImage }
+  = useImageLoader(coverUrl)
 
 const showBookInfo = computed(() => {
   return !loading.value && book.value !== null
+})
+
+const showBookCover = computed(() => {
+  return !imageHasError.value && !imageLoading.value && showBookInfo.value
 })
 
 watch(book, (newValue) => {
@@ -62,8 +61,8 @@ onMounted(() => {
 
 const blurCover = computed(() => {
   return (
-    (spoilerMode.value.cover && !book.value!.isRead) ||
-    (blurNsfw.value && book.value!.isNsfw)
+    (spoilerMode.value.cover && !book.value!.isRead)
+    || (blurNsfw.value && book.value!.isNsfw)
   )
 })
 
@@ -83,8 +82,8 @@ const { t } = useI18n({ useScope: 'global' })
 <template>
   <figure
     :class="[
-      'group aspect-[var(--aspect)] rounded-xl overflow-hidden',
-      'bg-gray-200 dark:bg-gray-800 relative shadow-md'
+      'group aspect-[--aspect] rounded-xl overflow-hidden',
+      'bg-gray-200 dark:bg-gray-800 relative shadow-md',
     ]"
     :style="{ aspectRatio: imageAspectRatio }"
   >
@@ -98,13 +97,13 @@ const { t } = useI18n({ useScope: 'global' })
             : undefined
         "
         :class="['w-full h-full', blurCover ? ' filter blur-sm scale-105' : '']"
-      />
+      >
       <div v-else class="w-full h-full flex items-center justify-center">
         <PhotoIcon
           v-if="imageLoading || loading || coverUrl.length === 0"
           :class="[
             'w-10 h-10 text-gray-500 dark:text-gray-600',
-            imageLoading || loading ? 'motion-safe:animate-pulse' : ''
+            imageLoading || loading ? 'motion-safe:animate-pulse' : '',
           ]"
         />
         <ExclamationCircleIcon

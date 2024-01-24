@@ -1,6 +1,6 @@
 <template>
   <section class="content-body prose dark:prose-invert max-w-none">
-    <slot></slot>
+    <slot />
   </section>
 </template>
 
@@ -23,7 +23,7 @@
 
 .content-body kbd {
   @apply inline-flex rounded-md py-0.5 px-2 text-xs select-none
-    font-sans supports-var-font:font-sans-var
+    font-sans-safe
     bg-gray-200/80 dark:bg-gray-700 dark:text-white
     border-b-2 border-gray-300 dark:border-gray-600;
 }

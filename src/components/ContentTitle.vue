@@ -9,7 +9,7 @@ const { t, d } = useI18n({ useScope: 'global' })
 <template>
   <div class="content-title">
     <h1>
-      <slot></slot>
+      <slot />
     </h1>
 
     <time
@@ -28,7 +28,7 @@ const { t, d } = useI18n({ useScope: 'global' })
 }
 
 .content-title h1 {
-  @apply font-display font-bold leading-7
+  @apply font-display-safe font-bold leading-7
     text-3xl md:text-4xl
     text-gray-800 dark:text-gray-100;
 }

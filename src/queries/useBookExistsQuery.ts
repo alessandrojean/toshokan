@@ -1,20 +1,24 @@
-import { computed, type Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import { type Ref, computed } from 'vue'
 
+import type Book from '@/model/Book'
 import getBookByCode from '@/services/sheet/getBookByCode'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export default function useBookExistsQuery(
-  isbn: Ref<string>,
-  { enabled }: UseQueryOptions
-) {
+type BookByCodeReturn = Book[] | null | undefined
+type UseBookExistsQueryOptions<S> = UseQueryOptions<BookByCodeReturn, Error, S> &
+  { isbn: Ref<string> }
+
+export default function useBookExistsQuery<S = BookByCodeReturn>(options: UseBookExistsQueryOptions<S>) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getBookByCode(sheetId.value!, isbn.value))
-  }
-
-  return useQuery(['book-exists', { isbn, sheetId }], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['book-exists', { isbn: options.isbn, sheetId }],
+    queryFn: async () => {
+      return await fetch(getBookByCode(sheetId.value!, options.isbn.value))
+    },
+    ...options,
+  })
 }

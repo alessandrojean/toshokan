@@ -1,29 +1,30 @@
-import { computed, type Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
+import { type Ref, computed } from 'vue'
 
+import type Book from '@/model/Book'
 import getBooksFromCollection from '@/services/sheet/getBooksFromCollection'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
-import Book from '@/model/Book'
 
-export default function useBookCollectionQuery(
-  book: Ref<Book | undefined | null>,
-  { enabled }: UseQueryOptions
-) {
+type GetBooksReturn = Book[] | undefined | null
+type UseBookCollectionQueryOptions<S> = UseQueryOptions<GetBooksReturn, Error, S>
+  & { book: Ref<Book | undefined | null> }
+
+export default function useBookCollectionQuery<S = GetBooksReturn>(options: UseBookCollectionQueryOptions<S>) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    if (!book.value) {
-      return null
-    }
+  const bookTitle = computed(() => `${options.book.value?.titleParts?.title} #`)
 
-    return await fetch(getBooksFromCollection(sheetId.value!, book.value))
-  }
+  return useQuery({
+    queryKey: ['book-collection', { bookTitle, sheetId }],
+    queryFn: async () => {
+      if (!options.book.value) {
+        return null
+      }
 
-  const bookTitle = computed(() => book.value?.titleParts?.title + ' #')
-
-  return useQuery(['book-collection', { bookTitle, sheetId }], fetcher, {
-    enabled
+      return await fetch(getBooksFromCollection(sheetId.value!, options.book.value))
+    },
+    ...options,
   })
 }

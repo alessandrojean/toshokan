@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 import type { ReadingMonthYear } from '@/services/sheet/getReadingMonths'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 
@@ -25,8 +25,8 @@ const props = withDefaults(defineProps<ReadingsPerYearProps>(), {
   selected: undefined,
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const emit = defineEmits<{
@@ -41,23 +41,26 @@ const {
   readBooks,
   readBooksLoading,
   selected,
-  spoilerMode
+  spoilerMode,
 } = toRefs(props)
+
+const selectedYear = ref(selected.value?.year ?? new Date().getFullYear())
+const selectedMonth = ref(selected.value?.month ?? new Date().getMonth() + 1)
 
 const { t, d, locale } = useI18n({ useScope: 'global' })
 
 const years = computed(() => {
-  const all = monthsYears.value?.map((monthYear) => monthYear.year)
+  const all = monthsYears.value?.map(monthYear => monthYear.year)
 
   return [...new Set(all ?? [])]
 })
 
 function monthsInYear(year: number) {
   const inYear = monthsYears.value?.filter(
-    (monthYear) => monthYear.year === year
+    monthYear => monthYear.year === year,
   )
 
-  return inYear?.map((monthYear) => monthYear.month) ?? []
+  return inYear?.map(monthYear => monthYear.month) ?? []
 }
 
 const months = computed(() => monthsInYear(selectedYear.value))
@@ -86,9 +89,6 @@ onMounted(() => {
   }
 })
 
-const selectedYear = ref(selected.value?.year ?? new Date().getFullYear())
-const selectedMonth = ref(selected.value?.month ?? new Date().getMonth() + 1)
-
 watch([selectedMonth, selectedYear], ([month, year]) => {
   const monthYear = monthsYears.value?.find((my) => {
     return my.month === month && my.year === year
@@ -101,8 +101,8 @@ function handleSelectChange(event: Event) {
   const select = event.target as HTMLSelectElement
   const [year, month] = select.value.split('-')
 
-  selectedYear.value = parseInt(year, 10)
-  selectedMonth.value = parseInt(month, 10)
+  selectedYear.value = Number.parseInt(year, 10)
+  selectedMonth.value = Number.parseInt(month, 10)
 }
 
 const monthFormatter = computed(() => {
@@ -141,18 +141,18 @@ meta:
     <div class="w-52 shrink-0 hidden md:block">
       <div class="sticky top-20">
         <fieldset class="grid grid-cols-2 gap-2">
-          <legend class="col-span-2 text-md font-medium font-display mb-3">
+          <legend class="col-span-2 text-md font-medium font-display-safe mb-3">
             {{ t('dashboard.readings.year') }}
           </legend>
           <template v-if="!loading">
             <div v-for="year in years" :key="year" class="w-full">
               <input
+                :id="`year-${year}`"
+                v-model="selectedYear"
                 class="sr-only peer"
                 type="radio"
-                :id="`year-${year}`"
                 :value="year"
-                v-model="selectedYear"
-              />
+              >
               <label
                 :class="[
                   'border border-gray-200 dark:border-gray-700',
@@ -164,7 +164,7 @@ meta:
                   'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
                   'peer-focus-visible:ring-primary-600',
                   'dark:peer-focus-visible:ring-offset-gray-900',
-                  'w-full block text-center py-1 rounded-md text-sm'
+                  'w-full block text-center py-1 rounded-md text-sm',
                 ]"
                 :for="`year-${year}`"
               >
@@ -182,19 +182,19 @@ meta:
         </fieldset>
 
         <fieldset class="grid grid-cols-3 gap-2 mt-8">
-          <legend class="col-span-3 text-md font-medium font-display mb-3">
+          <legend class="col-span-3 text-md font-medium font-display-safe mb-3">
             {{ t('dashboard.readings.month') }}
           </legend>
           <div v-for="month of 12" :key="month" class="w-full">
             <template v-if="!loading">
               <input
+                :id="`month-${month}`"
+                v-model="selectedMonth"
                 class="sr-only peer"
                 type="radio"
-                :id="`month-${month}`"
                 :value="month"
                 :disabled="!months.includes(month)"
-                v-model="selectedMonth"
-              />
+              >
               <label
                 :class="[
                   'border border-gray-200 dark:border-gray-700',
@@ -206,7 +206,7 @@ meta:
                   'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
                   'peer-focus-visible:ring-primary-600',
                   'dark:peer-focus-visible:ring-offset-gray-900',
-                  'w-full block text-center py-1 rounded-md text-sm'
+                  'w-full block text-center py-1 rounded-md text-sm',
                 ]"
                 :for="`month-${month}`"
               >
@@ -214,8 +214,8 @@ meta:
               </label>
             </template>
             <div
-              aria-hidden="true"
               v-else
+              aria-hidden="true"
               class="skeleton h-7 w-full rounded-md"
             />
           </div>
@@ -224,7 +224,7 @@ meta:
     </div>
 
     <div class="grow">
-      <div class="md:hidden mb-6" v-if="!loading && monthsYears">
+      <div v-if="!loading && monthsYears" class="md:hidden mb-6">
         <label for="month-select" class="sr-only">
           {{ t('dashboard.readings.month') }}
         </label>

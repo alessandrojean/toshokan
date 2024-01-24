@@ -4,7 +4,7 @@ import { useI18n } from '@/i18n'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
-type Link = {
+interface Link {
   route: RouteLocationRaw
   text: string
 }
@@ -14,9 +14,9 @@ const links = computed<Link[]>(() => [
   { route: '/help/guide/instructions', text: t('footer.links.instructions') },
   {
     route: '/help/general/privacy-policy',
-    text: t('footer.links.privacyPolicy')
+    text: t('footer.links.privacyPolicy'),
   },
-  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') }
+  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') },
 ])
 </script>
 

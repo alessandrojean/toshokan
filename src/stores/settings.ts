@@ -1,5 +1,5 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 const LocalStorageKeys = {
   BLUR_NSFW: 'blur_nsfw',
@@ -8,7 +8,7 @@ const LocalStorageKeys = {
   SPOILER_MODE_COVER: 'spoiler_mode_cover',
   SPOILER_MODE_SYNOPSIS: 'spoiler_mode_synopsis',
   THEME: 'theme',
-  VIEW_MODE: 'view_mode'
+  VIEW_MODE: 'view_mode',
 }
 
 export const THEME_SYSTEM: Theme = 'system'
@@ -41,6 +41,7 @@ export function getTheme() {
 }
 
 function handleThemeChange(event: MediaQueryListEvent) {
+  // eslint-disable-next-line ts/no-use-before-define
   const settingsStore = useSettingsStore()
 
   if (settingsStore.theme === THEME_SYSTEM) {
@@ -56,9 +57,9 @@ window
   .matchMedia('(prefers-color-scheme: dark)')
   .addEventListener('change', handleThemeChange)
 
-const isDevEnvironment = !!import.meta.env.DEV
+const isDevEnvironment = false // !!import.meta.env.DEV
 
-export type SpoilerMode = {
+export interface SpoilerMode {
   cover?: boolean
   synopsis?: boolean
 }
@@ -68,15 +69,15 @@ export const useSettingsStore = defineStore('settings', {
     blurNsfw: useLocalStorage(LocalStorageKeys.BLUR_NSFW, false),
     gridMode: useLocalStorage<GridMode>(
       LocalStorageKeys.GRID_MODE,
-      'comfortable'
+      'comfortable',
     ),
     spoilerMode: {
       cover: useLocalStorage(LocalStorageKeys.SPOILER_MODE_COVER, false),
-      synopsis: useLocalStorage(LocalStorageKeys.SPOILER_MODE_SYNOPSIS, false)
+      synopsis: useLocalStorage(LocalStorageKeys.SPOILER_MODE_SYNOPSIS, false),
     },
     theme: getTheme(),
     useDevSheet: isDevEnvironment,
-    viewMode: useLocalStorage<ViewMode>(LocalStorageKeys.VIEW_MODE, 'grid')
+    viewMode: useLocalStorage<ViewMode>(LocalStorageKeys.VIEW_MODE, 'grid'),
   }),
   actions: {
     updateBlurNsfw(blurNsfw: boolean) {
@@ -89,8 +90,8 @@ export const useSettingsStore = defineStore('settings', {
 
     updateSpoilerMode(spoilerMode: SpoilerMode) {
       this.spoilerMode.cover = spoilerMode.cover ?? this.spoilerMode.cover
-      this.spoilerMode.synopsis =
-        spoilerMode.synopsis ?? this.spoilerMode.synopsis
+      this.spoilerMode.synopsis
+        = spoilerMode.synopsis ?? this.spoilerMode.synopsis
     },
 
     updateTheme(theme: Theme) {
@@ -119,8 +120,8 @@ export const useSettingsStore = defineStore('settings', {
 
     updateViewMode(viewMode: ViewMode) {
       this.viewMode = viewMode
-    }
-  }
+    },
+  },
 })
 
 if (import.meta.hot) {

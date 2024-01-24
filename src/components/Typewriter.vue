@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<TypewriterProps>(), {
   speed: 500,
   deleteSpeed: 166,
   nextWordInterval: 1200,
-  words: () => []
+  words: () => [],
 })
 
 const { speed, deleteSpeed, nextWordInterval, words } = toRefs(props)
@@ -38,9 +38,9 @@ function type() {
   if (currentWord.value.length > 0) {
     displayText.value.push(currentWord.value.shift()!)
   } else if (
-    !isWaitingNextWord.value &&
-    currentWord.value.length === 0 &&
-    displayText.value.length === words.value[wordIdx.value].length
+    !isWaitingNextWord.value
+    && currentWord.value.length === 0
+    && displayText.value.length === words.value[wordIdx.value].length
   ) {
     timeoutSpeed.value = nextWordInterval.value
     isWaitingNextWord.value = true
@@ -76,7 +76,7 @@ onBeforeUnmount(() => {
     <span :class="textClass" aria-hidden="true">{{
       displayText.join('')
     }}</span>
-    <span class="cursor" aria-hidden="true"></span>
+    <span class="cursor" aria-hidden="true" />
     <span class="sr-only">{{ words[wordIdx] }}</span>
   </span>
 </template>

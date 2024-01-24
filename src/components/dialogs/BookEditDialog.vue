@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash.clonedeep'
 
+import { CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
@@ -19,7 +18,7 @@ export interface BookEditDialogProps {
 }
 
 const props = withDefaults(defineProps<BookEditDialogProps>(), {
-  isOpen: false
+  isOpen: false,
 })
 
 const emit = defineEmits<{
@@ -29,6 +28,8 @@ const emit = defineEmits<{
 
 const { t, n } = useI18n({ useScope: 'global' })
 
+const editFormInvalid = ref(false)
+
 function closeDialog() {
   editFormInvalid.value = false
   emit('close')
@@ -37,7 +38,6 @@ function closeDialog() {
 const { isOpen, book } = toRefs(props)
 
 const editingBook = reactive(book?.value ?? new Book())
-const editFormInvalid = ref(false)
 
 function setEditFormInvalid(value: boolean) {
   editFormInvalid.value = value
@@ -56,12 +56,12 @@ watch(isOpen, (newIsOpen) => {
     Object.assign(editingBook, cloneDeep(toRaw(book!.value)), {
       labelPrice: {
         ...book!.value!.labelPrice,
-        valueStr: n(book!.value!.labelPrice!.value, 'decimal')
+        valueStr: n(book!.value!.labelPrice!.value, 'decimal'),
       },
       paidPrice: {
         ...book!.value!.paidPrice,
-        valueStr: n(book!.value!.paidPrice!.value, 'decimal')
-      }
+        valueStr: n(book!.value!.paidPrice!.value, 'decimal'),
+      },
     })
 
     window.addEventListener('beforeunload', preventUnload)
@@ -73,6 +73,7 @@ watch(isOpen, (newIsOpen) => {
 })
 
 const editForm = ref<InstanceType<typeof BookForm>>()
+const main = ref<HTMLDivElement>()
 
 async function handleEdit() {
   if (!editFormInvalid.value) {
@@ -82,25 +83,23 @@ async function handleEdit() {
     nextTick(() => {
       main.value!.scroll({
         top: main.value!.scrollHeight,
-        behavior: 'smooth'
+        behavior: 'smooth',
       })
     })
   }
 }
 
-const main = ref<HTMLDivElement>()
-
 const tabs = computed(() => [
   {
     title: t('dashboard.details.editForm.title'),
-    error: editFormInvalid.value
+    error: editFormInvalid.value,
   },
   { title: t('dashboard.details.coverForm.title') },
   {
     title: t('dashboard.details.readingForm.title'),
-    disabled: editingBook.isFuture
+    disabled: editingBook.isFuture,
   },
-  { title: t('dashboard.details.organizationForm.title') }
+  { title: t('dashboard.details.organizationForm.title') },
 ])
 
 const sheetStore = useSheetStore()
@@ -111,13 +110,13 @@ const coverUrl = computed({
   get: () => editingBook.coverUrl ?? undefined,
   set: (value) => {
     editingBook.coverUrl = value ?? null
-  }
+  },
 })
 
-const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
-  computed(() => editingBook),
-  { enabled: true }
-)
+const { isLoading: findingCovers, data: coverResults } = useCoverQuery({
+  enabled: true,
+  book: computed(() => editingBook),
+})
 </script>
 
 <template>
@@ -183,7 +182,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                     fill="currentColor"
                     fill-rule="evenodd"
                     opacity="0.503"
-                  ></path>
+                  />
                 </svg>
               </span>
             </div>
@@ -208,35 +207,35 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
               </TabList>
 
               <TabPanels as="template">
-                <div class="tab-panels" ref="main">
+                <div ref="main" class="tab-panels">
                   <TabPanel class="has-ring-focus rounded-md">
                     <BookForm
                       ref="editForm"
                       touch-on-mount
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
+                      :model-value="editingBook"
+                      @update:model-value="Object.assign(editingBook, $event)"
                       @error="setEditFormInvalid"
                     />
                   </TabPanel>
                   <TabPanel class="has-ring-focus rounded-md">
                     <BookCoverSelector
+                      v-model="coverUrl"
                       custom
                       hide-custom-title
-                      v-model="coverUrl"
                       :loading="findingCovers"
                       :options="coverResults"
                     />
                   </TabPanel>
                   <TabPanel class="has-ring-focus rounded-md">
                     <BookReading
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
+                      :model-value="editingBook"
+                      @update:model-value="Object.assign(editingBook, $event)"
                     />
                   </TabPanel>
                   <TabPanel class="has-ring-focus rounded-md">
                     <BookOrganization
-                      :modelValue="editingBook"
-                      @update:modelValue="Object.assign(editingBook, $event)"
+                      :model-value="editingBook"
+                      @update:model-value="Object.assign(editingBook, $event)"
                     />
                   </TabPanel>
                 </div>
@@ -282,7 +281,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
 }
 
 .dialog-title {
-  @apply text-lg font-medium font-display leading-6 text-white;
+  @apply text-lg font-medium font-display-safe leading-6 text-white;
 }
 
 .dialog-description {

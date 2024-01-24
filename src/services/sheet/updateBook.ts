@@ -1,5 +1,5 @@
 import { promisify } from '@/util/gapi'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 /**
  * Update a book in the sheet.
@@ -14,7 +14,7 @@ export default async function updateBook(sheetId: string, book: Book) {
     spreadsheetId: sheetId,
     range: book.sheetLocation!,
     valueInputOption: 'USER_ENTERED',
-    resource: { range: book.sheetLocation!, values: [bookFormatted] }
+    resource: { range: book.sheetLocation!, values: [bookFormatted] },
   })
 
   await promisify(thenable)

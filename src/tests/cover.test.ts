@@ -1,4 +1,4 @@
-import { beforeEach, vi, it, expect } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 
 import axios from 'axios'
 
@@ -15,11 +15,11 @@ beforeEach(() => {
   axiosPost.mockClear()
 })
 
-it('Should replace the value in URL replacer', async () => {
+it('should replace the value in URL replacer', async () => {
   const urlReplacer = new UrlReplacerFinder({
     name: 'Test publisher',
     url: 'https://cool.api.dev/isbn/{value}.jpg',
-    property: 'code'
+    property: 'code',
   })
 
   const coverUrls = await urlReplacer.find(new Book({ code: '12345' }))
@@ -27,21 +27,21 @@ it('Should replace the value in URL replacer', async () => {
   expect(coverUrls).toStrictEqual(['https://cool.api.dev/isbn/12345.jpg'])
 })
 
-it('Should find the cover in WordPress if available', async () => {
+it('should find the cover in WordPress if available', async () => {
   axiosGet.mockResolvedValueOnce({
     data: [
       {
         _embedded: {
-          'wp:featuredmedia': [{ source_url: 'COVER_URL' }]
-        }
-      }
-    ]
+          'wp:featuredmedia': [{ source_url: 'COVER_URL' }],
+        },
+      },
+    ],
   })
 
   const wordpress = new WordPressFinder({
     name: 'Test publisher',
     url: 'https://cool.publisher.dev',
-    searchWith: 'code'
+    searchWith: 'code',
   })
 
   const coverUrls = await wordpress.find(new Book({ code: '12345' }))
@@ -49,13 +49,13 @@ it('Should find the cover in WordPress if available', async () => {
   expect(coverUrls).toStrictEqual(['COVER_URL'])
 })
 
-it('Should return no results in WordPress if not available', async () => {
+it('should return no results in WordPress if not available', async () => {
   axiosGet.mockResolvedValueOnce({ data: [] })
 
   const wordpress = new WordPressFinder({
     name: 'Test publisher',
     url: 'https://cool.publisher.dev',
-    searchWith: 'code'
+    searchWith: 'code',
   })
 
   const coverUrls = await wordpress.find(new Book({ code: '12345' }))
@@ -63,17 +63,17 @@ it('Should return no results in WordPress if not available', async () => {
   expect(coverUrls).toHaveLength(0)
 })
 
-it('Should check only on Amazon when forced', async () => {
+it('should check only on Amazon when forced', async () => {
   axiosGet.mockResolvedValue({ data: [] })
 
   const book = new Book({ code: '9786589912415' })
 
   await expect(findCovers(book, true)).resolves.toStrictEqual([
-    'https://images-na.ssl-images-amazon.com/images/P/6589912416.01._SCRM_SL700_.jpg'
+    'https://images-na.ssl-images-amazon.com/images/P/6589912416.01._SCRM_SL700_.jpg',
   ])
 })
 
-it('Should return no results if book does not have a ISBN', async () => {
+it('should return no results if book does not have a ISBN', async () => {
   const book = new Book({ code: '12345' })
 
   await expect(findCovers(book)).resolves.toHaveLength(0)

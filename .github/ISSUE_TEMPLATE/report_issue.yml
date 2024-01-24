@@ -1,6 +1,6 @@
 name: Issue report
 description: File a issue report for the application.
-labels: ['bug']
+labels: [bug]
 body:
   - type: input
     id: version

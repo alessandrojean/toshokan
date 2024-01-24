@@ -22,8 +22,8 @@ const { t } = useI18n({ useScope: 'global' })
     <span
       v-if="!iconOnly"
       :class="[
-        'font-display font-semibold text-xl ml-3',
-        dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50'
+        'font-display-safe font-semibold text-xl ml-3',
+        dark ? 'text-gray-50' : 'text-gray-800 dark:text-gray-50',
       ]"
       aria-hidden="true"
     >
@@ -33,7 +33,7 @@ const { t } = useI18n({ useScope: 'global' })
       v-if="!iconOnly"
       :class="[
         'font-semibold text-[0.6rem] align-super ml-0.5',
-        dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'
+        dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400',
       ]"
       aria-hidden="true"
     >

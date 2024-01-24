@@ -1,6 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookCover from './BookCover.vue'
 
-import { Meta, StoryObj } from '@storybook/vue3'
 import Book from '@/model/Book'
 
 const bookDemo: Partial<Book> = {
@@ -9,7 +9,7 @@ const bookDemo: Partial<Book> = {
   publisher: 'Panini',
   group: 'Manga',
   tags: ['nsfw'],
-  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg'
+  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg',
 }
 
 export default {
@@ -21,55 +21,55 @@ export default {
     loading: false,
     spoilerMode: {
       cover: false,
-      synopsis: false
-    }
+      synopsis: false,
+    },
   },
   argTypes: {
     book: {
-      control: { type: null }
+      control: { type: null },
     },
     spoilerMode: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="md:p-6 w-64 max-w-xl"><story/></div>'
-    })
-  ]
+      template: '<div class="md:p-6 w-64 max-w-xl"><story/></div>',
+    }),
+  ],
 } as Meta<typeof BookCover>
 
 export const Default: StoryObj<typeof BookCover> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCover },
     setup: () => ({ args }),
-    template: '<BookCover v-bind="args" v-on="args" />'
-  })
+    template: '<BookCover v-bind="args" v-on="args" />',
+  }),
 }
 
 export const Loading: StoryObj<typeof BookCover> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCover },
     setup: () => ({ args }),
-    template: '<BookCover v-bind="args" v-on="args" />'
+    template: '<BookCover v-bind="args" v-on="args" />',
   }),
-  args: { loading: true }
+  args: { loading: true },
 }
 
 export const Empty: StoryObj<typeof BookCover> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCover },
     setup: () => ({ args }),
-    template: '<BookCover v-bind="args" v-on="args" />'
+    template: '<BookCover v-bind="args" v-on="args" />',
   }),
-  args: { book: new Book({ ...bookDemo, coverUrl: '' }) }
+  args: { book: new Book({ ...bookDemo, coverUrl: '' }) },
 }
 
 export const NSFW: StoryObj<typeof BookCover> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCover },
     setup: () => ({ args }),
-    template: '<BookCover v-bind="args" v-on="args" />'
+    template: '<BookCover v-bind="args" v-on="args" />',
   }),
-  args: { blurNsfw: true }
+  args: { blurNsfw: true },
 }

@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<BookButtonsProps>(), {
   markdown: undefined,
   blur: false,
   loading: false,
-  options: () => ({ disable: ['image'] })
+  options: () => ({ disable: ['image'] }),
 })
 
 const { markdown, blur, loading, title, emptyMessage, options } = toRefs(props)
@@ -72,34 +72,34 @@ function handleContainerClick(event: MouseEvent) {
 <template>
   <DashboardBlock
     v-if="markdownRendered?.length || emptyMessage || loading"
+    ref="content"
     :class="[
       'book-markdown relative motion-safe:transition overflow-hidden',
       collapsed && showReadMore
         ? 'h-52 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 animate-hover'
-        : ''
+        : '',
     ]"
-    ref="content"
     :title="title"
     @click="handleContainerClick"
   >
     <div
       v-if="!loading"
-      v-html="markdownRendered"
       :class="{
         'spoiler-blur':
           blur && (collapsed || !showReadMore) && markdownRendered?.length,
-        'show-on-hover': blur && !showReadMore && markdownRendered?.length
+        'show-on-hover': blur && !showReadMore && markdownRendered?.length,
       }"
       class="mt-3 prose prose-sm sm:prose-base dark:prose-invert max-w-none motion-safe:transition"
       :inert="showReadMore && collapsed"
+      v-html="markdownRendered"
     />
     <div v-else class="flex flex-col space-y-2 mt-3" aria-hidden="true">
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-6/12 h-5"></div>
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-6/12 h-5" />
     </div>
 
     <FadeTransition>
@@ -107,15 +107,15 @@ function handleContainerClick(event: MouseEvent) {
         v-if="showReadMore"
         :class="[
           'inset-x-0 bottom-0 flex justify-center items-end motion-safe:transition-colors',
-          collapsed ? 'h-1/2 collapsed-gradient absolute p-2' : 'pt-2'
+          collapsed ? 'h-1/2 collapsed-gradient absolute p-2' : 'pt-2',
         ]"
       >
         <Button
           kind="ghost"
           size="small"
           rounded
-          @click.stop="toggleCollapsed"
           :aria-expanded="collapsed"
+          @click.stop="toggleCollapsed"
         >
           {{
             collapsed

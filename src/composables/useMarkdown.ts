@@ -15,8 +15,8 @@ import { useI18n } from 'vue-i18n'
 
 const youtube: PluginSimple = (md) => {
   const defaultRenderer = md.renderer.rules.image!
-  const youtubeRegex =
-    /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed|playlist)?(\?(?:v|list)=|\/)?([^$/\n]+)/
+  const youtubeRegex
+    = /^https?:\/\/(www\.)?youtu\.?be(\.com)?\/(watch|embed|playlist)?(\?(?:v|list)=|\/)?([^$/\n]+)/
 
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
@@ -72,9 +72,9 @@ const imageLazyLoad: PluginSimple = (md) => {
 }
 
 const externalLinks: PluginSimple = (md) => {
-  const defaultRenderer =
-    md.renderer.rules.link_open ??
-    function (tokens, idx, options, env, self) {
+  const defaultRenderer
+    = md.renderer.rules.link_open
+    ?? function (tokens, idx, options, env, self) {
       return self.renderToken(tokens, idx, options)
     }
 
@@ -94,7 +94,7 @@ const externalLinks: PluginSimple = (md) => {
   }
 }
 
-export type UseMarkdownOptions = {
+export interface UseMarkdownOptions {
   disable?: string[]
   mdOptions?: md.Options
   typographer?: boolean
@@ -102,7 +102,7 @@ export type UseMarkdownOptions = {
 }
 
 export default function useMarkdown(
-  options: UseMarkdownOptions = { typographer: true }
+  options: UseMarkdownOptions = { typographer: true },
 ) {
   const { t } = useI18n({ useScope: 'global' })
   const frontmatter = ref<string>()
@@ -112,13 +112,13 @@ export default function useMarkdown(
     .use(mdDefList)
     .use(mdAnchor, {
       permalink: mdAnchor.permalink.linkInsideHeader(),
-      slugify: (s) => slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g })
+      slugify: s => slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g }),
     })
     .use(mdToc, {
       slugify: (s: string) =>
         slugify(s, { lower: true, remove: /[*+~.()'"!:@]/g }),
       listType: 'ol',
-      containerHeaderHtml: `<h2>${t('about.summary')}</h2>`
+      containerHeaderHtml: `<h2>${t('about.summary')}</h2>`,
     })
     .use(mdFrontMatter, (fm) => {
       frontmatter.value = fm
@@ -140,7 +140,7 @@ export default function useMarkdown(
       'hr',
       'html_block',
       'lheading',
-      ...(options.disable ?? [])
+      ...(options.disable ?? []),
     ])
 
   function renderMarkdown(source: string) {
@@ -152,7 +152,7 @@ export default function useMarkdown(
     renderMarkdown,
     escapeHtml: markdown.utils.escapeHtml,
     frontmatter: computed(() =>
-      frontmatter.value ? YAML.parse(frontmatter.value) : null
-    )
+      frontmatter.value ? YAML.parse(frontmatter.value) : null,
+    ),
   }
 }

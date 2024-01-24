@@ -7,16 +7,16 @@ export interface SignInWithGoogleButtonProps {
 }
 
 const props = withDefaults(defineProps<SignInWithGoogleButtonProps>(), {
-  prompt: true
+  prompt: true,
 })
-const { prompt, type } = toRefs(props)
-
 const emit = defineEmits<{
   (
     e: 'notification',
     notification: google.accounts.id.PromptMomentNotification
   ): void
 }>()
+
+const { prompt, type } = toRefs(props)
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -27,9 +27,9 @@ const authenticated = computed(() => authStore.authenticated)
 const authorized = computed(() => authStore.authorized)
 const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
-const redirectToDashboard = () => {
+function redirectToDashboard() {
   router.replace(
-    (route.query.redirect as string | undefined) ?? { name: 'dashboard' }
+    (route.query.redirect as string | undefined) ?? { name: 'dashboard' },
   )
 }
 
@@ -53,8 +53,8 @@ const googleButton = ref(null)
 function renderButton() {
   if (!shouldRedirect.value && googleButton.value) {
     if (!authenticated.value && prompt.value) {
-      window.google.accounts.id.prompt((notification) =>
-        emit('notification', notification)
+      window.google.accounts.id.prompt(notification =>
+        emit('notification', notification),
       )
     }
 
@@ -63,7 +63,7 @@ function renderButton() {
       size: 'large',
       locale: locale.value,
       text: 'continue_with',
-      type: type.value || (isMdBreakpoint.value ? 'standard' : 'icon')
+      type: type.value || (isMdBreakpoint.value ? 'standard' : 'icon'),
     })
   }
 }

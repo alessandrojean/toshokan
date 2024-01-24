@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-import type { FunctionalComponent, WritableComputedRef } from 'vue'
-import { useBrowserLocation } from '@vueuse/core'
 import { useQueryClient } from '@tanstack/vue-query'
-
-import { useI18n } from '@/i18n'
+import { useBrowserLocation } from '@vueuse/core'
+import type { FunctionalComponent, WritableComputedRef } from 'vue'
 
 import {
   ArrowDownTrayIcon,
   CheckIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/vue/20/solid'
+import { useI18n } from '@/i18n'
 
-import type { ButtonProps } from '@/components/form/Button.vue'
 import type { Item } from '@/components/dashboard/DashboardAsideMenu.vue'
+import type { ButtonProps } from '@/components/form/Button.vue'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 const isDev = ref(import.meta.env.DEV)
@@ -22,25 +21,25 @@ const sections = computed<Item[]>(() => {
     {
       key: 'appearence',
       label: t('dashboard.settings.appearence.title'),
-      to: '#appearence'
+      to: '#appearence',
     },
     {
       key: 'export',
       label: t('dashboard.settings.export.title'),
-      to: '#export'
+      to: '#export',
     },
     {
       key: 'privacy',
       label: t('dashboard.settings.privacy.title'),
-      to: '#privacy'
-    }
+      to: '#privacy',
+    },
   ]
 
   if (isDev.value) {
     buttons.push({
       key: 'development',
       label: t('dashboard.settings.development.title'),
-      to: '#development'
+      to: '#development',
     })
   }
 
@@ -65,7 +64,7 @@ type ActionPreference = PreferenceBase & {
 }
 type SelectPreference = PreferenceBase & {
   type: 'select'
-  options: { value: string; title: string }[]
+  options: { value: string, title: string }[]
   modelValue: WritableComputedRef<string>
 }
 type SwitchPreference = PreferenceBase & {
@@ -78,7 +77,7 @@ type Preference =
   | ActionPreference
   | SelectPreference
   | SwitchPreference
-type PreferenceGroup = {
+interface PreferenceGroup {
   key: string
   title: string
   preferences: Preference[]
@@ -90,37 +89,37 @@ const sheetStore = useSheetStore()
 
 const theme = computed({
   get: () => settingsStore.theme,
-  set: (value) => settingsStore.updateTheme(value)
+  set: value => settingsStore.updateTheme(value),
 })
 
 const viewMode = computed({
   get: () => settingsStore.viewMode,
-  set: (value) => settingsStore.updateViewMode(value)
+  set: value => settingsStore.updateViewMode(value),
 })
 
 const gridMode = computed({
   get: () => settingsStore.gridMode,
-  set: (value) => settingsStore.updateGridMode(value)
+  set: value => settingsStore.updateGridMode(value),
 })
 
 const spoilerModeSynopsis = computed({
   get: () => settingsStore.spoilerMode.synopsis,
-  set: (value) => settingsStore.updateSpoilerMode({ synopsis: value })
+  set: value => settingsStore.updateSpoilerMode({ synopsis: value }),
 })
 
 const spoilerModeCover = computed({
   get: () => settingsStore.spoilerMode.cover,
-  set: (value) => settingsStore.updateSpoilerMode({ cover: value })
+  set: value => settingsStore.updateSpoilerMode({ cover: value }),
 })
 
 const blurNsfwCover = computed({
   get: () => settingsStore.blurNsfw,
-  set: (value) => settingsStore.updateBlurNsfw(value)
+  set: value => settingsStore.updateBlurNsfw(value),
 })
 
 const useDevSheet = computed({
   get: () => settingsStore.useDevSheet,
-  set: (value) => settingsStore.updateUseDevSheet(value)
+  set: value => settingsStore.updateUseDevSheet(value),
 })
 
 const groups = computed<PreferenceGroup[]>(() => [
@@ -133,7 +132,7 @@ const groups = computed<PreferenceGroup[]>(() => [
         type: 'locale',
         title: t('dashboard.settings.appearence.locale.label'),
         description: t('dashboard.settings.appearence.locale.description'),
-        controlId: 'locale'
+        controlId: 'locale',
       },
       {
         key: 'theme',
@@ -145,17 +144,17 @@ const groups = computed<PreferenceGroup[]>(() => [
         options: [
           {
             value: 'system',
-            title: t('dashboard.settings.appearence.theme.system')
+            title: t('dashboard.settings.appearence.theme.system'),
           },
           {
             value: 'light',
-            title: t('dashboard.settings.appearence.theme.light')
+            title: t('dashboard.settings.appearence.theme.light'),
           },
           {
             value: 'dark',
-            title: t('dashboard.settings.appearence.theme.dark')
-          }
-        ]
+            title: t('dashboard.settings.appearence.theme.dark'),
+          },
+        ],
       },
       {
         key: 'view-mode',
@@ -167,13 +166,13 @@ const groups = computed<PreferenceGroup[]>(() => [
         options: [
           {
             value: 'grid',
-            title: t('dashboard.library.filters.viewMode.grid')
+            title: t('dashboard.library.filters.viewMode.grid'),
           },
           {
             value: 'table',
-            title: t('dashboard.library.filters.viewMode.table')
-          }
-        ]
+            title: t('dashboard.library.filters.viewMode.table'),
+          },
+        ],
       },
       {
         key: 'grid-mode',
@@ -185,45 +184,45 @@ const groups = computed<PreferenceGroup[]>(() => [
         options: [
           {
             value: 'compact',
-            title: t('dashboard.library.filters.gridMode.compact')
+            title: t('dashboard.library.filters.gridMode.compact'),
           },
           {
             value: 'comfortable',
-            title: t('dashboard.library.filters.gridMode.comfortable')
-          }
-        ]
+            title: t('dashboard.library.filters.gridMode.comfortable'),
+          },
+        ],
       },
       {
         key: 'spoiler-mode-synopsis',
         type: 'switch',
         title: t('dashboard.settings.appearence.spoilerModeSynopsis.label'),
         description: t(
-          'dashboard.settings.appearence.spoilerModeSynopsis.description'
+          'dashboard.settings.appearence.spoilerModeSynopsis.description',
         ),
         controlId: 'spoiler-mode-synopsis',
-        modelValue: spoilerModeSynopsis
+        modelValue: spoilerModeSynopsis,
       },
       {
         key: 'spoiler-mode-cover',
         type: 'switch',
         title: t('dashboard.settings.appearence.spoilerModeCover.label'),
         description: t(
-          'dashboard.settings.appearence.spoilerModeCover.description'
+          'dashboard.settings.appearence.spoilerModeCover.description',
         ),
         controlId: 'spoiler-mode-cover',
-        modelValue: spoilerModeCover
+        modelValue: spoilerModeCover,
       },
       {
         key: 'blur-nsfw-cover',
         type: 'switch',
         title: t('dashboard.settings.appearence.blurNsfwCover.label'),
         description: t(
-          'dashboard.settings.appearence.blurNsfwCover.description'
+          'dashboard.settings.appearence.blurNsfwCover.description',
         ),
         controlId: 'blur-nsfw-cover',
-        modelValue: blurNsfwCover
-      }
-    ]
+        modelValue: blurNsfwCover,
+      },
+    ],
   },
   {
     key: 'export',
@@ -237,9 +236,9 @@ const groups = computed<PreferenceGroup[]>(() => [
         controlId: 'android',
         buttonTitle: t('dashboard.settings.export.android.export'),
         leftIcon: ArrowDownTrayIcon,
-        action: () => {}
-      }
-    ]
+        action: () => {},
+      },
+    ],
   },
   {
     key: 'privacy',
@@ -254,11 +253,11 @@ const groups = computed<PreferenceGroup[]>(() => [
         buttonTitle: t('dashboard.settings.privacy.removeAccess.remove'),
         leftIcon: ExclamationTriangleIcon,
         buttonProps: {
-          kind: 'danger'
+          kind: 'danger',
         },
-        action: () => {}
-      }
-    ]
+        action: () => {},
+      },
+    ],
   },
   {
     key: 'development',
@@ -270,13 +269,13 @@ const groups = computed<PreferenceGroup[]>(() => [
         type: 'switch',
         title: t('dashboard.settings.development.useDevSheet.label'),
         description: t(
-          'dashboard.settings.development.useDevSheet.description'
+          'dashboard.settings.development.useDevSheet.description',
         ),
         controlId: 'use-dev-sheet',
-        modelValue: useDevSheet
-      }
-    ]
-  }
+        modelValue: useDevSheet,
+      },
+    ],
+  },
 ])
 
 function updateSelectPreference(preference: SelectPreference, event: Event) {
@@ -367,7 +366,7 @@ meta:
           <template v-for="group in groups" :key="group.key">
             <div v-if="!group.hide" :id="group.key" class="w-full scroll-mt-20">
               <h2
-                class="text-lg sm:text-xl font-medium font-display sticky top-16 bg-white dark:bg-gray-900 py-3 border-b dark:border-b-gray-700 z-10"
+                class="text-lg sm:text-xl font-medium font-display-safe sticky top-16 bg-white dark:bg-gray-900 py-3 border-b dark:border-b-gray-700 z-10"
               >
                 {{ group.title }}
               </h2>
@@ -386,8 +385,8 @@ meta:
                 />
                 <select
                   v-else-if="preference.type === 'select'"
-                  class="select w-44 h-auto"
                   :id="preference.controlId"
+                  class="select w-44 h-auto"
                   @change="updateSelectPreference(preference, $event)"
                 >
                   <option
@@ -399,21 +398,21 @@ meta:
                     {{ option.title }}
                   </option>
                 </select>
-                <SwitchGroup as="div" v-else-if="preference.type === 'switch'">
+                <SwitchGroup v-else-if="preference.type === 'switch'" as="div">
                   <SwitchLabel class="sr-only">
                     {{ preference.title }}
                   </SwitchLabel>
                   <Switch
                     :model-value="preference.modelValue.value"
-                    @update:model-value="
-                      updateSwitchPreference(preference, $event)
-                    "
                     :class="
                       preference.modelValue.value
                         ? 'bg-primary-600 dark:bg-primary-500'
                         : 'bg-gray-200 dark:bg-gray-600'
                     "
                     class="relative inline-flex items-center h-8 rounded-full w-14 motion-safe:transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-900"
+                    @update:model-value="
+                      updateSwitchPreference(preference, $event)
+                    "
                   >
                     <div
                       aria-hidden="true"
@@ -430,7 +429,7 @@ meta:
                           'text-primary-600 dark:text-primary-500',
                           preference.modelValue.value
                             ? 'opacity-100'
-                            : 'opacity-0'
+                            : 'opacity-0',
                         ]"
                       />
                     </div>
@@ -442,10 +441,10 @@ meta:
                   :id="preference.controlId"
                   @click="preference.action"
                 >
-                  <template #left="{ iconClass }" v-if="preference.leftIcon">
+                  <template v-if="preference.leftIcon" #left="{ iconClass }">
                     <component :is="preference.leftIcon" :class="iconClass" />
                   </template>
-                  <template #right="{ iconClass }" v-if="preference.rightIcon">
+                  <template v-if="preference.rightIcon" #right="{ iconClass }">
                     <component :is="preference.rightIcon" :class="iconClass" />
                   </template>
                   <span>{{ preference.buttonTitle }}</span>

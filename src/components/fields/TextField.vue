@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<TextFieldProps>(), {
   listText: (value: any) => String(value),
   listValue: (value: any) => String(value),
   multiline: false,
-  required: false
+  required: false,
 })
 
 defineEmits<{
@@ -42,11 +42,11 @@ const hasList = computed(() => list?.value && list.value.length > 0)
 
 <template>
   <BaseField
+    v-slot="{ inputId, ariaDescribedBy }"
     :label="label"
     :error="error"
     :required="required"
     :help="help"
-    v-slot="{ inputId, ariaDescribedBy }"
   >
     <div class="group relative field-wrapper">
       <div
@@ -57,8 +57,8 @@ const hasList = computed(() => list?.value && list.value.length > 0)
       </div>
       <textarea
         v-if="multiline"
-        rows="5"
         :id="inputId"
+        rows="5"
         :class="['input', inputClass]"
         :value="modelValue ?? ''"
         :placeholder="placeholder"
@@ -68,29 +68,29 @@ const hasList = computed(() => list?.value && list.value.length > 0)
         @input="
           $emit(
             'update:modelValue',
-            ($event.target! as HTMLTextAreaElement).value
+            ($event.target! as HTMLTextAreaElement).value,
           )
         "
       />
       <input
         v-else
-        :type="inputType"
         :id="inputId"
+        :type="inputType"
         :class="['input', hasList ? 'pr-9' : '', inputClass]"
         :value="modelValue"
         :placeholder="placeholder"
         :aria-describedby="ariaDescribedBy"
         :aria-invalid="hasError"
         :required="required"
-        :list="hasList ? inputId + '-list' : undefined"
+        :list="hasList ? `${inputId}-list` : undefined"
         :inputmode="inputMode"
         :max="max"
         @input="
           $emit('update:modelValue', ($event.target! as HTMLInputElement).value)
         "
-      />
+      >
       <template v-if="hasList">
-        <datalist :id="inputId + '-list'">
+        <datalist :id="`${inputId}-list`">
           <option
             v-for="option of list"
             :key="listValue ? listValue(option) : option"

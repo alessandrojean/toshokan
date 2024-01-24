@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-import { parseFileSingle } from '@/services/export/androidExport'
-import type { ToshokanBook } from '@/services/export/schema/library'
-
+import { BuildingLibraryIcon, QrCodeIcon } from '@heroicons/vue/20/solid'
 import {
   BookOpenIcon,
   FaceFrownIcon,
-  ShareIcon
+  ShareIcon,
 } from '@heroicons/vue/24/outline'
-import { BuildingLibraryIcon, QrCodeIcon } from '@heroicons/vue/20/solid'
+import { useI18n } from '@/i18n'
+import { parseFileSingle } from '@/services/export/androidExport'
+import type { ToshokanBook } from '@/services/export/schema/library'
 
 const router = useRouter()
 const route = useRoute()
@@ -46,11 +45,13 @@ const error = ref<any>()
 const listFormatter = computed(() => {
   return new Intl.ListFormat(locale.value, {
     style: 'long',
-    type: 'conjunction'
+    type: 'conjunction',
   })
 })
 
-const bookCoverUrl = computed(() => book.value?.coverUrl!)
+const { renderMarkdown } = useMarkdown()
+
+const bookCoverUrl = computed(() => book.value?.coverUrl)
 const bookAuthors = computed(() => {
   if (!book.value?.authors || book.value.authors.length === 0) {
     return null
@@ -64,12 +65,11 @@ const bookMetadata = computed(() => {
 
   return metadata
     .filter(Boolean)
-    .filter((mt) => mt!.length > 0)
+    .filter(mt => mt!.length > 0)
     .join(' · ')
 })
 
 const { imageHasError, imageLoading, loadImage } = useImageLoader(bookCoverUrl)
-const { renderMarkdown } = useMarkdown()
 
 function parseDataQuery() {
   loading.value = true
@@ -79,7 +79,7 @@ function parseDataQuery() {
     book.value = parseFileSingle(data.value)
 
     if (!book.value) {
-      throw Error('Invalid data')
+      throw new Error('Invalid data')
     }
   } catch (e: any) {
     error.value = e.message
@@ -100,8 +100,8 @@ meta:
 
 <template>
   <main
-    class="min-h-screen relative flex flex-col md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
     id="main-content"
+    class="min-h-screen relative flex flex-col md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
   >
     <LoadingIndicator :loading="loading" />
 
@@ -115,7 +115,7 @@ meta:
         </span>
         <span class="sr-only">{{ t('app.routes.home') }}</span>
         <span
-          class="text-gray-800 dark:text-gray-200 font-display font-semibold text-xl ml-3"
+          class="text-gray-800 dark:text-gray-200 font-display-safe font-semibold text-xl ml-3"
           aria-hidden="true"
         >
           {{ t('app.name') }}
@@ -144,7 +144,7 @@ meta:
                   <BookOpenIcon
                     :class="[
                       imageLoading ? 'motion-safe:animate-pulse' : '',
-                      'w-14 h-14 stroke-[1.5] text-gray-400 dark:text-gray-500'
+                      'w-14 h-14 stroke-[1.5] text-gray-400 dark:text-gray-500',
                     ]"
                   />
                 </div>
@@ -153,7 +153,7 @@ meta:
                   class="w-full h-full object-cover"
                   :src="bookCoverUrl"
                   :alt="book.title"
-                />
+                >
               </FadeTransition>
             </div>
             <Button
@@ -171,7 +171,7 @@ meta:
           <div class="flex-grow px-4 md:px-0">
             <p
               v-if="book.owner"
-              class="text-gray-600 dark:text-gray-400 font-display font-medium inline-flex items-center text-sm"
+              class="text-gray-600 dark:text-gray-400 font-display-safe font-medium inline-flex items-center text-sm"
             >
               <span aria-hidden="true">
                 <ShareIcon class="w-5 h-5 mr-2.5" />
@@ -183,7 +183,7 @@ meta:
               </i18n-t>
             </p>
 
-            <h2 class="font-display font-semibold text-2xl">
+            <h2 class="font-display-safe font-semibold text-2xl">
               {{ book.title }}
             </h2>
             <p
@@ -202,7 +202,7 @@ meta:
             <ul v-if="book.tags.length > 0" class="tag-list mt-4">
               <li v-for="tag in book.tags" :key="tag" class="mr-2 mt-2">
                 <span class="tag has-ring-focus cursor-default">
-                  <span aria-hidden="true" class="bullet"></span>
+                  <span aria-hidden="true" class="bullet" />
                   {{ tag }}
                 </span>
               </li>
@@ -219,7 +219,7 @@ meta:
         <div v-else-if="error" class="flex flex-col md:flex-row w-full">
           <div
             aria-hidden="true"
-            class="shrink-0 font-semibold font-display text-4xl text-primary-600 dark:text-primary-500"
+            class="shrink-0 font-semibold font-display-safe text-4xl text-primary-600 dark:text-primary-500"
           >
             <FaceFrownIcon class="w-10 h-10" />
           </div>
@@ -228,13 +228,13 @@ meta:
               class="md:border-l md:border-gray-200 dark:md:border-gray-700 md:pl-6 md:ml-6"
             >
               <h2
-                class="font-semibold font-display text-2xl dark:text-gray-100"
+                class="font-semibold font-display-safe text-2xl dark:text-gray-100"
               >
                 {{ t('share.errorTitle') }}
               </h2>
               <div
-                v-html="renderMarkdown(t('share.errorDescription'))"
                 class="mt-4 text-gray-500 dark:text-gray-400 prose md:prose-sm"
+                v-html="renderMarkdown(t('share.errorDescription'))"
               />
             </header>
           </div>

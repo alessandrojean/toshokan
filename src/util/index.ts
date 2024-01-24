@@ -1,9 +1,9 @@
-import { inject, type InjectionKey } from 'vue'
+import { type InjectionKey, inject } from 'vue'
 
 export function getFlagUrl(countryCode: string) {
   return {
     circle: `https://hatscripts.github.io/circle-flags/flags/${countryCode.toLowerCase()}.svg`,
-    rectangle: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg`
+    rectangle: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg`,
   }
 }
 

@@ -5,7 +5,7 @@ export interface DashboardBlockProps {
 }
 
 const props = withDefaults(defineProps<DashboardBlockProps>(), {
-  as: 'section'
+  as: 'section',
 })
 
 const { as } = toRefs(props)
@@ -18,11 +18,11 @@ const { as } = toRefs(props)
   >
     <slot
       name="title"
-      titleClasses="text-md sm:text-lg font-medium font-display dark:text-gray-100"
+      title-classes="text-md sm:text-lg font-medium font-display-safe dark:text-gray-100"
     >
       <h2
         v-if="title"
-        class="text-md sm:text-lg font-medium font-display dark:text-gray-100"
+        class="text-md sm:text-lg font-medium font-display-safe dark:text-gray-100"
       >
         {{ title }}
       </h2>

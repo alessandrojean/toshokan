@@ -1,5 +1,5 @@
 import type { Axios } from 'axios'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 /**
  * Base class for the book lookup services.
@@ -14,6 +14,7 @@ export default class Lookup {
     this.axios = this._createAxios()
   }
 
+  // eslint-disable-next-line jsdoc/require-returns-check
   /**
    * Creates the axios instance to be used inside the class.
    *
@@ -26,9 +27,10 @@ export default class Lookup {
   /**
    * Search a book using the ISBN provided.
    *
-   * @param {String} isbn The ISBN to search
+   * @param {string} isbn The ISBN to search
    * @returns {Promise<T[]>} An array of books found
    */
+  // eslint-disable-next-line unused-imports/no-unused-vars
   async search(isbn: string): Promise<Book[]> {
     throw new Error('Not implemented!')
   }

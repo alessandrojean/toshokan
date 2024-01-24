@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-export type InfoLine = {
+export interface InfoLine {
   title: string
   columns?: number
   property: string
@@ -14,7 +14,7 @@ function colSpan(columns?: number) {
     1: 'sm:col-span-1',
     2: 'sm:col-span-2',
     3: 'sm:col-span-3',
-    4: 'sm:col-span-4'
+    4: 'sm:col-span-4',
   }
 
   return map[columns ?? 0]

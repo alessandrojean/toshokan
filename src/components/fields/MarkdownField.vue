@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { HTMLAttributes } from 'vue'
+import type { BaseFieldProps } from './BaseField.vue'
 import { useI18n } from '@/i18n'
 
 import type { UseMarkdownOptions } from '@/composables/useMarkdown'
-import type { BaseFieldProps } from './BaseField.vue'
 
 export interface MarkdownFieldProps extends BaseFieldProps {
   inputClass?: string
@@ -17,7 +17,7 @@ export interface MarkdownFieldProps extends BaseFieldProps {
 const props = withDefaults(defineProps<MarkdownFieldProps>(), {
   inputType: 'text',
   markdownOptions: () => ({}),
-  required: false
+  required: false,
 })
 
 defineEmits(['update:modelValue'])
@@ -51,19 +51,19 @@ const { t } = useI18n({ useScope: 'global' })
 
 <template>
   <BaseField
+    v-slot="{ inputId, ariaDescribedBy }"
     :label="label"
     :error="error"
     :required="required"
-    v-slot="{ inputId, ariaDescribedBy }"
   >
     <div
       :class="[
         'markdown-editor',
         hasFocus ? 'has-focus' : '',
-        currentTab === 1 ? 'view-mode' : ''
+        currentTab === 1 ? 'view-mode' : '',
       ]"
     >
-      <TabGroup @change="tabChanged" as="div">
+      <TabGroup as="div" @change="tabChanged">
         <TabPanels as="div" class="relative z-0">
           <TabPanel class="tab-panel">
             <textarea
@@ -77,7 +77,7 @@ const { t } = useI18n({ useScope: 'global' })
               @input="
                 $emit(
                   'update:modelValue',
-                  ($event.target! as HTMLTextAreaElement).value
+                  ($event.target! as HTMLTextAreaElement).value,
                 )
               "
               @focus="hasFocus = true"

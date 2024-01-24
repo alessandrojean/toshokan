@@ -1,3 +1,4 @@
+import type { DefineComponent } from 'vue'
 import { convertIsbn13ToIsbn10 } from '@/util/isbn'
 
 import AmazonIcon from '@/components/icons/AmazonIcon.vue'
@@ -7,12 +8,11 @@ import NewPopIcon from '@/components/icons/NewPopIcon.vue'
 import PaniniIcon from '@/components/icons/PaniniIcon.vue'
 import SkoobIcon from '@/components/icons/SkoobIcon.vue'
 
-import Book from '@/model/Book'
-import { DefineComponent } from 'vue'
+import type Book from '@/model/Book'
 
 enum Category {
   DATABASE = 0,
-  STORE = 1
+  STORE = 1,
 }
 
 const ALL_COUNTRIES = 'ALL'
@@ -22,7 +22,7 @@ export interface Link {
   url: string | ((book: Book) => string)
   country: string
   category: Category
-  icon?: DefineComponent<{}, {}, any>
+  icon?: DefineComponent<object, object, any>
   check?: (book: Book) => boolean
 }
 
@@ -35,20 +35,20 @@ const WEBSITES: Link[] = [
     url: 'https://goodreads.com/search?q={isbn}',
     country: ALL_COUNTRIES,
     category: Category.DATABASE,
-    icon: GoodreadsIcon
+    icon: GoodreadsIcon,
   },
   {
     title: 'Open Library',
     url: 'https://openlibrary.org/isbn/{isbn}',
     country: ALL_COUNTRIES,
-    category: Category.DATABASE
+    category: Category.DATABASE,
   },
   {
     title: 'Skoob',
     url: 'https://www.skoob.com.br/livro/lista/busca:{isbn}/tipo:isbn',
     country: 'BR',
     category: Category.DATABASE,
-    icon: SkoobIcon
+    icon: SkoobIcon,
   },
   // Stores
   {
@@ -56,28 +56,28 @@ const WEBSITES: Link[] = [
     url: 'https://amazon.com/dp/{isbn10}',
     country: 'US',
     category: Category.STORE,
-    icon: AmazonIcon
+    icon: AmazonIcon,
   },
   {
     title: 'Amazon.co.jp',
     url: 'https://amazon.co.jp/dp/{isbn10}',
     country: 'JP',
     category: Category.STORE,
-    icon: AmazonIcon
+    icon: AmazonIcon,
   },
   {
     title: 'Amazon.com.br',
     url: 'https://amazon.com.br/dp/{isbn10}?m=A1ZZFT5FULY4LN',
     country: 'BR',
     category: Category.STORE,
-    icon: AmazonIcon
+    icon: AmazonIcon,
   },
   {
     title: 'Amazon.es',
     url: 'https://amazon.es/dp/{isbn10}',
     country: 'ES',
     category: Category.STORE,
-    icon: AmazonIcon
+    icon: AmazonIcon,
   },
   {
     title: 'Loja Panini',
@@ -90,7 +90,7 @@ const WEBSITES: Link[] = [
     country: 'BR',
     category: Category.STORE,
     check: (book: Book) => book.publisher!.includes('Panini'),
-    icon: PaniniIcon
+    icon: PaniniIcon,
   },
   {
     title: 'NewPOP SHOP',
@@ -98,15 +98,15 @@ const WEBSITES: Link[] = [
     country: 'BR',
     category: Category.STORE,
     check: (book: Book) => book.publisher!.includes('NewPOP'),
-    icon: NewPopIcon
+    icon: NewPopIcon,
   },
   {
     title: 'Fnac.pt',
     url: 'https://fnac.pt/SearchResult/ResultList.aspx?Search={isbn}',
     country: 'PT',
     category: Category.STORE,
-    icon: FnacIcon
-  }
+    icon: FnacIcon,
+  },
 ]
 
 /**
@@ -117,7 +117,7 @@ const WEBSITES: Link[] = [
  */
 export default function getBookLinks(
   book: Book | undefined | null,
-  locale: string
+  locale: string,
 ): BookLink[] {
   if (!book || !book.codeType.includes('ISBN')) {
     return []
@@ -131,16 +131,16 @@ export default function getBookLinks(
   return WEBSITES.filter((website) => {
     return website.country === country || website.country === ALL_COUNTRIES
   })
-    .filter((website) => (website.check ? website.check(book) : true))
+    .filter(website => (website.check ? website.check(book) : true))
     .map((website) => {
-      const urlString =
-        typeof website.url === 'function'
+      const urlString
+        = typeof website.url === 'function'
           ? website.url(book)
           : website.url.toString()
 
       return {
         ...website,
-        url: urlString.replace(/\{isbn\}/g, isbn).replace(/\{isbn10\}/g, isbn10)
+        url: urlString.replace(/\{isbn\}/g, isbn).replace(/\{isbn10\}/g, isbn10),
       }
     })
     .sort((a, b) => {

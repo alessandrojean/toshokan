@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, provide, ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 
@@ -12,7 +12,7 @@ import {
   EnableSearchShortcutKey,
   SetNavbarTransparentKey,
   ShowAsideDialogKey,
-  ShowSearchDialogKey
+  ShowSearchDialogKey,
 } from '@/symbols'
 
 import BetaWarning from '@/components/BetaWarning.vue'
@@ -32,6 +32,8 @@ const router = useRouter()
 const authenticated = computed(() => authStore.authenticated)
 const hasGrantedScopes = computed(() => authStore.hasGrantedScopes)
 const enabled = computed(() => sheetStore.sheetId !== null)
+
+const { t } = useI18n({ useScope: 'global' })
 
 async function findSheetId() {
   if (sheetStore.sheetId === null) {
@@ -55,8 +57,6 @@ watch(authenticated, (newValue) => {
     router.replace('/')
   }
 })
-
-const { t } = useI18n({ useScope: 'global' })
 
 const showSearch = computed(() => !sheetStore.loading)
 const searchDialog = ref<InstanceType<typeof SearchDialog>>()
@@ -100,11 +100,11 @@ provide(SetNavbarTransparentKey, setNavbarTransparent)
 
 function handleKeyDown(event: KeyboardEvent) {
   if (
-    (event.ctrlKey || event.metaKey) &&
-    event.key === 'k' &&
-    showSearch.value &&
-    !searchDialogIsOpen.value &&
-    !searchShortcutDisabled.value
+    (event.ctrlKey || event.metaKey)
+    && event.key === 'k'
+    && showSearch.value
+    && !searchDialogIsOpen.value
+    && !searchShortcutDisabled.value
   ) {
     event.stopPropagation()
     event.preventDefault()
@@ -156,18 +156,18 @@ const shared = computed(() => sheetStore.shared)
     <div class="md:flex w-full">
       <div class="shrink-0 hidden lg:block">
         <DashboardAsideMenu
-          class="sticky inset-x-0 top-0 h-screen"
           id="dashboard-aside-menu"
+          class="sticky inset-x-0 top-0 h-screen"
           collapsible
         >
-          <template #footer v-if="enabled && shared">
+          <template v-if="enabled && shared" #footer>
             <div class="border-t border-gray-200 dark:border-gray-700 py-2">
               <BookOwnerBadge />
             </div>
           </template>
         </DashboardAsideMenu>
       </div>
-      <div class="flex-1 flex flex-col relative" id="main-content">
+      <div id="main-content" class="flex-1 flex flex-col relative">
         <DashboardNavbar
           class="sticky inset-x-0 top-0 shrink-0"
           :transparent="route.meta?.transparentNavbar && smAndLarger"
@@ -194,7 +194,7 @@ const shared = computed(() => sheetStore.shared)
     <BetaWarning />
 
     <DashboardAsideDialog :is-open="asideDialogOpen" @close="closeAsideDialog">
-      <template #footer v-if="enabled && shared">
+      <template v-if="enabled && shared" #footer>
         <div class="border-t border-gray-200 dark:border-gray-700 py-2">
           <BookOwnerBadge />
         </div>

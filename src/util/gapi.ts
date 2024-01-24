@@ -19,13 +19,14 @@ type Response<T> = gapi.client.Response<T>
 export function promisify<T>(thenable: Request<T>): Promise<Response<T>> {
   return new Promise((resolve, reject) => {
     thenable.then(
-      (response) => resolve(response),
-      (reason) =>
+      response => resolve(response),
+      reason =>
+        // eslint-disable-next-line prefer-promise-reject-errors
         reject({
           message: reason.result.error.message,
           status: reason.result.error.code,
-          reason
-        })
+          reason,
+        }),
     )
   })
 }
@@ -39,9 +40,9 @@ export function promisify<T>(thenable: Request<T>): Promise<Response<T>> {
 export function loadApiAsync(api: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     window.gapi.load(api, {
-      // @ts-ignore Missing documentation on types package.
+      // @ts-expect-error Missing documentation on types package.
       callback: () => resolve(),
-      onerror: (reason: string) => reject(reason)
+      onerror: (reason: string) => reject(reason),
     })
   })
 }
@@ -85,7 +86,7 @@ export async function fetch<T>(promise: Promise<T>): Promise<T | undefined> {
  */
 export async function whenAvailable(
   name: keyof typeof window,
-  intervalMs = 100
+  intervalMs = 100,
 ): Promise<void> {
   return new Promise((resolve) => {
     const interval = setInterval(() => {

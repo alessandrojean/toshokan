@@ -1,5 +1,5 @@
 import { CollectionColumns } from '@/model/Book'
-import Query from '@/data/Query'
+import type Query from '@/data/Query'
 
 /**
  * Counts the total number of results in a specific
@@ -11,7 +11,7 @@ import Query from '@/data/Query'
  */
 export default async function countTotalResults(
   sheetId: string,
-  query: Query
+  query: Query,
 ): Promise<number> {
   const { ID } = CollectionColumns
   const newQuery = query

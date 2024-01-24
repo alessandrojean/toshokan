@@ -1,20 +1,19 @@
 <script lang="ts" setup>
+import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { ShowAsideDialogKey, ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'
 
-import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
-
-import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ProfileMenu from '@/components/ProfileMenu.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import ToshokanLogo from '@/components/ToshokanLogo.vue'
+import FadeTransition from '@/components/transitions/FadeTransition.vue'
 
 export interface DashboardNavbarProps {
   transparent?: boolean
 }
 
 const props = withDefaults(defineProps<DashboardNavbarProps>(), {
-  transparent: false
+  transparent: false,
 })
 const { transparent } = toRefs(props)
 
@@ -25,11 +24,9 @@ const { t } = useI18n({ useScope: 'global' })
 const loading = computed(() => sheetStore.loading)
 
 const isMac = ref(
-  // @ts-ignore
   navigator.userAgentData
-    ? // @ts-ignore
-      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
-    : navigator.platform.toLowerCase().indexOf('mac') > -1
+    ? navigator.userAgentData.platform.toLowerCase().includes('mac')
+    : navigator.platform.toLowerCase().includes('mac'),
 )
 
 const showAsideDialog = injectStrict(ShowAsideDialogKey)
@@ -49,14 +46,14 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   <nav
     :class="[
       'app-navbar z-20',
-      { 'app-navbar-transparent': transparent && !isScrolling }
+      { 'app-navbar-transparent': transparent && !isScrolling },
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center h-16">
         <button
-          @click="showAsideDialog()"
           class="lg:hidden p-1 mr-2 rounded-full text-gray-300 hover:text-white transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800"
+          @click="showAsideDialog()"
         >
           <span class="sr-only">
             {{ t('dashboard.header.menu.mobileOpen') }}
@@ -75,8 +72,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
         <FadeTransition>
           <button
-            class="fake-search-input has-ring-focus group"
             v-if="!loading"
+            class="fake-search-input has-ring-focus group"
             @click="showSearchDialog()"
           >
             <span aria-hidden="true">
@@ -90,12 +87,12 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
               class="ctrl-k motion-safe:transition-colors motion-safe:duration-300 text-gray-300 text-xs leading-5 px-1.5 bg-gray-800 rounded-md"
             >
               <kbd class="font-sans">
-                <abbr title="Control" class="no-underline" v-if="!isMac">
+                <abbr v-if="!isMac" title="Control" class="no-underline">
                   {{ t('dashboard.header.search.ctrl') }}&nbsp;
                 </abbr>
-                <abbr title="Command" class="no-underline" v-else>⌘&nbsp;</abbr>
+                <abbr v-else title="Command" class="no-underline">⌘&nbsp;</abbr>
               </kbd>
-              <kbd class="font-sans">K</kbd>
+              <kbd class="font-sans-safe">K</kbd>
             </span>
           </button>
         </FadeTransition>
@@ -104,13 +101,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
           <FadeTransition>
             <button
               v-if="!loading"
-              @click="showSearchDialog()"
               :class="[
                 'lg:hidden p-1 mr-2 rounded-full transition-shadow motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-800',
                 transparent && !isScrolling
                   ? 'text-white/80 hover:text-white/95'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-gray-400 hover:text-white',
               ]"
+              @click="showSearchDialog()"
             >
               <span class="sr-only">{{
                 t('dashboard.header.search.link')

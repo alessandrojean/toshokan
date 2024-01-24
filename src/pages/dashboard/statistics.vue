@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import {
   ExclamationCircleIcon,
-  PresentationChartLineIcon
+  PresentationChartLineIcon,
 } from '@heroicons/vue/24/outline'
 
 const sheetStore = useSheetStore()
 
 const { data: stats, isLoading } = useStatisticsQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 const loading = computed(() => isLoading.value)

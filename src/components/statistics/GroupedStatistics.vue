@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import {
   ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
 } from '@heroicons/vue/20/solid'
 
 const { t, n } = useI18n()
 const sheetStore = useSheetStore()
 
 const { data: stats, isLoading } = useStatisticsQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 const loading = computed(() => isLoading.value)
@@ -25,7 +25,7 @@ function percentageIncrease(final?: number, starting?: number) {
   return {
     percentage,
     absPercentage: Math.abs(percentage),
-    increased: percentage > 0
+    increased: percentage > 0,
   }
 }
 
@@ -35,7 +35,7 @@ const groups = computed(() => [
   {
     label: t('dashboard.stats.count'),
     current: stats.value?.count,
-    integer: true
+    integer: true,
   },
   {
     label: t('dashboard.stats.thisMonth'),
@@ -43,10 +43,10 @@ const groups = computed(() => [
     previous: monthlyReversed.value?.[1]?.totalSpent,
     percentage: percentageIncrease(
       monthlyReversed.value?.[0]?.totalSpent,
-      monthlyReversed.value?.[1]?.totalSpent
+      monthlyReversed.value?.[1]?.totalSpent,
     ),
     currency: true,
-    inverted: true
+    inverted: true,
   },
   {
     label: t('dashboard.stats.bought'),
@@ -54,8 +54,8 @@ const groups = computed(() => [
     previous: monthlyReversed.value?.[1]?.count,
     percentage: percentageIncrease(
       monthlyReversed.value?.[0]?.count,
-      monthlyReversed.value?.[1]?.count
-    )
+      monthlyReversed.value?.[1]?.count,
+    ),
   },
   {
     label: t('dashboard.stats.read'),
@@ -63,9 +63,9 @@ const groups = computed(() => [
     previous: monthlyReversed.value?.[1]?.read,
     percentage: percentageIncrease(
       monthlyReversed.value?.[0]?.read,
-      monthlyReversed.value?.[1]?.read
-    )
-  }
+      monthlyReversed.value?.[1]?.read,
+    ),
+  },
 ])
 </script>
 
@@ -81,12 +81,12 @@ const groups = computed(() => [
           :class="[
             'px-4 py-4',
             idx < 2 ? 'border-b dark:border-b-gray-700 md:border-b-0' : '',
-            idx % 2 === 1 ? 'border-l dark:border-l-gray-700 md:border-l-0' : ''
+            idx % 2 === 1 ? 'border-l dark:border-l-gray-700 md:border-l-0' : '',
           ]"
         >
           <div class="flex justify-between">
             <h3
-              class="text-xs md:text-sm font-medium font-display dark:text-gray-200"
+              class="text-xs md:text-sm font-medium font-display-safe dark:text-gray-200"
             >
               {{ group.label }}
             </h3>
@@ -97,7 +97,7 @@ const groups = computed(() => [
                 'flex items-center text-xxs font-semibold tracking-wide uppercase px-1.5 py-0.5 rounded-full shrink-0',
                 group.percentage?.increased !== !!group.inverted
                   ? 'bg-green-100 dark:bg-green-600/40 text-green-800 dark:text-green-200'
-                  : 'bg-red-100 dark:bg-red-700/40 text-red-800 dark:text-red-200'
+                  : 'bg-red-100 dark:bg-red-700/40 text-red-800 dark:text-red-200',
               ]"
             >
               <span aria-hidden="true">
@@ -123,7 +123,7 @@ const groups = computed(() => [
                     group.current ?? 0,
                     group.currency ? 'currency' : 'integer',
                     // @ts-ignore
-                    group.currency ? { currency: currency ?? 'USD' } : undefined
+                    group.currency ? { currency: currency ?? 'USD' } : undefined,
                   )
                 }}
               </span>

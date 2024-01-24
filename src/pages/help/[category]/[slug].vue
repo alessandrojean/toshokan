@@ -4,11 +4,13 @@ import { useRoute } from 'vue-router'
 
 import useMarkdown from '@/composables/useMarkdown'
 import { useI18n } from '@/i18n'
+import type {
+  DocumentationPage,
+} from '@/symbols'
 import {
   ChangeTitleKey,
   DocumentationKey,
-  DocumentationPage,
-  RebuildPageContentsKey
+  RebuildPageContentsKey,
 } from '@/symbols'
 import { injectStrict } from '@/util'
 
@@ -36,12 +38,12 @@ const changeTitle = injectStrict(ChangeTitleKey)
 function getMarkdownContent(
   locale: string,
   category: string,
-  pageSlug: string
+  pageSlug: string,
 ): DocumentationPage {
-  const categoryPages = docs.find((c) => c.category === category)?.pages ?? []
-  const page = categoryPages.filter((p) => p.slug === pageSlug)
-  const localePage = page.find((p) => p.locale === locale)
-  const englishPage = page.find((p) => p.locale === 'en-US')!
+  const categoryPages = docs.find(c => c.category === category)?.pages ?? []
+  const page = categoryPages.filter(p => p.slug === pageSlug)
+  const localePage = page.find(p => p.locale === locale)
+  const englishPage = page.find(p => p.locale === 'en-US')!
 
   return localePage ?? englishPage
 }
@@ -74,7 +76,7 @@ function getImageUrl(name: string) {
 const body = computed(() => {
   const markdownWithAssets = markdownBody.value.replace(
     /@\/assets\/about\/(.*)\.jpg/g,
-    (_, assetImage) => getImageUrl(assetImage)
+    (_, assetImage) => getImageUrl(assetImage),
   )
 
   return renderMarkdown(markdownWithAssets) ?? ''
@@ -82,7 +84,7 @@ const body = computed(() => {
 
 const gitHubLink = computed(
   () =>
-    `https://github.com/alessandrojean/toshokan/blob/main/docs/${markdownLocale.value}/${slug.value}.md`
+    `https://github.com/alessandrojean/toshokan/blob/main/docs/${markdownLocale.value}/${slug.value}.md`,
 )
 </script>
 

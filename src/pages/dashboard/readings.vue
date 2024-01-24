@@ -1,43 +1,43 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
-import { ReadingMonthYear } from '@/services/sheet/getReadingMonths'
 import { TabPanel } from '@headlessui/vue'
+import { useI18n } from '@/i18n'
+import type Book from '@/model/Book'
+import type { ReadingMonthYear } from '@/services/sheet/getReadingMonths'
 
 const { t } = useI18n({ useScope: 'global' })
 const settingsStore = useSettingsStore()
 const sheetStore = useSheetStore()
 const enabled = computed(() => sheetStore.sheetId !== null)
 
-const { data: readingMonthsYears, isLoading: readingMonthsYearsLoading } =
-  useReadingMonthsQuery({ enabled })
+const { data: readingMonthsYears, isLoading: readingMonthsYearsLoading }
+  = useReadingMonthsQuery({ enabled })
 
 const selectedMonthYear = ref<ReadingMonthYear>({
   month: new Date().getMonth() + 1,
   year: new Date().getFullYear(),
-  count: 0
+  count: 0,
 })
 
 const blurNsfw = computed(() => settingsStore.blurNsfw)
 const gridMode = computed(() => settingsStore.gridMode)
 const spoilerMode = computed(() => settingsStore.spoilerMode)
 
-const { data: readBooks, isLoading: readBooksLoading } =
-  useReadBooksInYearQuery(
-    { year: computed(() => selectedMonthYear.value.year) },
-    { enabled }
-  )
+const { data: readBooks, isLoading: readBooksLoading }
+  = useReadBooksInYearQuery({
+    year: computed(() => selectedMonthYear.value.year),
+    enabled,
+  })
 
 function handleMonthYearChange(newMonthYear?: ReadingMonthYear) {
   selectedMonthYear.value = newMonthYear ?? selectedMonthYear.value
 }
 
-const { isLoading: nextVolumesLoading, data: nextVolumes } = useNextReadsQuery(
-  { threshold: Infinity },
-  { enabled }
-)
+const { isLoading: nextVolumesLoading, data: nextVolumes } = useNextReadsQuery({
+  enabled,
+  threshold: Number.POSITIVE_INFINITY,
+})
 
-const { mutate: edit, isLoading: editing } = useEditBookMutation()
+const { mutate: edit, isPending: editing } = useEditBookMutation()
 const editingId = ref<string>()
 
 function handleMarkAsRead(book: Book) {
@@ -53,7 +53,7 @@ function handleMarkAsRead(book: Book) {
     },
     onError: () => {
       editingId.value = undefined
-    }
+    },
   })
 }
 </script>
@@ -69,13 +69,13 @@ meta:
     <TabGroup>
       <DashboardHeader :title="t('dashboard.readings.title')">
         <template #tabs>
-          <TabList class="flex gap-6 -mt-3" v-slot="{ selectedIndex }">
+          <TabList v-slot="{ selectedIndex }" class="flex gap-6 -mt-3">
             <Tab
               :class="[
                 'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 0
                   ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-100'
-                  : 'border-b-transparent text-gray-600 dark:text-gray-400'
+                  : 'border-b-transparent text-gray-600 dark:text-gray-400',
               ]"
             >
               {{ t('dashboard.readings.nextReads') }}
@@ -85,7 +85,7 @@ meta:
                 'text-sm lg:text-base font-medium py-3 border-b-2 -mb-px px-0.5 has-ring-focus',
                 selectedIndex === 1
                   ? 'border-b-primary-600 dark:border-b-primary-400 text-primary-700 dark:text-primary-100'
-                  : 'border-b-transparent text-gray-600 dark:text-gray-400'
+                  : 'border-b-transparent text-gray-600 dark:text-gray-400',
               ]"
             >
               {{ t('dashboard.readings.history') }}

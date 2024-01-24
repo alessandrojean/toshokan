@@ -1,9 +1,8 @@
 <script lang="ts" setup>
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 export interface BookCoverDialogProps {
   coverUrl: string
@@ -69,12 +68,12 @@ function onImageLoad() {
             </DialogTitle>
 
             <img
+              ref="imageEl"
               :src="coverUrl"
               alt=""
               class="min-w-0 max-w-full min-h-0 max-h-full rounded-lg"
-              ref="imageEl"
               @load="onImageLoad"
-            />
+            >
 
             <div class="hidden sm:block absolute w-10 h-10 -right-12 -top-1">
               <button
@@ -107,7 +106,7 @@ function onImageLoad() {
 .dialog-content {
   @apply relative flex flex-col items-center align-middle
     min-w-0 max-w-full min-h-0 max-h-full overflow-visible
-    text-left bg-white dark:bg-gray-800 w-fit h-fit aspect-[var(--aspect-ratio)]
+    text-left bg-white dark:bg-gray-800 w-fit h-fit aspect-[--aspect-ratio]
     shadow-xl rounded-xl ring-1 ring-black/5;
 }
 

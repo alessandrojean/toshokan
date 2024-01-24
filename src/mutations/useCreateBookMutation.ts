@@ -1,10 +1,10 @@
-import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { computed } from 'vue'
 
-import { useSheetStore } from '@/stores/sheet'
+import type Book from '@/model/Book'
 import insertBook from '@/services/sheet/insertBook'
+import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
-import Book from '@/model/Book'
 
 export default function useCreateBookMutation() {
   const sheetStore = useSheetStore()
@@ -15,19 +15,20 @@ export default function useCreateBookMutation() {
     return await fetch(insertBook(sheetId.value!, book))
   }
 
-  return useMutation(mutate, {
+  return useMutation({
+    mutationFn: mutate,
     onSuccess(_, book) {
       queryClient.setQueryData(['book', { bookId: book.id, sheetId }], book)
     },
     onSettled() {
-      queryClient.invalidateQueries(['last-added'])
-      queryClient.invalidateQueries(['next-reads'])
-      queryClient.invalidateQueries(['groups'])
-      queryClient.invalidateQueries(['books'])
-      queryClient.invalidateQueries(['authors'])
-      queryClient.invalidateQueries(['book-search'])
-      queryClient.invalidateQueries(['statistics'])
-      queryClient.invalidateQueries(['reading-months'])
-    }
+      queryClient.invalidateQueries({ queryKey: ['last-added'] })
+      queryClient.invalidateQueries({ queryKey: ['next-reads'] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+      queryClient.invalidateQueries({ queryKey: ['books'] })
+      queryClient.invalidateQueries({ queryKey: ['authors'] })
+      queryClient.invalidateQueries({ queryKey: ['book-search'] })
+      queryClient.invalidateQueries({ queryKey: ['statistics'] })
+      queryClient.invalidateQueries({ queryKey: ['reading-months'] })
+    },
   })
 }

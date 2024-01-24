@@ -1,20 +1,23 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getVersion from '@/services/sheet/getVersion'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export default function useSheetVersionQuery({ enabled }: UseQueryOptions) {
+type GetVersionReturn = Awaited<ReturnType<typeof getVersion>> | undefined
+type UseSheetVersionQueryOptions<S> = UseQueryOptions<GetVersionReturn, Error, S>
+
+export default function useSheetVersionQuery<S = GetVersionReturn>(options: UseSheetVersionQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getVersion(sheetId.value!))
-  }
-
-  return useQuery(['sheet-version', { sheetId }], fetcher, {
-    enabled,
-    initialData: 0
+  return useQuery({
+    queryKey: ['sheet-version', { sheetId }],
+    queryFn: async () => {
+      return await fetch(getVersion(sheetId.value!))
+    },
+    initialData: 0,
+    ...options,
   })
 }

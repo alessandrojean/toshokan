@@ -1,10 +1,9 @@
 <script lang="ts" setup>
+import { TrashIcon } from '@heroicons/vue/24/outline'
 import { useI18n } from '@/i18n'
 
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { TrashIcon } from '@heroicons/vue/24/outline'
 
 export interface BookDeleteDialogProps {
   open?: boolean
@@ -13,7 +12,7 @@ export interface BookDeleteDialogProps {
 
 const props = withDefaults(defineProps<BookDeleteDialogProps>(), {
   open: false,
-  quantity: 1
+  quantity: 1,
 })
 
 const emit = defineEmits<{
@@ -93,7 +92,7 @@ watch(open, (newOpen) => {
                 <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <DialogTitle
                     as="h3"
-                    class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
+                    class="text-lg leading-6 font-display-safe font-medium text-gray-900 dark:text-gray-100"
                   >
                     {{ t('book.deleteModal.title', quantity) }}
                   </DialogTitle>

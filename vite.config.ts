@@ -1,25 +1,24 @@
-import { defineConfig } from 'vitest/config'
-import Vue from '@vitejs/plugin-vue'
-import { resolve, dirname } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vitest/config'
 
-import { VitePWA } from 'vite-plugin-pwa'
-import vueI18n from '@intlify/vite-plugin-vue-i18n'
-import Pages from 'vite-plugin-pages'
-import Layouts from 'vite-plugin-vue-layouts'
-import Components from 'unplugin-vue-components/vite'
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import postcss from './postcss.config.js'
+import Components from 'unplugin-vue-components/vite'
+import Pages from 'vite-plugin-pages'
+import { VitePWA } from 'vite-plugin-pwa'
+import Layouts from 'vite-plugin-vue-layouts'
 
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
   assetsInclude: ['**/*.md'],
-  css: { postcss },
   define: {
     'import.meta.env.PACKAGE_VERSION': JSON.stringify(
-      process.env.npm_package_version
-    )
+      process.env.npm_package_version,
+    ),
   },
   plugins: [
     // https://github.com/vitejs/vite/tree/main/packages/plugin-vue
@@ -35,8 +34,8 @@ export default defineConfig({
     vueI18n({
       include: resolve(
         dirname(fileURLToPath(import.meta.url)),
-        './src/i18n/messages/**'
-      )
+        './src/i18n/messages/**',
+      ),
     }),
 
     // https://github.com/antfu/unplugin-auto-import
@@ -50,22 +49,22 @@ export default defineConfig({
           '@vueuse/core': [
             'breakpointsTailwind',
             'useBreakpoints',
-            'useLocalStorage'
-          ]
-        }
+            'useLocalStorage',
+          ],
+        },
       ],
       dts: 'src/auto-imports.d.ts',
       dirs: ['src/composables', 'src/stores', 'src/queries', 'src/mutations'],
       vueTemplate: true,
       eslintrc: {
-        enabled: true
-      }
+        enabled: true,
+      },
     }),
 
     // https://github.com/antfu/unplugin-vue-components
     Components({
       dts: 'src/components.d.ts',
-      resolvers: [HeadlessUiResolver()]
+      resolvers: [HeadlessUiResolver()],
     }),
 
     // https://github.com/vite-pwa/vite-plugin-pwa
@@ -74,7 +73,7 @@ export default defineConfig({
         'favicon.ico',
         'favicon.svg',
         'robots.txt',
-        'img/icons/apple-touch-icon.png'
+        'img/icons/apple-touch-icon.png',
       ],
       manifest: {
         name: 'Toshokan',
@@ -87,25 +86,25 @@ export default defineConfig({
           {
             src: './img/icons/icon-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: './img/icons/icon-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: './img/icons/icon-192x192-maskable.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'maskable'
+            purpose: 'maskable',
           },
           {
             src: './img/icons/icon-512x512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable'
-          }
+            purpose: 'maskable',
+          },
         ],
         shortcuts: [
           {
@@ -116,9 +115,9 @@ export default defineConfig({
             icons: [
               {
                 src: './img/icons/shortcut-dashboard-192x192.png',
-                sizes: '192x192'
-              }
-            ]
+                sizes: '192x192',
+              },
+            ],
           },
           {
             name: 'Biblioteca',
@@ -128,9 +127,9 @@ export default defineConfig({
             icons: [
               {
                 src: './img/icons/shortcut-library-192x192.png',
-                sizes: '192x192'
-              }
-            ]
+                sizes: '192x192',
+              },
+            ],
           },
           {
             name: 'Estatísticas',
@@ -140,35 +139,35 @@ export default defineConfig({
             icons: [
               {
                 src: './img/icons/shortcut-stats-192x192.png',
-                sizes: '192x192'
-              }
-            ]
-          }
-        ]
-      }
-    })
+                sizes: '192x192',
+              },
+            ],
+          },
+        ],
+      },
+    }),
   ],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '~~': resolve(__dirname, '.')
-    }
+      '~~': resolve(__dirname, '.'),
+    },
   },
   optimizeDeps: {
-    include: ['tailwind.config.js']
+    include: ['tailwind.config.js'],
   },
   build: {
     commonjsOptions: {
-      include: ['tailwind.config.js', 'node_modules/**']
-    }
+      include: ['tailwind.config.js', 'node_modules/**'],
+    },
   },
   server: {
     port: 8080,
     watch: {
-      ignored: ['**/src/tests/**']
-    }
+      ignored: ['**/src/tests/**'],
+    },
   },
   test: {
-    environment: 'jsdom'
-  }
+    environment: 'jsdom',
+  },
 })

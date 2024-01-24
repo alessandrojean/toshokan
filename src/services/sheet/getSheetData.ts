@@ -1,5 +1,3 @@
-import { promisify } from '@/util/gapi'
-
 import getStatistics from './getStatistics'
 import getTimeZone from './getTimeZone'
 

@@ -1,17 +1,22 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getPublishers from '@/services/sheet/getPublishers'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export default function usePublishersQuery({ enabled }: UseQueryOptions) {
+type GetPublishersReturn = Awaited<ReturnType<typeof getPublishers>> | undefined
+type UsePublishersQueryOptions<S> = UseQueryOptions<GetPublishersReturn, Error, S>
+
+export default function usePublishersQuery<S = GetPublishersReturn>(options: UsePublishersQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getPublishers(sheetId.value!))
-  }
-
-  return useQuery(['publishers', { sheetId }], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['publishers', { sheetId }],
+    queryFn: async () => {
+      return await fetch(getPublishers(sheetId.value!))
+    },
+    ...options,
+  })
 }

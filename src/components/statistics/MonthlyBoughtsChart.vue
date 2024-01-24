@@ -2,16 +2,15 @@
 import type { UnwrapRef } from 'vue'
 import type { ApexOptions } from 'apexcharts'
 
-import { useI18n, type Locale } from '@/i18n'
-
 import { ChartBarIcon } from '@heroicons/vue/24/solid'
 
 import apexEnUs from 'apexcharts/dist/locales/en.json'
 import apexPtBr from 'apexcharts/dist/locales/pt-br.json'
+import { type Locale, useI18n } from '@/i18n'
 
 const apexLocales: Record<Locale, ApexLocale> = {
   'en-US': apexEnUs,
-  'pt-BR': apexPtBr
+  'pt-BR': apexPtBr,
 }
 
 const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
@@ -20,7 +19,7 @@ const sheetStore = useSheetStore()
 const { color, fontFamily } = useTailwindTheme()
 
 const { data: stats, isLoading } = useStatisticsQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 const loading = computed(() => isLoading.value)
@@ -50,7 +49,7 @@ function fillMissingMonths(values: MonthlyValues, year: number) {
         month: new Date(`${year}-${String(i + 1).padStart(2, '0')}-02`),
         totalSpent: 0,
         count: 0,
-        read: 0
+        read: 0,
       }
     }
   }
@@ -60,35 +59,35 @@ function fillMissingMonths(values: MonthlyValues, year: number) {
 
 const currentYearValues = computed(() => {
   const values = (stats.value?.monthly ?? []).filter(
-    (m) => m.month.getFullYear() === currentYear
+    m => m.month.getFullYear() === currentYear,
   )
 
   return fillMissingMonths(values, currentYear)
 })
 
 const itemsBought = computed(() => ({
-  options: <ApexOptions>{
+  options: {
     chart: {
       animations: { enabled: false },
       fontFamily: fontFamily('sans')!.join(', '),
       id: 'monthly-boughts',
-      locales: [apexLocales[locale.value]],
+      locales: [apexLocales[locale.value as Locale]],
       defaultLocale: localeStr.value,
       selection: { enabled: false },
       toolbar: { show: false },
-      zoom: { enabled: false }
+      zoom: { enabled: false },
     },
     states: {
-      active: { filter: { type: 'none' } }
+      active: { filter: { type: 'none' } },
     },
     colors: [color('primary', 500)!, color('cyan', 500)!],
     fill: { opacity: 1.0 },
     grid: {
-      borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!
+      borderColor: darkMode.value ? color('slate', 600)! : color('slate', 200)!,
     },
     tooltip: { enabled: false },
     xaxis: {
-      categories: currentYearValues.value.map((m) => m.month.toISOString()),
+      categories: currentYearValues.value.map(m => m.month.toISOString()),
       labels: {
         formatter: (_, timestamp) => {
           return d(new Date(timestamp!), 'month')
@@ -96,63 +95,64 @@ const itemsBought = computed(() => ({
         hideOverlappingLabels: false,
         showDuplicates: true,
         style: {
-          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
-        }
-      }
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600),
+        },
+      },
     },
     yaxis: {
       labels: {
-        formatter: (val) => val.toFixed(0),
+        formatter: val => val.toFixed(0),
         style: {
-          colors: darkMode.value ? color('slate', 300) : color('slate', 600)
-        }
+          colors: darkMode.value ? color('slate', 300) : color('slate', 600),
+        },
       },
-      max: (max) => max + 1,
-      forceNiceScale: true
+      max: max => max + 1,
+      forceNiceScale: true,
     },
     legend: {
       labels: {
         colors: darkMode.value ? color('slate', 300) : color('slate', 600),
-        useSeriesColors: false
+        useSeriesColors: false,
       },
       onItemClick: {
-        toggleDataSeries: false
-      }
+        toggleDataSeries: false,
+      },
     },
     dataLabels: {
       enabled: true,
       offsetY: -20,
       style: {
-        colors: [darkMode.value ? color('slate', 100) : color('slate', 700)]
-      }
+        colors: [darkMode.value ? color('slate', 100) : color('slate', 700)],
+      },
     },
     stroke: {
       show: true,
       colors: ['transparent'],
-      width: 6
+      width: 6,
     },
     plotOptions: {
       bar: {
         horizontal: false,
         borderRadius: 5,
+        // @ts-expect-error missing types
         endingShape: 'rounded',
         dataLabels: {
           position: 'top',
-          hideOverflowingLabels: false
-        }
-      }
-    }
-  },
+          hideOverflowingLabels: false,
+        },
+      },
+    },
+  } satisfies ApexOptions,
   series: [
     {
       name: t('dashboard.stats.booksBoughtAndRead.bought'),
-      data: currentYearValues.value.map((m) => m.count)
+      data: currentYearValues.value.map(m => m.count),
     },
     {
       name: t('dashboard.stats.booksBoughtAndRead.read'),
-      data: currentYearValues.value.map((m) => m.read)
-    }
-  ]
+      data: currentYearValues.value.map(m => m.read),
+    },
+  ],
 }))
 </script>
 

@@ -1,14 +1,14 @@
 import axios from 'axios'
 
 import CoverFinder from './CoverFinder'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
-type OEmbedResponse = {
+interface OEmbedResponse {
   thumbnail_url?: string
 }
 
 export default class OEmbedFinder extends CoverFinder {
-  createPath: (book: Book) => string = (b) => b.code!
+  createPath: (book: Book) => string = b => b.code!
 
   baseUrl = ''
 
@@ -23,12 +23,12 @@ export default class OEmbedFinder extends CoverFinder {
   async find(book: Book) {
     try {
       const response = await axios.get<OEmbedResponse>(
-        this.baseUrl + '/wp-json/oembed/1.0/embed',
+        `${this.baseUrl}/wp-json/oembed/1.0/embed`,
         {
           params: {
-            url: this.baseUrl + this.createPath(book)
-          }
-        }
+            url: this.baseUrl + this.createPath(book),
+          },
+        },
       )
 
       if (!response.data.thumbnail_url) {

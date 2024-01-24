@@ -1,4 +1,4 @@
-import { beforeEach, vi, describe, it, expect, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Axios } from 'axios'
 
@@ -14,7 +14,7 @@ beforeEach(() => {
   axiosPost.mockClear()
 })
 
-describe('CBL', () => {
+describe('cBL', () => {
   beforeEach(() => {
     process.env.VITE_APP_CBL_QUERY_KEY = 'CBL_QUERY_KEY'
   })
@@ -23,7 +23,7 @@ describe('CBL', () => {
     process.env.VITE_APP_CBL_QUERY_KEY = undefined
   })
 
-  it('Should parse the book if found', async () => {
+  it('should parse the book if found', async () => {
     axiosPost.mockResolvedValueOnce({
       data: {
         value: [
@@ -35,10 +35,10 @@ describe('CBL', () => {
             FormattedKey: '9788545702870',
             Profissoes: ['Autor', 'Tradutor'],
             Dimensao: '178x256',
-            Sinopse: null
-          }
-        ]
-      }
+            Sinopse: null,
+          },
+        ],
+      },
     })
 
     const cbl = new Cbl()
@@ -52,16 +52,16 @@ describe('CBL', () => {
       publisher: 'JBC',
       dimensions: {
         width: 17.8,
-        height: 25.6
+        height: 25.6,
       },
       synopsis: '',
-      provider: 'CBL'
+      provider: 'CBL',
     })
   })
 
-  it('Should return no results if ISBN does not exists', async () => {
+  it('should return no results if ISBN does not exists', async () => {
     axiosPost.mockResolvedValueOnce({
-      data: { value: [] }
+      data: { value: [] },
     })
 
     const cbl = new Cbl()
@@ -70,31 +70,31 @@ describe('CBL', () => {
     expect(results).toHaveLength(0)
   })
 
-  it('Should fail if the ISBN is invalid', async () => {
+  it('should fail if the ISBN is invalid', async () => {
     const cbl = new Cbl()
     const search = vi.spyOn(cbl, 'search')
 
     await expect(cbl.search('9788545702871')).rejects.toThrowError(
-      'The informed ISBN is invalid.'
+      'The informed ISBN is invalid.',
     )
 
     expect(search).toHaveBeenCalled()
   })
 
-  it('Should fail if no query key is provided', async () => {
+  it('should fail if no query key is provided', async () => {
     delete process.env.VITE_APP_CBL_QUERY_KEY
 
     const cbl = new Cbl()
     vi.spyOn(cbl, 'search')
 
     await expect(cbl.search('9788545702870')).rejects.toThrowError(
-      'Authorization key missing.'
+      'Authorization key missing.',
     )
   })
 })
 
-describe('Google Books', () => {
-  it('Should parse the book if found', async () => {
+describe('google Books', () => {
+  it('should parse the book if found', async () => {
     axiosGet.mockResolvedValueOnce({
       data: {
         items: [
@@ -104,16 +104,16 @@ describe('Google Books', () => {
               authors: ['Katsuhiro Otomo'],
               publisher: 'Editora JBC',
               industryIdentifiers: [
-                { type: 'ISBN_13', identifier: '9788545702870' }
+                { type: 'ISBN_13', identifier: '9788545702870' },
               ],
               dimensions: {
                 width: '17.8 cm',
-                height: '25.6 cm'
-              }
-            }
-          }
-        ]
-      }
+                height: '25.6 cm',
+              },
+            },
+          },
+        ],
+      },
     })
 
     const googleBooks = new GoogleBooks()
@@ -127,16 +127,16 @@ describe('Google Books', () => {
       publisher: 'Editora JBC',
       dimensions: {
         width: 17.8,
-        height: 25.6
+        height: 25.6,
       },
       synopsis: '',
-      provider: 'Google Books'
+      provider: 'Google Books',
     })
   })
 
-  it('Should return no results if ISBN does not exists', async () => {
+  it('should return no results if ISBN does not exists', async () => {
     axiosGet.mockResolvedValueOnce({
-      data: { totalItems: 0 }
+      data: { totalItems: 0 },
     })
 
     const googleBooks = new GoogleBooks()
@@ -145,37 +145,37 @@ describe('Google Books', () => {
     expect(results).toHaveLength(0)
   })
 
-  it('Should fail if the ISBN is invalid', async () => {
+  it('should fail if the ISBN is invalid', async () => {
     const googleBooks = new GoogleBooks()
     const search = vi.spyOn(googleBooks, 'search')
 
     await expect(googleBooks.search('9788545702871')).rejects.toThrowError(
-      'The informed ISBN is invalid.'
+      'The informed ISBN is invalid.',
     )
 
     expect(search).toHaveBeenCalled()
   })
 })
 
-describe('Open Library', () => {
-  it('Should parse the book if found', async () => {
+describe('open Library', () => {
+  it('should parse the book if found', async () => {
     axiosGet.mockResolvedValueOnce({
       data: {
         'ISBN:9788545702870': {
           identifiers: {
-            isbn_13: ['9788545702870']
+            isbn_13: ['9788545702870'],
           },
           title: 'Akira vol. 1',
           authors: [{ name: 'Katsuhiro Otomo' }],
-          publishers: [{ name: 'Editora JBC' }]
-        }
-      }
+          publishers: [{ name: 'Editora JBC' }],
+        },
+      },
     })
 
     axiosGet.mockResolvedValueOnce({
       data: {
-        physical_dimensions: '25.6 x 17.8 x 1 centimeters'
-      }
+        physical_dimensions: '25.6 x 17.8 x 1 centimeters',
+      },
     })
 
     const openLibrary = new OpenLibrary()
@@ -189,15 +189,15 @@ describe('Open Library', () => {
       publisher: 'Editora JBC',
       dimensions: {
         width: 17.8,
-        height: 25.6
+        height: 25.6,
       },
       synopsis: '',
       coverUrl: '',
-      provider: 'Open Library'
+      provider: 'Open Library',
     })
   })
 
-  it('Should return no results if ISBN does not exists', async () => {
+  it('should return no results if ISBN does not exists', async () => {
     axiosGet.mockResolvedValueOnce({ data: {} })
 
     const openLibrary = new OpenLibrary()
@@ -206,12 +206,12 @@ describe('Open Library', () => {
     expect(results).toHaveLength(0)
   })
 
-  it('Should fail if the ISBN is invalid', async () => {
+  it('should fail if the ISBN is invalid', async () => {
     const openLibrary = new OpenLibrary()
     const search = vi.spyOn(openLibrary, 'search')
 
     await expect(openLibrary.search('9788545702871')).rejects.toThrowError(
-      'The informed ISBN is invalid.'
+      'The informed ISBN is invalid.',
     )
 
     expect(search).toHaveBeenCalled()

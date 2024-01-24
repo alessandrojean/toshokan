@@ -1,7 +1,7 @@
 import { computed, readonly, ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 
-import { useSettingsStore, THEME_SYSTEM, THEME_DARK } from '@/stores/settings'
+import { THEME_DARK, THEME_SYSTEM, useSettingsStore } from '@/stores/settings'
 
 export default function useDarkMode() {
   const settingsStore = useSettingsStore()
@@ -11,8 +11,8 @@ export default function useDarkMode() {
   const theme = computed(() => settingsStore.theme)
 
   const darkMode = ref(
-    (theme.value === THEME_SYSTEM && prefersDark.value) ||
-      theme.value === THEME_DARK
+    (theme.value === THEME_SYSTEM && prefersDark.value)
+    || theme.value === THEME_DARK,
   )
 
   watch(prefersDark, (matches) => {
@@ -22,12 +22,12 @@ export default function useDarkMode() {
   })
 
   watch(theme, (newValue) => {
-    darkMode.value =
-      newValue === THEME_DARK ||
-      (newValue === THEME_SYSTEM && prefersDark.value)
+    darkMode.value
+      = newValue === THEME_DARK
+      || (newValue === THEME_SYSTEM && prefersDark.value)
   })
 
   return {
-    darkMode: readonly(darkMode)
+    darkMode: readonly(darkMode),
   }
 }

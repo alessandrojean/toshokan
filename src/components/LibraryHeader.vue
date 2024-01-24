@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import type { Sort } from '@/types'
-
 import {
   ArchiveBoxIcon,
+  BarsArrowDownIcon,
+  BarsArrowUpIcon,
   FunnelIcon,
   PlusIcon,
-  BarsArrowUpIcon,
-  BarsArrowDownIcon
 } from '@heroicons/vue/20/solid'
+import type { Sort } from '@/types'
 
 export interface LibraryHeaderProps {
   loading?: boolean
@@ -20,7 +19,7 @@ export interface LibraryHeaderProps {
 const props = withDefaults(defineProps<LibraryHeaderProps>(), {
   loading: false,
   groups: () => [],
-  writing: false
+  writing: false,
 })
 
 defineEmits<{
@@ -33,7 +32,7 @@ const {
   groups: selectedGroups,
   sortDirection,
   sortProperty,
-  writing
+  writing,
 } = toRefs(props)
 
 const sheetStore = useSheetStore()
@@ -42,15 +41,15 @@ const { t } = useI18n({ useScope: 'global' })
 const sheetIsEmpty = computed(() => sheetStore.isEmpty)
 
 const sortPropertyNames = computed<Record<string, string>>(() => ({
-  title: t('book.properties.title'),
-  publisher: t('book.properties.publisher'),
-  status: t('book.properties.status'),
-  readAt: t('book.properties.readAt'),
+  'title': t('book.properties.title'),
+  'publisher': t('book.properties.publisher'),
+  'status': t('book.properties.status'),
+  'readAt': t('book.properties.readAt'),
   'paidPrice.value': t('book.properties.paidPrice'),
   'labelPrice.value': t('book.properties.labelPrice'),
-  boughtAt: t('book.properties.boughtAt'),
-  createdAt: t('book.properties.createdAt'),
-  updatedAt: t('book.properties.updatedAt')
+  'boughtAt': t('book.properties.boughtAt'),
+  'createdAt': t('book.properties.createdAt'),
+  'updatedAt': t('book.properties.updatedAt'),
 }))
 
 const sortPropertyName = computed(() => {
@@ -61,7 +60,7 @@ const sheetLoading = computed(() => sheetStore.loading)
 const sheetLoadedOnce = computed(() => sheetStore.loadedOnce)
 
 const { data: allGroups } = useGroupsQuery({
-  enabled: computed(() => !sheetLoading.value)
+  enabled: computed(() => !sheetLoading.value),
 })
 
 const currentGroups = computed(() => {
@@ -111,10 +110,10 @@ const canEdit = computed(() => sheetStore.canEdit)
         >
           <span aria-hidden="true">
             <component
-              class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
               :is="
                 sortDirection === 'asc' ? BarsArrowUpIcon : BarsArrowDownIcon
               "
+              class="shrink-0 mr-1.5 h-5 w-5 text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
             />
           </span>
           <span class="sr-only">
@@ -128,10 +127,10 @@ const canEdit = computed(() => sheetStore.canEdit)
     <template #actions>
       <div class="flex space-x-2">
         <Button
-          class="flex-1 md:flex-initial justify-center md:justify-start"
-          @click.stop="$emit('click:filter')"
           v-if="!sheetIsEmpty"
+          class="flex-1 md:flex-initial justify-center md:justify-start"
           :disabled="loading || writing"
+          @click.stop="$emit('click:filter')"
         >
           <template #left="{ iconClass }">
             <FunnelIcon :class="iconClass" />
@@ -141,9 +140,9 @@ const canEdit = computed(() => sheetStore.canEdit)
         <Button
           v-if="canEdit"
           kind="primary"
-          @click="$emit('click:new')"
           class="flex-1 md:flex-initial justify-center md:justify-start"
           :disabled="loading || writing"
+          @click="$emit('click:new')"
         >
           <template #left="{ iconClass }">
             <PlusIcon :class="iconClass" />

@@ -1,7 +1,7 @@
-import Button from './Button.vue'
 import { FolderOpenIcon } from '@heroicons/vue/20/solid'
 
-import { Meta, StoryObj } from '@storybook/vue3'
+import type { Meta, StoryObj } from '@storybook/vue3'
+import Button from './Button.vue'
 
 export default {
   title: 'Components/Form/Button',
@@ -13,112 +13,110 @@ export default {
     link: false,
     rounded: false,
     size: 'normal',
-    type: 'button'
+    type: 'button',
   },
   argTypes: {
     kind: {
       control: 'inline-radio',
-      options: ['default', 'primary', 'secondary', 'ghost', 'danger']
+      options: ['default', 'primary', 'secondary', 'ghost', 'danger'],
     },
     size: {
       control: 'inline-radio',
-      options: ['small', 'normal', 'large']
+      options: ['small', 'normal', 'large'],
     },
     type: {
-      control: { type: null }
+      control: { type: null },
     },
     default: {
-      control: { type: null }
+      control: { type: null },
     },
     left: {
-      control: { type: null }
+      control: { type: null },
     },
     right: {
-      control: { type: null }
+      control: { type: null },
     },
     click: {
       action: 'onClick',
       control: { type: null },
-      table: { category: 'Events' }
-    }
+      table: { category: 'Events' },
+    },
   },
-  decorators: [() => ({ template: '<div class="p-6"><story/></div>' })]
+  decorators: [() => ({ template: '<div class="p-6"><story/></div>' })],
 } as Meta<typeof Button>
 
 export const Default: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
-  })
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
+  }),
 }
 
 export const Disabled: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
-  args: { disabled: true }
+  args: { disabled: true },
 }
 
 export const Primary: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
-  args: { kind: 'primary' }
+  args: { kind: 'primary' },
 }
 
 export const Secondary: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
-  args: { kind: 'secondary' }
+  args: { kind: 'secondary' },
 }
 
 export const Danger: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
-  args: { kind: 'danger' }
+  args: { kind: 'danger' },
 }
 
 export const Ghost: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
-  args: { kind: 'ghost' }
+  args: { kind: 'ghost' },
 }
 
 export const Link: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button },
     setup: () => ({ args }),
-    template: '<Button v-bind="args" v-on="args">Button</Button>'
+    template: '<Button v-bind="args" v-on="args">Button</Button>',
   }),
   args: {
     kind: 'ghost',
     link: true,
     as: 'router-link',
-    // @ts-ignore
-    to: '/'
+    to: '/',
   },
   argTypes: {
-    // @ts-ignore
-    click: { action: null }
-  }
+    click: { action: null },
+  },
 }
 
 export const LeftIcon: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button, FolderOpenIcon },
     setup: () => ({ args }),
     template: `
@@ -128,12 +126,12 @@ export const LeftIcon: StoryObj<typeof Button> = {
         </template>
         <span>Open file&hellip;</span>
       </Button>
-    `
-  })
+    `,
+  }),
 }
 
 export const RightIcon: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button, FolderOpenIcon },
     setup: () => ({ args }),
     template: `
@@ -143,12 +141,12 @@ export const RightIcon: StoryObj<typeof Button> = {
           <FolderOpenIcon :class="iconClass" />
         </template>
       </Button>
-    `
-  })
+    `,
+  }),
 }
 
 export const IconOnly: StoryObj<typeof Button> = {
-  render: (args) => ({
+  render: (args: any) => ({
     components: { Button, FolderOpenIcon },
     setup: () => ({ args }),
     template: `
@@ -160,7 +158,7 @@ export const IconOnly: StoryObj<typeof Button> = {
       >
         <FolderOpenIcon :class="iconClass" />
       </Button>
-    `
+    `,
   }),
-  args: { iconOnly: true }
+  args: { iconOnly: true },
 }

@@ -12,13 +12,13 @@ import Book, { CollectionColumns } from '@/model/Book'
  */
 export default async function getBooksFromCollection(
   sheetId: string,
-  book: Book
+  book: Book,
 ): Promise<Book[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { TITLE, PUBLISHER, GROUP } = CollectionColumns
   const query = new QueryBuilder(sheetUrl)
-    .where(TITLE, 'starts with', book.titleParts.title + ' #')
+    .where(TITLE, 'starts with', `${book.titleParts.title} #`)
     .andWhere(PUBLISHER, book.publisher)
     .andWhere(GROUP, book.group)
     .orderBy([TITLE, 'asc'])

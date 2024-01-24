@@ -1,21 +1,20 @@
 import axios from 'axios'
 
+import Lookup from './Lookup'
 import Book from '@/model/Book'
 import { isbn as isValidIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
-import Lookup from './Lookup'
-
 export const PUBLISHER_REPLACEMENTS: Record<string, string> = {
   'Editora JBC': 'JBC',
-  INK: 'JBC',
+  'INK': 'JBC',
   'Japorama Editora e Comunicação': 'JBC',
   'New Pop Editora': 'NewPOP',
   'NewPOP Editora': 'NewPOP',
   'Panini Brasil': 'Panini',
   'Panini Comics': 'Panini',
   'Bernardo Ferreira de Santana Carvalho': 'Panini',
-  CONRAD: 'Conrad',
+  'CONRAD': 'Conrad',
   'Editora Alto Astral': 'Alto Astral',
   'Editora Draco': 'Draco',
   'L&PM Editores': 'L&PM',
@@ -24,14 +23,14 @@ export const PUBLISHER_REPLACEMENTS: Record<string, string> = {
   'Darkside Books': 'DarkSide',
   'Kleber de Sousa': 'Devir',
   'Verus Editora': 'Verus',
-  'reginaldo f silva': 'ComixZone'
+  'reginaldo f silva': 'ComixZone',
 }
 
-type CblSearchResponse = {
+interface CblSearchResponse {
   value: CblBook[]
 }
 
-export type CblBook = {
+export interface CblBook {
   Authors: string[] | null
   Colection: string | null
   Countries: string[] | null
@@ -49,7 +48,7 @@ export type CblBook = {
   Sinopse: string | null
 }
 
-type SearchOptions = {
+interface SearchOptions {
   count?: boolean | null
   facets?: string[] | null
   filter?: string | null
@@ -79,7 +78,7 @@ export default class Cbl extends Lookup {
     'Veiculacao',
     'Profissoes',
     'Dimensao',
-    'Sinopse'
+    'Sinopse',
   ]
 
   _createAxios() {
@@ -87,9 +86,9 @@ export default class Cbl extends Lookup {
       baseURL:
         'https://isbn-search-br.search.windows.net/indexes/isbn-index/docs/',
       headers: {
-        Accept: 'application/json',
-        'Api-Key': import.meta.env.VITE_APP_CBL_QUERY_KEY
-      }
+        'Accept': 'application/json',
+        'Api-Key': import.meta.env.VITE_APP_CBL_QUERY_KEY,
+      },
     })
   }
 
@@ -105,7 +104,7 @@ export default class Cbl extends Lookup {
       searchMode: 'any',
       select: this.#FIELDS_TO_SELECT.join(','),
       skip: 0,
-      top: 12
+      top: 12,
     }
 
     if (dataOptions) {
@@ -129,7 +128,7 @@ export default class Cbl extends Lookup {
     try {
       const response = await this.axios.post<CblSearchResponse>(
         'search?api-version=2016-09-01',
-        dataPayload
+        dataPayload,
       )
 
       return response.data.value.map(Book.fromCbl)
@@ -146,7 +145,7 @@ export default class Cbl extends Lookup {
     }
 
     const searchResults = await this.#internalSearch(isbn.replace(/-/g, ''), {
-      searchFields: 'FormattedKey,RowKey'
+      searchFields: 'FormattedKey,RowKey',
     })
 
     return searchResults

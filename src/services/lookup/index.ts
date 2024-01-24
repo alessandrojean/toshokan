@@ -3,13 +3,13 @@ import GoogleBooks from './GoogleBooks'
 import OpenLibrary from './OpenLibrary'
 
 import i18n from '@/i18n'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 /**
  * Search by the ISBN in the providers.
  *
- * @param {String} isbn the ISBN to search
- * @returns {Promise<Object[]>} an array of books
+ * @param {string} isbn the ISBN to search
+ * @returns {Promise<object[]>} an array of books
  */
 export default async function search(isbn: string): Promise<Book[]> {
   const { locale } = i18n.global
@@ -28,8 +28,8 @@ export default async function search(isbn: string): Promise<Book[]> {
   const results = await Promise.allSettled(allPromises)
 
   return results
-    .filter((result) => result.status === 'fulfilled')
-    .flatMap((result) => (result as PromiseFulfilledResult<Book[]>).value)
+    .filter(result => result.status === 'fulfilled')
+    .flatMap(result => (result as PromiseFulfilledResult<Book[]>).value)
     .sort((a, b) => a.provider!.localeCompare(b.provider!, locale))
 }
 

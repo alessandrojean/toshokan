@@ -9,12 +9,12 @@ const COLLECTION_SHEET = 'Collection'
  */
 export default function buildSheetUrl(sheetId: string): string {
   const sheetUrl = new URL(
-    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`
+    `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`,
   )
 
-  const accessToken: string | undefined =
-    // @ts-ignore Missing declarations
-    window.gapi?.client?.getToken?.()?.access_token
+  const accessToken: string | undefined
+    // @ts-expect-error Missing declarations
+    = window.gapi?.client?.getToken?.()?.access_token
 
   sheetUrl.searchParams.append('range', COLLECTION_RANGE)
   sheetUrl.searchParams.append('sheet', COLLECTION_SHEET)

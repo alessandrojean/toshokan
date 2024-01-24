@@ -1,10 +1,10 @@
-import { computed } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { computed } from 'vue'
 
-import { useSheetStore } from '@/stores/sheet'
+import type Book from '@/model/Book'
 import bulkUpdateBooks from '@/services/sheet/bulkUpdateBooks'
+import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
-import Book from '@/model/Book'
 
 export default function useBulkEditBookMutation() {
   const sheetStore = useSheetStore()
@@ -15,33 +15,34 @@ export default function useBulkEditBookMutation() {
     return await fetch(bulkUpdateBooks(sheetId.value!, books))
   }
 
-  return useMutation(mutate, {
+  return useMutation({
+    mutationFn: mutate,
     onSuccess(_, books) {
       books.forEach((book) => {
         queryClient.setQueryData(['book', { bookId: book.id, sheetId }], book)
       })
 
       queryClient.setQueriesData<{ books: Book[] }>(
-        ['books', { sheetId }],
+        { queryKey: ['books', { sheetId }] },
         (oldData) => {
           return {
             ...oldData,
             books: (oldData?.books ?? []).map((oldBook) => {
               return books.find(({ id }) => id === oldBook.id) || oldBook
-            })
+            }),
           }
-        }
+        },
       )
     },
     onSettled() {
-      queryClient.invalidateQueries(['latest-readings'])
-      queryClient.invalidateQueries(['next-reads'])
-      queryClient.invalidateQueries(['groups'])
-      queryClient.invalidateQueries(['books'])
-      queryClient.invalidateQueries(['authors'])
-      queryClient.invalidateQueries(['book-search'])
-      queryClient.invalidateQueries(['statistics'])
-      queryClient.invalidateQueries(['reading-months'])
-    }
+      queryClient.invalidateQueries({ queryKey: ['latest-readings'] })
+      queryClient.invalidateQueries({ queryKey: ['next-reads'] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+      queryClient.invalidateQueries({ queryKey: ['books'] })
+      queryClient.invalidateQueries({ queryKey: ['authors'] })
+      queryClient.invalidateQueries({ queryKey: ['book-search'] })
+      queryClient.invalidateQueries({ queryKey: ['statistics'] })
+      queryClient.invalidateQueries({ queryKey: ['reading-months'] })
+    },
   })
 }

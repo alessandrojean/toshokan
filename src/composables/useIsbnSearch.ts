@@ -1,7 +1,7 @@
-import { computed, readonly, ref, type Ref } from 'vue'
+import { type Ref, computed, readonly, ref } from 'vue'
 
 import lookupSearch from '@/services/lookup'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 export default function useIsbnSearch(isbnRef: Ref<string>) {
   const errorMessage = ref('')
@@ -46,6 +46,6 @@ export default function useIsbnSearch(isbnRef: Ref<string>) {
     noResultsFound: readonly(noResultsFound),
     results: readonly(results),
     search,
-    searching: readonly(searching)
+    searching: readonly(searching),
   }
 }

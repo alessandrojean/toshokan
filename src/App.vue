@@ -2,12 +2,11 @@
 import { computed, nextTick, provide, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useStore } from '@/stores/main'
 import { ChangeTitleKey } from '@/symbols'
-
-import { BuildingLibraryIcon } from '@heroicons/vue/20/solid'
 
 import FadeTransition from '@/components/transitions/FadeTransition.vue'
 import ReloadDialog from '@/components/dialogs/ReloadDialog.vue'
@@ -41,12 +40,12 @@ watch(
     nextTick(() => {
       setTimeout(() => {
         changeNavigationHelpText(
-          route.meta.title ? t(route.meta.title) : t('app.name')
+          route.meta.title ? t(route.meta.title) : t('app.name'),
         )
         focusOnJumpLink()
       }, 500)
     })
-  }
+  },
 )
 
 watch(locale, (newLocale) => {
@@ -56,7 +55,7 @@ watch(locale, (newLocale) => {
 })
 
 function changeTitle(title?: string) {
-  document.title = title ? title + ' | ' + t('app.name') : t('app.name')
+  document.title = title ? `${title} | ${t('app.name')}` : t('app.name')
 }
 
 provide(ChangeTitleKey, changeTitle)
@@ -82,7 +81,7 @@ const showLoadingIndicator = computed(() => {
       </p>
     </div>
   </FadeTransition>
-  <a href="#main-content" class="jump-to" ref="jumpToMain">
+  <a ref="jumpToMain" href="#main-content" class="jump-to">
     {{ t('a11y.jumpToMain') }}
   </a>
   <p class="sr-only" aria-live="polite" aria-hidden="true">

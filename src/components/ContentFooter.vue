@@ -1,10 +1,9 @@
 <script lang="ts" setup>
+import { PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import { DocumentationKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { PencilSquareIcon } from '@heroicons/vue/24/outline'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 
 defineProps({ githubLink: String })
 
@@ -16,13 +15,13 @@ const category = computed(() => String(route.params.category))
 const slug = computed(() => String(route.params.slug))
 
 const pages = computed(() => {
-  const pages = docs.find((c) => c.category === category.value)?.pages ?? []
+  const pages = docs.find(c => c.category === category.value)?.pages ?? []
 
-  return pages.filter((p) => p.locale === locale.value)
+  return pages.filter(p => p.locale === locale.value)
 })
 
 const currentIdx = computed(() =>
-  pages.value.findIndex((p) => p.slug === slug.value)
+  pages.value.findIndex(p => p.slug === slug.value),
 )
 const previous = computed(() => pages.value[currentIdx.value - 1])
 const next = computed(() => pages.value[currentIdx.value + 1])
@@ -47,7 +46,7 @@ const next = computed(() => pages.value[currentIdx.value + 1])
         v-if="previous"
         :to="{
           name: 'help-category-slug',
-          params: { category, slug: previous.slug }
+          params: { category, slug: previous.slug },
         }"
         class="link previous has-ring-focus"
       >
@@ -61,7 +60,7 @@ const next = computed(() => pages.value[currentIdx.value + 1])
         v-if="next"
         :to="{
           name: 'help-category-slug',
-          params: { category, slug: next.slug }
+          params: { category, slug: next.slug },
         }"
         class="link next has-ring-focus"
       >

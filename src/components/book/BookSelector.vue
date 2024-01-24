@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 export interface BookSelectorProps {
   options?: Book[]
@@ -24,7 +24,7 @@ function formatAuthors(authors: string[]) {
 
     formattedAuthors = t('dashboard.details.header.authorListComplete', {
       authors: firstAuthors,
-      lastAuthor: authors[authors.length - 1]
+      lastAuthor: authors[authors.length - 1],
     })
   }
 
@@ -41,24 +41,24 @@ function setSelected(newValue: Book) {
 
 <template>
   <RadioGroup
-    class="flex flex-col space-y-2"
     v-if="options"
-    :modelValue="selected as Record<string, any>"
-    @update:modelValue="setSelected"
+    class="flex flex-col space-y-2"
+    :model-value="selected as Record<string, any>"
+    @update:model-value="setSelected"
   >
     <RadioGroupOption
-      as="template"
       v-for="book in options"
       :key="book.code!"
-      :value="book"
       v-slot="{ checked }"
+      as="template"
+      :value="book"
     >
       <div
         :class="[
           checked
             ? 'border-primary-600 dark:border-primary-400 shadow bg-primary-50 dark:bg-transparent'
             : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700',
-          'cursor-pointer group rounded-md border flex items-start text-sm px-4 py-4 has-input-focus'
+          'cursor-pointer group rounded-md border flex items-start text-sm px-4 py-4 has-input-focus',
         ]"
       >
         <div
@@ -67,7 +67,7 @@ function setSelected(newValue: Book) {
             checked
               ? 'bg-primary-600 dark:bg-primary-500 border-primary-600 dark:border-primary-500'
               : 'bg-white dark:bg-gray-900 dark:group-hover:bg-gray-850 border-gray-300 dark:border-gray-600 group-hover:border-gray-400 dark:group-hover:border-gray-500',
-            'shrink-0 w-4 h-4 mr-4 mt-0.5 border rounded-xl flex items-center justify-center'
+            'shrink-0 w-4 h-4 mr-4 mt-0.5 border rounded-xl flex items-center justify-center',
           ]"
         >
           <span
@@ -75,7 +75,7 @@ function setSelected(newValue: Book) {
               checked
                 ? 'bg-white'
                 : 'bg-white dark:bg-gray-850 dark:group-hover:bg-gray-850',
-              'inline-block w-1.5 h-1.5 rounded-xl'
+              'inline-block w-1.5 h-1.5 rounded-xl',
             ]"
           />
         </div>
@@ -84,13 +84,13 @@ function setSelected(newValue: Book) {
             <RadioGroupLabel
               as="span"
               :class="checked ? 'text-primary-800' : ''"
-              class="block w-full truncate font-medium font-display dark:text-gray-100"
+              class="block w-full truncate font-medium font-display-safe dark:text-gray-100"
             >
               {{ book.title }}
             </RadioGroupLabel>
             <RadioGroupDescription
-              as="span"
               v-if="book.authors && book.authors.length > 0"
+              as="span"
               :class="checked ? 'text-primary-700' : 'text-gray-600'"
               class="block w-full truncate dark:text-gray-300 font-medium"
             >
@@ -103,7 +103,7 @@ function setSelected(newValue: Book) {
                 !checked
                   ? 'group-hover:text-gray-600 dark:group-hover:text-gray-100 group-hover:border-gray-300 dark:group-hover:border-gray-500 text-gray-500 border-gray-200'
                   : 'text-primary-600 border-primary-300',
-                'text-xxs font-semibold bg-white dark:bg-transparent dark:text-gray-200 px-2 py-0.5 rounded text uppercase tracking-wide border dark:border-gray-600'
+                'text-xxs font-semibold bg-white dark:bg-transparent dark:text-gray-200 px-2 py-0.5 rounded text uppercase tracking-wide border dark:border-gray-600',
               ]"
             >
               {{ book.provider }}
@@ -114,7 +114,7 @@ function setSelected(newValue: Book) {
                 !checked
                   ? 'group-hover:text-gray-600 dark:group-hover:text-gray-300 text-gray-500'
                   : 'text-primary-600',
-                'block dark:text-gray-400'
+                'block dark:text-gray-400',
               ]"
             >
               {{ book.publisher }}

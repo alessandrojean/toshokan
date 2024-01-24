@@ -1,17 +1,16 @@
 import axios from 'axios'
 
+import Lookup from './Lookup'
 import Book from '@/model/Book'
 import { isbn as isValidIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
-import Lookup from './Lookup'
-
-type GoogleBooksSearchResponse = {
+interface GoogleBooksSearchResponse {
   totalItems: number
   items: GoogleBook[]
 }
 
-export type GoogleBook = {
+export interface GoogleBook {
   volumeInfo: {
     title: string
     authors?: string[]
@@ -31,7 +30,7 @@ export type GoogleBook = {
 export default class GoogleBooks extends Lookup {
   _createAxios() {
     return axios.create({
-      baseURL: 'https://www.googleapis.com/books/v1'
+      baseURL: 'https://www.googleapis.com/books/v1',
     })
   }
 
@@ -50,9 +49,9 @@ export default class GoogleBooks extends Lookup {
         'volumes',
         {
           params: {
-            q: bibKey
-          }
-        }
+            q: bibKey,
+          },
+        },
       )
 
       return data.items?.map(Book.fromGoogleBooks) || []

@@ -9,10 +9,10 @@ import { promisify } from '@/util/gapi'
 export default async function getVersion(sheetId: string) {
   const thenable = window.gapi.client.sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
-    range: 'ToshokanVersion'
+    range: 'ToshokanVersion',
   })
 
   const response = await promisify(thenable)
 
-  return parseInt(response.result.values![0][0], 10)
+  return Number.parseInt(response.result.values![0][0], 10)
 }

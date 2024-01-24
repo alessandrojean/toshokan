@@ -10,21 +10,21 @@ module.exports = {
       name: '@storybook/addon-postcss',
       options: {
         postcssLoaderOptions: {
-          implementation: require('postcss')
-        }
-      }
-    }
+          implementation: require('postcss'),
+        },
+      },
+    },
   ],
   framework: {
-    name: '@storybook/vue3-vite'
+    name: '@storybook/vue3-vite',
   },
   core: {
-    builder: '@storybook/builder-vite'
+    builder: '@storybook/builder-vite',
   },
   features: {
-    storyStoreV7: true
+    storyStoreV7: true,
   },
   docsPage: {
-    docs: 'automatic'
-  }
+    docs: 'automatic',
+  },
 }

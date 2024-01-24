@@ -1,10 +1,9 @@
-import { readonly, ref, watch } from 'vue'
+import { computed, readonly, ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import { computed } from 'vue'
 
 export default function useImageLoader(
   imageUrl?: Ref<string | undefined>,
-  aspectRatioDefault = '2 / 3'
+  aspectRatioDefault = '2 / 3',
 ) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
@@ -51,7 +50,7 @@ export default function useImageLoader(
       imageHasError.value = false
       imageLoading.value = true
       loadImage()
-    }
+    },
   )
 
   return {
@@ -60,6 +59,6 @@ export default function useImageLoader(
     imageWidth: readonly(imageWidth),
     imageHeight: readonly(imageHeight),
     imageAspectRatio,
-    loadImage
+    loadImage,
   }
 }

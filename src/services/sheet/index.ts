@@ -47,5 +47,5 @@ export default {
   getWholeLibrary,
   insertBook,
   searchBooks,
-  updateBook
+  updateBook,
 }

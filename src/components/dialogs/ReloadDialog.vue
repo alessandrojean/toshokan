@@ -26,7 +26,7 @@ const sections = computed(() => {
 
   return chunk(parts, 2).map(([title, body]) => ({
     title: md.renderInline(title),
-    body: renderMarkdown(body)
+    body: renderMarkdown(body),
   }))
 })
 </script>
@@ -74,7 +74,7 @@ const sections = computed(() => {
               >
                 <DialogTitle
                   as="h3"
-                  class="shrink-0 text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
+                  class="shrink-0 text-lg leading-6 font-display-safe font-medium text-gray-900 dark:text-gray-100"
                 >
                   {{ t('pwa.newContent.title') }}
                 </DialogTitle>

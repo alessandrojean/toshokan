@@ -2,9 +2,8 @@
 import dedent from 'dedent'
 import searchQuery from 'search-query-parser'
 
-import { createSearchKeywords } from '@/services/sheet/searchBooks'
-
 import { XMarkIcon } from '@heroicons/vue/20/solid'
+import { createSearchKeywords } from '@/services/sheet/searchBooks'
 
 const props = defineProps<{ search: string }>()
 
@@ -28,12 +27,12 @@ const searchText = computed(() => {
 
   for (const offset of result.offsets!.reverse()) {
     if ('text' in offset) {
-      withTags =
-        withTags.substring(0, offset.offsetStart) +
-        escapeHtml(
-          search.value.substring(offset.offsetStart, offset.offsetEnd)
-        ) +
-        withTags.substring(offset.offsetEnd)
+      withTags
+        = withTags.substring(0, offset.offsetStart)
+        + escapeHtml(
+          search.value.substring(offset.offsetStart, offset.offsetEnd),
+        )
+        + withTags.substring(offset.offsetEnd)
       continue
     }
 
@@ -46,10 +45,10 @@ const searchText = computed(() => {
       </span>
     `
 
-    withTags =
-      withTags.substring(0, startIndex) +
-      tag +
-      withTags.substring(offset.offsetEnd)
+    withTags
+      = withTags.substring(0, startIndex)
+      + tag
+      + withTags.substring(offset.offsetEnd)
   }
 
   return withTags.replace(/\n/g, '')

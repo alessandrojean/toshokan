@@ -1,4 +1,4 @@
-import type { InjectionKey, Ref } from 'vue'
+import type { InjectionKey } from 'vue'
 
 /**
  * Application
@@ -18,34 +18,34 @@ export type DisableSearchShortcut = () => void
 export type EnableSearchShortcut = () => void
 export type SetNavbarTransparent = (value: boolean) => void
 
-export const ShowAsideDialogKey: InjectionKey<ShowAsideDialog> =
-  Symbol('showAsideDialog')
+export const ShowAsideDialogKey: InjectionKey<ShowAsideDialog>
+  = Symbol('showAsideDialog')
 
-export const ShowSearchDialogKey: InjectionKey<ShowSearchDialog> =
-  Symbol('showSearchDialog')
+export const ShowSearchDialogKey: InjectionKey<ShowSearchDialog>
+  = Symbol('showSearchDialog')
 
-export const DisableSearchShortcutKey: InjectionKey<DisableSearchShortcut> =
-  Symbol('disableSearchShortcut')
+export const DisableSearchShortcutKey: InjectionKey<DisableSearchShortcut>
+  = Symbol('disableSearchShortcut')
 
-export const EnableSearchShortcutKey: InjectionKey<EnableSearchShortcut> =
-  Symbol('enableSearchShortcut')
+export const EnableSearchShortcutKey: InjectionKey<EnableSearchShortcut>
+  = Symbol('enableSearchShortcut')
 
-export const SetNavbarTransparentKey: InjectionKey<SetNavbarTransparent> =
-  Symbol('setNavbarTransparent')
+export const SetNavbarTransparentKey: InjectionKey<SetNavbarTransparent>
+  = Symbol('setNavbarTransparent')
 
 /**
  * Help
  */
 
 export type RebuildPageContents = (resetPosition?: boolean) => void
-export type DocumentationPage = {
+export interface DocumentationPage {
   order: number
   slug: string
   locale: string
   title: string
   content: () => Promise<string>
 }
-export type DocumentationCategory = {
+export interface DocumentationCategory {
   order: number
   category: string
   pages: DocumentationPage[]
@@ -53,8 +53,8 @@ export type DocumentationCategory = {
 export type Documentation = DocumentationCategory[]
 
 export const RebuildPageContentsKey: InjectionKey<RebuildPageContents> = Symbol(
-  'rebuildPageContents'
+  'rebuildPageContents',
 )
 
-export const DocumentationKey: InjectionKey<Documentation> =
-  Symbol('documentation')
+export const DocumentationKey: InjectionKey<Documentation>
+  = Symbol('documentation')

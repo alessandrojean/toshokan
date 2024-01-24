@@ -11,7 +11,7 @@ export interface StatCardProps {
 const props = withDefaults(defineProps<StatCardProps>(), {
   alwaysHidden: false,
   sensitive: false,
-  showValue: true
+  showValue: true,
 })
 
 const { alwaysHidden, showValue } = toRefs(props)
@@ -24,12 +24,12 @@ const { alwaysHidden, showValue } = toRefs(props)
         class="skeleton w-10 h-10 shrink-0 md:w-12 md:h-12 2xl:w-16 2xl:h-16 mr-3 md:mr-4 rounded-xl"
       />
       <div class="flex-1 space-y-2">
-        <div class="skeleton h-3 2xl:h-4 w-24"></div>
-        <div class="skeleton h-5 2xl:h-7 w-32"></div>
+        <div class="skeleton h-3 2xl:h-4 w-24" />
+        <div class="skeleton h-5 2xl:h-7 w-32" />
       </div>
     </div>
   </div>
-  <div class="flex items-center justify-center" v-else>
+  <div v-else class="flex items-center justify-center">
     <div
       class="flex shrink-0 w-10 h-10 md:w-12 md:h-12 2xl:w-16 2xl:h-16 mr-3 md:mr-4 items-center justify-center rounded-xl bg-primary-100 dark:bg-gray-700/50"
       aria-hidden="true"
@@ -56,8 +56,8 @@ const { alwaysHidden, showValue } = toRefs(props)
           enter-to-class="opacity-100 translate-x-0"
         >
           <p
-            class="font-medium dark:text-gray-50 text-md sm:text-lg lg:text-xl 2xl:text-2xl mb-0"
             v-if="showValue && !alwaysHidden"
+            class="font-medium dark:text-gray-50 text-md sm:text-lg lg:text-xl 2xl:text-2xl mb-0"
           >
             {{ value || '' }}
           </p>

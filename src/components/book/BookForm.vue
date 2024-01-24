@@ -4,11 +4,11 @@ import { helpers, required } from '@vuelidate/validators'
 
 import cloneDeep from 'lodash.clonedeep'
 
-import { useI18n } from '@/i18n'
-import Book, { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
-import { decimalComma, dimension } from '@/util/validators'
-
 import { UserPlusIcon } from '@heroicons/vue/20/solid'
+import { useI18n } from '@/i18n'
+import type Book from '@/model/Book'
+import { STATUS_FUTURE, STATUS_UNREAD } from '@/model/Book'
+import { decimalComma, dimension } from '@/util/validators'
 
 export interface BookFormProps {
   editing?: boolean
@@ -18,7 +18,7 @@ export interface BookFormProps {
 
 const props = withDefaults(defineProps<BookFormProps>(), {
   editing: false,
-  touchOnMount: false
+  touchOnMount: false,
 })
 
 const emit = defineEmits<{
@@ -38,18 +38,17 @@ function forceUpdateBook() {
 
 const decimalCommaValidator = decimalComma(2)
 
-// eslint-disable-next-line prettier/prettier
 const messageRequired = helpers.withMessage(
   t('book.form.blankField'),
-  required
+  required,
 )
 const messageDimension = helpers.withMessage(
   t('book.form.invalidValue'),
-  dimension
+  dimension,
 )
 const messageDecimalComma = helpers.withMessage(
   t('book.form.invalidNumber'),
-  decimalCommaValidator
+  decimalCommaValidator,
 )
 
 const rules = {
@@ -60,49 +59,49 @@ const rules = {
   group: { messageRequired },
   labelPrice: {
     currency: { messageRequired },
-    valueStr: { messageRequired, messageDecimalComma }
+    valueStr: { messageRequired, messageDecimalComma },
   },
   paidPrice: {
     currency: { messageRequired },
-    valueStr: { messageRequired, messageDecimalComma }
+    valueStr: { messageRequired, messageDecimalComma },
   },
   dimensions: {
     width: { messageRequired, messageDimension },
-    height: { messageRequired, messageDimension }
+    height: { messageRequired, messageDimension },
   },
-  store: { messageRequired }
+  store: { messageRequired },
 }
 
 const propertyNames = computed<Record<string, string>>(() => ({
-  code: t('book.properties.id'),
-  title: t('book.properties.title'),
-  authors: t('book.properties.authors'),
-  publisher: t('book.properties.publisher'),
-  group: t('book.properties.group'),
+  'code': t('book.properties.id'),
+  'title': t('book.properties.title'),
+  'authors': t('book.properties.authors'),
+  'publisher': t('book.properties.publisher'),
+  'group': t('book.properties.group'),
   'labelPrice.currency': t('book.properties.labelPriceCurrency'),
   'labelPrice.valueStr': t('book.properties.labelPrice'),
   'paidPrice.currency': t('book.properties.paidPriceCurrency'),
   'paidPrice.valueStr': t('book.properties.paidPrice'),
   'dimensions.width': t('book.properties.width'),
   'dimensions.height': t('book.properties.height'),
-  store: t('book.properties.store'),
-  synopsis: t('book.properties.synopsis'),
-  notes: t('book.properties.notes')
+  'store': t('book.properties.store'),
+  'synopsis': t('book.properties.synopsis'),
+  'notes': t('book.properties.notes'),
 }))
 
 const v$ = useVuelidate(rules, bookState)
 
 function handleInput(
   property: keyof typeof bookState | 'boughtAtStr',
-  value: any
+  value: any,
 ) {
   if (property === 'boughtAtStr') {
     bookState.boughtAt = value.length === 10 ? new Date(value) : null
     bookState.boughtAt?.setMinutes(
-      bookState.boughtAt.getMinutes() + bookState.boughtAt.getTimezoneOffset()
+      bookState.boughtAt.getMinutes() + bookState.boughtAt.getTimezoneOffset(),
     )
   } else {
-    // @ts-ignore
+    // @ts-expect-error missing types
     bookState[property] = value
   }
 
@@ -132,7 +131,7 @@ function touch(book?: Book) {
 
   return {
     error: v$.value.$error,
-    book: bookState
+    book: bookState,
   }
 }
 
@@ -278,7 +277,7 @@ function toDateInputValue(date: Date) {
         @update:model-value="handleInput('dimensions', $event)"
       />
 
-      <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8"></div>
+      <div aria-hidden="true" class="md:hidden col-span-5 sm:col-span-8" />
 
       <MonetaryField
         required
@@ -287,14 +286,14 @@ function toDateInputValue(date: Date) {
         :model-value="modelValue.labelPrice"
         :placeholder="
           t('book.form.example.placeholder', [
-            t('book.form.example.labelPrice')
+            t('book.form.example.labelPrice'),
           ])
         "
         :error="v$.labelPrice.$error ? v$.labelPrice.$errors[0].$message : ''"
         @update:model-value="handleInput('labelPrice', $event)"
       />
 
-      <div aria-hidden="true" class="sm:hidden col-span-3"></div>
+      <div aria-hidden="true" class="sm:hidden col-span-3" />
 
       <MonetaryField
         required
@@ -343,13 +342,13 @@ function toDateInputValue(date: Date) {
     <div class="space-y-2">
       <div class="flex items-center space-x-2.5">
         <input
+          id="not-in-collection"
           type="checkbox"
           class="checkbox"
           name="not-in-collection"
-          id="not-in-collection"
           :checked="modelValue.isFuture"
           @change="handleNotInCollection"
-        />
+        >
         <label for="not-in-collection" class="label mb-0">
           {{ t('book.form.notInCollection') }}
         </label>
@@ -357,12 +356,12 @@ function toDateInputValue(date: Date) {
 
       <div class="flex items-center space-x-2.5">
         <input
+          id="add-notes"
+          v-model="addNotes"
           type="checkbox"
           class="checkbox"
           name="add-notes"
-          id="add-notes"
-          v-model="addNotes"
-        />
+        >
         <label for="add-notes" class="label mb-0">
           {{ t('book.form.addNotes') }}
         </label>
@@ -383,7 +382,7 @@ function toDateInputValue(date: Date) {
       :show="v$.$errors.length > 0"
       :title="
         t('book.form.error.title', {
-          errorsCount: t('book.form.error.count', v$.$errors.length)
+          errorsCount: t('book.form.error.count', v$.$errors.length),
         })
       "
     >

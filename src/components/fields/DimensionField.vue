@@ -7,7 +7,7 @@ export interface DimensionFieldProps extends BaseFieldProps {
 }
 
 const props = withDefaults(defineProps<DimensionFieldProps>(), {
-  required: false
+  required: false,
 })
 
 const emit = defineEmits<{
@@ -19,10 +19,10 @@ const { n } = useI18n({ useScope: 'global' })
 const { modelValue: dimensions, label, error, required, help } = toRefs(props)
 
 const width = ref(
-  dimensions!.value?.width ? n(dimensions!.value.width, 'dimensions') : ''
+  dimensions!.value?.width ? n(dimensions!.value.width, 'dimensions') : '',
 )
 const height = ref(
-  dimensions!.value?.height ? n(dimensions!.value.height, 'dimensions') : ''
+  dimensions!.value?.height ? n(dimensions!.value.height, 'dimensions') : '',
 )
 
 const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
@@ -30,11 +30,11 @@ const dimensionsStr = computed(() => `${width.value} × ${height.value}`)
 watch(dimensionsStr, () => {
   emit('update:modelValue', {
     width: width.value.match(VALIDATOR)
-      ? parseFloat(width.value.replace(',', '.'))
-      : NaN,
+      ? Number.parseFloat(width.value.replace(',', '.'))
+      : Number.NaN,
     height: height.value.match(VALIDATOR)
-      ? parseFloat(height.value.replace(',', '.'))
-      : NaN
+      ? Number.parseFloat(height.value.replace(',', '.'))
+      : Number.NaN,
   })
 })
 
@@ -47,31 +47,31 @@ function focusHeight() {
 
 <template>
   <BaseField
+    v-slot="{ inputId }"
     :label="label"
     :error="error"
     :required="required"
     :help="help"
     class="w-full"
-    v-slot="{ inputId }"
   >
-    <div class="dimension-field" :id="inputId">
+    <div :id="inputId" class="dimension-field">
       <input
+        v-model="width"
         type="text"
         class="input grow width"
         inputmode="decimal"
         placeholder="0.0"
-        v-model="width"
         @keydown.x.prevent="focusHeight()"
-      />
+      >
       <span class="symbol">×</span>
       <input
         ref="heightInput"
+        v-model="height"
         type="text"
         class="input grow height"
         inputmode="decimal"
         placeholder="0.0"
-        v-model="height"
-      />
+      >
       <span class="symbol cm">cm</span>
     </div>
   </BaseField>

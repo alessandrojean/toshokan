@@ -6,7 +6,7 @@ export default function useImageLazyLoader(
   imageUrl: Ref<string | undefined>,
   elRef: Ref<
     ComponentPublicInstance | InstanceType<_RouterLinkI> | Element | undefined
-  >
+  >,
 ) {
   const imageHasError = ref(false)
   const imageLoading = ref(true)
@@ -54,8 +54,8 @@ export default function useImageLazyLoader(
       }
     })
 
-    const element: Element =
-      '$el' in elRef.value ? elRef.value.$el : elRef.value
+    const element: Element
+      = '$el' in elRef.value ? elRef.value.$el : elRef.value
 
     if (element.tagName) {
       observer.value.observe(element)
@@ -82,6 +82,6 @@ export default function useImageLazyLoader(
     imageHasError: readonly(imageHasError),
     imageLoading: readonly(imageLoading),
     setupObserver,
-    observerCreated: readonly(observerCreated)
+    observerCreated: readonly(observerCreated),
   }
 }

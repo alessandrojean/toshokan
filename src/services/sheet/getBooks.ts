@@ -2,18 +2,12 @@ import buildSheetUrl from './buildSheetUrl'
 import countTotalResults from './countTotalResults'
 import { PER_PAGE } from './constants'
 
-import QueryBuilder, {
-  type OrderBy,
-  type WhereRestriction
+import QueryBuilder, { type OrderBy, type WhereRestriction,
 } from '@/data/QueryBuilder'
-import Book, {
-  CollectionColumns,
-  FAVORITE_ACTIVE,
-  STATUS_FUTURE
-} from '@/model/Book'
-import { Sort, TriState } from '@/types'
+import Book, { CollectionColumns, FAVORITE_ACTIVE, STATUS_FUTURE } from '@/model/Book'
+import type { Sort, TriState } from '@/types'
 
-export type GetBooksArgs = {
+export interface GetBooksArgs {
   orderBy?: (string | [string, Sort])[]
   orderDirection?: Sort
   limit?: number
@@ -34,8 +28,8 @@ export type GetBooksArgs = {
 export default async function getBooks(
   sheetId: string,
   page: number = 1,
-  options: GetBooksArgs = {}
-): Promise<{ books: Book[]; totalResults: number | null }> {
+  options: GetBooksArgs = {},
+): Promise<{ books: Book[], totalResults: number | null }> {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { CREATED_AT, FAVORITE, GROUP, STATUS } = CollectionColumns
@@ -52,7 +46,7 @@ export default async function getBooks(
 
   if (options.groups && options.groups.length > 0) {
     const groupConditions = options.groups.map(
-      (group) => [GROUP, '=', group] as WhereRestriction
+      group => [GROUP, '=', group] as WhereRestriction,
     )
 
     queryBuilder.where(QueryBuilder.or(...groupConditions))
@@ -80,6 +74,6 @@ export default async function getBooks(
 
   return {
     books: dataTable.asArray.map(Book.fromDataTable),
-    totalResults
+    totalResults,
   }
 }

@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
-
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
+import { useI18n } from '@/i18n'
+import type Book from '@/model/Book'
 
 const emit = defineEmits<{
   (e: 'search', searching: boolean): void
@@ -20,8 +19,8 @@ const {
   isError: searchFailed,
   data: searchResults,
   isFetching: searching,
-  refetch: isbnSearch
-} = useIsbnSearchQuery(isbnQuery, { enabled: false })
+  refetch: isbnSearch,
+} = useIsbnSearchQuery({ isbn: isbnQuery, enabled: false })
 
 const noResultsFound = computed(() => searchResults.value?.length === 0)
 
@@ -48,8 +47,7 @@ async function search() {
 }
 
 const { data: existingIds, refetch: checkIfExists } = useBookExistsQuery(
-  isbnQuery,
-  { enabled: false }
+  { isbn: isbnQuery, enabled: false },
 )
 
 const proceedAnyway = ref(false)
@@ -75,7 +73,7 @@ function viewExisting() {
       class="flex flex-col items-end"
       @submit.prevent="search"
     >
-      <label for="book-isbn" id="isbn-search-label" class="sr-only">
+      <label id="isbn-search-label" for="book-isbn" class="sr-only">
         {{ t('dashboard.newBook.autoFill.label') }}
       </label>
       <div class="group relative w-full search-field">
@@ -83,17 +81,17 @@ function viewExisting() {
           <MagnifyingGlassIcon class="w-5 h-5" />
         </div>
         <input
+          id="book-isbn"
+          ref="searchInput"
+          v-model="isbnQuery"
           type="search"
           inputmode="numeric"
-          id="book-isbn"
           class="input text-lg pl-10 md:pr-16 rounded-full"
           :placeholder="t('dashboard.newBook.autoFill.placeholder')"
-          v-model="isbnQuery"
-          @keyup.enter.prevent="search"
           aria-labelledby="isbn-search-label search-provider-info"
-          ref="searchInput"
           :disabled="searching"
-        />
+          @keyup.enter.prevent="search"
+        >
         <div
           class="key-tooltip absolute right-3 inset-y-0 justify-center items-center"
           aria-hidden="true"
@@ -103,7 +101,7 @@ function viewExisting() {
             class="font-medium text-gray-400 dark:text-gray-300 text-xs leading-5 px-1.5 border border-gray-300 dark:border-gray-500 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 dark:focus-visible:ring-offset-gray-700"
             :disabled="searching"
           >
-            <kbd aria-hidden="true" class="font-sans">
+            <kbd aria-hidden="true" class="font-sans-safe">
               {{ t('dashboard.newBook.autoFill.enter') }}
             </kbd>
             <span class="sr-only">
@@ -128,7 +126,7 @@ function viewExisting() {
           "
         />
 
-        <template v-slot:actions>
+        <template #actions>
           <a
             :href="t('dashboard.newBook.autoFill.isbnAlert.wikipediaLink')"
             target="_blank"
@@ -150,7 +148,7 @@ function viewExisting() {
           </p>
         </div>
 
-        <template v-slot:actions>
+        <template #actions>
           <button @click="viewExisting">
             {{ t('dashboard.newBook.autoFill.existAlert.actionView') }}
           </button>
@@ -164,15 +162,15 @@ function viewExisting() {
       <div
         v-else-if="proceedAnyway && searchResults && searchResults.length > 0"
       >
-        <h3 class="text-gray-700 dark:text-gray-200 font-medium font-display">
+        <h3 class="text-gray-700 dark:text-gray-200 font-medium font-display-safe">
           {{ t('dashboard.search.results') }}
         </h3>
 
         <BookSelector
           v-if="searchResults && searchResults.length > 0"
           :options="searchResults"
-          @select="handleSearchSelect"
           class="mt-3"
+          @select="handleSearchSelect"
         />
       </div>
 

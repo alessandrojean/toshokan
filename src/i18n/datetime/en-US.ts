@@ -4,7 +4,7 @@ export default <DefaultDateTimeFormatSchema>{
   short: {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
   },
   long: {
     year: 'numeric',
@@ -12,7 +12,7 @@ export default <DefaultDateTimeFormatSchema>{
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   },
   sheet: {
     year: 'numeric',
@@ -21,17 +21,17 @@ export default <DefaultDateTimeFormatSchema>{
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hourCycle: 'h23'
+    hourCycle: 'h23',
   },
   dayMonth: {
     day: '2-digit',
-    month: 'short'
+    month: 'short',
   },
   month: {
-    month: 'short'
+    month: 'short',
   },
   monthYear: {
     month: 'long',
-    year: 'numeric'
-  }
+    year: 'numeric',
+  },
 }

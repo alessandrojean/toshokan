@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
-
 import {
   ChevronRightIcon,
   ClockIcon,
-  PhotoIcon
+  PhotoIcon,
 } from '@heroicons/vue/24/outline'
+import type Book from '@/model/Book'
 
 const props = defineProps<{ result: Book }>()
 
@@ -19,8 +18,8 @@ const thumbnailUrl = computed(() => {
 
 const searchItem = ref<HTMLAnchorElement>()
 
-const { imageHasError, imageLoading, setupObserver, observerCreated } =
-  useImageLazyLoader(thumbnailUrl, searchItem)
+const { imageHasError, imageLoading, setupObserver, observerCreated }
+  = useImageLazyLoader(thumbnailUrl, searchItem)
 
 onMounted(() => {
   if (result.value) {
@@ -41,8 +40,8 @@ const blurNsfw = computed(() => settingsStore.blurNsfw)
 
 const blurCover = computed(() => {
   return (
-    (spoilerMode.value.cover && !result.value.isRead) ||
-    (blurNsfw.value && result.value.isNsfw)
+    (spoilerMode.value.cover && !result.value.isRead)
+    || (blurNsfw.value && result.value.isNsfw)
   )
 })
 
@@ -59,7 +58,7 @@ const authorsFormatted = computed(() => {
 
     authors = t('dashboard.details.header.authorListComplete', {
       authors: firstAuthors,
-      lastAuthor: result.value.authors[result.value.authors.length - 1]
+      lastAuthor: result.value.authors[result.value.authors.length - 1],
     })
   }
 
@@ -69,9 +68,9 @@ const authorsFormatted = computed(() => {
 
 <template>
   <RouterLink
+    ref="searchItem"
     :to="{ name: 'dashboard-library-book-id', params: { id: result.id } }"
     class="result group has-ring-focus focus-visible:ring-inset dark:focus-visible:ring-offset-gray-800"
-    ref="searchItem"
   >
     <div class="w-14 sm:w-16 shrink-0">
       <FadeTransition>
@@ -84,20 +83,20 @@ const authorsFormatted = computed(() => {
             <PhotoIcon
               :class="[
                 imageLoading ? 'motion-safe:animate-pulse' : '',
-                'w-7 h-7 text-gray-500 dark:text-gray-400'
+                'w-7 h-7 text-gray-500 dark:text-gray-400',
               ]"
             />
           </div>
         </div>
         <div v-else :class="['result-cover', blurCover ? 'is-hidden' : '']">
-          <img :src="thumbnailUrl" :alt="result.title!" />
+          <img :src="thumbnailUrl" :alt="result.title!">
         </div>
       </FadeTransition>
     </div>
     <div class="flex-grow space-y-3 min-w-0">
       <div class="w-full">
         <h4 class="result-title">
-          <span aria-hidden="true" v-if="result.isFuture">
+          <span v-if="result.isFuture" aria-hidden="true">
             <ClockIcon class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
           </span>
           <span>{{ result.title }}</span>
@@ -128,7 +127,7 @@ const authorsFormatted = computed(() => {
 
 .result-title {
   @apply flex items-center space-x-1.5
-    text-sm font-display font-medium w-full truncate
+    text-sm font-display-safe font-medium w-full truncate
     dark:text-gray-100;
 }
 

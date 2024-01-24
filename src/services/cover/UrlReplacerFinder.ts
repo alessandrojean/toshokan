@@ -1,10 +1,10 @@
-import Book from '@/model/Book'
 import CoverFinder from './CoverFinder'
+import type Book from '@/model/Book'
 
 export default class UrlReplacerFinder<
-  S extends keyof Book
+  S extends keyof Book,
 > extends CoverFinder {
-  condition: (book: Book) => boolean = (_) => true
+  condition: (book: Book) => boolean = _ => true
 
   property!: S
 

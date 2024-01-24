@@ -1,10 +1,12 @@
 // https://javascript.plainenglish.io/how-to-create-a-debounced-ref-in-vue-3-using-composition-api-c464cc39c82a
-import { ref, customRef } from 'vue'
+import { customRef, ref } from 'vue'
 
 function debounce(fn: (...args: any[]) => void, delay = 0, immediate = false) {
   let timeout: ReturnType<typeof setTimeout>
   return (...args: any[]) => {
-    if (immediate && !timeout) fn(...args)
+    if (immediate && !timeout) {
+      fn(...args)
+    }
     clearTimeout(timeout)
 
     timeout = setTimeout(() => {
@@ -16,7 +18,7 @@ function debounce(fn: (...args: any[]) => void, delay = 0, immediate = false) {
 function useDebouncedRef<T>(
   initialValue: T,
   delay: number,
-  immediate: boolean
+  immediate: boolean,
 ) {
   const state = ref(initialValue)
   const debouncedRef = customRef((track, trigger) => ({
@@ -30,8 +32,8 @@ function useDebouncedRef<T>(
         trigger()
       },
       delay,
-      immediate
-    )
+      immediate,
+    ),
   }))
   return debouncedRef
 }

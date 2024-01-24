@@ -8,7 +8,7 @@ import QueryBuilder from '@/data/QueryBuilder'
  */
 export default async function getReadBooksInYear(
   sheetId: string,
-  year: number
+  year: number,
 ): Promise<Record<number, Book[]>> {
   const sheetUrl = buildSheetUrl(sheetId)
 

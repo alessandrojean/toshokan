@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 export type Kind = 'default' | 'readings'
 export interface BookGridProps {
   blurNsfw?: boolean
-  current?: String
+  current?: string
   imageOnly?: boolean
   items?: Book[]
   kind?: Kind
@@ -24,8 +24,8 @@ const props = withDefaults(defineProps<BookGridProps>(), {
   mode: 'comfortable',
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const grid = ref<HTMLUListElement>()
@@ -33,11 +33,11 @@ const { items, loading, kind } = toRefs(props)
 
 const gridColumns: Record<Kind, string> = {
   default: 'grid-cols-3 md:grid-cols-5 xl:grid-cols-6',
-  readings: 'grid-cols-3 md:grid-cols-4 xl:grid-cols-5'
+  readings: 'grid-cols-3 md:grid-cols-4 xl:grid-cols-5',
 }
 
 defineExpose({
-  focus: () => grid.value?.focus()
+  focus: () => grid.value?.focus(),
 })
 </script>
 
@@ -53,7 +53,7 @@ defineExpose({
         :blur-nsfw="blurNsfw"
       />
     </div>
-    <ul v-else :class="['grid gap-2.5 sm:gap-4', gridColumns[kind]]" ref="grid">
+    <ul v-else ref="grid" :class="['grid gap-2.5 sm:gap-4', gridColumns[kind]]">
       <li v-for="book in items" :key="book.id!">
         <BookCard
           class="scroll-mt-20"
@@ -65,7 +65,7 @@ defineExpose({
           :blur-nsfw="blurNsfw"
           :image-only="imageOnly"
         >
-          <template #actions v-if="$slots.actions">
+          <template v-if="$slots.actions" #actions>
             <slot name="actions" :book="book" />
           </template>
         </BookCard>

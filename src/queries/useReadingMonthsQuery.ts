@@ -1,17 +1,22 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
+import getReadingMonths from '@/services/sheet/getReadingMonths'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
-import getReadingMonths from '@/services/sheet/getReadingMonths'
 
-export default function useReadingMonthsQuery({ enabled }: UseQueryOptions) {
+type GetReadingMonthsReturn = Awaited<ReturnType<typeof getReadingMonths>> | undefined
+type UseReadingMonthsQueryOptions<S> = UseQueryOptions<GetReadingMonthsReturn, Error, S>
+
+export default function useReadingMonthsQuery<S = GetReadingMonthsReturn>(options: UseReadingMonthsQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getReadingMonths(sheetId.value!))
-  }
-
-  return useQuery(['reading-months', { sheetId }], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['reading-months', { sheetId }],
+    queryFn: async () => {
+      return await fetch(getReadingMonths(sheetId.value!))
+    },
+    ...options,
+  })
 }

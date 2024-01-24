@@ -1,23 +1,23 @@
 <script lang="ts" setup>
 import { useIsFetching, useQueryClient } from '@tanstack/vue-query'
-import Book from '@/model/Book'
 
 import {
   BookOpenIcon,
   BookmarkIcon,
   CurrencyDollarIcon,
+  ExclamationCircleIcon,
   FaceSmileIcon,
-  ExclamationCircleIcon
 } from '@heroicons/vue/24/outline'
 
 import {
-  ArrowRightIcon,
-  RectangleStackIcon,
-  PlusIcon,
   ArrowPathIcon,
+  ArrowRightIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  PlusIcon,
+  RectangleStackIcon,
 } from '@heroicons/vue/20/solid'
+import type Book from '@/model/Book'
 
 const authStore = useAuthStore()
 const settingsStore = useSettingsStore()
@@ -35,20 +35,17 @@ const enabled = computed(() => sheetStore.sheetId !== null)
 
 const {
   data: stats,
-  isLoading: statsLoading,
-  isSuccess: statsSuccess
+  isSuccess: statsSuccess,
 } = useStatisticsQuery({ enabled })
 
-// eslint-disable-next-line prettier/prettier
-const { isLoading: lastAddedLoading, data: lastAddedItems } =
-  useLastAddedQuery({ enabled })
+const { isLoading: lastAddedLoading, data: lastAddedItems }
+  = useLastAddedQuery({ enabled })
 
-const { isLoading: latestReadingsLoading, data: latestReadingsItems } =
-  useLatestReadingsQuery({ enabled })
+const { isLoading: latestReadingsLoading, data: latestReadingsItems }
+  = useLatestReadingsQuery({ enabled })
 
-// eslint-disable-next-line prettier/prettier
-const { isLoading: nextReadsLoading, data: nextReadsItems } =
-  useNextReadsQuery({ limit: 6 }, { enabled })
+const { isLoading: nextReadsLoading, data: nextReadsItems }
+  = useNextReadsQuery({ limit: 6, enabled })
 
 const isDev = ref(import.meta.env.DEV)
 const queryClient = useQueryClient()
@@ -106,7 +103,7 @@ function handleMarkAsRead(book: Book) {
 
   edit(book, {
     onSuccess: () => removeFromEditing(book.id!),
-    onError: () => removeFromEditing(book.id!)
+    onError: () => removeFromEditing(book.id!),
   })
 }
 
@@ -142,17 +139,17 @@ meta:
         <div class="flex space-x-2">
           <Button
             v-if="!shared"
+            v-slot="{ iconClass }"
             size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="showValues = !showValues"
             :disabled="loading"
             :title="
               showValues
                 ? t('dashboard.home.hideValues')
                 : t('dashboard.home.showValues')
             "
-            v-slot="{ iconClass }"
             icon-only
+            @click="showValues = !showValues"
           >
             <Transition
               mode="out-in"
@@ -163,47 +160,47 @@ meta:
               enter-from-class="opacity-0 -rotate-180"
               enter-to-class="opacity-100 rotate-0"
             >
-              <EyeIcon :class="iconClass" v-if="!showValues" />
-              <EyeSlashIcon :class="iconClass" v-else />
+              <EyeIcon v-if="!showValues" :class="iconClass" />
+              <EyeSlashIcon v-else :class="iconClass" />
             </Transition>
           </Button>
           <Button
+            v-slot="{ iconClass }"
             size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="reload"
             :disabled="loading || isFetching > 0"
             :title="t('dashboard.home.reload')"
-            v-slot="{ iconClass }"
             icon-only
+            @click="reload"
           >
             <ArrowPathIcon
               :class="[
                 iconClass,
-                loading || isFetching ? 'motion-safe:animate-spin' : ''
+                loading || isFetching ? 'motion-safe:animate-spin' : '',
               ]"
             />
           </Button>
           <Button
             v-if="canChange"
+            v-slot="{ iconClass }"
             size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="openSheetChooser"
             :disabled="loading || isFetching > 0"
             :title="t('dashboard.sheetChooser.actionSelectSheet')"
-            v-slot="{ iconClass }"
             icon-only
+            @click="openSheetChooser"
           >
             <RectangleStackIcon :class="iconClass" />
           </Button>
           <Button
             v-if="canEdit"
+            v-slot="{ iconClass }"
             size="large"
             class="flex-grow sm:flex-1 md:flex-initial justify-center md:justify-start"
-            @click="openCreateDialog"
             :disabled="loading"
             :title="t('dashboard.home.newBook')"
-            v-slot="{ iconClass }"
             icon-only
+            @click="openCreateDialog"
           >
             <PlusIcon :class="iconClass" />
           </Button>
@@ -223,7 +220,7 @@ meta:
               :value="n(stats?.count || 0.0, 'integer')"
               :loading="!statsSuccess"
             >
-              <template v-slot:icon="{ cssClass }">
+              <template #icon="{ cssClass }">
                 <BookOpenIcon :class="cssClass" />
               </template>
             </StatCard>
@@ -233,7 +230,7 @@ meta:
               :value="n(stats?.status?.percent || 0.0, 'percent')"
               :loading="!statsSuccess"
             >
-              <template v-slot:icon="{ cssClass }">
+              <template #icon="{ cssClass }">
                 <BookmarkIcon :class="cssClass" />
               </template>
             </StatCard>
@@ -242,7 +239,7 @@ meta:
               :title="t('dashboard.home.overview.stats.totalExpense')"
               :value="
                 n(stats?.money?.totalSpentPaid || 0.0, 'currency', {
-                  currency: stats?.money?.currency || 'USD'
+                  currency: stats?.money?.currency || 'USD',
                 })
               "
               :loading="!statsSuccess"
@@ -250,7 +247,7 @@ meta:
               :show-value="showValues"
               sensitive
             >
-              <template v-slot:icon="{ cssClass }">
+              <template #icon="{ cssClass }">
                 <CurrencyDollarIcon :class="cssClass" />
               </template>
             </StatCard>
@@ -259,7 +256,7 @@ meta:
               :title="t('dashboard.home.overview.stats.totalSavings')"
               :value="
                 n(stats?.money?.saved || 0.0, 'currency', {
-                  currency: stats?.money?.currency || 'USD'
+                  currency: stats?.money?.currency || 'USD',
                 })
               "
               :loading="!statsSuccess"
@@ -267,7 +264,7 @@ meta:
               :show-value="showValues"
               sensitive
             >
-              <template v-slot:icon="{ cssClass }">
+              <template #icon="{ cssClass }">
                 <FaceSmileIcon :class="cssClass" />
               </template>
             </StatCard>
@@ -299,7 +296,7 @@ meta:
                 <ArrowRightIcon
                   :class="[
                     iconClass,
-                    'motion-safe:transition-transform group-hover:translate-x-1'
+                    'motion-safe:transition-transform group-hover:translate-x-1',
                   ]"
                 />
               </template>
@@ -324,7 +321,7 @@ meta:
               class="-mr-3 hidden md:flex group"
               :to="{
                 name: 'dashboard-library',
-                query: { sortProperty: 'createdAt' }
+                query: { sortProperty: 'createdAt' },
               }"
             >
               <span>{{ t('dashboard.home.viewAll') }}</span>
@@ -332,7 +329,7 @@ meta:
                 <ArrowRightIcon
                   :class="[
                     iconClass,
-                    'motion-safe:transition-transform group-hover:translate-x-1'
+                    'motion-safe:transition-transform group-hover:translate-x-1',
                   ]"
                 />
               </template>
@@ -347,7 +344,7 @@ meta:
           :button-text="t('dashboard.search.history')"
           :button-link="{
             name: 'dashboard-library',
-            query: { sortProperty: 'readAt' }
+            query: { sortProperty: 'readAt' },
           }"
           :mode="gridMode"
           :blur-nsfw="blurNsfw"
@@ -362,7 +359,7 @@ meta:
               class="-mr-3 hidden md:flex group"
               :to="{
                 name: 'dashboard-library',
-                query: { sortProperty: 'readAt' }
+                query: { sortProperty: 'readAt' },
               }"
             >
               <span>{{ t('dashboard.search.history') }}</span>
@@ -370,7 +367,7 @@ meta:
                 <ArrowRightIcon
                   :class="[
                     iconClass,
-                    'motion-safe:transition-transform group-hover:translate-x-1'
+                    'motion-safe:transition-transform group-hover:translate-x-1',
                   ]"
                 />
               </template>

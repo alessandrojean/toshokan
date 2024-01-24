@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash.clonedeep'
 
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 import { useI18n } from '@/i18n'
 
 const props = defineProps<{ modelValue: Book }>()

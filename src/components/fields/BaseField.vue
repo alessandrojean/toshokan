@@ -11,7 +11,7 @@ export interface BaseFieldProps {
 }
 
 const props = withDefaults(defineProps<BaseFieldProps>(), {
-  required: false
+  required: false,
 })
 
 const inputId = ref(nanoid())
@@ -24,10 +24,10 @@ const hasError = computed(() => {
 const hasHelp = computed(() => help?.value && help.value.length > 0)
 
 const ariaDescribedBy = computed(() => {
-  const helps = [inputId.value + '-error']
+  const helps = [`${inputId.value}-error`]
 
   if (hasHelp.value) {
-    helps.push(inputId.value + '-help')
+    helps.push(`${inputId.value}-help`)
   }
 
   return helps.join(' ')
@@ -52,14 +52,14 @@ const { t } = useI18n({ useScope: 'global' })
       </span>
     </label>
     <slot :input-id="inputId" :aria-described-by="ariaDescribedBy" />
-    <p class="sr-only" aria-hidden="true" :id="inputId + '-error'">
+    <p :id="`${inputId}-error`" class="sr-only" aria-hidden="true">
       {{ hasError ? error : '' }}
     </p>
     <p
       v-if="hasHelp"
+      :id="`${inputId}-help`"
       class="mt-2 text-xs text-gray-500 dark:text-gray-400"
       aria-hidden="true"
-      :id="inputId + '-help'"
     >
       {{ help }}
     </p>

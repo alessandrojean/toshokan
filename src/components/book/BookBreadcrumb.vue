@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
+import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/20/solid'
+import type Book from '@/model/Book'
 import { ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/20/solid'
 
 export interface BookBreadcrumbProps {
   book: Book | null | undefined
@@ -14,19 +13,19 @@ export interface BookBreadcrumbProps {
 const props = withDefaults(defineProps<BookBreadcrumbProps>(), {
   book: undefined,
   loading: false,
-  hideHome: false
+  hideHome: false,
 })
 
 const { t } = useI18n({ useScope: 'global' })
 const { book } = toRefs(props)
 
-const showSearchDialog = injectStrict(ShowSearchDialogKey, (q) => {})
+const showSearchDialog = injectStrict(ShowSearchDialogKey, (_) => {})
 
 function showCollection() {
   const keywords = {
-    [t('dashboard.search.keywords.title')]: book.value!.titleParts.title + ' #',
+    [t('dashboard.search.keywords.title')]: `${book.value!.titleParts.title} #`,
     [t('dashboard.search.keywords.publisher')]: book.value!.publisher,
-    [t('dashboard.search.keywords.group')]: book.value!.group
+    [t('dashboard.search.keywords.group')]: book.value!.group,
   }
 
   const queryString = Object.entries(keywords)
@@ -57,7 +56,7 @@ function showCollection() {
           </span>
         </RouterLink>
       </li>
-      <li aria-hidden="true" v-if="!hideHome" class="shrink-0">
+      <li v-if="!hideHome" aria-hidden="true" class="shrink-0">
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
       </li>
       <li class="shrink-0">
@@ -80,8 +79,8 @@ function showCollection() {
         </RouterLink>
       </li>
       <li
-        aria-hidden="true"
         v-if="book!.titleParts.number && !hideHome"
+        aria-hidden="true"
         class="shrink-0"
       >
         <ChevronRightIcon class="h-5 w-5 text-gray-400" />
@@ -97,5 +96,5 @@ function showCollection() {
       </li>
     </ul>
   </nav>
-  <div v-else class="skeleton h-5 w-44"></div>
+  <div v-else class="skeleton h-5 w-44" />
 </template>

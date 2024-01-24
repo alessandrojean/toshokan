@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 import CoverFinder from './CoverFinder'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
-type WordpressEntity = {
+interface WordpressEntity {
   _embedded: {
     'wp:featuredmedia': {
       source_url: string
@@ -50,13 +50,13 @@ export default class WordPressFinder<S extends keyof Book> extends CoverFinder {
 
     try {
       const response = await axios.get<WordpressEntity[]>(
-        this.url + '/wp-json/wp/v2/' + collection,
+        `${this.url}/wp-json/wp/v2/${collection}`,
         {
           params: {
             _embed: 'wp:featuredmedia',
-            [searchParam]: searchQuery
-          }
-        }
+            [searchParam]: searchQuery,
+          },
+        },
       )
 
       if (response.data.length === 0) {
@@ -64,8 +64,8 @@ export default class WordPressFinder<S extends keyof Book> extends CoverFinder {
       }
 
       return response.data
-        .filter((item) => item._embedded['wp:featuredmedia'])
-        .map((item) => item._embedded['wp:featuredmedia'][0].source_url)
+        .filter(item => item._embedded['wp:featuredmedia'])
+        .map(item => item._embedded['wp:featuredmedia'][0].source_url)
     } catch (e) {
       return []
     }

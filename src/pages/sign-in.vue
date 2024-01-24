@@ -14,7 +14,7 @@ const authenticated = computed(() => authStore.authenticated)
 const authorized = computed(() => authStore.authorized)
 const shouldRedirect = computed(() => authenticated.value && authorized.value)
 
-const redirectToDashboard = () => {
+function redirectToDashboard() {
   if (shouldRedirect.value) {
     router.replace({ name: 'dashboard' })
   }
@@ -29,10 +29,10 @@ const { t } = useI18n({ useScope: 'global' })
 const steps = computed(() => [
   t('signIn.step1'),
   t('signIn.step2'),
-  t('signIn.step3')
+  t('signIn.step3'),
 ])
 
-type Link = {
+interface Link {
   route: RouteLocationRaw
   text: string
 }
@@ -42,18 +42,18 @@ const links = computed<Link[]>(() => [
   { route: '/help/guide/instructions', text: t('footer.links.instructions') },
   {
     route: '/help/general/privacy-policy',
-    text: t('footer.links.privacyPolicy')
+    text: t('footer.links.privacyPolicy'),
   },
-  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') }
+  { route: '/help/general/terms-of-use', text: t('footer.links.termsOfUse') },
 ])
 
 const showOverlay = ref(false)
 
 function handleNotification(
-  notification: google.accounts.id.PromptMomentNotification
+  notification: google.accounts.id.PromptMomentNotification,
 ) {
-  const notificationShowing =
-    notification.isDisplayMoment() && notification.isDisplayed()
+  const notificationShowing
+    = notification.isDisplayMoment() && notification.isDisplayed()
   showOverlay.value = notificationShowing // || !authorized.value
 }
 
@@ -71,9 +71,9 @@ meta:
 
 <template>
   <main
+    id="main-content"
     role="main"
     class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
-    id="main-content"
   >
     <div
       class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden md:grid md:grid-cols-2 max-w-[370px] md:max-w-3xl w-full"
@@ -81,7 +81,7 @@ meta:
       <div
         class="bg-cover aspect-w-4 aspect-h-5 hidden md:block"
         :style="{
-          backgroundImage: `url('${libraryUnsplash}')`
+          backgroundImage: `url('${libraryUnsplash}')`,
         }"
       >
         <div
@@ -97,7 +97,7 @@ meta:
                 <BuildingLibraryIcon class="h-9 w-9 mx-auto text-white/90" />
               </span>
               <span
-                class="text-white/90 font-display font-semibold text-xl ml-3"
+                class="text-white/90 font-display-safe font-semibold text-xl ml-3"
                 aria-hidden="true"
               >
                 {{ t('app.name') }}
@@ -120,8 +120,7 @@ meta:
                 target="_blank"
                 href="https://unsplash.com/@itfeelslikefilm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
                 class="hocus:underline hocus:text-white/90 has-ring-focus focus-visible:ring-offset-primary-700 focus-visible:ring-white rounded"
-                >Janko Ferlič</a
-              >
+              >Janko Ferlič</a>
             </p>
             <p class="text-white/80 text-xs">
               {{ t('footer.version', { version: appVersion }) }}
@@ -131,7 +130,7 @@ meta:
       </div>
       <div class="py-4 px-5 flex flex-col">
         <h1
-          class="font-display text-2xl font-bold text-gray-900 dark:text-gray-100"
+          class="font-display-safe text-2xl font-bold text-gray-900 dark:text-gray-100"
         >
           {{ t('signIn.title') }}
           <span class="sr-only">{{ t('signIn.titleSr') }}</span>
@@ -167,7 +166,7 @@ meta:
             class="flex"
           >
             <div
-              class="font-display font-semibold text-xs bg-primary-100 dark:bg-gray-700 text-primary-700 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center"
+              class="font-display-safe font-semibold text-xs bg-primary-100 dark:bg-gray-700 text-primary-700 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center"
             >
               {{ idx + 1 }}
             </div>

@@ -12,8 +12,8 @@ import QueryBuilder from '@/data/QueryBuilder'
 export default async function getColumnUniqueValues(
   sheetId: string,
   column: string,
-  alphabetically?: boolean
-): Promise<{ name: string; count: number }[]> {
+  alphabetically?: boolean,
+): Promise<{ name: string, count: number }[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const queryBuilder = new QueryBuilder(sheetUrl)

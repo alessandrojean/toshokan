@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IdentificationIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
+import { ArrowPathIcon, IdentificationIcon } from '@heroicons/vue/20/solid'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -44,13 +44,13 @@ meta:
 
 <template>
   <main
-    class="min-h-screen flex md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
     id="main-content"
+    class="min-h-screen flex md:items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
   >
     <div class="max-w-2xl w-full space-y-8">
       <div class="flex flex-col md:flex-row w-full">
         <p
-          class="shrink-0 font-semibold font-display text-4xl text-primary-600 dark:text-primary-500"
+          class="shrink-0 font-semibold font-display-safe text-4xl text-primary-600 dark:text-primary-500"
         >
           500
         </p>
@@ -58,7 +58,7 @@ meta:
           <header
             class="md:border-l md:border-gray-200 dark:md:border-gray-700 md:pl-6 md:ml-6"
           >
-            <h2 class="font-semibold font-display text-4xl dark:text-gray-100">
+            <h2 class="font-semibold font-display-safe text-4xl dark:text-gray-100">
               {{ t('criticalError.title') }}
             </h2>
             <p class="mt-1 text-gray-500 dark:text-gray-400">
@@ -66,8 +66,8 @@ meta:
             </p>
           </header>
           <div
-            class="mt-10 md:ml-6 md:pl-6"
             v-if="isDev && criticalError?.stack"
+            class="mt-10 md:ml-6 md:pl-6"
           >
             <div
               class="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-md py-4 px-6"

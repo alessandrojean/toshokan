@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import {
-  CodeBracketIcon,
   CircleStackIcon,
-  PhotoIcon,
+  CodeBracketIcon,
   MagnifyingGlassIcon,
-  SparklesIcon
+  PhotoIcon,
+  SparklesIcon,
 } from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
@@ -17,23 +17,23 @@ const features = computed(() => [
   {
     icon: MagnifyingGlassIcon,
     title: t('home.features.isbn.title'),
-    description: t('home.features.isbn.description')
+    description: t('home.features.isbn.description'),
   },
   {
     icon: PhotoIcon,
     title: t('home.features.cover.title'),
-    description: t('home.features.cover.description')
+    description: t('home.features.cover.description'),
   },
   {
     icon: SparklesIcon,
     title: t('home.features.data.title'),
-    description: t('home.features.data.description')
+    description: t('home.features.data.description'),
   },
   {
     icon: CodeBracketIcon,
     title: t('home.features.openSource.title'),
-    description: t('home.features.openSource.description')
-  }
+    description: t('home.features.openSource.description'),
+  },
 ])
 
 const faqKeys = ref(['currentState', 'beta', 'costs', 'share', 'metadata'])
@@ -49,16 +49,16 @@ meta:
     <HomeHeader />
 
     <main
-      class="max-w-7xl mx-auto pb-16 px-6 lg:px-8 space-y-16"
       id="main-content"
+      class="max-w-7xl mx-auto pb-16 px-6 lg:px-8 space-y-16"
     >
       <section class="w-full">
         <div class="flex flex-col items-center pt-24 space-y-24">
           <div class="space-y-8">
             <h2
-              class="text-gray-800 dark:text-gray-100 font-bold font-display text-center text-5xl"
+              class="text-gray-800 dark:text-gray-100 font-bold font-display-safe text-center text-5xl"
             >
-              {{ t('home.leading1') + ' ' }}<br class="hidden md:block" />
+              {{ `${t('home.leading1')} ` }}<br class="hidden md:block">
               <i18n-t
                 class="text-primary-600 dark:text-primary-500"
                 keypath="home.leading2"
@@ -71,7 +71,7 @@ meta:
                     t('home.types.manhwas'),
                     t('home.types.manhuas'),
                     t('home.types.comics'),
-                    t('home.types.books')
+                    t('home.types.books'),
                   ]"
                   :next-word-interval="2000"
                   :delete-speed="100"
@@ -99,9 +99,9 @@ meta:
                 {{ t('app.name') }}
               </p>
               <div class="space-x-2 hidden md:flex">
-                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
-                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
-                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block"></span>
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block" />
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block" />
+                <span class="w-3.5 h-3.5 rounded-lg bg-gray-700 block" />
               </div>
             </div>
             <WireframeMobileLibrary class="md:hidden w-full h-full" />
@@ -144,7 +144,7 @@ meta:
       <section class="md:grid md:grid-cols-3 gap-12 py-12 lg:px-16">
         <div>
           <h2
-            class="text-gray-800 dark:text-gray-100 font-display font-bold text-2xl"
+            class="text-gray-800 dark:text-gray-100 font-display-safe font-bold text-2xl"
           >
             {{ t('home.faq.title') }}
           </h2>
@@ -172,7 +172,7 @@ meta:
         <div
           class="py-12 px-12 md:px-16 md:pr-0 flex flex-col justify-center space-y-6"
         >
-          <h2 class="text-white/95 font-bold font-display text-3xl -mb-2">
+          <h2 class="text-white/95 font-bold font-display-safe text-3xl -mb-2">
             {{ t('home.cta.title') }}
           </h2>
           <p class="text-white/[0.85]">
@@ -185,7 +185,7 @@ meta:
             as="RouterLink"
             kind="secondary"
             :to="{
-              name: authenticated && authorized ? 'dashboard' : 'sign-in'
+              name: authenticated && authorized ? 'dashboard' : 'sign-in',
             }"
             class="!px-4 !py-2.5 w-fit"
           >
@@ -193,7 +193,7 @@ meta:
               t(
                 authenticated && authorized
                   ? 'home.cta.dashboard'
-                  : 'home.cta.signIn'
+                  : 'home.cta.signIn',
               )
             }}
           </Button>
@@ -216,7 +216,7 @@ meta:
 }
 
 .features h2 {
-  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-display font-bold text-3xl;
+  @apply col-span-3 md:col-span-1 text-gray-800 dark:text-gray-100 font-display-safe font-bold text-3xl;
 }
 
 .features-grid {
@@ -228,7 +228,7 @@ meta:
 }
 
 .feature h3 {
-  @apply text-gray-800 dark:text-gray-100 font-semibold font-display text-lg;
+  @apply text-gray-800 dark:text-gray-100 font-semibold font-display-safe text-lg;
 }
 
 .feature p {
@@ -259,7 +259,7 @@ meta:
 }
 
 .functionality-description h2 {
-  @apply text-gray-800 dark:text-gray-100 font-display font-bold text-2xl;
+  @apply text-gray-800 dark:text-gray-100 font-display-safe font-bold text-2xl;
 }
 
 .functionality-description p {

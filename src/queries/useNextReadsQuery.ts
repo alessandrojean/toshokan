@@ -1,33 +1,36 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getNextReads from '@/services/sheet/getNextReads'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export interface useNextReadsQueryArgs {
+export interface UseNextReadsQueryArgs {
   limit?: number
   threshold?: number
 }
+type GetNextReadsReturn = Awaited<ReturnType<typeof getNextReads>> | undefined
+type UseNextReadsQueryOptions<S> = UseQueryOptions<GetNextReadsReturn, Error, S> & UseNextReadsQueryArgs
 
-export default function useNextReadsQuery(
-  { limit, threshold }: useNextReadsQueryArgs,
-  { enabled }: UseQueryOptions
-) {
+export default function useNextReadsQuery<S = GetNextReadsReturn>(options: UseNextReadsQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    const books = await fetch(
-      getNextReads(sheetId.value!, {
-        threshold: threshold === Infinity ? undefined : 6 * 30 /* 6 months */
-      })
-    )
+  return useQuery({
+    queryKey: ['next-reads', {
+      sheetId,
+      limit: options.limit,
+      threshold: options.threshold,
+    }],
+    queryFn: async () => {
+      const books = await fetch(
+        getNextReads(sheetId.value!, {
+          threshold: options.threshold === Number.POSITIVE_INFINITY ? undefined : 6 * 30, /* 6 months */
+        }),
+      )
 
-    return limit ? books?.slice(0, 6) : books
-  }
-
-  return useQuery(['next-reads', { sheetId, limit, threshold }], fetcher, {
-    enabled
+      return options.limit ? books?.slice(0, 6) : books
+    },
+    ...options,
   })
 }

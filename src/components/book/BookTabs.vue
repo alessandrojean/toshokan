@@ -1,14 +1,14 @@
 <script lang="ts" setup>
+import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon,
+} from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
-import Book, { MonetaryValue } from '@/model/Book'
+import type { MonetaryValue } from '@/model/Book'
+import type Book from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 import { ShowSearchDialogKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import {
-  ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon
-} from '@heroicons/vue/20/solid'
 
 export interface BookTabsProps {
   blurNsfw?: boolean
@@ -27,8 +27,8 @@ const props = withDefaults(defineProps<BookTabsProps>(), {
   mode: 'comfortable',
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const { t, d, n, locale } = useI18n({ useScope: 'global' })
@@ -51,9 +51,9 @@ const notesRendered = computed(() => {
 
 const filteredCollection = computed(() => {
   if (
-    !showBookInfo.value ||
-    !collection.value ||
-    collection.value.length === 0
+    !showBookInfo.value
+    || !collection.value
+    || collection.value.length === 0
   ) {
     return []
   }
@@ -77,7 +77,7 @@ const tabs = computed(() => {
     if (filteredCollection.value.length > 0) {
       items.push({
         title: t('dashboard.details.tabs.collection'),
-        count: filteredCollection.value.length
+        count: filteredCollection.value.length,
       })
     }
   }
@@ -92,12 +92,11 @@ function formatPrice(price: MonetaryValue | null | undefined) {
 
   const { value, currency } = price
 
-  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
 const { data: timeZone } = useTimeZoneQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 function formatDate(date: Date | string, format = 'short') {
@@ -105,13 +104,13 @@ function formatDate(date: Date | string, format = 'short') {
     return d(
       new Date(`${date}T00:00:00.000${timeZone.value!.offsetStr}`),
       format,
-      // @ts-ignore
-      { timeZone: timeZone.value.name }
+      // @ts-expect-error missing types
+      { timeZone: timeZone.value.name },
     )
   }
 
   if (date instanceof Date) {
-    // @ts-ignore
+    // @ts-expect-error missing types
     return d(date, format, { timeZone: timeZone.value.name })
   }
 
@@ -126,91 +125,91 @@ const language = computed(() => {
   }
 
   const languageNames = new Intl.DisplayNames([locale.value], {
-    type: 'language'
+    type: 'language',
   })
   const localizedName = languageNames.of(country.value.locale)!
 
   return (
-    localizedName.charAt(0).toLocaleUpperCase(locale.value) +
-    localizedName.slice(1)
+    localizedName.charAt(0).toLocaleUpperCase(locale.value)
+    + localizedName.slice(1)
   )
 })
 
 const metadata = computed(() => {
-  const sameCurrency =
-    book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
+  const sameCurrency
+    = book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
 
   return [
     {
       title: t('book.properties.id'),
       value: book.value?.id,
-      class: 'font-mono'
+      class: 'font-mono',
     },
     {
       title: t('book.properties.language'),
       value: country.value ? language.value : null,
-      flagUrl: country.value?.flagUrl?.circle
+      flagUrl: country.value?.flagUrl?.circle,
     },
     {
       title: t('book.properties.publisher'),
       key: 'publisher',
       value: book.value?.publisher,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.group'),
       key: 'group',
       value: book.value?.group,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.dimensions'),
       value: book.value?.dimensions
-        ? n(book.value.dimensions.width, 'dimensions') +
-          ' × ' +
-          n(book.value.dimensions.height, 'dimensions') +
-          ' cm'
-        : null
+        ? `${n(book.value.dimensions.width, 'dimensions')
+          } × ${
+          n(book.value.dimensions.height, 'dimensions')
+          } cm`
+        : null,
     },
     {
       title: t('book.properties.labelPrice'),
-      value: formatPrice(book.value?.labelPrice)
+      value: formatPrice(book.value?.labelPrice),
     },
     {
       title: t('book.properties.paidPrice'),
       value: formatPrice(book.value?.paidPrice),
       badge: sameCurrency
-        ? (book.value?.paidPrice?.value ?? 0) >
-          (book.value?.labelPrice?.value ?? 0)
-          ? (book.value?.paidPrice?.value ?? 1) /
-            (book.value?.labelPrice?.value ?? 1)
-          : 1 -
-            (book.value?.paidPrice?.value ?? 1) /
-              (book.value?.labelPrice?.value ?? 1)
+        ? (book.value?.paidPrice?.value ?? 0)
+        > (book.value?.labelPrice?.value ?? 0)
+            ? (book.value?.paidPrice?.value ?? 1)
+            / (book.value?.labelPrice?.value ?? 1)
+            : 1
+            - (book.value?.paidPrice?.value ?? 1)
+            / (book.value?.labelPrice?.value ?? 1)
         : null,
-      samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
+      samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value,
     },
     {
       title: t('book.properties.store'),
       key: 'store',
       value: book.value?.store,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.boughtAt'),
       value: book.value?.boughtAt,
-      time: true
+      time: true,
     },
     {
       title: t('book.properties.readAt'),
       value: book.value?.readAt,
-      time: true
+      time: true,
     },
     {
       title: t('book.properties.tags'),
       value: (book.value?.tags || []).length > 0 ? book.value?.tags : null,
-      tags: true
-    }
+      tags: true,
+    },
   ]
 })
 
@@ -219,7 +218,7 @@ const showSearchDialog = injectStrict(ShowSearchDialogKey)
 function searchBy(key: string, value: string, event: MouseEvent) {
   event.preventDefault()
 
-  const queryKeyword = t('dashboard.search.keywords.' + key)
+  const queryKeyword = t(`dashboard.search.keywords.${key}`)
   const queryString = `${queryKeyword}:"${value}"`
   showSearchDialog(queryString)
 }
@@ -239,8 +238,8 @@ function searchByTag(tag: string, event: MouseEvent) {
           <Tab
             v-for="(tab, i) in tabs"
             :key="i"
-            as="template"
             v-slot="{ disabled, selected }"
+            as="template"
           >
             <button
               :class="[
@@ -248,7 +247,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                 'disabled:text-gray-500 dark:disabled:text-gray-400 disabled:opacity-70',
                 selected
                   ? 'text-primary-600 dark:text-gray-100 hover:text-primary-600 dark:hover:text-gray-100 border-primary-600 dark:border-primary-400'
-                  : 'hover:text-gray-800 dark:hover:text-gray-300 border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+                  : 'hover:text-gray-800 dark:hover:text-gray-300 border-transparent hover:border-gray-300 dark:hover:border-gray-600',
               ]"
               :disabled="disabled"
             >
@@ -259,7 +258,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                   'ml-2 text-xs px-2.5 py-0.5 rounded-xl font-semibold',
                   selected
                     ? 'bg-primary-100 dark:bg-primary-500 dark:bg-opacity-50 dark:text-primary-50'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
                 ]"
               >
                 {{ n(tab.count, 'integer') }}
@@ -287,13 +286,13 @@ function searchByTag(tag: string, event: MouseEvent) {
                   <div
                     v-else
                     class="mt-1 md:mt-0 motion-safe:animate-pulse w-32 h-5 bg-gray-400 dark:bg-gray-600 rounded"
-                  ></div>
+                  />
 
                   <dd
                     v-if="showBookInfo"
                     :class="[
                       mt.class || '',
-                      'mt-1 md:mt-0 text-sm text-gray-900 dark:text-gray-200 md:col-span-2 inline-flex items-center'
+                      'mt-1 md:mt-0 text-sm text-gray-900 dark:text-gray-200 md:col-span-2 inline-flex items-center',
                     ]"
                   >
                     <img
@@ -302,7 +301,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                       alt=""
                       aria-hidden="true"
                       class="inline-block w-5 h-5 mr-2.5"
-                    />
+                    >
 
                     <time v-if="mt.time" :datetime="mt.value!.toISOString()">
                       {{ formatDate(mt.value!) }}
@@ -314,7 +313,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                           class="tag has-ring-focus py-0"
                           @click.prevent="searchByTag(tag, $event)"
                         >
-                          <span aria-hidden="true" class="bullet"></span>
+                          <span aria-hidden="true" class="bullet" />
                           {{ tag }}
                         </a>
                       </li>
@@ -336,7 +335,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                         mt.badge <= 1
                           ? 'bg-emerald-100 text-emerald-700'
                           : 'bg-red-100 text-red-800',
-                        'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
+                        'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold',
                       ]"
                     >
                       <span aria-hidden="true">
@@ -352,7 +351,7 @@ function searchByTag(tag: string, event: MouseEvent) {
                   <div
                     v-else
                     class="mt-1 md:mt-0 motion-safe:animate-pulse w-44 h-5 bg-gray-400 dark:bg-gray-600 rounded"
-                  ></div>
+                  />
                 </div>
               </template>
             </dl>
@@ -360,12 +359,12 @@ function searchByTag(tag: string, event: MouseEvent) {
 
           <!-- Book notes -->
           <TabPanel
-            class="rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
             v-if="showBookInfo && book!.notes!.length > 0"
+            class="rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:ring-offset-gray-900 focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 motion-safe:transition-shadow"
           >
             <div
-              v-html="notesRendered"
               class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-3xl mx-auto"
+              v-html="notesRendered"
             />
           </TabPanel>
 

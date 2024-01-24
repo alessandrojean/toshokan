@@ -10,7 +10,7 @@ const donateDialogOpen = ref(false)
 const githubLink = ref('https://github.com/alessandrojean/toshokan')
 
 const releaseLink = computed(() => {
-  return githubLink.value + '/releases/tag/v' + appVersion.value
+  return `${githubLink.value}/releases/tag/v${appVersion.value}`
 })
 </script>
 

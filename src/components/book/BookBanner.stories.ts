@@ -1,6 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookBanner from './BookBanner.vue'
 
-import { Meta, StoryObj } from '@storybook/vue3'
 import Book from '@/model/Book'
 
 const bookDemo: Partial<Book> = {
@@ -9,7 +9,7 @@ const bookDemo: Partial<Book> = {
   publisher: 'Panini',
   group: 'Manga',
   tags: ['nsfw'],
-  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg'
+  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg',
 }
 
 export default {
@@ -17,40 +17,40 @@ export default {
   component: BookBanner,
   args: {
     book: new Book(bookDemo),
-    loading: false
+    loading: false,
   },
   argTypes: {
     book: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   parameters: {
-    layout: 'fullscreen'
-  }
+    layout: 'fullscreen',
+  },
 } as Meta<typeof BookBanner>
 
 export const Default: StoryObj<typeof BookBanner> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookBanner },
     setup: () => ({ args }),
-    template: '<BookBanner v-bind="args" v-on="args" />'
-  })
+    template: '<BookBanner v-bind="args" v-on="args" />',
+  }),
 }
 
 export const Loading: StoryObj<typeof BookBanner> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookBanner },
     setup: () => ({ args }),
-    template: '<BookBanner v-bind="args" v-on="args" />'
+    template: '<BookBanner v-bind="args" v-on="args" />',
   }),
-  args: { loading: true }
+  args: { loading: true },
 }
 
 export const Empty: StoryObj<typeof BookBanner> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookBanner },
     setup: () => ({ args }),
-    template: '<BookBanner v-bind="args" v-on="args" />'
+    template: '<BookBanner v-bind="args" v-on="args" />',
   }),
-  args: { book: new Book({ ...bookDemo, coverUrl: '' }) }
+  args: { book: new Book({ ...bookDemo, coverUrl: '' }) },
 }

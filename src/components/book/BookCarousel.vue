@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash.clonedeep'
 
-import Book, { STATUS_READ } from '@/model/Book'
+import type Book from '@/model/Book'
+import { STATUS_READ } from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
 
 export interface BookCarouselProps {
@@ -24,8 +25,8 @@ const props = withDefaults(defineProps<BookCarouselProps>(), {
   showReadingActions: false,
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const emit = defineEmits<{
@@ -39,7 +40,7 @@ const {
   items,
   loading,
   showReadingActions,
-  editingIds
+  editingIds,
 } = toRefs(props)
 
 const carousel = ref<HTMLUListElement>()
@@ -62,7 +63,7 @@ function handleKeydown(event: KeyboardEvent) {
 
   // https://stackoverflow.com/a/21696585
   const visibleItems = Array.from(carousel.value!.children).filter(
-    (el) => (el as HTMLLIElement).offsetParent !== null
+    el => (el as HTMLLIElement).offsetParent !== null,
   )
   const totalItems = visibleItems.length
 
@@ -127,13 +128,13 @@ function handleReadToday(book: Book) {
 
     <ul
       v-if="!loading"
+      ref="carousel"
       :class="[
         items!.length < 3
           ? 'grid grid-cols-2'
           : '-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 flex md:grid',
-        'md:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 mt-4'
+        'md:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 mt-4',
       ]"
-      ref="carousel"
     >
       <li
         v-for="(book, bookIdx) in items"
@@ -142,7 +143,7 @@ function handleReadToday(book: Book) {
           items!.length > 2
             ? 'shrink-0 w-2/5 sm:w-3/12 md:w-auto snap-start md:snap-none scroll-ml-5 md:scroll-ml-0'
             : '',
-          bookIdx === 5 ? 'md:hidden xl:block' : ''
+          bookIdx === 5 ? 'md:hidden xl:block' : '',
         ]"
       >
         <BookCard
@@ -155,7 +156,7 @@ function handleReadToday(book: Book) {
           :blur-nsfw="blurNsfw"
           @keydown="handleKeydown"
         >
-          <template #actions v-if="showReadingActions">
+          <template v-if="showReadingActions" #actions>
             <BookCardReadingActions
               :book="book"
               :disabled="editingIds.length > 0"

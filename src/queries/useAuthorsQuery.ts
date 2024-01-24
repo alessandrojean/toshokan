@@ -1,17 +1,22 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import getAuthors from '@/services/sheet/getAuthors'
 import { useSheetStore } from '@/stores/sheet'
 import { fetch } from '@/util/gapi'
 
-export default function useAuthorsQuery({ enabled }: UseQueryOptions) {
+type GetAuthorsReturn = string[] | undefined
+type UseAuthorsQueryOptions<S = string[]> = UseQueryOptions<GetAuthorsReturn, Error, S>
+
+export default function useAuthorsQuery<S = GetAuthorsReturn>(options: UseAuthorsQueryOptions<S> = {}) {
   const sheetStore = useSheetStore()
   const sheetId = computed(() => sheetStore.sheetId)
 
-  async function fetcher() {
-    return await fetch(getAuthors(sheetId.value!))
-  }
-
-  return useQuery(['authors', { sheetId }], fetcher, { enabled })
+  return useQuery({
+    queryKey: ['authors', { sheetId }],
+    queryFn: async () => {
+      return await fetch(getAuthors(sheetId.value!))
+    },
+    ...options,
+  })
 }

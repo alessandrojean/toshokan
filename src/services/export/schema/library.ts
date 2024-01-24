@@ -11,7 +11,7 @@ export class ToshokanDimension extends Message<ToshokanDimension> {
 export enum ToshokanStatus {
   UNREAD = 0,
   READ = 1,
-  FUTURE = 2
+  FUTURE = 2,
 }
 
 export class ToshokanPrice extends Message<ToshokanPrice> {

@@ -10,9 +10,9 @@ import QueryBuilder from '@/data/QueryBuilder'
  * @returns {Promise<{ name: string, count: number, futureCount: number, totalCount: number }[]}>} The groups found
  */
 export default async function getGroups(
-  sheetId: string
+  sheetId: string,
 ): Promise<
-  { name: string; count: number; futureCount: number; totalCount: number }[]
+  { name: string, count: number, futureCount: number, totalCount: number }[]
 > {
   const sheetUrl = buildSheetUrl(sheetId)
 
@@ -34,7 +34,7 @@ export default async function getGroups(
         name: group,
         count: 0,
         futureCount: 0,
-        totalCount: 0
+        totalCount: 0,
       })
     }
 

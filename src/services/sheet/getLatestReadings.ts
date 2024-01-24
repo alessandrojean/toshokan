@@ -4,7 +4,7 @@ import { PER_PAGE } from './constants'
 import Book, { CollectionColumns, STATUS_READ } from '@/model/Book'
 import QueryBuilder from '@/data/QueryBuilder'
 
-export type GetLatestReadingsArgs = {
+export interface GetLatestReadingsArgs {
   limit?: number
 }
 
@@ -17,7 +17,7 @@ export type GetLatestReadingsArgs = {
  */
 export default async function getLatestReadings(
   sheetId: string,
-  options: GetLatestReadingsArgs = {}
+  options: GetLatestReadingsArgs = {},
 ): Promise<Book[]> {
   const sheetUrl = buildSheetUrl(sheetId)
 

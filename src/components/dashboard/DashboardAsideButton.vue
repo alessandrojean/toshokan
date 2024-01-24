@@ -10,7 +10,7 @@ export interface DashboardAsideButton {
 }
 
 const props = withDefaults(defineProps<DashboardAsideButton>(), {
-  active: false
+  active: false,
 })
 
 const { active, item, href } = toRefs(props)
@@ -26,7 +26,7 @@ const { active, item, href } = toRefs(props)
       item.icon ? 'h-10' : 'h-9',
       active
         ? 'bg-primary-100 text-primary-900 dark:text-gray-100 dark:bg-gray-900'
-        : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 dark:hocus:bg-gray-700'
+        : 'text-gray-700 dark:text-gray-300 hocus:bg-gray-200 hocus:text-gray-800 dark:hocus:text-gray-100 dark:hocus:bg-gray-700',
     ]"
     :title="item.label"
   >
@@ -34,7 +34,7 @@ const { active, item, href } = toRefs(props)
       v-if="item.icon"
       :class="[
         'shrink-0 w-10 h-10 flex items-center justify-center',
-        'motion-safe:transition-colors'
+        'motion-safe:transition-colors',
       ]"
     >
       <component
@@ -43,14 +43,14 @@ const { active, item, href } = toRefs(props)
           'w-6 h-6 motion-safe:transition-colors',
           active
             ? 'text-primary-600 dark:text-gray-100'
-            : 'text-gray-500 dark:text-gray-500 group-hocus:text-gray-600 dark:group-hocus:text-gray-300'
+            : 'text-gray-500 dark:text-gray-500 group-hocus:text-gray-600 dark:group-hocus:text-gray-300',
         ]"
       />
     </div>
     <span
       :class="[
         'shrink-0 pl-3 box-border truncate motion-safe:transition-all',
-        item.icon ? 'w-[11.5rem]' : 'w-full'
+        item.icon ? 'w-[11.5rem]' : 'w-full',
       ]"
     >
       {{ item.label }}

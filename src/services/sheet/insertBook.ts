@@ -1,16 +1,16 @@
 import { promisify } from '@/util/gapi'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 /**
  * Insert a book in the sheet.
  *
  * @param {string} sheetId The ID of the sheet to insert the book.
  * @param {Book} book The book to be inserted.
- * @returns {Promise<string>}
+ * @returns {Promise<string>} the book id
  */
 export default async function insertBook(
   sheetId: string,
-  book: Book
+  book: Book,
 ): Promise<string> {
   const bookFormatted = book.toArray()
 
@@ -19,7 +19,7 @@ export default async function insertBook(
     range: 'Collection!B5',
     valueInputOption: 'USER_ENTERED',
     insertDataOption: 'INSERT_ROWS',
-    resource: { range: 'Collection!B5', values: [bookFormatted] }
+    resource: { range: 'Collection!B5', values: [bookFormatted] },
   })
 
   await promisify(thenable)

@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookMarkdown from './BookMarkdown.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 const lorem = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
@@ -26,60 +25,60 @@ export default {
     markdown: lorem.trim(),
     emptyMessage: 'This is a message if empty',
     blur: false,
-    loading: false
+    loading: false,
   },
   argTypes: {
     options: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="md:p-6 md:w-3/5"><story/></div>'
-    })
-  ]
+      template: '<div class="md:p-6 md:w-3/5"><story/></div>',
+    }),
+  ],
 } as Meta<typeof BookMarkdown>
 
 export const Default: StoryObj<typeof BookMarkdown> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookMarkdown },
     setup: () => ({ args }),
-    template: '<BookMarkdown v-bind="args" />'
-  })
+    template: '<BookMarkdown v-bind="args" />',
+  }),
 }
 
 export const Loading: StoryObj<typeof BookMarkdown> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookMarkdown },
     setup: () => ({ args }),
-    template: '<BookMarkdown v-bind="args" />'
+    template: '<BookMarkdown v-bind="args" />',
   }),
-  args: { loading: true }
+  args: { loading: true },
 }
 
 export const Empty: StoryObj<typeof BookMarkdown> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookMarkdown },
     setup: () => ({ args }),
-    template: '<BookMarkdown v-bind="args" />'
+    template: '<BookMarkdown v-bind="args" />',
   }),
-  args: { markdown: '' }
+  args: { markdown: '' },
 }
 
 export const Blur: StoryObj<typeof BookMarkdown> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookMarkdown },
     setup: () => ({ args }),
-    template: '<BookMarkdown v-bind="args" />'
+    template: '<BookMarkdown v-bind="args" />',
   }),
-  args: { blur: true }
+  args: { blur: true },
 }
 
 export const SmallText: StoryObj<typeof BookMarkdown> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookMarkdown },
     setup: () => ({ args }),
-    template: '<BookMarkdown v-bind="args" />'
+    template: '<BookMarkdown v-bind="args" />',
   }),
-  args: { markdown: 'This is a _small_ text.' }
+  args: { markdown: 'This is a _small_ text.' },
 }

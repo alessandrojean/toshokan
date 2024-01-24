@@ -1,20 +1,22 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-import Book, {
-  Status,
-  STATUS_FUTURE,
-  STATUS_READ,
-  STATUS_UNREAD
-} from '@/model/Book'
-import type { Sort } from '@/types'
-
 import {
   ArrowDownIcon,
   ArrowUpIcon,
   EllipsisHorizontalIcon,
-  StarIcon
+  StarIcon,
 } from '@heroicons/vue/20/solid'
 import { PhotoIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from '@/i18n'
+import type {
+  Status,
+} from '@/model/Book'
+import type Book from '@/model/Book'
+import {
+  STATUS_FUTURE,
+  STATUS_READ,
+  STATUS_UNREAD,
+} from '@/model/Book'
+import type { Sort } from '@/types'
 
 export interface BookTable {
   currentPage?: number
@@ -26,17 +28,17 @@ export interface BookTable {
   sortDirection?: Sort
 }
 
-export type SortEvent = {
+export interface SortEvent {
   property: string
   direction: Sort
 }
 
-export type MarkAsEvent = {
+export interface MarkAsEvent {
   booksToEdit: Book[]
   newStatus: Status
 }
 
-export type ToggleFavoriteEvent = {
+export interface ToggleFavoriteEvent {
   booksToEdit: Book[]
   newFavorite: boolean
 }
@@ -47,7 +49,7 @@ const props = withDefaults(defineProps<BookTable>(), {
   selectable: false,
   skeleton: false,
   sortDirection: undefined,
-  sortProperty: undefined
+  sortProperty: undefined,
 })
 
 const emit = defineEmits<{
@@ -63,25 +65,25 @@ const sheetStore = useSheetStore()
 const router = useRouter()
 
 const { data: timeZone } = useTimeZoneQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 function formatDate(date: Date) {
-  // @ts-ignore
+  // @ts-expect-error missing types
   return d(date, 'long', { timeZone: timeZone.value.name })
 }
 
 function formatPrice(currency: string, value?: number) {
   const formatter = new Intl.NumberFormat(locale.value, {
     ...getNumberFormat(locale.value).currency,
-    currency: currency
+    currency,
   })
 
   return formatter.formatToParts(value ?? 0)
 }
 
 function currency(currency: string) {
-  const part = formatPrice(currency).find((p) => p.type === 'currency')
+  const part = formatPrice(currency).find(p => p.type === 'currency')
 
   return part?.value || '$'
 }
@@ -89,7 +91,6 @@ function currency(currency: string) {
 function value(currencyValue: string, value: number) {
   const currencySymbol = currency(currencyValue)
 
-  // @ts-ignore
   return n(value, 'currency', { currency: currencyValue })
     .replace(currencySymbol, '')
     .trim()
@@ -110,28 +111,28 @@ const columns = computed(() => [
     key: 'status',
     label: t('book.properties.status'),
     class:
-      'hidden md:table-cell w-[12ch] ' + (skeleton.value ? '!text-right' : ''),
+      `hidden md:table-cell w-[12ch] ${skeleton.value ? '!text-right' : ''}`,
     buttonClass: '!text-right',
-    skeletonClass: 'ml-3'
+    skeletonClass: 'ml-3',
   },
   {
     key: 'paidPrice.value',
     label: t('book.properties.paidPrice'),
     class: 'hidden lg:table-cell w-[15ch]',
     buttonClass: '!pl-8',
-    skeletonClass: 'ml-6'
+    skeletonClass: 'ml-6',
   },
   {
     key: 'createdAt',
     label: t('book.properties.createdAt'),
-    class: 'hidden md:table-cell w-[20ch]'
+    class: 'hidden md:table-cell w-[20ch]',
   },
   {
     key: 'actions',
     label: t('dashboard.library.items.tableColumns.actions'),
     hidden: true,
-    class: 'w-16'
-  }
+    class: 'w-16',
+  },
 ])
 
 const { items, selectable } = toRefs(props)
@@ -142,12 +143,13 @@ const topCheckbox = ref<HTMLInputElement>()
 const tableBody = ref<HTMLTableElement>()
 
 const isMac = ref(
-  // @ts-ignore
   navigator.userAgentData
-    ? // @ts-ignore
-      navigator.userAgentData.platform.toLowerCase().indexOf('mac') > -1
-    : navigator.platform.toLowerCase().indexOf('mac') > -1
+    ? navigator.userAgentData.platform.toLowerCase().includes('mac')
+    : navigator.platform.toLowerCase().includes('mac'),
 )
+
+const { breakpoints } = useTailwindTheme()
+const isMdBreakpoint = useBreakpoints(breakpoints).greater('md')
 
 function handleTopCheckbox(event: Event) {
   const checked = (event.target as HTMLInputElement).checked
@@ -161,9 +163,9 @@ function handleTopCheckbox(event: Event) {
     : []
 
   if (topCheckbox.value) {
-    topCheckbox.value.indeterminate =
-      selection.value.length > 0 &&
-      selection.value.length < (items.value?.length ?? 0)
+    topCheckbox.value.indeterminate
+      = selection.value.length > 0
+      && selection.value.length < (items.value?.length ?? 0)
   }
 
   current.value = 0
@@ -178,12 +180,9 @@ function rangeArray(startIdx: number, endIdx: number) {
 
   return Array.from(
     { length: endIdx - startIdx + 1 },
-    (_, i) => i + startIdx
+    (_, i) => i + startIdx,
   ).sort((a, b) => a - b)
 }
-
-const { breakpoints } = useTailwindTheme()
-const isMdBreakpoint = useBreakpoints(breakpoints).greater('md')
 
 /**
  * Try to mimic the Windows behavior on selecting items
@@ -199,7 +198,7 @@ function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
   if (!isMdBreakpoint.value) {
     router.push({
       name: 'dashboard-library-book-id',
-      params: { id: items.value?.[idx].id ?? '' }
+      params: { id: items.value?.[idx].id ?? '' },
     })
     return
   }
@@ -235,9 +234,9 @@ function handleCheckbox(checked: boolean, idx: number, event: MouseEvent) {
   selection.value = Array.from(new Set(selection.value)).sort((a, b) => a - b)
 
   if (topCheckbox.value) {
-    topCheckbox.value.indeterminate =
-      selection.value.length > 0 &&
-      selection.value.length < (items.value?.length ?? 0)
+    topCheckbox.value.indeterminate
+      = selection.value.length > 0
+      && selection.value.length < (items.value?.length ?? 0)
   }
 
   current.value = idx
@@ -254,7 +253,7 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
     'Delete',
     'Enter',
     'a',
-    ' '
+    ' ',
   ]
   const { key, shiftKey, ctrlKey, metaKey } = event
 
@@ -270,7 +269,7 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   if (key === 'Enter') {
     router.push({
       name: 'dashboard-library-book-id',
-      params: { id: items.value?.[idx]?.id ?? '' }
+      params: { id: items.value?.[idx]?.id ?? '' },
     })
 
     return
@@ -297,8 +296,8 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   }
 
   if (
-    (key === 'ArrowDown' || key === 'End') &&
-    current.value === totalItems - 1
+    (key === 'ArrowDown' || key === 'End')
+    && current.value === totalItems - 1
   ) {
     return
   }
@@ -308,10 +307,10 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   if (key === 'Delete' && selection.value.length > 0) {
     emit('click:deleteSelection')
   } else if (
-    key === 'a' &&
-    controlKey &&
-    !shiftKey &&
-    selection.value.length < totalItems
+    key === 'a'
+    && controlKey
+    && !shiftKey
+    && selection.value.length < totalItems
   ) {
     selection.value = rangeArray(0, totalItems - 1)
   } else if (key === 'a' && controlKey && !shiftKey) {
@@ -320,9 +319,9 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
     selection.value = [idx]
     current.value = idx
   } else if (
-    selectionTotalItems === 0 &&
-    (key === 'ArrowDown' || key === 'ArrowUp') &&
-    !controlKey
+    selectionTotalItems === 0
+    && (key === 'ArrowDown' || key === 'ArrowUp')
+    && !controlKey
   ) {
     selection.value = [idx]
     current.value = idx
@@ -334,15 +333,15 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
       current.value = endIdx
     } else if (key === 'Home') {
       const startIdx = 0
-      const endIdx =
-        selection.value.length > 0
+      const endIdx
+        = selection.value.length > 0
           ? selection.value[selection.value.length - 1]
           : 0
       selection.value = rangeArray(startIdx, endIdx)
       current.value = startIdx
     } else if (
-      key === 'ArrowDown' &&
-      !selection.value.includes(current.value + 1)
+      key === 'ArrowDown'
+      && !selection.value.includes(current.value + 1)
     ) {
       const startIdx = selection.value[0]
       const endIdx = Math.min(current.value + 1, totalItems - 1)
@@ -354,8 +353,8 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
       selection.value = rangeArray(startIdx, endIdx)
       current.value = startIdx
     } else if (
-      key === 'ArrowUp' &&
-      !selection.value.includes(current.value - 1)
+      key === 'ArrowUp'
+      && !selection.value.includes(current.value - 1)
     ) {
       const startIdx = Math.max(current.value - 1, 0)
       const endIdx = selection.value[selection.value.length - 1]
@@ -396,9 +395,9 @@ function handleKeyboard(event: KeyboardEvent, idx: number) {
   selection.value = Array.from(new Set(selection.value)).sort((a, b) => a - b)
 
   if (topCheckbox.value) {
-    topCheckbox.value.indeterminate =
-      selection.value.length > 0 &&
-      selection.value.length < (items.value?.length ?? '')
+    topCheckbox.value.indeterminate
+      = selection.value.length > 0
+      && selection.value.length < (items.value?.length ?? '')
   }
 
   nextTick(() => focus())
@@ -423,7 +422,7 @@ watch(() => loading.value || skeleton.value, clearSelection)
 watch([currentPage, sortProperty, sortDirection], clearSelection)
 
 function handleDeleteSelection() {
-  const booksToDelete = selection.value.map((idx) => items.value![idx])
+  const booksToDelete = selection.value.map(idx => items.value![idx])
   emit('click:deleteSelection', booksToDelete)
 }
 
@@ -439,19 +438,19 @@ function handleSort(property: string) {
   if (property !== sortProperty.value) {
     emit('sort', {
       property,
-      direction: sortDirection.value!
+      direction: sortDirection.value!,
     })
   } else {
     emit('sort', {
       property,
-      direction: sortDirection.value === 'asc' ? 'desc' : 'asc'
+      direction: sortDirection.value === 'asc' ? 'desc' : 'asc',
     })
   }
 }
 
 function countBy(array: number[], key: keyof Book) {
   const counting = array
-    .map((idx) => items.value![idx])
+    .map(idx => items.value![idx])
     .reduce((acm, crr) => {
       const acmKey = acm[crr[key] as string]
 
@@ -466,7 +465,7 @@ function countBy(array: number[], key: keyof Book) {
 
   return Object.entries(counting)
     .sort((a, b) => b[1] - a[1])
-    .map((entry) => ({ [key]: entry[0], count: entry[1] }))
+    .map(entry => ({ [key]: entry[0], count: entry[1] }))
 }
 
 const statusCount = computed(() => countBy(selection.value, 'status'))
@@ -487,7 +486,7 @@ const hasFutureSelected = computed(() => {
 })
 
 function handleMarkAsClick() {
-  const booksToEdit = selection.value.map((idx) => items.value![idx])
+  const booksToEdit = selection.value.map(idx => items.value![idx])
   emit('click:markAs', { booksToEdit, newStatus: inverseStatus.value })
 }
 
@@ -498,10 +497,10 @@ const inverseFavorite = computed(() => {
 })
 
 function handleToggleFavorite() {
-  const booksToEdit = selection.value.map((idx) => items.value![idx])
+  const booksToEdit = selection.value.map(idx => items.value![idx])
   emit('click:toggleFavorite', {
     booksToEdit,
-    newFavorite: inverseFavorite.value
+    newFavorite: inverseFavorite.value,
   })
 }
 
@@ -516,7 +515,7 @@ function focus() {
 function focusOnActiveHeader() {
   document
     .querySelector<HTMLButtonElement>(
-      'th[aria-sort]:not([aria-sort=none]) button'
+      'th[aria-sort]:not([aria-sort=none]) button',
     )
     ?.focus()
 }
@@ -543,20 +542,20 @@ defineExpose({ focus, focusOnActiveHeader })
                 {{ t('table.selectAll') }}
               </label>
               <input
+                id="select-all"
                 ref="topCheckbox"
                 type="checkbox"
                 class="checkbox !ml-0"
-                id="select-all"
                 :checked="selection.length === items?.length && !skeleton"
                 :disabled="loading || skeleton"
                 @change="handleTopCheckbox"
-              />
+              >
             </th>
             <th
               scope="col"
               :class="[
                 'table-column-header align-middle',
-                sortProperty === 'title' ? 'is-selected' : ''
+                sortProperty === 'title' ? 'is-selected' : '',
               ]"
               :aria-sort="ariaSorted('title')"
             >
@@ -565,7 +564,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 type="button"
                 :class="[
                   'has-ring-focus !pl-4 sm:!pl-6 focus-visible:ring-inset table-header-button',
-                  selectable ? 'md:!pl-3' : 'md:!pl-6'
+                  selectable ? 'md:!pl-3' : 'md:!pl-6',
                 ]"
                 :disabled="loading"
                 @click="handleSort('title')"
@@ -594,7 +593,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 >
                   {{
                     t('dashboard.details.header.options.markAs', {
-                      status: inverseStatusText.toLocaleLowerCase(locale)
+                      status: inverseStatusText.toLocaleLowerCase(locale),
                     })
                   }}
                 </Button>
@@ -603,7 +602,7 @@ defineExpose({ focus, focusOnActiveHeader })
                     t(
                       inverseFavorite
                         ? 'dashboard.details.header.options.addToFavorites'
-                        : 'dashboard.details.header.options.removeFromFavorites'
+                        : 'dashboard.details.header.options.removeFromFavorites',
                     )
                   }}
                 </Button>
@@ -617,7 +616,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 v-else
                 :class="[
                   'skeleton w-20 h-4 mr-auto ml-4 sm:ml-6',
-                  selectable ? 'md:ml-0' : 'md:ml-6'
+                  selectable ? 'md:ml-0' : 'md:ml-6',
                 ]"
               >
                 <span class="sr-only">
@@ -632,7 +631,7 @@ defineExpose({ focus, focusOnActiveHeader })
               :class="[
                 'table-column-header !pl-0 align-middle',
                 sortProperty === column.key ? 'is-selected' : '',
-                column.class
+                column.class,
               ]"
               :aria-sort="!column.hidden ? ariaSorted(column.key) : undefined"
             >
@@ -641,7 +640,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 type="button"
                 :class="[
                   'has-ring-focus table-header-button focus-visible:ring-inset',
-                  column.buttonClass
+                  column.buttonClass,
                 ]"
                 :disabled="loading"
                 @click="handleSort(column.key)"
@@ -670,7 +669,7 @@ defineExpose({ focus, focusOnActiveHeader })
                 :class="[
                   'h-4',
                   column.skeletonClass,
-                  !column.hidden ? 'skeleton w-20' : 'w-10'
+                  !column.hidden ? 'skeleton w-20' : 'w-10',
                 ]"
               >
                 <span class="sr-only">
@@ -692,10 +691,10 @@ defineExpose({ focus, focusOnActiveHeader })
                 selection.includes(bookIdx)
                   ? 'bg-primary-100/25 dark:bg-gray-700/60 hover:bg-primary-100/50 dark:hover:bg-gray-700/80'
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700/20',
-                'motion-safe:transition-colors group has-ring-focus focus-visible:ring-inset focus-visible:!ring-offset-2'
+                'motion-safe:transition-colors group has-ring-focus focus-visible:ring-inset focus-visible:!ring-offset-2',
               ]"
               :tabindex="bookIdx === current ? '0' : undefined"
-              :aria-labelledby="'book-label-' + book.id"
+              :aria-labelledby="`book-label-${book.id}`"
               @click="
                 handleCheckbox(!selection.includes(bookIdx), bookIdx, $event)
               "
@@ -709,21 +708,21 @@ defineExpose({ focus, focusOnActiveHeader })
                     'motion-safe:transition-transform',
                     selection.includes(bookIdx)
                       ? 'translate-x-0 group-focus-visible:-translate-x-full'
-                      : '-translate-x-full'
+                      : '-translate-x-full',
                   ]"
                 />
                 <input
+                  :id="`book-checkbox-${book.id}`"
                   type="checkbox"
                   class="checkbox"
                   tabindex="-1"
                   :checked="selection.includes(bookIdx)"
-                  :id="'book-checkbox-' + book.id"
-                />
+                >
               </td>
               <td
                 :class="[
                   'pl-4 sm:pl-6 py-4 max-w-[calc(100vw-8.5rem)] md:max-w-xs lg:max-w-none',
-                  selectable ? 'md:pl-3' : 'md:pl-6'
+                  selectable ? 'md:pl-3' : 'md:pl-6',
                 ]"
               >
                 <div class="flex items-center">
@@ -733,7 +732,7 @@ defineExpose({ focus, focusOnActiveHeader })
                       'motion-safe:transition-colors',
                       selection.includes(bookIdx)
                         ? 'bg-primary-600/10 dark:bg-gray-600/60'
-                        : 'bg-gray-600/10 dark:bg-gray-600/40'
+                        : 'bg-gray-600/10 dark:bg-gray-600/40',
                     ]"
                   >
                     <img
@@ -742,32 +741,32 @@ defineExpose({ focus, focusOnActiveHeader })
                         'h-10 w-10 rounded object-cover motion-safe:transition',
                         selection.includes(bookIdx)
                           ? 'ring-2 ring-primary-200/60 dark:ring-gray-500/40'
-                          : ''
+                          : '',
                       ]"
                       :src="book.coverUrl!"
                       :alt="book.title!"
                       loading="lazy"
-                    />
+                    >
                     <PhotoIcon
                       v-else
                       :class="[
                         'h-6 w-6 motion-safe:transition-colors',
                         selection.includes(bookIdx)
                           ? 'text-primary-600/70 dark:text-gray-300/70'
-                          : 'text-gray-500/80 dark:text-gray-400/80'
+                          : 'text-gray-500/80 dark:text-gray-400/80',
                       ]"
                     />
                   </div>
                   <div class="ml-4 min-w-0">
                     <label
+                      :id="`book-label-${book.id}`"
                       :class="[
                         'text-sm font-medium truncate max-w-[calc(100vw-8.5rem)] md:max-w-xs lg:max-w-none min-w-0 block',
                         selection.includes(bookIdx)
                           ? 'text-primary-800 dark:text-gray-100'
-                          : 'text-gray-900 dark:text-gray-200'
+                          : 'text-gray-900 dark:text-gray-200',
                       ]"
-                      :for="'book-checkbox-' + book.id"
-                      :id="'book-label-' + book.id"
+                      :for="`book-checkbox-${book.id}`"
                     >
                       {{ book.titleParts.title }}
                     </label>
@@ -776,7 +775,7 @@ defineExpose({ focus, focusOnActiveHeader })
                         'text-xs truncate max-w-[calc(100vw-8.5rem)] md:max-w-xs lg:max-w-none min-w-0',
                         selection.includes(bookIdx)
                           ? 'text-primary-600 dark:text-gray-300'
-                          : 'text-gray-500 dark:text-gray-300/80'
+                          : 'text-gray-500 dark:text-gray-300/80',
                       ]"
                     >
                       {{ volumeText(book) }} &middot; {{ book.publisher }}
@@ -788,7 +787,7 @@ defineExpose({ focus, focusOnActiveHeader })
                       'w-5 h-5 shrink-0 ml-auto -mr-2 hidden sm:block',
                       selection.includes(bookIdx)
                         ? 'text-primary-600 dark:text-yellow-500'
-                        : 'text-gray-700/50 dark:text-yellow-500/80'
+                        : 'text-gray-700/50 dark:text-yellow-500/80',
                     ]"
                   />
                 </div>
@@ -796,7 +795,7 @@ defineExpose({ focus, focusOnActiveHeader })
               <td
                 class="pr-3 py-4 md:whitespace-nowrap hidden md:table-cell text-right"
               >
-                <span :class="'is-' + book.status!.toLowerCase()" class="badge">
+                <span :class="`is-${book.status!.toLowerCase()}`" class="badge">
                   {{ t(`book.${book.status!.toLowerCase()}`) }}
                 </span>
               </td>
@@ -823,18 +822,18 @@ defineExpose({ focus, focusOnActiveHeader })
                 class="pr-6 py-4 w-16 md:whitespace-nowrap text-right text-sm font-medium"
               >
                 <Button
+                  v-slot="{ iconClass }"
                   as="RouterLink"
                   kind="ghost"
                   icon-only
                   rounded
                   :to="{
                     name: 'dashboard-library-book-id',
-                    params: { id: book.id }
+                    params: { id: book.id },
                   }"
                   class="-mr-2"
                   tabindex="-1"
                   :title="t('dashboard.library.items.view')"
-                  v-slot="{ iconClass }"
                 >
                   <EllipsisHorizontalIcon :class="iconClass" />
                 </Button>
@@ -849,12 +848,12 @@ defineExpose({ focus, focusOnActiveHeader })
                   type="checkbox"
                   disabled
                   class="checkbox"
-                />
+                >
               </td>
               <td
                 :class="[
                   'pr-6 py-4 pl-4 sm:pl-6',
-                  selectable ? 'md:pl-0' : 'md:pl-6'
+                  selectable ? 'md:pl-0' : 'md:pl-6',
                 ]"
               >
                 <div class="flex items-center">

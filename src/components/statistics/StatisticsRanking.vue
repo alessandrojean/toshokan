@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { RankingItem } from '@/services/sheet/getStatistics'
 import { useI18n } from '@/i18n'
+import type { RankingItem } from '@/services/sheet/getStatistics'
 
 export interface StatisticsRankingProps {
   loading?: boolean
@@ -10,7 +10,7 @@ export interface StatisticsRankingProps {
 
 const props = withDefaults(defineProps<StatisticsRankingProps>(), {
   loading: false,
-  ranking: () => []
+  ranking: () => [],
 })
 
 const { loading, ranking, title } = toRefs(props)
@@ -23,14 +23,14 @@ const { t, n } = useI18n({ useScope: 'global' })
       <li v-for="(item, i) of ranking" :key="item.name" class="py-2.5 relative">
         <span
           aria-hidden="true"
-          class="select-none absolute right-1 inset-y-0 flex items-center text-6xl leading-none italic font-display tracking-tighter text-gray-300 dark:text-gray-600/80 font-light"
+          class="select-none absolute right-1 inset-y-0 flex items-center text-6xl leading-none italic font-display-safe tracking-tighter text-gray-300 dark:text-gray-600/80 font-light"
         >
           {{ i + 1 }}
         </span>
         <span
           :class="[
             'block text-gray-800 dark:text-gray-300 font-medium truncate text-sm',
-            i + 1 < 10 ? 'pr-12' : 'pr-24'
+            i + 1 < 10 ? 'pr-12' : 'pr-24',
           ]"
         >
           {{ item.name }}
@@ -39,7 +39,7 @@ const { t, n } = useI18n({ useScope: 'global' })
           {{
             t('dashboard.stats.bookCount', item.count).replace(
               item.count.toString(),
-              n(item.count, 'integer')
+              n(item.count, 'integer'),
             )
           }}
         </span>
@@ -49,7 +49,7 @@ const { t, n } = useI18n({ useScope: 'global' })
       <div v-for="position of 10" :key="position" class="py-2.5 relative">
         <span
           aria-hidden="true"
-          class="select-none absolute right-1 inset-y-0 flex items-center text-6xl leading-none italic font-display tracking-tighter text-gray-300 dark:text-gray-600/80 font-light"
+          class="select-none absolute right-1 inset-y-0 flex items-center text-6xl leading-none italic font-display-safe tracking-tighter text-gray-300 dark:text-gray-600/80 font-light"
         >
           {{ position }}
         </span>

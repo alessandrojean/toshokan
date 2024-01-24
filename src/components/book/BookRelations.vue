@@ -1,12 +1,11 @@
 <script lang="ts" setup>
+import {
+  ArrowTopRightOnSquareIcon,
+  GlobeAltIcon,
+} from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 
 import type { BookLink } from '@/services/links'
-
-import {
-  ArrowTopRightOnSquareIcon,
-  GlobeAltIcon
-} from '@heroicons/vue/20/solid'
 
 export interface BookTagsProps {
   links?: BookLink[] | null
@@ -15,7 +14,7 @@ export interface BookTagsProps {
 
 const props = withDefaults(defineProps<BookTagsProps>(), {
   links: () => [],
-  loading: false
+  loading: false,
 })
 
 const { links, loading } = toRefs(props)
@@ -46,7 +45,7 @@ function randomSize() {
           rounded
         >
           <template #left="{ iconClass }">
-            <component v-if="link.icon" :is="link.icon" :class="iconClass" />
+            <component :is="link.icon" v-if="link.icon" :class="iconClass" />
             <GlobeAltIcon v-else :class="iconClass" />
           </template>
           <span>{{ link.title }}</span>

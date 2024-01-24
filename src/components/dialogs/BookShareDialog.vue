@@ -1,23 +1,22 @@
 <script lang="ts" setup>
-import QrCode from 'qrcode'
 import { useClipboard } from '@vueuse/core'
+import QrCode from 'qrcode'
 
+import {
+  ArrowTopRightOnSquareIcon,
+  ClipboardIcon,
+  XMarkIcon,
+} from '@heroicons/vue/20/solid'
+import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
 import { useI18n } from '@/i18n'
 import Book from '@/model/Book'
 import {
   downloadUrl,
   generateFile,
   generateFileSingle,
-  parseFileSingle
+  parseFileSingle,
 } from '@/services/export/androidExport'
-import { ToshokanOwner } from '@/services/export/schema/library'
-
-import { ArrowDownTrayIcon } from '@heroicons/vue/24/outline'
-import {
-  ClipboardIcon,
-  ArrowTopRightOnSquareIcon,
-  XMarkIcon
-} from '@heroicons/vue/20/solid'
+import type { ToshokanOwner } from '@/services/export/schema/library'
 
 export interface BookShareDialogProps {
   modelValue: boolean
@@ -30,7 +29,7 @@ export interface BookShareDialogProps {
 const props = withDefaults(defineProps<BookShareDialogProps>(), {
   book: undefined,
   data: undefined,
-  showUrlCopier: true
+  showUrlCopier: true,
 })
 
 const emit = defineEmits<{
@@ -58,10 +57,10 @@ const owner = computed(() => {
     return null
   }
 
-  return <ToshokanOwner>{
+  return {
     name: authStore.profileName,
-    pictureUrl: authStore.profileImageUrl
-  }
+    pictureUrl: authStore.profileImageUrl,
+  } as ToshokanOwner
 })
 
 function reset() {
@@ -90,8 +89,8 @@ watch([open, anonymous], async () => {
     URL.revokeObjectURL(fileUrl.value)
   }
 
-  const fileSingle =
-    data.value ?? generateFileSingle(book.value!, version.value, owner.value)
+  const fileSingle
+    = data.value ?? generateFileSingle(book.value!, version.value, owner.value)
   const blobSingle = new Blob([fileSingle], { type: 'application/gzip' })
   const bookSingle = parseFileSingle(fileSingle)
   const bookOwner = anonymous.value ? null : bookSingle.owner
@@ -99,7 +98,7 @@ watch([open, anonymous], async () => {
   const file = generateFile(
     [new Book(bookSingle as unknown as Partial<Book>)],
     version.value,
-    bookOwner ?? owner.value
+    bookOwner ?? owner.value,
   )
   const blob = new Blob([file], { type: 'application/gzip' })
   fileUrl.value = URL.createObjectURL(blob)
@@ -108,8 +107,8 @@ watch([open, anonymous], async () => {
     [{ data: fileSingle, mode: 'byte' }],
     {
       errorCorrectionLevel: 'H',
-      margin: 2.5
-    }
+      margin: 2.5,
+    },
   )
 
   if (showUrlCopier.value) {
@@ -202,7 +201,7 @@ function handleAnonymousChange(event: Event) {
           <div class="flex justify-between items-center flex-shrink-0">
             <DialogTitle
               as="h3"
-              class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
+              class="text-lg leading-6 font-display-safe font-medium text-gray-900 dark:text-gray-100"
             >
               {{ t('dashboard.details.share.title') }}
             </DialogTitle>
@@ -234,7 +233,7 @@ function handleAnonymousChange(event: Event) {
                     v-if="qrCodeDataUrl.length > 0"
                     :src="qrCodeDataUrl"
                     class="w-full h-full"
-                  />
+                  >
 
                   <LoadingIndicator
                     :loading="qrCodeDataUrl.length === 0"
@@ -245,7 +244,7 @@ function handleAnonymousChange(event: Event) {
             </div>
 
             <div class="flex-grow">
-              <h2 class="font-display font-medium text-base mb-4">
+              <h2 class="font-display-safe font-medium text-base mb-4">
                 {{ t('dashboard.details.share.qrCodeInstructions.title') }}
               </h2>
 
@@ -253,7 +252,7 @@ function handleAnonymousChange(event: Event) {
                 class="prose prose-sm max-w-full min-w-0 dark:prose-invert prose-h4:text-base prose-h4:font-medium prose-h4:pb-2"
                 v-html="
                   renderMarkdown(
-                    t('dashboard.details.share.qrCodeInstructions.body')
+                    t('dashboard.details.share.qrCodeInstructions.body'),
                   )
                 "
               />
@@ -263,13 +262,13 @@ function handleAnonymousChange(event: Event) {
                 class="mt-8 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 p-1.5 rounded-md hidden md:flex md:items-center focus-within:ring-2 focus-within:ring-primary-600 dark:focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-gray-800 motion-safe:transition-shadow"
               >
                 <input
+                  ref="shareUrlInput"
                   type="text"
                   class="bg-transparent md:text-sm md:py-1.5 w-full min-w-0 border-none focus:ring-0 focus:outline-none focus:border-none"
                   readonly
-                  ref="shareUrlInput"
                   :value="shareUrl"
                   @focus="select"
-                />
+                >
 
                 <Button
                   size="small"
@@ -288,6 +287,7 @@ function handleAnonymousChange(event: Event) {
                 </Button>
 
                 <Button
+                  v-slot="{ iconClass }"
                   as="a"
                   size="small"
                   icon-only
@@ -295,7 +295,6 @@ function handleAnonymousChange(event: Event) {
                   class="flex-shrink-0 ml-0.5"
                   :href="shareUrl"
                   :title="t('dashboard.details.share.actionOpen')"
-                  v-slot="{ iconClass }"
                 >
                   <ArrowTopRightOnSquareIcon :class="iconClass" />
                 </Button>
@@ -307,7 +306,7 @@ function handleAnonymousChange(event: Event) {
             v-if="fileUrl.length > 0"
             :class="[
               'w-full flex flex-col md:flex-row pt-2 flex-shrink-0',
-              showUrlCopier ? 'md:justify-between' : 'md:justify-end'
+              showUrlCopier ? 'md:justify-between' : 'md:justify-end',
             ]"
           >
             <div
@@ -315,13 +314,13 @@ function handleAnonymousChange(event: Event) {
               class="flex items-center space-x-2.5 mb-4 md:mb-0"
             >
               <input
+                id="anonymous"
                 type="checkbox"
                 class="checkbox"
                 name="anonymous"
-                id="anonymous"
                 :checked="anonymous"
                 @change="handleAnonymousChange"
-              />
+              >
               <label for="anonymous" class="label mb-0">
                 {{ t('dashboard.details.share.anonymous') }}
               </label>

@@ -144,7 +144,7 @@ book:
     message: >
       The book metadata was inserted in the sheet. You can view the
       page of the book created or repeat the creation process and add
-      another book to the sheet.      
+      another book to the sheet.
     view: View
     newBook: New book
   card:
@@ -192,7 +192,7 @@ footer:
     description: >
       If the project is helping you and you want to make a donation,
       use the codes available below. We really appreciate it and we
-      will be eternally grateful.            
+      will be eternally grateful.
 pagination:
   text: 'Page {0} of {1} with {2} items'
   previous: Previous
@@ -246,7 +246,7 @@ home:
       title: Control over your data
       description: >
         The sheet is a Google Sheets™ file that is stored
-        at your Google Drive™.      
+        at your Google Drive™.
     openSource:
       title: Open source website
       description: >
@@ -260,10 +260,9 @@ home:
       it also allows the creation of other printed medias, such as books
       and comic books.
 
-
       By filling the catalographic record of each item, you will permit
       that filters can be used in the collection to a better organization
-      of the sheet contents.  
+      of the sheet contents.
   faq:
     title: Frequently Asked Questions
     help: >
@@ -375,7 +374,7 @@ dashboard:
         delete: Delete
     share:
       title: Share the book
-      qrCodeInstructions: 
+      qrCodeInstructions:
         title: Instructions
         body: |
           1. Open **Toshokan** in your phone.
@@ -413,7 +412,7 @@ dashboard:
       title: Reading
       description: >
         The reading date are used to compute the statistics of the
-        monthly read books. Make them precise, if possible.      
+        monthly read books. Make them precise, if possible.
       options:
         notReadYet: I have not read the book yet
         readToday: I finished the reading today
@@ -454,7 +453,7 @@ dashboard:
       title: You don't have any books yet
       description: >
         Create at least one book to allow the information to
-        be calculated and displayed at this page.      
+        be calculated and displayed at this page.
   library:
     title: Library
     currentGroup: 'Current group: '
@@ -506,7 +505,7 @@ dashboard:
       title: Your library is empty
       description: >
         Add the first book to start to better manage your
-        collections and allow the display of the monthly statistics.   
+        collections and allow the display of the monthly statistics.
     noResults:
       title: No results found
       description: >
@@ -541,15 +540,12 @@ dashboard:
           gives a unique numeric identifier for each item, allowing the
           classification by title, authors, country, publisher and edition.
 
-
           This code can be normally found next to the barcode. The search
           accepts both versions of the code, the 10-digit and the 13-digit.
           Books recently published usually have a 13-digit version.
 
-
           If the book does not have an ISBN, you can manually fill in the
           information needed to create the item in the spreadsheet.
-
 
           *[ISBN]: International Standard Book Number
         additionalInfo: Additional information
@@ -648,7 +644,7 @@ dashboard:
         label: Toshokan Android
         description: Export your sheet as a Toshokan Android compatible file.
         export: Exportar
-        instructions: 
+        instructions:
           title: Instructions
           text: |
             Follow the steps below to restore the sheet in the app.
@@ -677,7 +673,7 @@ dashboard:
       title: You don't have any books yet
       description: >
         Create at least one book so we can start to do the calculation
-        of your library statistics.      
+        of your library statistics.
       action: New book
     tooEarly:
       title: It's too early to display the statistics

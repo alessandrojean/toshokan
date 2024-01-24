@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
-import SheetService from '@/services/sheet'
 import { useSettingsStore } from './settings'
+import SheetService from '@/services/sheet'
 
 type File = gapi.client.drive.File
 
@@ -10,7 +10,7 @@ export const useSheetStore = defineStore('sheet', {
     isEmpty: false,
     options: [] as File[],
     selected: null as File | null,
-    sheetId: null as string | null
+    sheetId: null as string | null,
   }),
   getters: {
     canChange(): boolean {
@@ -39,7 +39,7 @@ export const useSheetStore = defineStore('sheet', {
 
     shared(): boolean {
       return this.selected?.ownedByMe === false
-    }
+    },
   },
   actions: {
     /**
@@ -75,8 +75,8 @@ export const useSheetStore = defineStore('sheet', {
     updateSheetId(sheetId: string | null) {
       this.sheetId = sheetId
       localStorage.setItem('last_sheet_opened', sheetId ?? '')
-    }
-  }
+    },
+  },
 })
 
 if (import.meta.hot) {

@@ -6,11 +6,11 @@ import Book from '@/model/Book'
 import { isbn as isValidIsbn } from '@/util/validators'
 import i18n from '@/i18n'
 
-type OpenLibraryBookResponse = {
+interface OpenLibraryBookResponse {
   [bibkey: string]: OpenLibraryBook
 }
 
-export type OpenLibraryBook = {
+export interface OpenLibraryBook {
   title: string
   authors: { name: string }[]
   publishers: { name: string }[]
@@ -24,7 +24,7 @@ export type OpenLibraryBook = {
     large?: string
   }
 }
-export type OpenLibraryBookDetails = {
+export interface OpenLibraryBookDetails {
   physical_dimensions?: string
   description?: { value: string }
 }
@@ -34,15 +34,15 @@ export default class OpenLibrary extends Lookup {
     return axios.create({
       baseURL: 'https://openlibrary.org/',
       headers: {
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     })
   }
 
   async #findDetails(isbn: string) {
     try {
       const { data } = await this.axios.get<OpenLibraryBookDetails>(
-        `isbn/${isbn}.json`
+        `isbn/${isbn}.json`,
       )
 
       return data
@@ -69,9 +69,9 @@ export default class OpenLibrary extends Lookup {
           params: {
             bibkeys: bibKey,
             jscmd: 'data',
-            format: 'json'
-          }
-        }
+            format: 'json',
+          },
+        },
       )
 
       if (!data[bibKey]) {

@@ -1,15 +1,18 @@
+import { type UseQueryOptions, useQuery } from '@tanstack/vue-query'
 import type { Ref } from 'vue'
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query'
 
 import lookupSearch from '@/services/lookup'
 
-export default function useIsbnSearchQuery(
-  isbn: Ref<string>,
-  { enabled }: UseQueryOptions
-) {
-  async function fetcher() {
-    return await lookupSearch(isbn.value)
-  }
+type LookupSearchReturn = Awaited<ReturnType<typeof lookupSearch>> | undefined
+type UseIsbnSearchQueryOptions<S> = UseQueryOptions<LookupSearchReturn, Error, S> &
+  { isbn: Ref<string> }
 
-  return useQuery(['isbn-search', isbn], fetcher, { enabled })
+export default function useIsbnSearchQuery<S = LookupSearchReturn>(options: UseIsbnSearchQueryOptions<S>) {
+  return useQuery({
+    queryKey: ['isbn-search', options.isbn],
+    queryFn: async () => {
+      return await lookupSearch(options.isbn.value)
+    },
+    ...options,
+  })
 }

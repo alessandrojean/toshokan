@@ -5,7 +5,7 @@ import type { Sort } from '@/types'
 
 type PaginationInfo = ReturnType<Paginator['build']>
 
-type UpdateSortArgs = {
+interface UpdateSortArgs {
   sortBy?: string
   sortDirection?: Sort
 }
@@ -17,14 +17,14 @@ export const useSearchStore = defineStore('search', {
     page: 1,
     pagination: null as PaginationInfo | null,
     sortBy: useLocalStorage('search_sort_by', 'createdAt'),
-    sortDirection: useLocalStorage<Sort>('search_sort_direction', 'desc')
+    sortDirection: useLocalStorage<Sort>('search_sort_direction', 'desc'),
   }),
   actions: {
     clear() {
       this.$patch({
         query: '',
         page: 1,
-        pagination: null
+        pagination: null,
       })
     },
 
@@ -39,7 +39,7 @@ export const useSearchStore = defineStore('search', {
     updatePagination(pagination: PaginationInfo) {
       this.pagination = {
         ...this.pagination,
-        ...pagination
+        ...pagination,
       }
     },
 
@@ -50,8 +50,8 @@ export const useSearchStore = defineStore('search', {
     updateSort({ sortBy, sortDirection }: UpdateSortArgs) {
       this.sortBy = sortBy ?? this.sortBy
       this.sortDirection = sortDirection ?? this.sortDirection
-    }
-  }
+    },
+  },
 })
 
 if (import.meta.hot) {

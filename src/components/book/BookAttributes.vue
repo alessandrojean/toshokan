@@ -1,14 +1,13 @@
 <script lang="ts" setup>
+import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon,
+} from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import type { MonetaryValue } from '@/model/Book'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 import type { SheetTimezone } from '@/services/sheet/getTimeZone'
 import { hyphenate } from '@/util/isbn'
-
-import {
-ArrowTrendingDownIcon,
-ArrowTrendingUpIcon
-} from '@heroicons/vue/20/solid'
 
 export interface BookButtonsProps {
   book?: Book | null
@@ -19,7 +18,7 @@ export interface BookButtonsProps {
 const props = withDefaults(defineProps<BookButtonsProps>(), {
   book: undefined,
   loading: false,
-  timeZone: undefined
+  timeZone: undefined,
 })
 
 defineEmits<{
@@ -38,7 +37,6 @@ function formatPrice(price: MonetaryValue | null | undefined) {
 
   const { value, currency } = price
 
-  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
@@ -47,13 +45,13 @@ function formatDate(date: Date | string, format = 'short') {
     return d(
       new Date(`${date}T00:00:00.000${timeZone.value!.offsetStr}`),
       format,
-      // @ts-ignore
-      { timeZone: timeZone.value.name }
+      // @ts-expect-error missing types
+      { timeZone: timeZone.value.name },
     )
   }
 
   if (date instanceof Date) {
-    // @ts-ignore
+    // @ts-expect-error missing types
     return d(date, format, { timeZone: timeZone.value.name })
   }
 
@@ -68,85 +66,86 @@ const language = computed(() => {
   }
 
   const languageNames = new Intl.DisplayNames([locale.value], {
-    type: 'language'
+    type: 'language',
   })
   const localizedName = languageNames.of(country.value.locale)!
 
   return (
-    localizedName.charAt(0).toLocaleUpperCase(locale.value) +
-    localizedName.slice(1)
+    localizedName.charAt(0).toLocaleUpperCase(locale.value)
+    + localizedName.slice(1)
   )
 })
 
 const metadata = computed(() => {
-  const sameCurrency =
-    book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
+  const sameCurrency
+    = book.value?.paidPrice?.currency === book.value?.labelPrice?.currency
 
   return [
     {
       title: t('book.properties.language'),
-      value: country.value ? language.value : null
+      value: country.value ? language.value : null,
     },
     {
       title: book.value?.codeType ?? t('book.properties.code'),
       value: book.value?.codeType === 'ISBN-10' || book.value?.codeType === 'ISBN-13'
-        ? hyphenate(book.value!!.code!!) : book.value?.code
+        ? hyphenate(book.value!.code!)
+        : book.value?.code,
     },
     {
       title: t('book.properties.publisher'),
       key: 'publisher',
       value: book.value?.publisher,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.group'),
       key: 'group',
       value: book.value?.group,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.dimensions'),
       value: book.value?.dimensions
-        ? n(book.value.dimensions.width, 'dimensions') +
-          ' × ' +
-          n(book.value.dimensions.height, 'dimensions') +
-          ' cm'
-        : null
+        ? `${n(book.value.dimensions.width, 'dimensions')
+          } × ${
+          n(book.value.dimensions.height, 'dimensions')
+          } cm`
+        : null,
     },
     {
       title: t('book.properties.labelPrice'),
-      value: formatPrice(book.value?.labelPrice)
+      value: formatPrice(book.value?.labelPrice),
     },
     {
       title: t('book.properties.paidPrice'),
       value: formatPrice(book.value?.paidPrice),
       badge: sameCurrency
-        ? (book.value?.paidPrice?.value ?? 0) >
-          (book.value?.labelPrice?.value ?? 0)
-          ? (book.value?.paidPrice?.value ?? 1) /
-            (book.value?.labelPrice?.value ?? 1)
-          : 1 -
-            (book.value?.paidPrice?.value ?? 1) /
-              (book.value?.labelPrice?.value ?? 1)
+        ? (book.value?.paidPrice?.value ?? 0)
+        > (book.value?.labelPrice?.value ?? 0)
+            ? (book.value?.paidPrice?.value ?? 1)
+            / (book.value?.labelPrice?.value ?? 1)
+            : 1
+            - (book.value?.paidPrice?.value ?? 1)
+            / (book.value?.labelPrice?.value ?? 1)
         : null,
-      samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value
+      samePrice: book.value?.paidPrice?.value === book.value?.labelPrice?.value,
     },
     {
       title: t('book.properties.store'),
       key: 'store',
       value: book.value?.store,
-      searchable: true
+      searchable: true,
     },
     {
       title: t('book.properties.boughtAt'),
       value: book.value?.boughtAt,
-      time: true
+      time: true,
     },
     {
       title: t('book.properties.readAt'),
       value: book.value?.readAt,
-      time: true
-    }
+      time: true,
+    },
   ]
 })
 </script>
@@ -188,7 +187,7 @@ const metadata = computed(() => {
                 mt.badge <= 1
                   ? 'bg-emerald-100 text-emerald-700'
                   : 'bg-red-100 text-red-800',
-                'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold'
+                'dark:bg-gray-700 dark:text-gray-200 ml-3 px-1.5 py-0.5 flex items-center space-x-1 rounded-full text-xs uppercase font-bold dark:font-semibold',
               ]"
             >
               <span aria-hidden="true">

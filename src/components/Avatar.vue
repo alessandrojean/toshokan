@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   alt: undefined,
   dark: false,
   shared: false,
-  small: false
+  small: false,
 })
 
 const { alt, pictureUrl } = toRefs(props)
@@ -33,7 +33,7 @@ const { t } = useI18n({ useScope: 'global' })
     >
       <UserIcon class="user-icon" />
     </div>
-    <img v-else class="avatar-img" :alt="alt" :src="pictureUrl" />
+    <img v-else class="avatar-img" :alt="alt" :src="pictureUrl">
     <div
       v-if="shared"
       class="shared-badge"

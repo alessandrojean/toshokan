@@ -32,7 +32,7 @@ watch(imageHasError, (hasError) => {
       active || checked
         ? 'ring-2 ring-offset-2 ring-primary-600 dark:ring-primary-500 dark:ring-offset-gray-700'
         : '',
-      'relative shadow bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden aspect-w-2 aspect-h-3 cursor-pointer motion-safe:transition-shadow'
+      'relative shadow bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden aspect-w-2 aspect-h-3 cursor-pointer motion-safe:transition-shadow',
     ]"
   >
     <FadeTransition>
@@ -43,7 +43,7 @@ watch(imageHasError, (hasError) => {
         <PhotoIcon
           :class="[
             imageLoading ? 'motion-safe:animate-pulse' : '',
-            'w-10 h-10 text-gray-400 dark:text-gray-500'
+            'w-10 h-10 text-gray-400 dark:text-gray-500',
           ]"
           aria-hidden="true"
         />
@@ -53,7 +53,7 @@ watch(imageHasError, (hasError) => {
         class="object-cover w-full h-full"
         :src="thumbnailUrl"
         alt=""
-      />
+      >
     </FadeTransition>
     <div
       v-if="checked"

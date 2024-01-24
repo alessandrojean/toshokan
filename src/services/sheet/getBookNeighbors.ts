@@ -12,8 +12,8 @@ import Book, { CollectionColumns, Columns } from '@/model/Book'
  */
 export default async function getBookNeighbors(
   sheetId: string,
-  book: Book
-): Promise<{ previous: Book | null; next: Book | null } | null> {
+  book: Book,
+): Promise<{ previous: Book | null, next: Book | null } | null> {
   const sheetUrl = buildSheetUrl(sheetId)
 
   const { TITLE, PUBLISHER, GROUP } = CollectionColumns
@@ -31,14 +31,14 @@ export default async function getBookNeighbors(
   }
 
   const bookRow = dataTable.asArray.findIndex(
-    (rowData) => rowData[Columns.TITLE] === book.title
+    rowData => rowData[Columns.TITLE] === book.title,
   )
 
-  const previous =
-    bookRow > 0 ? Book.fromDataTable(dataTable.getRow(bookRow - 1)) : null
+  const previous
+    = bookRow > 0 ? Book.fromDataTable(dataTable.getRow(bookRow - 1)) : null
 
-  const next =
-    bookRow < dataTable.rows - 1
+  const next
+    = bookRow < dataTable.rows - 1
       ? Book.fromDataTable(dataTable.getRow(bookRow + 1))
       : null
 

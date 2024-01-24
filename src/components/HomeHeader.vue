@@ -18,7 +18,7 @@ const { t } = useI18n({ useScope: 'global' })
             <BuildingLibraryIcon class="h-9 w-9 text-primary-500" />
           </span>
           <span
-            class="text-gray-800 dark:text-gray-200 font-display font-semibold text-xl ml-3"
+            class="text-gray-800 dark:text-gray-200 font-display-safe font-semibold text-xl ml-3"
             aria-hidden="true"
           >
             {{ t('app.name') }}
@@ -37,26 +37,28 @@ const { t } = useI18n({ useScope: 'global' })
         </div>
         <div class="flex items-center">
           <Button
+            v-if="authenticated && authorized"
             as="RouterLink"
             kind="primary"
             :to="{ name: 'dashboard' }"
             rounded
-            v-if="authenticated && authorized"
           >
             {{ t('home.header.dashboard') }}
           </Button>
           <ThemeToggle light class="ml-3" />
           <Button
+            v-if="!authenticated"
             as="RouterLink"
             kind="primary"
             :to="{ name: 'dashboard' }"
             rounded
             class="ml-3 hidden md:flex"
-            v-if="!authenticated"
           >
             {{ t('home.header.signIn') }}
           </Button>
           <Button
+            v-if="!authenticated"
+            v-slot="{ iconClass }"
             as="RouterLink"
             kind="primary"
             size="large"
@@ -65,8 +67,6 @@ const { t } = useI18n({ useScope: 'global' })
             rounded
             icon-only
             class="ml-3 md:hidden"
-            v-if="!authenticated"
-            v-slot="{ iconClass }"
           >
             <ArrowLeftStartOnRectangleIcon :class="[iconClass, 'rotate-180']" />
           </Button>

@@ -12,7 +12,7 @@ export default function useTailwindTheme(): TailwindTheme {
   const config = resolveConfig(tailwindConfig)
 
   const breakpoints = Object.entries(config.theme!.screens!).map(
-    ([screen, minWidth]) => [screen, parseInt(minWidth.replace('px', ''), 10)]
+    ([screen, minWidth]) => [screen, Number.parseInt(minWidth.replace('px', ''), 10)],
   )
 
   return {
@@ -28,6 +28,6 @@ export default function useTailwindTheme(): TailwindTheme {
       const variants = colors[name] as Record<string | number, string>
 
       return variants[variantion]
-    }
+    },
   }
 }

@@ -12,7 +12,7 @@ import QueryBuilder from '@/data/QueryBuilder'
  */
 export default async function getBookById(
   sheetId: string,
-  id: string
+  id: string,
 ): Promise<Book | null> {
   const sheetUrl = buildSheetUrl(sheetId)
 

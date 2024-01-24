@@ -2,13 +2,13 @@ import { nanoid } from 'nanoid'
 
 import { PUBLISHER_REPLACEMENTS } from '@/services/lookup/Cbl'
 import {
-  ean as validateEan,
+  decimalComma,
   isbn as isValidIsbn,
-  issn as validateIssn
+  ean as validateEan
+  , issn as validateIssn,
 } from '@/util/validators'
 
 import i18n from '@/i18n'
-import { decimalComma } from '@/util/validators'
 import { getIsbnCountry } from '@/util/isbn'
 import { fixDate, formatDateTimeToSheet, formatDateToSheet } from '@/util/date'
 import type { Sort } from '@/types'
@@ -17,7 +17,7 @@ import type {
   CblBook,
   GoogleBook,
   OpenLibraryBook,
-  OpenLibraryBookDetails
+  OpenLibraryBookDetails,
 } from '@/services/lookup'
 
 const { n, locale } = i18n.global
@@ -45,7 +45,7 @@ export enum Columns {
   NOTES = 19,
   TAGS = 20,
   CREATED_AT = 21,
-  UPDATED_AT = 22
+  UPDATED_AT = 22,
 }
 
 export enum CollectionColumns {
@@ -71,31 +71,31 @@ export enum CollectionColumns {
   NOTES = 'U',
   TAGS = 'V',
   CREATED_AT = 'W',
-  UPDATED_AT = 'X'
+  UPDATED_AT = 'X',
 }
 
 export const PropertyToColumn: Record<string, (string | [string, Sort])[]> = {
-  title: [CollectionColumns.TITLE],
-  publisher: [CollectionColumns.PUBLISHER],
-  status: [CollectionColumns.STATUS],
+  'title': [CollectionColumns.TITLE],
+  'publisher': [CollectionColumns.PUBLISHER],
+  'status': [CollectionColumns.STATUS],
   'paidPrice.value': [
     [CollectionColumns.PAID_PRICE_CURRENCY, 'asc'],
-    CollectionColumns.PAID_PRICE_VALUE
+    CollectionColumns.PAID_PRICE_VALUE,
   ],
   'labelPrice.value': [
     [CollectionColumns.LABEL_PRICE_CURRENCY, 'asc'],
-    CollectionColumns.LABEL_PRICE_VALUE
+    CollectionColumns.LABEL_PRICE_VALUE,
   ],
-  boughtAt: [CollectionColumns.BOUGHT_AT],
-  readAt: [CollectionColumns.READ_AT, CollectionColumns.UPDATED_AT],
-  createdAt: [CollectionColumns.CREATED_AT],
-  updatedAt: [CollectionColumns.UPDATED_AT]
+  'boughtAt': [CollectionColumns.BOUGHT_AT],
+  'readAt': [CollectionColumns.READ_AT, CollectionColumns.UPDATED_AT],
+  'createdAt': [CollectionColumns.CREATED_AT],
+  'updatedAt': [CollectionColumns.UPDATED_AT],
 }
 
 export enum Status {
   READ = 'READ',
   UNREAD = 'UNREAD',
-  FUTURE = 'FUTURE'
+  FUTURE = 'FUTURE',
 }
 
 export const STATUS_READ = Status.READ
@@ -104,7 +104,7 @@ export const STATUS_FUTURE = Status.FUTURE
 
 export enum Favorite {
   ACTIVE = 'YES',
-  INACTIVE = ''
+  INACTIVE = '',
 }
 
 export const FAVORITE_ACTIVE = Favorite.ACTIVE
@@ -116,12 +116,12 @@ const CBL_ALLOWED_ROLES = ['Autor', 'Ilustrador', 'Roteirista']
 
 const monetaryValidator = decimalComma(2)
 
-export type Dimension = {
+export interface Dimension {
   width: number
   height: number
 }
 
-export type MonetaryValue = {
+export interface MonetaryValue {
   currency: string
   value: number
   valueStr?: string
@@ -218,7 +218,7 @@ export default class Book {
       title: parts[0].trim(),
       number: parts[1] || null,
       main,
-      subtitle: subtitle.length > 0 ? subtitle : null
+      subtitle: subtitle.length > 0 ? subtitle : null,
     }
   }
 
@@ -244,7 +244,7 @@ export default class Book {
    * @type {boolean}
    */
   get isNsfw() {
-    return this.tags.some((tag) => NSFW_TAGS.includes(tag.toLowerCase()))
+    return this.tags.some(tag => NSFW_TAGS.includes(tag.toLowerCase()))
   }
 
   /**
@@ -282,8 +282,8 @@ export default class Book {
       return ''
     }
 
-    const width = isNaN(this.dimensions.width) ? '' : n(this.dimensions.width)
-    const height = isNaN(this.dimensions.height)
+    const width = Number.isNaN(this.dimensions.width) ? '' : n(this.dimensions.width)
+    const height = Number.isNaN(this.dimensions.height)
       ? ''
       : n(this.dimensions.height)
 
@@ -309,24 +309,24 @@ export default class Book {
    * Compares this book with b.
    *
    * @param {Book} b The other book to compare
-   * @returns {number}
+   * @returns {number} the comparison
    */
   compare(b: Book): number {
     return (
-      this.group!.localeCompare(b.group!, locale) ||
-      this.titleParts.title.localeCompare(b.titleParts.title, locale) ||
-      this.publisher!.localeCompare(b.publisher!, locale) ||
-      (this.titleParts.number ?? '01').localeCompare(
-        b.titleParts.number ?? '01',
-        locale
-      )
+      this.group!.localeCompare(b.group!, locale)
+        || this.titleParts.title.localeCompare(b.titleParts.title, locale)
+        || this.publisher!.localeCompare(b.publisher!, locale)
+        || (this.titleParts.number ?? '01').localeCompare(
+          b.titleParts.number ?? '01',
+          locale,
+        )
     )
   }
 
   /**
    * Formats the book as a proper array to be inserted in the sheet.
    *
-   * @returns {string[]}
+   * @returns {string[]} the array representation
    */
   toArray(): string[] {
     const now = new Date()
@@ -346,9 +346,9 @@ export default class Book {
       this.title!,
       this.authorsStr,
       this.publisher!,
-      n(this.dimensions!.width, 'dimensions', 'en-US') +
-        ' × ' +
-        n(this.dimensions!.height, 'dimensions', 'en-US'),
+      `${n(this.dimensions!.width, 'dimensions', 'en-US')
+        } × ${
+        n(this.dimensions!.height, 'dimensions', 'en-US')}`,
       this.status ?? STATUS_UNREAD,
       this.readAt ? formatDateToSheet(fixDate(this.readAt, offset)) : '',
       this.labelPrice!.currency,
@@ -363,7 +363,7 @@ export default class Book {
       this.notes ?? '',
       this.tags ? this.tags.join(', ').toUpperCase() : '',
       formatDateTimeToSheet(fixDate(this.createdAt!, offset) ?? timezoned),
-      formatDateTimeToSheet(timezoned)
+      formatDateTimeToSheet(timezoned),
     ]
   }
 
@@ -387,18 +387,18 @@ export default class Book {
       authors: rowData[Columns.AUTHORS].split(/;\s+/g),
       publisher: rowData[Columns.PUBLISHER],
       dimensions: {
-        width: parseFloat(dimensions[0]),
-        height: parseFloat(dimensions[1])
+        width: Number.parseFloat(dimensions[0]),
+        height: Number.parseFloat(dimensions[1]),
       },
       status: rowData[Columns.STATUS],
       readAt: rowData[Columns.READ_AT],
       labelPrice: {
         currency: rowData[Columns.LABEL_PRICE_CURRENCY],
-        value: rowData[Columns.LABEL_PRICE_VALUE]
+        value: rowData[Columns.LABEL_PRICE_VALUE],
       },
       paidPrice: {
         currency: rowData[Columns.PAID_PRICE_CURRENCY],
-        value: rowData[Columns.PAID_PRICE_VALUE]
+        value: rowData[Columns.PAID_PRICE_VALUE],
       },
       store: rowData[Columns.STORE],
       coverUrl: rowData[Columns.COVER_URL] || '',
@@ -408,11 +408,11 @@ export default class Book {
       notes: rowData[Columns.NOTES] || '',
       tags: rowData[Columns.TAGS]
         ? rowData[Columns.TAGS]
-            .split(/,\s*/)
-            .map((t: string) => t.toUpperCase())
+          .split(/,\s*/)
+          .map((t: string) => t.toUpperCase())
         : [],
       createdAt: rowData[Columns.CREATED_AT],
-      updatedAt: rowData[Columns.UPDATED_AT]
+      updatedAt: rowData[Columns.UPDATED_AT],
     })
   }
 
@@ -434,26 +434,26 @@ export default class Book {
         .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
         .replace(/#(\d{1})$/, '#0$1'),
       authors:
-        cblBook.Profissoes &&
-        cblBook.Profissoes.length >= (cblBook.Authors ?? []).length
+        cblBook.Profissoes
+        && cblBook.Profissoes.length >= (cblBook.Authors ?? []).length
           ? (cblBook.Authors ?? []).filter((_, i) =>
-              CBL_ALLOWED_ROLES.includes(cblBook.Profissoes![i])
+              CBL_ALLOWED_ROLES.includes(cblBook.Profissoes![i]),
             )
           : cblBook.Authors,
       publisher:
         PUBLISHER_REPLACEMENTS[cblBook.Imprint as string] ?? cblBook.Imprint,
       dimensions: dimensions
         ? {
-            width: parseFloat(
-              dimensions[1] + (dimensions[2] ? '.' + dimensions[2] : '')
+            width: Number.parseFloat(
+              dimensions[1] + (dimensions[2] ? `.${dimensions[2]}` : ''),
             ),
-            height: parseFloat(
-              dimensions[3] + (dimensions[4] ? '.' + dimensions[4] : '')
-            )
+            height: Number.parseFloat(
+              dimensions[3] + (dimensions[4] ? `.${dimensions[4]}` : ''),
+            ),
           }
         : null,
       synopsis: cblBook.Sinopse || '',
-      provider: 'CBL'
+      provider: 'CBL',
     })
   }
 
@@ -466,17 +466,17 @@ export default class Book {
   static fromGoogleBooks(googleBook: GoogleBook): Book {
     const volumeInfo = googleBook.volumeInfo
     const isbn13 = (volumeInfo.industryIdentifiers || []).find(
-      (identifier) => identifier.type === 'ISBN_13'
+      identifier => identifier.type === 'ISBN_13',
     )
     const isbn10 = (volumeInfo.industryIdentifiers || []).find(
-      (identifier) => identifier.type === 'ISBN_10'
+      identifier => identifier.type === 'ISBN_10',
     )
 
     const width = volumeInfo.dimensions
-      ? parseFloat(volumeInfo.dimensions.width.replace(/\s(.*)$/, ''))
+      ? Number.parseFloat(volumeInfo.dimensions.width.replace(/\s(.*)$/, ''))
       : null
     const height = volumeInfo.dimensions
-      ? parseFloat(volumeInfo.dimensions.height.replace(/\s(.*)$/, ''))
+      ? Number.parseFloat(volumeInfo.dimensions.height.replace(/\s(.*)$/, ''))
       : null
 
     return new Book({
@@ -489,7 +489,7 @@ export default class Book {
       publisher: volumeInfo.publisher ?? '',
       synopsis: volumeInfo.description ?? '',
       dimensions: width && height ? { width, height } : null,
-      provider: 'Google Books'
+      provider: 'Google Books',
     })
   }
 
@@ -502,7 +502,7 @@ export default class Book {
    */
   static fromOpenLibrary(
     openLibraryBook: OpenLibraryBook,
-    details: OpenLibraryBookDetails | null
+    details: OpenLibraryBookDetails | null,
   ): Book {
     const code = openLibraryBook.identifiers.isbn_13
       ? openLibraryBook.identifiers.isbn_13[0]
@@ -514,13 +514,13 @@ export default class Book {
         .trim()
         .replace(/(?::| -)? ?(?:v|vol|volume)?(?:\.|:)? ?(\d+)$/i, ' #$1')
         .replace(/#(\d{1})$/, '#0$1'),
-      authors: (openLibraryBook.authors ?? []).map((author) => author.name),
+      authors: (openLibraryBook.authors ?? []).map(author => author.name),
       publisher:
         openLibraryBook.publishers.length > 0
           ? openLibraryBook.publishers[0].name
           : '',
       coverUrl: openLibraryBook.cover?.large ?? '',
-      provider: 'Open Library'
+      provider: 'Open Library',
     })
 
     if (details) {
@@ -528,8 +528,8 @@ export default class Book {
       const dimensions = physicalDimensions
         .replace(' centimeters', '')
         .split(' x ')
-        .map(parseFloat)
-        .filter((dm) => !isNaN(dm))
+        .map(Number.parseFloat)
+        .filter(dm => !Number.isNaN(dm))
 
       Object.assign(book, {
         synopsis: details.description ?? '',
@@ -537,9 +537,9 @@ export default class Book {
           physicalDimensions.includes('centimeters') && dimensions.length === 3
             ? {
                 width: dimensions[1],
-                height: dimensions[0]
+                height: dimensions[0],
               }
-            : null
+            : null,
       })
     }
 
@@ -553,7 +553,7 @@ export default class Book {
    * @returns {'ISBN-13' | 'ISBN-10' | 'ISSN' | 'EAN-13' | 'ID' | 'N/A'} The type of the code
    */
   static getCodeType(
-    code: string
+    code: string,
   ): 'ISBN-13' | 'ISBN-10' | 'ISSN' | 'EAN-13' | 'ID' | 'N/A' {
     code = code.replace(/-/g, '')
 

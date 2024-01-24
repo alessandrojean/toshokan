@@ -1,13 +1,12 @@
 <script lang="ts" setup>
+import slugify from 'slugify'
+import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import type { GroupData } from '@/queries/useGroupsQuery'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import type { Sort } from '@/types'
+import { TriState } from '@/types'
 import { injectStrict } from '@/util'
-import { Sort, TriState } from '@/types'
-
-import slugify from 'slugify'
-
-import { ArrowUpIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 
 export interface FilterState {
   favorites: TriState
@@ -39,7 +38,7 @@ const {
   groups: groupsProps,
   sortDirection,
   sortProperty,
-  open
+  open,
 } = toRefs(props)
 
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -54,7 +53,7 @@ const sortProperties = computed(() => {
     { attr: 'paidPrice.value', title: t('book.properties.paidPrice') },
     { attr: 'labelPrice.value', title: t('book.properties.labelPrice') },
     { attr: 'createdAt', title: t('book.properties.createdAt') },
-    { attr: 'updatedAt', title: t('book.properties.updatedAt') }
+    { attr: 'updatedAt', title: t('book.properties.updatedAt') },
   ]
 
   return properties.sort((a, b) => a.title.localeCompare(b.title, locale.value))
@@ -64,6 +63,14 @@ const sheetStore = useSheetStore()
 const groupsEnabled = computed(() => sheetStore.sheetId !== null)
 
 const { data: groupsData } = useGroupsQuery({ enabled: groupsEnabled })
+
+const state = reactive<FilterState>({
+  favorites: favorites.value,
+  futureItems: futureItems.value,
+  sortDirection: sortDirection.value,
+  sortProperty: sortProperty.value,
+  groups: groupsProps.value,
+})
 
 const groups = computed<GroupData[]>(() => {
   const values = groupsData.value?.slice() || []
@@ -87,7 +94,7 @@ watch(open, (newOpen) => {
       futureItems: futureItems.value,
       sortDirection: sortDirection.value,
       sortProperty: sortProperty.value,
-      groups: groupsProps.value
+      groups: groupsProps.value,
     })
   }
 
@@ -103,18 +110,10 @@ function checked(key: keyof typeof state, value: string) {
   return state[key].includes(value)
 }
 
-const state = reactive<FilterState>({
-  favorites: favorites.value,
-  futureItems: futureItems.value,
-  sortDirection: sortDirection.value,
-  sortProperty: sortProperty.value,
-  groups: groupsProps.value
-})
-
 const countProperty: Record<TriState, keyof GroupData> = {
   [TriState.INDIFERENT]: 'totalCount',
   [TriState.ONLY]: 'futureCount',
-  [TriState.HIDE]: 'count'
+  [TriState.HIDE]: 'count',
 }
 
 interface FilterGroup {
@@ -151,12 +150,12 @@ const filters = computed(
             key: 'groups',
             label: t('dashboard.library.filters.groups'),
             multiple: true,
-            options: groups.value.map((grp) => ({
+            options: groups.value.map(grp => ({
               key: grp.name,
               value: grp.name,
               label: grp.name,
-              count: grp[countProperty[state.futureItems]]
-            }))
+              count: grp[countProperty[state.futureItems]],
+            })),
           },
           {
             key: 'favorites',
@@ -165,19 +164,19 @@ const filters = computed(
               {
                 key: TriState.INDIFERENT,
                 value: TriState.INDIFERENT,
-                label: t('dashboard.library.filters.favorites.indiferent')
+                label: t('dashboard.library.filters.favorites.indiferent'),
               },
               {
                 key: TriState.ONLY,
                 value: TriState.ONLY,
-                label: t('dashboard.library.filters.favorites.only')
+                label: t('dashboard.library.filters.favorites.only'),
               },
               {
                 key: TriState.HIDE,
                 value: TriState.HIDE,
-                label: t('dashboard.library.filters.favorites.hide')
-              }
-            ]
+                label: t('dashboard.library.filters.favorites.hide'),
+              },
+            ],
           },
           {
             key: 'futureItems',
@@ -186,33 +185,33 @@ const filters = computed(
               {
                 key: TriState.INDIFERENT,
                 value: TriState.INDIFERENT,
-                label: t('dashboard.library.filters.futureItems.indiferent')
+                label: t('dashboard.library.filters.futureItems.indiferent'),
               },
               {
                 key: TriState.ONLY,
                 value: TriState.ONLY,
-                label: t('dashboard.library.filters.futureItems.only')
+                label: t('dashboard.library.filters.futureItems.only'),
               },
               {
                 key: TriState.HIDE,
                 value: TriState.HIDE,
-                label: t('dashboard.library.filters.futureItems.hide')
-              }
-            ]
+                label: t('dashboard.library.filters.futureItems.hide'),
+              },
+            ],
           },
           {
             key: 'sortProperty',
             label: t('dashboard.library.filters.sortBy'),
             sort: true,
-            options: sortProperties.value.map((property) => ({
+            options: sortProperties.value.map(property => ({
               key: property.attr,
               value: property.attr,
-              label: property.title
-            }))
-          }
-        ]
-      }
-    ] as FilterGroup[]
+              label: property.title,
+            })),
+          },
+        ],
+      },
+    ] as FilterGroup[],
 )
 
 function toggleSort() {
@@ -226,8 +225,8 @@ function toggleSort() {
       as="div"
       static
       class="fixed inset-0 overflow-hidden z-30"
-      @close="$emit('update:open', false)"
       :open="open"
+      @close="$emit('update:open', false)"
     >
       <div class="absolute inset-0 overflow-hidden">
         <TransitionChild
@@ -262,7 +261,7 @@ function toggleSort() {
                   class="flex justify-between items-center pt-4 sm:pt-0 px-4 sm:px-6"
                 >
                   <DialogTitle
-                    class="text-lg font-display font-medium text-gray-900 dark:text-gray-100"
+                    class="text-lg font-display-safe font-medium text-gray-900 dark:text-gray-100"
                   >
                     {{ t('dashboard.library.filters.title') }}
                   </DialogTitle>
@@ -286,9 +285,9 @@ function toggleSort() {
                     <Disclosure
                       v-for="(section, sectionIdx) in filters"
                       :key="sectionIdx"
+                      v-slot="{ open }"
                       as="div"
                       class="py-4"
-                      v-slot="{ open }"
                       :default-open="section.open"
                     >
                       <DisclosureButton
@@ -309,7 +308,7 @@ function toggleSort() {
                         <template v-for="child in section.children">
                           <fieldset
                             v-if="child.options.length > 0 && child.multiple"
-                            :key="child.key + '-fieldset'"
+                            :key="`${child.key}-fieldset`"
                           >
                             <legend class="label">
                               {{ child.label }}
@@ -322,26 +321,26 @@ function toggleSort() {
                                 class="mr-2 mt-2 inline-block"
                               >
                                 <input
+                                  :id="slugify(`${child.key}-${option.key}`)"
+                                  v-model="state[child.key]"
                                   type="checkbox"
                                   class="sr-only"
-                                  :name="child.key + '-filter'"
-                                  :id="slugify(child.key + '-' + option.key)"
+                                  :name="`${child.key}-filter`"
                                   :value="option.value"
-                                  v-model="state[child.key]"
-                                />
+                                >
                                 <label
-                                  :for="slugify(child.key + '-' + option.key)"
+                                  :for="slugify(`${child.key}-${option.key}`)"
                                   :class="[
                                     'chip is-square',
                                     checked(child.key, option.value)
                                       ? 'is-active'
-                                      : ''
+                                      : '',
                                   ]"
                                 >
                                   {{ option.label }}
                                   <span
-                                    class="count"
                                     v-if="option.count !== undefined"
+                                    class="count"
                                   >
                                     <span class="sr-only">(</span>
                                     <span>{{ option.count }}</span>
@@ -356,7 +355,7 @@ function toggleSort() {
                             v-else-if="
                               child.options.length > 0 && !child.hidden
                             "
-                            :key="child.key + '-radiogroup'"
+                            :key="`${child.key}-radiogroup`"
                             v-model="state[child.key]"
                             as="div"
                           >
@@ -368,21 +367,21 @@ function toggleSort() {
                               <RadioGroupOption
                                 v-for="option of child.options"
                                 :key="option.key"
-                                :value="option.value"
                                 v-slot="{ checked }"
+                                :value="option.value"
                                 class="mr-2 mt-2 inline-block has-ring-focus rounded"
                               >
                                 <span
                                   :class="[
                                     'chip is-square',
-                                    checked ? 'is-active' : ''
+                                    checked ? 'is-active' : '',
                                   ]"
                                   @click="checked && child.sort && toggleSort()"
                                 >
                                   {{ option.label }}
                                   <span
-                                    aria-hidden="true"
                                     v-if="child.sort && checked"
+                                    aria-hidden="true"
                                     class="ml-1 -mr-1"
                                   >
                                     <ArrowUpIcon
@@ -390,7 +389,7 @@ function toggleSort() {
                                         'w-4 h-4 motion-safe:transition-transform',
                                         state.sortDirection === 'desc'
                                           ? '-scale-y-100'
-                                          : 'scale-y-100'
+                                          : 'scale-y-100',
                                       ]"
                                     />
                                   </span>

@@ -2,8 +2,8 @@
 import useVuelidate from '@vuelidate/core'
 import { helpers, required, url } from '@vuelidate/validators'
 
-import { FaceFrownIcon } from '@heroicons/vue/24/outline'
 import { PlusIcon } from '@heroicons/vue/20/solid'
+import { FaceFrownIcon } from '@heroicons/vue/24/outline'
 
 export interface BookCoverSelectorProps {
   custom?: boolean
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<BookCoverSelectorProps>(), {
   hideCustomTitle: false,
   loading: false,
   modelValue: undefined,
-  options: () => []
+  options: () => [],
 })
 
 const emit = defineEmits<{
@@ -28,32 +28,41 @@ const emit = defineEmits<{
 const {
   modelValue: coverUrl,
   loading: finding,
-  options: coverResults
+  options: coverResults,
 } = toRefs(props)
 const { t } = useI18n({ useScope: 'global' })
 
 const state = reactive({
-  customUrl: ''
+  customUrl: '',
 })
 
 const customs = ref(
-  (coverUrl!.value?.length ?? 0) > 0 ? [coverUrl!.value!] : []
+  (coverUrl!.value?.length ?? 0) > 0 ? [coverUrl!.value!] : [],
 )
 
 const rules = {
   customUrl: {
     required: helpers.withMessage(t('book.coverSelector.blankField'), required),
-    url: helpers.withMessage(t('book.coverSelector.invalidUrl'), url)
-  }
+    url: helpers.withMessage(t('book.coverSelector.invalidUrl'), url),
+  },
 }
 
 const v$ = useVuelidate(rules, state)
+const errors = ref<string[]>([])
+
+const results = computed(() => {
+  const allImages = (coverResults.value ?? [])
+    .concat(customs.value)
+    .filter(url => !errors.value.includes(url))
+
+  return Array.from(new Set(allImages))
+})
 
 function addNewImage() {
   v$.value.$touch()
 
   if (!v$.value.$error) {
-    if (results.value.indexOf(state.customUrl) === -1) {
+    if (!results.value.includes(state.customUrl)) {
       customs.value.push(state.customUrl)
     }
 
@@ -62,27 +71,17 @@ function addNewImage() {
   }
 }
 
-const results = computed(() => {
-  const allImages = (coverResults.value ?? [])
-    .concat(customs.value)
-    .filter((url) => errors.value.indexOf(url) === -1)
-
-  return Array.from(new Set(allImages))
-})
-
 watch(
   () => state.customUrl,
   (newValue) => {
     if (newValue.length === 0) {
       v$.value.$reset()
     }
-  }
+  },
 )
 
-const errors = ref<string[]>([])
-
 function handleError(url: string) {
-  if (errors.value.indexOf(url) === -1) {
+  if (!errors.value.includes(url)) {
     errors.value.push(url)
   }
 
@@ -117,11 +116,11 @@ function unselect(url: string) {
               </RadioGroupLabel>
               <div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                 <RadioGroupOption
-                  class="focus:outline-none"
                   v-for="result of results"
                   :key="result"
-                  :value="result"
                   v-slot="{ active, checked }"
+                  class="focus:outline-none"
+                  :value="result"
                 >
                   <CoverOption
                     :active="active"
@@ -162,11 +161,11 @@ function unselect(url: string) {
 
     <template v-if="custom">
       <div
-        class="border-t border-gray-200 dark:border-gray-700 pt-4"
         v-if="!hideCustomTitle"
+        class="border-t border-gray-200 dark:border-gray-700 pt-4"
       >
         <h3
-          class="text-lg font-medium font-display leading-6 text-gray-900 dark:text-gray-100"
+          class="text-lg font-medium font-display-safe leading-6 text-gray-900 dark:text-gray-100"
         >
           {{ t('book.coverSelector.custom.title') }}
         </h3>
@@ -182,17 +181,17 @@ function unselect(url: string) {
         <div class="flex space-x-2">
           <input
             id="cover-url"
+            v-model="state.customUrl"
             type="url"
             class="input"
-            v-model="state.customUrl"
             :placeholder="t('book.coverSelector.custom.placeholder')"
-          />
+          >
           <Button
+            v-slot="{ iconClass }"
             icon-only
             class="md:!hidden"
             :title="t('book.coverSelector.custom.add')"
             @click="addNewImage"
-            v-slot="{ iconClass }"
           >
             <PlusIcon :class="iconClass" />
           </Button>

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
+import { XMarkIcon } from '@heroicons/vue/20/solid'
 import { useI18n } from '@/i18n'
 import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
 import { injectStrict } from '@/util'
-
-import { XMarkIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps<{ modelValue: boolean }>()
 
@@ -61,7 +60,7 @@ watch(open, (newOpen) => {
           <div class="flex justify-between items-center">
             <DialogTitle
               as="h3"
-              class="text-lg leading-6 font-display font-medium text-gray-900 dark:text-gray-100"
+              class="text-lg leading-6 font-display-safe font-medium text-gray-900 dark:text-gray-100"
             >
               {{ t('footer.donate.actionDonate') }}
             </DialogTitle>
@@ -84,11 +83,11 @@ watch(open, (newOpen) => {
           </p>
 
           <div class="flex items-center justify-center p-6">
-            <a href='https://ko-fi.com/F1F2FRCOX' target='_blank'>
+            <a href="https://ko-fi.com/F1F2FRCOX" target="_blank">
               <img
                 class="h-[36px] border-none"
-                src='https://storage.ko-fi.com/cdn/kofi3.png?v=3'
-                alt='Buy Me a Coffee at ko-fi.com'
+                src="https://storage.ko-fi.com/cdn/kofi3.png?v=3"
+                alt="Buy Me a Coffee at ko-fi.com"
               >
             </a>
           </div>

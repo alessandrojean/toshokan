@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Alert from './Alert.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 export default {
   title: 'Components/Common/Alert',
@@ -8,11 +7,11 @@ export default {
   argTypes: {
     title: {
       name: 'Title',
-      description: 'Optional title for the alert'
+      description: 'Optional title for the alert',
     },
     show: {
       name: 'Show',
-      description: 'Defines if the alert is visible or not'
+      description: 'Defines if the alert is visible or not',
     },
     type: {
       name: 'Type',
@@ -22,17 +21,17 @@ export default {
         labels: {
           info: 'Information',
           error: 'Error',
-          warning: 'Warning'
-        }
+          warning: 'Warning',
+        },
       },
-      options: ['info', 'error', 'warning']
-    }
+      options: ['info', 'error', 'warning'],
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="max-w-2xl p-6"><story/></div>'
-    })
-  ]
+      template: '<div class="max-w-2xl p-6"><story/></div>',
+    }),
+  ],
 } as Meta<typeof Alert>
 
 const lorem = `
@@ -47,7 +46,7 @@ const lorem = `
 `
 
 export const Info: StoryObj<typeof Alert> = {
-  render: (args) => ({
+  render: args => ({
     components: { Alert },
     setup: () => ({ args }),
     template: `
@@ -58,17 +57,17 @@ export const Info: StoryObj<typeof Alert> = {
           <button type="button">Action one</button>
         </template>
       </Alert>
-    `
+    `,
   }),
   args: {
     title: 'This is an info alert',
     show: true,
-    type: 'info'
-  }
+    type: 'info',
+  },
 }
 
 export const Error: StoryObj<typeof Alert> = {
-  render: (args) => ({
+  render: args => ({
     components: { Alert },
     setup: () => ({ args }),
     template: `
@@ -79,17 +78,17 @@ export const Error: StoryObj<typeof Alert> = {
           <button type="button">Action one</button>
         </template>
       </Alert>
-    `
+    `,
   }),
   args: {
     title: 'This is an error alert',
     show: true,
-    type: 'error'
-  }
+    type: 'error',
+  },
 }
 
 export const Warning: StoryObj<typeof Alert> = {
-  render: (args) => ({
+  render: args => ({
     components: { Alert },
     setup: () => ({ args }),
     template: `
@@ -100,11 +99,11 @@ export const Warning: StoryObj<typeof Alert> = {
           <button type="button">Action one</button>
         </template>
       </Alert>
-    `
+    `,
   }),
   args: {
     title: 'This is a warning alert',
     show: true,
-    type: 'warning'
-  }
+    type: 'warning',
+  },
 }

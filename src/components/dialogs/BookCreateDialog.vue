@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash.clonedeep'
 
-import { useI18n } from '@/i18n'
-import Book, { FilledBook, MonetaryValue, STATUS_UNREAD } from '@/model/Book'
-import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
-import { injectStrict } from '@/util'
-
 import { ArrowRightIcon, CheckIcon, XMarkIcon } from '@heroicons/vue/20/solid'
 import {
   CheckIcon as CheckOutlineIcon,
-  PhotoIcon
+  PhotoIcon,
 } from '@heroicons/vue/24/outline'
+import { useI18n } from '@/i18n'
+import type { FilledBook, MonetaryValue } from '@/model/Book'
+import Book, { STATUS_UNREAD } from '@/model/Book'
+import { DisableSearchShortcutKey, EnableSearchShortcutKey } from '@/symbols'
+import { injectStrict } from '@/util'
 
 import BookCoverSelector from '@/components/book/BookCoverSelector.vue'
 import BookForm from '@/components/book/BookForm.vue'
@@ -18,7 +18,7 @@ import BookProviderSearch from '@/components/book/BookProviderSearch.vue'
 import type { InfoLine } from '@/components/DescriptionList.vue'
 
 const props = withDefaults(defineProps<{ isOpen?: boolean }>(), {
-  isOpen: false
+  isOpen: false,
 })
 
 const emit = defineEmits<{
@@ -27,6 +27,49 @@ const emit = defineEmits<{
 }>()
 
 const { t, d, n } = useI18n({ useScope: 'global' })
+
+const step = ref(1)
+const bookCreatedId = ref<string>()
+const bookInvalid = ref(false)
+const searchBookSelected = ref<Book | null>(null)
+const form = ref<InstanceType<typeof BookForm>>()
+const main = ref<HTMLDivElement>()
+const loading = ref(false)
+const now = new Date()
+
+const bookInitialState = new Book({
+  authors: [],
+  boughtAt: now,
+  code: '',
+  group: '',
+  coverUrl: '',
+  dimensions: {
+    width: 0,
+    height: 0,
+  },
+  publisher: '',
+  labelPrice: {
+    currency: 'BRL',
+    value: 0,
+    valueStr: '0',
+  },
+  paidPrice: {
+    currency: 'BRL',
+    value: 0,
+    valueStr: '0',
+  },
+  notes: '',
+  status: STATUS_UNREAD,
+  store: '',
+  synopsis: '',
+  title: '',
+}) as FilledBook
+
+const book = reactive(cloneDeep(toRaw(bookInitialState)))
+const bookCoverUrl = computed(() => book.coverUrl!)
+
+const { mutate: insertBook, isPending: inserting } = useCreateBookMutation()
+const { imageHasError, imageLoading, loadImage } = useImageLoader(bookCoverUrl)
 
 function resetSteps() {
   step.value = 1
@@ -49,44 +92,11 @@ function closeDialog() {
 
 const { isOpen } = toRefs(props)
 
-const now = new Date()
-
-const bookInitialState = new Book({
-  authors: [],
-  boughtAt: now,
-  code: '',
-  group: '',
-  coverUrl: '',
-  dimensions: {
-    width: 0,
-    height: 0
-  },
-  publisher: '',
-  labelPrice: {
-    currency: 'BRL',
-    value: 0,
-    valueStr: '0'
-  },
-  paidPrice: {
-    currency: 'BRL',
-    value: 0,
-    valueStr: '0'
-  },
-  notes: '',
-  status: STATUS_UNREAD,
-  store: '',
-  synopsis: '',
-  title: ''
-}) as FilledBook
-
-const book = reactive(cloneDeep(toRaw(bookInitialState)))
-const step = ref(1)
-
 const steps = computed(() => [
   t('dashboard.newBook.autoFill.title'),
   t('dashboard.newBook.metadata.title'),
   t('dashboard.newBook.cover.title'),
-  t('dashboard.newBook.review.title')
+  t('dashboard.newBook.review.title'),
 ])
 
 function previousStep() {
@@ -101,7 +111,7 @@ function previousStep() {
 function nextStep() {
   if (step.value === 1 && searchBookSelected.value) {
     const selected = Object.entries(
-      cloneDeep(toRaw(searchBookSelected.value))
+      cloneDeep(toRaw(searchBookSelected.value)),
     ).filter(([, value]) => value !== null)
     Object.assign(book, Object.fromEntries(selected))
   } else if (step.value === 2) {
@@ -111,7 +121,7 @@ function nextStep() {
       nextTick(() => {
         main.value!.scroll({
           top: main.value!.scrollHeight,
-          behavior: 'smooth'
+          behavior: 'smooth',
         })
       })
       return
@@ -130,13 +140,11 @@ const nextStepText = computed(() => {
       ? t('dashboard.newBook.autoFill.editInfo')
       : t('dashboard.newBook.autoFill.fillManually'),
     t('dashboard.newBook.metadata.findCover'),
-    t('dashboard.newBook.cover.review')
+    t('dashboard.newBook.cover.review'),
   ]
 
   return stepActions[step.value - 1]
 })
-
-const bookInvalid = ref(false)
 
 function setBookInvalid(value: boolean) {
   bookInvalid.value = value
@@ -150,6 +158,14 @@ function preventUnload(event: BeforeUnloadEvent) {
   event.returnValue = ''
 }
 
+const bookProviderSearch = ref<InstanceType<typeof BookProviderSearch>>()
+
+const isbnSearchInput = computed(() => {
+  return bookProviderSearch.value?.$el.querySelector('#book-isbn') as
+    | HTMLInputElement
+    | undefined
+})
+
 watch(isOpen, (newIsOpen) => {
   if (newIsOpen) {
     Object.assign(book, cloneDeep(toRaw(bookInitialState)))
@@ -162,23 +178,9 @@ watch(isOpen, (newIsOpen) => {
   }
 })
 
-const searchBookSelected = ref<Book | null>(null)
-
 function handleSearchSelect(searchBook: Book) {
   searchBookSelected.value = searchBook
 }
-
-async function handleNew() {
-  if (!bookInvalid.value) {
-    emit('new', cloneDeep(toRaw(book)))
-    closeDialog()
-  }
-}
-
-const form = ref<InstanceType<typeof BookForm>>()
-const main = ref<HTMLDivElement>()
-
-const loading = ref(false)
 
 function setLoading(newValue: boolean) {
   loading.value = newValue
@@ -186,19 +188,13 @@ function setLoading(newValue: boolean) {
 
 const { renderMarkdown } = useMarkdown()
 
-const bookCoverUrl = computed(() => book.coverUrl!)
-
-const { imageHasError, imageLoading, loadImage } = useImageLoader(bookCoverUrl)
-
 const router = useRouter()
-const { mutate: insertBook, isLoading: inserting } = useCreateBookMutation()
-const bookCreatedId = ref<string>()
 
 function handleInsertBook() {
   insertBook(book, {
     onSuccess(data) {
       bookCreatedId.value = data
-    }
+    },
   })
 }
 
@@ -210,29 +206,20 @@ function viewBook(bookId?: string) {
   setTimeout(() => {
     router.replace({
       name: 'dashboard-library-book-id',
-      params: { id: bookId }
+      params: { id: bookId },
     })
   }, 400)
 }
-
-const bookProviderSearch = ref<InstanceType<typeof BookProviderSearch>>()
-
-const isbnSearchInput = computed(() => {
-  return bookProviderSearch.value?.$el.querySelector('#book-isbn') as
-    | HTMLInputElement
-    | undefined
-})
 
 const sheetStore = useSheetStore()
 const ownerPictureUrl = computed(() => sheetStore.ownerPictureUrl)
 const shared = computed(() => sheetStore.shared)
 
 const { data: timeZone } = useTimeZoneQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 function formatPrice({ value, currency }: MonetaryValue) {
-  // @ts-ignore
   return n(value, 'currency', { currency })
 }
 
@@ -242,8 +229,8 @@ const boughtAt = computed(() => {
       // new Date(`${book.boughtAt}T00:00:00.000${timeZone.value.offsetStr}`),
       book.boughtAt,
       'short',
-      // @ts-ignore
-      { timeZone: timeZone.value.name }
+      // @ts-expect-error missing types
+      { timeZone: timeZone.value.name },
     )
   }
 
@@ -253,14 +240,14 @@ const boughtAt = computed(() => {
 const formattedLabelPrice = computed(() => {
   return formatPrice({
     value: book.labelPrice!.value,
-    currency: book.labelPrice!.currency
+    currency: book.labelPrice!.currency,
   })
 })
 
 const formattedPaidPrice = computed(() => {
   return formatPrice({
     value: book.paidPrice!.value,
-    currency: book.paidPrice!.currency
+    currency: book.paidPrice!.currency,
   })
 })
 
@@ -273,7 +260,7 @@ const bookInfo = computed(() => {
 
     authors = t('dashboard.details.header.authorListComplete', {
       authors: firstAuthors,
-      lastAuthor: book.authors[book.authors.length - 1]
+      lastAuthor: book.authors[book.authors.length - 1],
     })
   }
 
@@ -281,70 +268,70 @@ const bookInfo = computed(() => {
     {
       title: t('book.properties.id'),
       value: book.code,
-      property: 'code'
+      property: 'code',
     },
     {
       title: t('book.properties.title'),
       value: book.title,
-      property: 'title'
+      property: 'title',
     },
     {
       title: t('book.properties.author', book.authors!.length),
       value: authors,
-      property: 'authors'
+      property: 'authors',
     },
     {
       title: t('book.properties.publisher'),
       value: book.publisher,
       property: 'publisher',
-      columns: 1
+      columns: 1,
     },
     {
       title: t('book.properties.group'),
       value: book.group,
       property: 'group',
-      columns: 1
+      columns: 1,
     },
     {
       title: t('book.properties.dimensions'),
       value:
-        n(book.dimensions!.width, 'dimensions') +
-        ' × ' +
-        n(book.dimensions!.height, 'dimensions') +
-        ' cm',
-      property: 'dimensions'
+        `${n(book.dimensions!.width, 'dimensions')
+        } × ${
+        n(book.dimensions!.height, 'dimensions')
+        } cm`,
+      property: 'dimensions',
     },
     {
       title: t('book.properties.labelPrice'),
       value: formattedLabelPrice.value,
       property: 'labelPrice',
-      columns: 1
+      columns: 1,
     },
     {
       title: t('book.properties.paidPrice'),
       value: formattedPaidPrice.value,
       property: 'paidPrice',
-      columns: 1
+      columns: 1,
     },
     {
       title: t('book.properties.store'),
       value: book.store,
       property: 'store',
-      columns: 1
+      columns: 1,
     },
     {
       title: t('book.properties.boughtAt'),
       value: boughtAt.value,
       property: 'boughtAt',
-      columns: 1
-    }
+      columns: 1,
+    },
   ]
 
   if (book.synopsis && book.synopsis.length > 0) {
     properties.splice(3, 0, {
       title: t('book.properties.synopsis'),
       value: book.synopsis,
-      property: 'synopsis'
+      property: 'synopsis',
     })
   }
 
@@ -352,7 +339,7 @@ const bookInfo = computed(() => {
     properties.push({
       title: t('book.properties.notes'),
       value: book.notes,
-      property: 'notes'
+      property: 'notes',
     })
   }
 
@@ -363,13 +350,13 @@ const coverUrl = computed({
   get: () => book.coverUrl ?? undefined,
   set: (value) => {
     book.coverUrl = value ?? null
-  }
+  },
 })
 
-const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
-  computed(() => book),
-  { enabled: true }
-)
+const { isLoading: findingCovers, data: coverResults } = useCoverQuery({
+  enabled: true,
+  book: computed(() => book),
+})
 </script>
 
 <template>
@@ -417,7 +404,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
               </DialogDescription>
             </div>
 
-            <BulletSteps class="mr-3 sm:hidden" v-model="step" :steps="steps" />
+            <BulletSteps v-model="step" class="mr-3 sm:hidden" :steps="steps" />
 
             <button class="close-button has-ring-focus" @click="closeDialog">
               <span aria-hidden="true">
@@ -436,7 +423,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                   fill="currentColor"
                   fill-rule="evenodd"
                   opacity="0.503"
-                ></path>
+                />
               </svg>
             </span>
           </div>
@@ -451,7 +438,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                 'flex-1 relative flex items-baseline justify-center py-3 text-sm font-medium has-ring-focus',
                 step === i + 1
                   ? 'text-primary-600 dark:text-gray-100'
-                  : 'text-gray-400 dark:text-gray-400'
+                  : 'text-gray-400 dark:text-gray-400',
               ]"
             >
               <span
@@ -459,7 +446,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                   step === i + 1
                     ? 'text-gray-500 dark:text-gray-300'
                     : 'text-gray-400 dark:text-gray-500',
-                  'text-xs mr-2'
+                  'text-xs mr-2',
                 ]"
               >
                 {{ i + 1 }}.
@@ -473,7 +460,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
             </li>
           </ul>
 
-          <div class="flex-grow overflow-y-auto p-4 md:p-6 lg:p-8" ref="main">
+          <div ref="main" class="flex-grow overflow-y-auto p-4 md:p-6 lg:p-8">
             <FadeTransition>
               <div
                 v-if="bookCreatedId"
@@ -487,7 +474,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                   />
                 </div>
 
-                <p class="font-medium font-display leading-6 text">
+                <p class="font-medium font-display-safe leading-6 text">
                   {{ t('book.createdModal.title') }}
                 </p>
 
@@ -497,26 +484,26 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
               </div>
               <BookProviderSearch
                 v-else-if="step === 1"
+                ref="bookProviderSearch"
                 class="max-w-xl mx-auto"
                 @click:view-existing="viewBook"
                 @select="handleSearchSelect"
                 @search="setLoading"
-                ref="bookProviderSearch"
               />
               <BookForm
                 v-else-if="step === 2"
-                class="max-w-xl mx-auto"
                 ref="form"
+                class="max-w-xl mx-auto"
                 :model-value="book"
-                @update:modelValue="Object.assign(book, $event)"
+                @update:model-value="Object.assign(book, $event)"
                 @error="setBookInvalid"
               />
               <BookCoverSelector
                 v-else-if="step === 3"
+                v-model="coverUrl"
                 class="max-w-xl mx-auto"
                 custom
                 hide-custom-title
-                v-model="coverUrl"
                 :loading="findingCovers"
                 :options="coverResults"
               />
@@ -551,7 +538,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                         :src="coverUrl!"
                         :alt="book.title!"
                         class="w-full rounded-md shadow"
-                      />
+                      >
                     </FadeTransition>
                   </div>
                 </div>
@@ -568,14 +555,14 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
                     "
                     :info="bookInfo"
                   >
-                    <template v-slot:synopsis="{ value }">
+                    <template #synopsis="{ value }">
                       <div
                         class="prose prose-sm dark:prose-invert leading-normal"
                         v-html="renderMarkdown(value)"
                       />
                     </template>
 
-                    <template v-slot:notes="{ value }">
+                    <template #notes="{ value }">
                       <div
                         class="prose prose-sm dark:prose-invert leading-normal"
                         v-html="renderMarkdown(value)"
@@ -654,7 +641,7 @@ const { isLoading: findingCovers, data: coverResults } = useCoverQuery(
 }
 
 .dialog-title {
-  @apply text-lg font-medium font-display leading-6 text-white;
+  @apply text-lg font-medium font-display-safe leading-6 text-white;
 }
 
 .dialog-description {

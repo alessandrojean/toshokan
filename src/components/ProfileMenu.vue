@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import {
-ArrowLeftStartOnRectangleIcon,
-Cog8ToothIcon,
-QuestionMarkCircleIcon
+  ArrowLeftStartOnRectangleIcon,
+  Cog8ToothIcon,
+  QuestionMarkCircleIcon,
 } from '@heroicons/vue/16/solid'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
@@ -13,7 +13,7 @@ export interface ProfileMenuProps {
 
 const props = withDefaults(defineProps<ProfileMenuProps>(), {
   light: false,
-  transparent: false
+  transparent: false,
 })
 
 const { light, transparent } = toRefs(props)
@@ -29,7 +29,7 @@ function signOut() {
 </script>
 
 <template>
-  <Menu as="div" class="ml-3 relative inline-block" v-slot="{ open }">
+  <Menu v-slot="{ open }" as="div" class="ml-3 relative inline-block">
     <div>
       <MenuButton
         class="max-w-xs flex items-center text-sm focus:outline-none group"
@@ -40,7 +40,7 @@ function signOut() {
             'w-8 h-8 rounded-full bg-cover shadow-avatar transition-shadow motion-reduce:transition-none group-focus-visible:ring-2 group-focus-visible:ring-offset-2 group-focus-visible:ring-primary-500',
             light
               ? 'group-focus-visible:ring-offset-white dark:group-focus-visible:ring-offset-gray-900'
-              : 'group-focus-visible:ring-offset-gray-700'
+              : 'group-focus-visible:ring-offset-gray-700',
           ]"
           :style="{ backgroundImage: `url('${profileImageUrl}')` }"
         />
@@ -57,7 +57,7 @@ function signOut() {
                 : '',
               transparent
                 ? 'text-white/80 group-hover:text-white/95 group-focus-visible:text-white/95'
-                : ''
+                : '',
             ]"
           />
         </span>
@@ -76,7 +76,7 @@ function signOut() {
                 active
                   ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
                   : '',
-                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700',
               ]"
             >
               <span aria-hidden="true">
@@ -94,7 +94,7 @@ function signOut() {
                 active
                   ? 'bg-gray-100 dark:bg-gray-600 md:dark:bg-gray-600/50'
                   : '',
-                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700',
               ]"
             >
               <span aria-hidden="true">
@@ -112,7 +112,7 @@ function signOut() {
               type="button"
               :class="[
                 active ? 'bg-gray-100 dark:bg-gray-600' : '',
-                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700'
+                'group flex items-center w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:md:hover:bg-gray-600/50 dark:hover:text-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-700',
               ]"
               @click.stop="signOut"
             >

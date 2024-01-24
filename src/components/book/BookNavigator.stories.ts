@@ -1,6 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookNavigator from './BookNavigator.vue'
-
-import { Meta, StoryObj } from '@storybook/vue3'
 
 import Book from '@/model/Book'
 
@@ -10,19 +9,19 @@ const bookDemo: Partial<Book> = {
   publisher: 'Panini',
   group: 'Manga',
   tags: ['nsfw'],
-  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg'
+  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg',
 }
 
 const collection = [...Array.from({ length: 3 }).keys()].map(
-  (i) =>
+  i =>
     new Book({
       ...bookDemo,
       id: (i + 1).toString(),
       title: bookDemo.title!.replace(
         '#07',
-        '#' + (i + 1).toString().padStart(2, '0')
-      )
-    })
+        `#${(i + 1).toString().padStart(2, '0')}`,
+      ),
+    }),
 )
 
 export default {
@@ -31,55 +30,55 @@ export default {
   args: {
     book: new Book({ ...bookDemo, id: '2' }),
     collection,
-    loading: false
+    loading: false,
   },
   argTypes: {
     options: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="md:p-6 md:w-3/5"><story/></div>'
-    })
-  ]
+      template: '<div class="md:p-6 md:w-3/5"><story/></div>',
+    }),
+  ],
 } as Meta<typeof BookNavigator>
 
 export const Default: StoryObj<typeof BookNavigator> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookNavigator },
     setup: () => ({ args }),
-    template: '<BookNavigator v-bind="args" />'
-  })
+    template: '<BookNavigator v-bind="args" />',
+  }),
 }
 
 export const Loading: StoryObj<typeof BookNavigator> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookNavigator },
     setup: () => ({ args }),
-    template: '<BookNavigator v-bind="args" />'
+    template: '<BookNavigator v-bind="args" />',
   }),
-  args: { loading: true }
+  args: { loading: true },
 }
 
 export const First: StoryObj<typeof BookNavigator> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookNavigator },
     setup: () => ({ args }),
-    template: '<BookNavigator v-bind="args" />'
+    template: '<BookNavigator v-bind="args" />',
   }),
   args: {
-    collection: collection.slice(1)
-  }
+    collection: collection.slice(1),
+  },
 }
 
 export const Last: StoryObj<typeof BookNavigator> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookNavigator },
     setup: () => ({ args }),
-    template: '<BookNavigator v-bind="args" />'
+    template: '<BookNavigator v-bind="args" />',
   }),
   args: {
-    collection: collection.slice(0, -1)
-  }
+    collection: collection.slice(0, -1),
+  },
 }

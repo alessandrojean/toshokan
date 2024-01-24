@@ -1,21 +1,21 @@
+import { jwtDecode } from 'jwt-decode'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import jwtDecode from 'jwt-decode'
 
 import { loadApiAsync, promisify, whenAvailable } from '@/util/gapi'
 
 const DISCOVERY_DOCS = [
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-  'https://sheets.googleapis.com/$discovery/rest?version=v4'
+  'https://sheets.googleapis.com/$discovery/rest?version=v4',
 ]
 
 const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/drive.metadata.readonly'
+  'https://www.googleapis.com/auth/drive.metadata.readonly',
 ] as const
 
 type OAuthTokenClient = google.accounts.oauth2.TokenClient
 
-type Credential = {
+interface Credential {
   name: string
   email: string
   picture: string
@@ -32,12 +32,12 @@ export const useAuthStore = defineStore('auth', {
     profileImageUrl: null as string | null,
     refreshing: false,
     started: false,
-    tokenClient: null as OAuthTokenClient | null
+    tokenClient: null as OAuthTokenClient | null,
   }),
   getters: {
-    authorized: (state) => state.accessToken !== null,
-    isAuthenticated: (state) => state.authenticated,
-    isStarted: (state) => state.started
+    authorized: state => state.accessToken !== null,
+    isAuthenticated: state => state.authenticated,
+    isStarted: state => state.started,
   },
   actions: {
     clear() {
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
         profileEmail: null,
         profileName: null,
         profileImageUrl: null,
-        refreshing: false
+        refreshing: false,
       })
     },
 
@@ -57,7 +57,7 @@ export const useAuthStore = defineStore('auth', {
      * Attempt to disconnect the user.
      */
     disconnect() {
-      // @ts-ignore Missing definitions for revoke.
+      // @ts-expect-error Missing definitions for revoke.
       window.google.accounts.oauth2.revoke(this.accessToken!)
       window.google.accounts.id.revoke(this.profileEmail!)
       window.google.accounts.id.disableAutoSelect()
@@ -81,7 +81,7 @@ export const useAuthStore = defineStore('auth', {
       if (document.visibilityState === 'visible') {
         this.tokenClient!.requestAccessToken({
           hint: this.profileEmail!,
-          prompt: ''
+          prompt: '',
         })
         return
       }
@@ -90,7 +90,7 @@ export const useAuthStore = defineStore('auth', {
         if (document.visibilityState === 'visible') {
           this.tokenClient!.requestAccessToken({
             hint: this.profileEmail!,
-            prompt: ''
+            prompt: '',
           })
           document.removeEventListener('visibilitychange', handleVisibility)
         }
@@ -118,9 +118,9 @@ export const useAuthStore = defineStore('auth', {
       await whenAvailable('gapi')
       await loadApiAsync('client')
 
-      // @ts-ignore Missing definitions
+      // @ts-expect-error Missing definitions
       const initThenable = window.gapi.client.init({
-        discoveryDocs: DISCOVERY_DOCS
+        discoveryDocs: DISCOVERY_DOCS,
       })
 
       await promisify<void>(initThenable)
@@ -141,17 +141,17 @@ export const useAuthStore = defineStore('auth', {
             this.$patch({
               accessToken: tokenResponse.access_token,
               expiresIn:
-                new Date().getTime() +
-                parseInt(tokenResponse.expires_in, 10) * 1000,
+                new Date().getTime()
+                  + Number.parseInt(tokenResponse.expires_in, 10) * 1000,
               hasGrantedScopes:
                 window.google.accounts.oauth2.hasGrantedAllScopes(
                   tokenResponse,
-                  ...SCOPES
+                  ...SCOPES,
                 ),
-              refreshing: false
+              refreshing: false,
             })
           }
-        }
+        },
       })
 
       window.google.accounts.id.initialize({
@@ -168,7 +168,7 @@ export const useAuthStore = defineStore('auth', {
           }
 
           this.authenticated = true
-        }
+        },
       })
 
       this.started = true
@@ -205,7 +205,7 @@ export const useAuthStore = defineStore('auth', {
               resolve()
             }
           },
-          { detached: true }
+          { detached: true },
         )
 
         if (!this.refreshing) {
@@ -233,10 +233,10 @@ export const useAuthStore = defineStore('auth', {
       this.$patch({
         profileName: name,
         profileEmail: email,
-        profileImageUrl: picture
+        profileImageUrl: picture,
       })
-    }
-  }
+    },
+  },
 })
 
 if (import.meta.hot) {

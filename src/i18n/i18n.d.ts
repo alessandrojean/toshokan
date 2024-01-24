@@ -1,10 +1,3 @@
-import {
-  DefineDateTimeFormat,
-  DefineNumberFormat,
-  Locale,
-  UseI18nOptions
-} from 'vue-i18n'
-
 declare module 'vue-i18n' {
   export interface DefineDateTimeFormat {
     short: Intl.DateTimeFormatOptions

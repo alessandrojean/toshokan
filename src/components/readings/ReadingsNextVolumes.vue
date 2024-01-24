@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import Book, { STATUS_READ } from '@/model/Book'
+import cloneDeep from 'lodash.clonedeep'
+import type Book from '@/model/Book'
+import { STATUS_READ } from '@/model/Book'
 import type { GridMode, SpoilerMode } from '@/stores/settings'
-import { cloneDeep } from 'lodash'
 
 export interface ReadingsNextVolumesProps {
   blurNsfw?: boolean
@@ -22,16 +23,16 @@ const props = withDefaults(defineProps<ReadingsNextVolumesProps>(), {
   loading: false,
   spoilerMode: () => ({
     cover: false,
-    synopsis: false
-  })
+    synopsis: false,
+  }),
 })
 
 const emit = defineEmits<{
   (e: 'markAsRead', book: Book): void
 }>()
 
-const { blurNsfw, books, editing, editingId, gridMode, loading, spoilerMode } =
-  toRefs(props)
+const { blurNsfw, books, editing, editingId, gridMode, loading, spoilerMode }
+  = toRefs(props)
 
 function handleRead(book: Book, readAt: Date) {
   if (editing.value) {

@@ -1,6 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import BookCard from './BookCard.vue'
 
-import { Meta, StoryObj } from '@storybook/vue3'
 import Book, { Status } from '@/model/Book'
 
 export default {
@@ -8,27 +8,27 @@ export default {
   component: BookCard,
   argTypes: {
     actions: {
-      control: { type: null }
+      control: { type: null },
     },
     book: {
-      control: { type: null }
+      control: { type: null },
     },
     mode: {
       control: 'inline-radio',
-      options: ['compact', 'comfortable']
+      options: ['compact', 'comfortable'],
     },
     spoilerMode: {
-      control: { type: null }
+      control: { type: null },
     },
     tabindex: {
-      control: { type: null }
-    }
+      control: { type: null },
+    },
   },
   decorators: [
     () => ({
-      template: '<div class="w-52 p-6"><story/></div>'
-    })
-  ]
+      template: '<div class="w-52 p-6"><story/></div>',
+    }),
+  ],
 } as Meta<typeof BookCard>
 
 const bookDemo: Partial<Book> = {
@@ -38,14 +38,14 @@ const bookDemo: Partial<Book> = {
   publisher: 'Panini',
   group: 'Manga',
   tags: ['nsfw'],
-  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg'
+  coverUrl: 'https://panini.com.br/media/catalog/product/a/k/akomi007.jpg',
 }
 
 export const Default: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
@@ -56,17 +56,17 @@ export const Default: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const Loading: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
@@ -77,17 +77,17 @@ export const Loading: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const Compact: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
@@ -98,17 +98,17 @@ export const Compact: StoryObj<typeof BookCard> = {
     mode: 'compact',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const CompactLoading: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
@@ -119,17 +119,17 @@ export const CompactLoading: StoryObj<typeof BookCard> = {
     mode: 'compact',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const Current: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
@@ -140,23 +140,23 @@ export const Current: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const Read: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
     book: new Book({
       ...bookDemo,
-      status: Status.READ
+      status: Status.READ,
     }),
     current: false,
     imageOnly: false,
@@ -164,23 +164,23 @@ export const Read: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const ReadCompact: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
     book: new Book({
       ...bookDemo,
-      status: Status.READ
+      status: Status.READ,
     }),
     current: false,
     imageOnly: false,
@@ -188,23 +188,23 @@ export const ReadCompact: StoryObj<typeof BookCard> = {
     mode: 'compact',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const Future: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
     book: new Book({
       ...bookDemo,
-      status: Status.FUTURE
+      status: Status.FUTURE,
     }),
     current: false,
     imageOnly: false,
@@ -212,17 +212,17 @@ export const Future: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const NSFW: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: true,
@@ -233,17 +233,17 @@ export const NSFW: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const NSFWCompact: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: true,
@@ -254,23 +254,23 @@ export const NSFWCompact: StoryObj<typeof BookCard> = {
     mode: 'compact',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const SingleVolume: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
     book: new Book({
       ...bookDemo,
-      title: 'Komi não consegue se comunicar'
+      title: 'Komi não consegue se comunicar',
     }),
     current: false,
     imageOnly: false,
@@ -278,23 +278,23 @@ export const SingleVolume: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }
 
 export const NoCover: StoryObj<typeof BookCard> = {
-  render: (args) => ({
+  render: args => ({
     components: { BookCard },
     setup: () => ({ args }),
-    template: '<BookCard v-bind="args" />'
+    template: '<BookCard v-bind="args" />',
   }),
   args: {
     blurNsfw: false,
     book: new Book({
       ...bookDemo,
-      coverUrl: ''
+      coverUrl: '',
     }),
     current: false,
     imageOnly: false,
@@ -302,8 +302,8 @@ export const NoCover: StoryObj<typeof BookCard> = {
     mode: 'comfortable',
     spoilerMode: {
       cover: false,
-      synopsis: false
+      synopsis: false,
     },
-    tabindex: undefined
-  }
+    tabindex: undefined,
+  },
 }

@@ -1,5 +1,5 @@
 import { promisify } from '@/util/gapi'
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 /**
  * Bulk update books in the sheet.
@@ -12,11 +12,11 @@ export default async function bulkUpdateBooks(sheetId: string, books: Book[]) {
     spreadsheetId: sheetId,
     resource: {
       valueInputOption: 'USER_ENTERED',
-      data: books.map((book) => ({
+      data: books.map(book => ({
         range: book.sheetLocation!,
-        values: [book.toArray()]
-      }))
-    }
+        values: [book.toArray()],
+      })),
+    },
   })
 
   return await promisify(thenable)

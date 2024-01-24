@@ -1,9 +1,9 @@
 # Toshokan
 
-Toshokan is a progressive web app on top of Google Sheets written 
+Toshokan is a progressive web app on top of Google Sheets written
 in Vue.
 
-It compiles in a static HTML that works great on mobile and can 
+It compiles in a static HTML that works great on mobile and can
 be deployed anywhere.
 
 <p align="center">
@@ -29,16 +29,15 @@ static HTML under a custom domain with support to HTTPS.
 2. Don't rename it. It should be named `Toshokan`.
 3. Clone this repo, install the dependencies, setup the variables in `.env`
    and build the app.
-   
+
    ```console
    $ yarn install && yarn build
    ```
 4. Copy the content of `build` folder to your server.
-5. That's it! You can start adding books now. 
+5. That's it! You can start adding books now.
 
 ## License
 
 > You can check out the full license [here](LICENSE).
 
 This repository is licensed under the terms of the **MIT** license.
-

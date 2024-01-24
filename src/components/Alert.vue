@@ -2,7 +2,7 @@
 import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
-  XCircleIcon
+  XCircleIcon,
 } from '@heroicons/vue/20/solid'
 
 export interface AlertProps {
@@ -18,13 +18,13 @@ const { type } = toRefs(props)
 const classes: Record<AlertProps['type'], string> = {
   info: 'bg-blue-50 text-blue-700 border-blue-500',
   error: 'bg-red-50 text-red-700 border-red-500',
-  warning: 'bg-amber-50 text-amber-900 border-amber-400'
+  warning: 'bg-amber-50 text-amber-900 border-amber-400',
 }
 
 const titleClasses: Record<AlertProps['type'], string> = {
   info: 'text-blue-800',
   error: 'text-red-800',
-  warning: 'text-amber-800'
+  warning: 'text-amber-800',
 }
 </script>
 
@@ -36,7 +36,7 @@ const titleClasses: Record<AlertProps['type'], string> = {
       :data-type="type"
       :class="[
         'dark:bg-gray-800 border-l-4 dark:border dark:rounded-xl dark:text-gray-100 px-3 py-5 text-sm flex space-x-3',
-        classes[type]
+        classes[type],
       ]"
     >
       <div class="shrink-0 pt-1">
@@ -63,17 +63,17 @@ const titleClasses: Record<AlertProps['type'], string> = {
           v-if="title && title.length > 0"
           :class="[
             titleClasses[type],
-            'font-display font-medium text-md sm:text-lg dark:text-gray-100'
+            'font-display-safe font-medium text-md sm:text-lg dark:text-gray-100',
           ]"
         >
           {{ title }}
         </p>
-        <slot></slot>
+        <slot />
         <div
           v-if="$slots.actions"
           class="flex pt-3 space-x-3 alert-actions -ml-2.5"
         >
-          <slot name="actions"></slot>
+          <slot name="actions" />
         </div>
       </div>
     </div>

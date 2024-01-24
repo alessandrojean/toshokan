@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
+import type Book from '@/model/Book'
 
 export interface BookTitleProps {
   book?: Book | null
@@ -8,7 +8,7 @@ export interface BookTitleProps {
 
 const props = withDefaults(defineProps<BookTitleProps>(), {
   book: undefined,
-  loading: false
+  loading: false,
 })
 
 defineEmits<{
@@ -31,7 +31,7 @@ const lastSeparator = computed(() => {
   <div class="flex flex-col sm:h-56 text-gray-700 sm:text-white/80 2xl:pr-52">
     <h2
       v-if="!loading"
-      class="pt-3 text-gray-900 sm:text-white/95 dark:text-white/95 text-xl sm:text-2xl md:text-3xl font-display font-medium"
+      class="pt-3 text-gray-900 sm:text-white/95 dark:text-white/95 text-xl sm:text-2xl md:text-3xl font-display-safe font-medium"
     >
       {{ book!.titleParts.main }}
     </h2>
@@ -43,7 +43,7 @@ const lastSeparator = computed(() => {
 
     <p
       v-if="!loading && book!.titleParts.subtitle"
-      class="font-display text-md sm:text-lg sm:text-white/80 dark:text-white/80 md:text-xl -mt-1 mb-2"
+      class="font-display-safe text-md sm:text-lg sm:text-white/80 dark:text-white/80 md:text-xl -mt-1 mb-2"
     >
       {{ book!.titleParts.subtitle }}
     </p>

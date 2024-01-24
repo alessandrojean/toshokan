@@ -1,25 +1,23 @@
 <script lang="ts" setup>
-import { useI18n } from '@/i18n'
-import Book from '@/model/Book'
-import getBookLinks from '@/services/links'
-import { convertIsbn13ToIsbn10 } from '@/util/isbn'
-import { injectStrict } from '@/util'
-import { ShowSearchDialogKey } from '@/symbols'
-
 import {
-  BookmarkIcon as BookmarkSolidIcon,
   ArrowTopRightOnSquareIcon,
+  BookmarkIcon as BookmarkSolidIcon,
   GlobeAltIcon,
   PencilIcon,
-  StarIcon as StarSolidIcon
+  StarIcon as StarSolidIcon,
 } from '@heroicons/vue/20/solid'
 import {
   BookmarkIcon as BookmarkOutlineIcon,
   ClockIcon,
   ShareIcon,
   StarIcon as StarOutlineIcon,
-  TrashIcon
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
+import { useI18n } from '@/i18n'
+import type Book from '@/model/Book'
+import getBookLinks from '@/services/links'
+import { ShowSearchDialogKey } from '@/symbols'
+import { injectStrict } from '@/util'
 
 export interface BookInformationProps {
   book: Book | null | undefined
@@ -30,7 +28,7 @@ export interface BookInformationProps {
 const props = withDefaults(defineProps<BookInformationProps>(), {
   book: undefined,
   disabled: false,
-  loading: false
+  loading: false,
 })
 
 defineEmits<{
@@ -66,23 +64,17 @@ const synopsisRendered = computed(() => {
 })
 
 const { data: timeZone } = useTimeZoneQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 function formatDate(date: Date, format = 'short') {
   if (date instanceof Date) {
-    // @ts-ignore
+    // @ts-expect-error missing types
     return d(date, format, { timeZone: timeZone.value.name })
   }
 
   return t('dashboard.details.info.dateUnknown')
 }
-
-const readAt = computed(() => {
-  return showBookInfo.value && book.value!.readAt
-    ? formatDate(book.value!.readAt)
-    : t('dashboard.details.info.dateUnknown')
-})
 
 const createdAt = computed(() => {
   return showBookInfo.value && book.value!.createdAt
@@ -96,34 +88,14 @@ const updatedAt = computed(() => {
     : ''
 })
 
-const country = computed(() => {
-  if (!showBookInfo.value) {
-    return []
-  }
-
-  return book.value?.isbnData
-})
-
-const isbn10 = computed(() => {
-  if (!showBookInfo.value || !book.value!.codeType.includes('ISBN')) {
-    return null
-  }
-
-  if (book.value!.codeType === 'ISBN-10') {
-    return book.value!.code
-  }
-
-  return convertIsbn13ToIsbn10(book.value!.code!)
-})
-
 const spoilerMode = computed(() => settingsStore.spoilerMode)
 
 const blurSynopsis = computed(() => {
   return (
-    showBookInfo.value &&
-    spoilerMode.value.synopsis &&
-    !book.value!.isRead &&
-    book.value!.synopsis!.length > 0
+    showBookInfo.value
+    && spoilerMode.value.synopsis
+    && !book.value!.isRead
+    && book.value!.synopsis!.length > 0
   )
 })
 
@@ -164,19 +136,19 @@ const canEdit = computed(() => sheetStore.canEdit)
 
       <!-- Book title -->
       <h2 v-if="showBookInfo" class="book-title">
-        <span aria-hidden="true" v-if="book!.isFuture">
+        <span v-if="book!.isFuture" aria-hidden="true">
           <ClockIcon
             class="w-5 h-5 mr-0.5 align-baseline inline-block text-gray-400 dark:text-gray-500"
           />
         </span>
         {{ book!.titleParts.main }}
       </h2>
-      <div v-else class="skeleton w-72 h-8 mb-2"></div>
+      <div v-else class="skeleton w-72 h-8 mb-2" />
 
       <!-- Book subtitle -->
       <p
         v-if="showBookInfo && book!.titleParts.subtitle"
-        class="italic font-medium font-display text-md md:text-xl text-gray-700 dark:text-gray-300 -mt-1 mb-2"
+        class="italic font-medium font-display-safe text-md md:text-xl text-gray-700 dark:text-gray-300 -mt-1 mb-2"
       >
         {{ book!.titleParts.subtitle }}
       </p>
@@ -198,58 +170,58 @@ const canEdit = computed(() => sheetStore.canEdit)
           </span>
         </template>
       </p>
-      <div v-else class="skeleton h-6 w-44"></div>
+      <div v-else class="skeleton h-6 w-44" />
     </div>
 
     <!-- Book synopsis -->
     <div
       v-if="showBookInfo"
-      v-html="synopsisRendered"
       :class="
         blurSynopsis
           ? 'md:blur-sm md:dark:blur md:select-none md:hover:blur-none md:dark:hover:blur-none md:hover:select-auto'
           : ''
       "
       class="prose prose-sm md:prose-base dark:prose-invert leading-normal max-w-none"
+      v-html="synopsisRendered"
     />
     <div v-else class="flex flex-col space-y-2">
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-full h-5"></div>
-      <div class="skeleton w-6/12 h-5"></div>
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-full h-5" />
+      <div class="skeleton w-6/12 h-5" />
     </div>
 
     <!-- Book actions -->
-    <div class="flex space-x-2" v-if="canEdit">
+    <div v-if="canEdit" class="flex space-x-2">
       <Button
         v-if="showBookInfo"
         kind="primary"
         size="large"
         class="justify-center md:justify-start flex-1 md:flex-initial"
-        @click="$emit('click:edit', $event)"
         :disabled="disabled"
+        @click="$emit('click:edit', $event)"
       >
         <template #left="{ iconClass }">
           <PencilIcon :class="iconClass" />
         </template>
         <span>{{ t('dashboard.details.header.edit') }}</span>
       </Button>
-      <div v-else class="skeleton flex-1 md:flex-initial md:w-28 h-11"></div>
+      <div v-else class="skeleton flex-1 md:flex-initial md:w-28 h-11" />
 
       <Button
         v-if="showBookInfo && !book!.isFuture"
+        v-slot="{ iconClass }"
         size="large"
         icon-only
         :disabled="disabled"
         :title="
           t('dashboard.details.header.options.markAs', {
-            status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase()
+            status: t(book!.isRead ? 'book.unread' : 'book.read').toLowerCase(),
           })
         "
         @click="$emit('click:toggleStatus', $event)"
-        v-slot="{ iconClass }"
       >
         <BookmarkSolidIcon v-if="book!.isRead" :class="iconClass" />
         <BookmarkOutlineIcon v-else :class="iconClass" />
@@ -257,6 +229,7 @@ const canEdit = computed(() => sheetStore.canEdit)
 
       <Button
         v-if="showBookInfo"
+        v-slot="{ iconClass }"
         size="large"
         icon-only
         :disabled="disabled"
@@ -264,11 +237,10 @@ const canEdit = computed(() => sheetStore.canEdit)
           t(
             `dashboard.details.header.options.${
               book!.favorite ? 'removeFromFavorites' : 'addToFavorites'
-            }`
+            }`,
           )
         "
         @click="$emit('click:toggleFavorite', $event)"
-        v-slot="{ iconClass }"
       >
         <StarSolidIcon v-if="book!.favorite" :class="iconClass" />
         <StarOutlineIcon v-else :class="iconClass" />
@@ -276,24 +248,24 @@ const canEdit = computed(() => sheetStore.canEdit)
 
       <Button
         v-if="showBookInfo"
+        v-slot="{ iconClass }"
         size="large"
         icon-only
         :disabled="disabled"
         :title="t('dashboard.details.header.options.share')"
         @click="$emit('click:share', $event)"
-        v-slot="{ iconClass }"
       >
         <ShareIcon :class="iconClass" />
       </Button>
 
       <Button
         v-if="showBookInfo"
+        v-slot="{ iconClass }"
         size="large"
         icon-only
         :disabled="disabled"
         :title="t('dashboard.details.header.options.delete')"
         @click="$emit('click:delete', $event)"
-        v-slot="{ iconClass }"
       >
         <TrashIcon :class="iconClass" />
       </Button>
@@ -310,7 +282,9 @@ const canEdit = computed(() => sheetStore.canEdit)
           >
             {{ book!.codeType }}
           </dt>
-          <dd class="grow text-right sm:text-left">{{ book!.code }}</dd>
+          <dd class="grow text-right sm:text-left">
+            {{ book!.code }}
+          </dd>
         </div>
         <div class="flex">
           <dt
@@ -338,9 +312,9 @@ const canEdit = computed(() => sheetStore.canEdit)
         </div>
       </dl>
       <div v-else class="flex flex-col space-y-1">
-        <div class="skeleton w-44 h-4"></div>
-        <div class="skeleton w-52 h-4"></div>
-        <div class="skeleton w-64 h-4"></div>
+        <div class="skeleton w-44 h-4" />
+        <div class="skeleton w-52 h-4" />
+        <div class="skeleton w-64 h-4" />
       </div>
 
       <FadeTransition>
@@ -355,7 +329,7 @@ const canEdit = computed(() => sheetStore.canEdit)
               :href="link.url"
             >
               <span aria-hidden="true" class="icon">
-                <component v-if="link.icon" :is="link.icon" />
+                <component :is="link.icon" v-if="link.icon" />
                 <GlobeAltIcon v-else />
               </span>
               <span>{{ link.title }}</span>
@@ -372,7 +346,7 @@ const canEdit = computed(() => sheetStore.canEdit)
 
 <style lang="postcss" scoped>
 .book-title {
-  @apply font-semibold font-display
+  @apply font-semibold font-display-safe
     text-2xl md:text-3xl dark:text-gray-100;
 }
 

@@ -21,7 +21,7 @@ export function issn(issn?: string) {
   const withoutDigit = issn.slice(0, -1)
   let calcDigit = withoutDigit
     .split('')
-    .map((d, i) => parseInt(d, 10) * (8 - i))
+    .map((d, i) => Number.parseInt(d, 10) * (8 - i))
     .reduce((acm, cv) => acm + cv, 0)
   calcDigit = calcDigit % 11
   calcDigit = calcDigit !== 0 ? 11 - calcDigit : calcDigit
@@ -40,10 +40,10 @@ export function ean(ean?: string) {
   const withoutDigit = ean.slice(0, -1)
   const checkSum = withoutDigit
     .split('')
-    .map((d, i) => parseInt(d, 10) * ((i + 1) % 2 === 0 ? 3 : 1))
+    .map((d, i) => Number.parseInt(d, 10) * ((i + 1) % 2 === 0 ? 3 : 1))
     .reduce((acm, cv) => acm + cv, 0)
 
-  return (10 - (checkSum % 10)) % 10 === parseInt(ean.slice(-1), 10)
+  return (10 - (checkSum % 10)) % 10 === Number.parseInt(ean.slice(-1), 10)
 }
 
 export function isoDate(dateString?: string, incomplete?: boolean) {
@@ -60,9 +60,9 @@ export function isoDate(dateString?: string, incomplete?: boolean) {
   }
 
   const parts = dateString.split('-')
-  const day = parseInt(parts[2] || '1', 10)
-  const month = parseInt(parts[1] || '1', 10)
-  const year = parseInt(parts[0], 10)
+  const day = Number.parseInt(parts[2] || '1', 10)
+  const month = Number.parseInt(parts[1] || '1', 10)
+  const year = Number.parseInt(parts[0], 10)
 
   if (year < 1000 || year > 3000 || month === 0 || month > 12) {
     return false

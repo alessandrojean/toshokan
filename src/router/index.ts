@@ -24,11 +24,11 @@ const router = createRouter({
     return (
       savedPosition ?? {
         top: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
       }
     )
   },
-  routes
+  routes,
 })
 
 /**
@@ -36,9 +36,9 @@ const router = createRouter({
  */
 router.afterEach((to) => {
   const routeTitle = to.meta?.title ?? ''
-  document.title =
-    routeTitle.length > 0
-      ? t(routeTitle) + ' | ' + t('app.name')
+  document.title
+    = routeTitle.length > 0
+      ? `${t(routeTitle)} | ${t('app.name')}`
       : t('app.name')
   document.body.dataset.route = String(to.name)
 })

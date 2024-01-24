@@ -2,13 +2,14 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import { useI18n } from '@/i18n'
-import Book, { Status, STATUS_READ, STATUS_UNREAD } from '@/model/Book'
+import type Book from '@/model/Book'
+import { STATUS_READ, STATUS_UNREAD, Status } from '@/model/Book'
 import {
   ChangeTitleKey,
   DisableSearchShortcutKey,
   EnableSearchShortcutKey,
   SetNavbarTransparentKey,
-  ShowSearchDialogKey
+  ShowSearchDialogKey,
 } from '@/symbols'
 import { injectStrict } from '@/util'
 
@@ -25,28 +26,28 @@ const loading = computed(() => sheetStore.loading)
 
 const enabled = computed(() => {
   return (
-    !loading.value &&
-    !!bookId.value &&
-    router.currentRoute.value.name === 'dashboard-library-book-id'
+    !loading.value
+    && !!bookId.value
+    && router.currentRoute.value.name === 'dashboard-library-book-id'
   )
 })
 
-const { isLoading, data: book } = useBookQuery(bookId, { enabled })
+const { isLoading, data: book } = useBookQuery({ bookId, enabled })
 
 const collectionEnabled = computed(() => {
   return (
-    enabled.value &&
-    book.value?.titleParts !== undefined &&
-    book.value.titleParts.number !== null
+    enabled.value
+    && book.value?.titleParts !== undefined
+    && book.value.titleParts.number !== null
   )
 })
 
-const { data: collection, isLoading: collectionLoading } =
-  useBookCollectionQuery(book, { enabled: collectionEnabled })
+const { data: collection, isLoading: collectionLoading }
+  = useBookCollectionQuery({ book, enabled: collectionEnabled })
 
 const { data: sheetVersion } = useSheetVersionQuery({ enabled })
 
-const redirectToHome = () => {
+function redirectToHome() {
   router.replace({ name: 'dashboard-library' })
 }
 
@@ -54,8 +55,8 @@ const changeTitle = injectStrict(ChangeTitleKey)
 
 watch(book, (newBook) => {
   if (
-    newBook === null &&
-    router.currentRoute.value.name === 'dashboard-library-book-id'
+    newBook === null
+    && router.currentRoute.value.name === 'dashboard-library-book-id'
   ) {
     redirectToHome()
     return
@@ -70,7 +71,7 @@ const showBookInfo = computed(() => {
   return !loading.value && !isLoading.value && !!book.value
 })
 
-const { mutate: updateBook, isLoading: editing } = useEditBookMutation()
+const { mutate: updateBook, isPending: editing } = useEditBookMutation()
 
 const editDialogOpen = ref(false)
 const bookToEdit = ref<Book>()
@@ -115,7 +116,7 @@ function toggleFavorite() {
 }
 
 const deleteModalOpen = ref(false)
-const { mutate: deleteBook, isLoading: deleting } = useDeleteBookMutation()
+const { mutate: deleteBook, isPending: deleting } = useDeleteBookMutation()
 
 function handleDelete() {
   deleteBook(book.value!)
@@ -153,19 +154,19 @@ const spoilerMode = computed(() => settingsStore.spoilerMode)
 const showSearchDialog = injectStrict(ShowSearchDialogKey)
 
 function searchBy(keyword: string, value: string) {
-  const query = `${t('dashboard.search.keywords.' + keyword)}:"${value}"`
+  const query = `${t(`dashboard.search.keywords.${keyword}`)}:"${value}"`
   showSearchDialog(query)
 }
 
 const { data: timeZone, isLoading: timeZoneLoading } = useTimeZoneQuery({
-  enabled: computed(() => sheetStore.sheetId !== null)
+  enabled: computed(() => sheetStore.sheetId !== null),
 })
 
 const blurSynopsis = computed(() => {
   return (
-    spoilerMode.value.synopsis &&
-    book.value?.status !== Status.READ &&
-    book.value?.synopsis?.length !== 0
+    spoilerMode.value.synopsis
+    && book.value?.status !== Status.READ
+    && book.value?.synopsis?.length !== 0
   )
 })
 
@@ -213,7 +214,7 @@ meta:
             :src="book.isbnData.flagUrl.rectangle"
             :alt="t('dashboard.details.flag', { region })"
             class="inline-block z-10 w-5 sm:w-6 aspect-[3/2] rounded-sm shadow absolute right-1.5 sm:right-3 bottom-1.5 sm:bottom-3 pointer-events-none"
-          />
+          >
         </BookCover>
 
         <BookTitle
@@ -229,8 +230,8 @@ meta:
           :book="book"
           :editing="writing"
           @click:edit="openEditDialog"
-          @click:toggleFavorite="toggleFavorite"
-          @click:toggleStatus="toggleStatus"
+          @click:toggle-favorite="toggleFavorite"
+          @click:toggle-status="toggleStatus"
           @click:share="openShareDialog"
           @click:delete="openDeleteModal"
         />

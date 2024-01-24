@@ -7,7 +7,7 @@ export interface PreferenceProps {
 }
 
 const props = withDefaults(defineProps<PreferenceProps>(), {
-  alwaysHorizontal: false
+  alwaysHorizontal: false,
 })
 
 const { alwaysHorizontal } = toRefs(props)
@@ -19,16 +19,16 @@ const { alwaysHorizontal } = toRefs(props)
       'flex gap-4 xl:gap-2 w-full py-4 lg:py-5 w-full',
       alwaysHorizontal
         ? 'flex-row items-center'
-        : 'flex-col xl:flex-row xl:items-center'
+        : 'flex-col xl:flex-row xl:items-center',
     ]"
   >
     <div
       :class="[
         'gap-0.5',
-        alwaysHorizontal ? 'flex flex-col grow' : 'xl:flex xl:flex-col xl:grow'
+        alwaysHorizontal ? 'flex flex-col grow' : 'xl:flex xl:flex-col xl:grow',
       ]"
     >
-      <slot name="title" :controlId="controlId" :title="title">
+      <slot name="title" :control-id="controlId" :title="title">
         <label
           :for="controlId"
           class="w-full font-medium dark:text-gray-100 flex items-center"

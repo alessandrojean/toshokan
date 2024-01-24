@@ -1,7 +1,7 @@
 import Query from './Query'
 import type { Sort } from '@/types'
 
-export type WhereCondition = {
+export interface WhereCondition {
   negated?: boolean
   operator: 'OR' | 'AND'
   restrictions: (WhereRestriction | WhereCondition)[]
@@ -19,7 +19,7 @@ const binaryOperators = [
   '<=',
   '<= date',
   'starts with',
-  'matches'
+  'matches',
 ] as const
 const binaryOperatorsCheck: Set<string> = new Set(binaryOperators)
 export type BinaryOperator = typeof binaryOperators[number]
@@ -32,7 +32,7 @@ type Limit = number | null
 type Offset = Limit
 
 function isBinaryOperator(
-  op?: BinaryOperator | string | null
+  op?: BinaryOperator | string | null,
 ): op is BinaryOperator {
   return binaryOperatorsCheck.has(op ?? '')
 }
@@ -98,12 +98,12 @@ export default class QueryBuilder {
       | (WhereRestriction | WhereCondition)[]
       | string,
     op?: BinaryOperator | string | null,
-    value?: any
+    value?: any,
   ) {
     if (
-      typeof column === 'string' &&
-      isBinaryOperator(op) &&
-      value !== undefined
+      typeof column === 'string'
+      && isBinaryOperator(op)
+      && value !== undefined
     ) {
       this.#where.restrictions.push([column, op, value])
     } else if (typeof column === 'string' && op === null) {
@@ -114,7 +114,7 @@ export default class QueryBuilder {
       this.#where.restrictions.push([column, 'is not', 'null'])
     } else if (Array.isArray(column)) {
       this.#where.restrictions.push(
-        ...(column as (WhereRestriction | WhereCondition)[])
+        ...(column as (WhereRestriction | WhereCondition)[]),
       )
     } else if (column?.operator) {
       this.#where.restrictions.push(column)
@@ -137,7 +137,7 @@ export default class QueryBuilder {
       | (WhereRestriction | WhereCondition)[]
       | string,
     op?: BinaryOperator | string | null,
-    value?: any
+    value?: any,
   ): QueryBuilder {
     this.#where.operator = 'AND'
     this.where(column, op, value)
@@ -159,12 +159,10 @@ export default class QueryBuilder {
       | (WhereRestriction | WhereCondition)[]
       | string,
     op?: BinaryOperator | string | null,
-    value?: any
+    value?: any,
   ): QueryBuilder {
     this.#where.operator = 'OR'
     this.where(column, op, value)
-
-    type a = Parameters<typeof this.where>
 
     return this
   }
@@ -178,7 +176,7 @@ export default class QueryBuilder {
   static or(...restrictions: WhereCondition['restrictions']): WhereCondition {
     return {
       operator: 'OR',
-      restrictions
+      restrictions,
     }
   }
 
@@ -191,7 +189,7 @@ export default class QueryBuilder {
   static and(...restrictions: WhereCondition['restrictions']): WhereCondition {
     return {
       operator: 'AND',
-      restrictions
+      restrictions,
     }
   }
 
@@ -207,7 +205,7 @@ export default class QueryBuilder {
     return {
       negated: true,
       operator: 'AND',
-      restrictions
+      restrictions,
     }
   }
 
@@ -270,7 +268,7 @@ export default class QueryBuilder {
       orderBy: this.#orderBy,
       limit: this.#limit,
       offset: this.#offset,
-      sheetUrl: this.#sheetUrl
+      sheetUrl: this.#sheetUrl,
     }
   }
 
@@ -296,8 +294,8 @@ export default class QueryBuilder {
   #whereString(where: WhereCondition | WhereRestriction): string {
     if (Array.isArray(where)) {
       const [column, op, value] = where
-      const fixedValue =
-        typeof value === 'string'
+      const fixedValue
+        = typeof value === 'string'
           ? op === 'is' || op === 'is not'
             ? value
             : `"${value}"`
@@ -307,7 +305,7 @@ export default class QueryBuilder {
     }
 
     const string = where.restrictions
-      .map((restriction) => this.#whereString(restriction))
+      .map(restriction => this.#whereString(restriction))
       .join(` ${where.operator} `)
     const not = where.negated ? 'not ' : ''
 
@@ -319,20 +317,20 @@ export default class QueryBuilder {
    */
   toString() {
     const parts = [
-      'select ' + (this.#select.length > 0 ? this.#select.join(', ') : '*'),
+      `select ${this.#select.length > 0 ? this.#select.join(', ') : '*'}`,
       this.#where.restrictions.length > 0
-        ? 'where ' + this.#whereString(this.#where)
+        ? `where ${this.#whereString(this.#where)}`
         : '',
-      this.#groupBy.length > 0 ? 'group by ' + this.#groupBy.join(', ') : '',
+      this.#groupBy.length > 0 ? `group by ${this.#groupBy.join(', ')}` : '',
       this.#orderBy.length > 0
-        ? 'order by ' +
-          this.#orderBy.map(([column, sort]) => `${column} ${sort}`).join(', ')
+        ? `order by ${
+          this.#orderBy.map(([column, sort]) => `${column} ${sort}`).join(', ')}`
         : '',
-      this.#limit !== null ? 'limit ' + this.#limit : '',
-      this.#offset !== null ? 'offset ' + this.#offset : ''
+      this.#limit !== null ? `limit ${this.#limit}` : '',
+      this.#offset !== null ? `offset ${this.#offset}` : '',
     ]
 
-    return parts.filter((part) => part.length > 0).join('\n')
+    return parts.filter(part => part.length > 0).join('\n')
   }
 
   /**
@@ -343,7 +341,7 @@ export default class QueryBuilder {
   build(): Query {
     return new Query(this.#sheetUrl, {
       builderObj: this.toObject(),
-      queryString: this.toString()
+      queryString: this.toString(),
     })
   }
 }

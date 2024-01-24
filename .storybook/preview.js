@@ -11,9 +11,9 @@ const MockedRouterLink = defineComponent({
   methods: {
     log() {
       action('onNavigate')(this.to)
-    }
+    },
   },
-  template: '<a class="cursor-pointer" @click="log()"><slot/></a>'
+  template: '<a class="cursor-pointer" @click="log()"><slot/></a>',
 })
 
 setup((app) => {
@@ -30,14 +30,14 @@ export const globalTypes = {
       icon: 'globe',
       items: [
         { value: 'en-US', right: '🇺🇸', title: 'English' },
-        { value: 'pt-BR', right: '🇧🇷', title: 'Português (Brasil)' }
+        { value: 'pt-BR', right: '🇧🇷', title: 'Português (Brasil)' },
       ],
     },
   },
 }
 
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
+  actions: { argTypesRegex: '^on[A-Z].*' },
   backgrounds: { disable: true },
   controls: {
     matchers: {
@@ -50,32 +50,36 @@ export const parameters = {
     classTarget: 'html',
     stylePreview: true,
     dark: themes.dark,
-    light: themes.light
+    light: themes.light,
+  },
+}
+
+function withThemeProvider(story) {
+  return {
+    components: { story },
+    setup: () => {
+      onMounted(() => {
+        document.documentElement.style.height = '100vh'
+
+        const style = document.createElement('style')
+        style.textContent = 'html.dark { background-color: #0f172a; }'
+        document.head.appendChild(style)
+      })
+    },
+    template: `<story />`,
   }
 }
 
-const withThemeProvider = (story) => ({
-  components: { story },
-  setup: () => {
-    onMounted(() => {
-      document.documentElement.style.height = '100vh'
+function withLocaleProvider(story, context) {
+  return {
+    components: { story },
+    setup: () => {
+      const { locale } = useI18n()
 
-      const style = document.createElement('style')
-      style.textContent = 'html.dark { background-color: #0f172a; }'
-      document.head.appendChild(style)
-    })
-  },
-  template: `<story />`
-})
-
-const withLocaleProvider = (story, context) => ({
-  components: { story },
-  setup: () => {
-    const { locale } = useI18n()
-
-    locale.value = context.globals.locale
-  },
-  template: `<story />`
-})
+      locale.value = context.globals.locale
+    },
+    template: `<story />`,
+  }
+}
 
 export const decorators = [withThemeProvider, withLocaleProvider]

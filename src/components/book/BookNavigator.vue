@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
-import { useI18n } from '@/i18n'
-
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
+import type Book from '@/model/Book'
+import { useI18n } from '@/i18n'
 
 export interface BookNavigatorProps {
   book?: Book | null
@@ -13,14 +12,14 @@ export interface BookNavigatorProps {
 const props = withDefaults(defineProps<BookNavigatorProps>(), {
   book: undefined,
   collection: undefined,
-  loading: false
+  loading: false,
 })
 
 const { book, collection, loading } = toRefs(props)
 
 const bookIdx = computed(() => {
   return (collection.value ?? []).findIndex(
-    (colItem) => colItem.id === book.value!.id
+    colItem => colItem.id === book.value!.id,
   )
 })
 
@@ -55,7 +54,7 @@ const { t } = useI18n({ useScope: 'global' })
           class="flex gap-2 items-center p-4 border dark:border-gray-700 dark:hover:border-gray-600 dark:hover:bg-gray-800/50 rounded-md group hover:shadow-md hover:-translate-y-0.5 motion-safe:transition will-change-transform has-ring-focus"
           :to="{
             name: 'dashboard-library-book-id',
-            params: { id: previous.id }
+            params: { id: previous.id },
           }"
         >
           <div aria-hidden="true" class="shrink-0">

@@ -144,7 +144,7 @@ book:
     message: >
       Os metadados do livro foram inseridos na planilha. Você pode
       visualizar a página do livro recém-criado ou repetir o processo
-      de criação e adicionar mais um livro logo em sequência.      
+      de criação e adicionar mais um livro logo em sequência.
     view: Visualizar
     newBook: Novo livro
   card:
@@ -183,7 +183,7 @@ footer:
   copyright: '© {year} Alessandro Jean. Todos os direitos reservados.'
   googleTrademarks: >
     Google Drive, Google Sheets e Google Books são marcas registradas do
-    Google Inc. O uso dessas marcas registradas está sujeito às 
+    Google Inc. O uso dessas marcas registradas está sujeito às
     Permissões do Google.
   dev: Ambiente de desenvolvimento
   lastUpdate: 'Atualizado em {0}.'
@@ -264,7 +264,6 @@ home:
       de gerenciar mangás, a planilha é versátil para também suportar
       outras mídias impressas, como os quadrinhos e livros.
 
-
       Ao preencher a ficha catalográfica de cada item, você permite
       com que filtros possam ser utilizados na coleção para uma
       melhor organização do conteúdo cadastrado na planilha.
@@ -276,8 +275,8 @@ home:
     currentState:
       question: Qual o estado atual do projeto?
       answer: >
-        No momento o projeto está instável e em Beta, com novos recursos e 
-        correções de problemas sendo feitas gradativamente. Você pode 
+        No momento o projeto está instável e em Beta, com novos recursos e
+        correções de problemas sendo feitas gradativamente. Você pode
         acompanhar o progresso do desenvolvimento em nosso GitHub.
     beta:
       question: Como posso entrar no Beta?
@@ -291,19 +290,19 @@ home:
     share:
       question: Posso compartilhar minha biblioteca?
       answer: >
-        Sim! Você pode visualizar e compartilhar sua biblioteca com outras 
-        pessoas ao compartilhar a visualização ou edição da planilha em 
+        Sim! Você pode visualizar e compartilhar sua biblioteca com outras
+        pessoas ao compartilhar a visualização ou edição da planilha em
         seu Google Drive. Para mais detalhes, consulte o guia “Compartilhando”.
     metadata:
       question: De onde os metadados são retirados?
       answer: >
         O Toshokan utiliza serviços com APIs públicas para consultar os
-        dados dos livros a partir do ISBN. Alguns exemplos de provedores 
+        dados dos livros a partir do ISBN. Alguns exemplos de provedores
         são a CBL, OpenLibrary e Google Books™.
   cta:
     title: Pronto para começar?
     description: >
-      Gerencie sua biblioteca, visualize as estatísticas de compra e leitura, 
+      Gerencie sua biblioteca, visualize as estatísticas de compra e leitura,
       compartilhe com amigos, e nunca mais compre itens repetidos!
     free: Totalmente gratuito e de código aberto.
     dashboard: Dashboard
@@ -380,7 +379,7 @@ dashboard:
         delete: Deletar
     share:
       title: Compartilhe o livro
-      qrCodeInstructions: 
+      qrCodeInstructions:
         title: Instruções de uso
         body: |
           1. Abra o **Toshokan** no seu celular.
@@ -547,17 +546,14 @@ dashboard:
           permitindo a classificação por título, autores, país, editora
           e edição.
 
-
           Este código pode ser normalmente encontrado na página de expediente
           do livro, junto a ficha catalográfica, ou próximo ao código de
           barras. A busca aceita ambas as versões do código, a com 10
           dígitos e a com 13 dígitos, sendo esta última a mais utilizada
           recentemente.
 
-
           Caso o livro não possua um ISBN, você pode preencher as informações
           para a criação do item na planilha de modo manual.
-
 
           *[ISBN]: International Standard Book Number
         additionalInfo: Informações adicionais
@@ -654,7 +650,7 @@ dashboard:
         label: Toshokan Android
         description: Exporte sua planilha como um arquivo compatível com a versão Android do Toshokan.
         export: Exportar
-        instructions: 
+        instructions:
           title: Instruções
           text: |
             Para restaurar sua planilha no aplicativo, siga o passo a passo abaixo.

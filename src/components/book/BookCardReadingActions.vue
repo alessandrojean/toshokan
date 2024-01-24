@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import Book from '@/model/Book'
-
 import { CalendarIcon, CheckIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon as CheckIconSolid } from '@heroicons/vue/20/solid'
+import type Book from '@/model/Book'
 
 export interface BookCardReadingActionsProps {
   book: Book
@@ -12,7 +11,7 @@ export interface BookCardReadingActionsProps {
 
 withDefaults(defineProps<BookCardReadingActionsProps>(), {
   disabled: false,
-  editing: false
+  editing: false,
 })
 
 const emit = defineEmits<{
@@ -65,28 +64,29 @@ function handleCalendar(close: () => void) {
 
           <ScaleTransition>
             <PopoverPanel
-              class="absolute z-10 -translate-x-1/2 left-1/2 -bottom-2.5 !ml-0"
               v-slot="{ close }"
+              class="absolute z-10 -translate-x-1/2 left-1/2 -bottom-2.5 !ml-0"
             >
               <form
                 class="rounded-lg shadow-lg bg-white dark:bg-gray-800 p-2.5 flex space-x-2 ring-1 dark:ring-2 ring-black/5 dark:ring-gray-500 dark:ring-inset relative arrow-up dark:before:hidden"
                 @submit.prevent="handleCalendar(close)"
               >
                 <div>
-                  <label :for="'read-at-' + book.id" class="sr-only">
+                  <label :for="`read-at-${book.id}`" class="sr-only">
                     {{ t('book.properties.readAt') }}
                   </label>
                   <input
+                    :id="`read-at-${book.id}`"
+                    v-model="readAt"
                     type="date"
                     class="input w-36 text-xs p-2 h-8 tabular-nums"
-                    v-model="readAt"
                     :disabled="disabled"
-                    :id="'read-at-' + book.id"
                     required
-                  />
+                  >
                 </div>
 
                 <Button
+                  v-slot="{ iconClass }"
                   type="submit"
                   kind="ghost"
                   icon-only
@@ -94,7 +94,6 @@ function handleCalendar(close: () => void) {
                   rounded
                   :disabled="disabled"
                   :title="t('dashboard.details.editForm.finish')"
-                  v-slot="{ iconClass }"
                 >
                   <CheckIconSolid :class="iconClass" />
                 </Button>

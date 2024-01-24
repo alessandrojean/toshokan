@@ -1,8 +1,8 @@
-import { it, expect } from 'vitest'
+import { expect, it } from 'vitest'
 
+import dedent from 'dedent'
 import Book, { type FilledBook, STATUS_READ } from '@/model/Book'
 import { fixDate, formatDateTimeToSheet, formatDateToSheet } from '@/util/date'
-import dedent from 'dedent'
 
 const createdAt = new Date('2022-02-22T21:00:00.000Z')
 
@@ -26,15 +26,15 @@ const testBook = new Book({
   publisher: 'Pipoca & Nanquim',
   dimensions: {
     width: 15,
-    height: 22
+    height: 22,
   },
   paidPrice: {
     currency: 'BRL',
-    value: 72.9
+    value: 72.9,
   },
   labelPrice: {
     currency: 'BRL',
-    value: 72.9
+    value: 72.9,
   },
   store: 'Amazon',
   status: STATUS_READ,
@@ -43,10 +43,10 @@ const testBook = new Book({
   boughtAt: new Date('2022-02-22'),
   readAt: new Date('2022-02-22'),
   createdAt: new Date(createdAt),
-  updatedAt: new Date(createdAt)
+  updatedAt: new Date(createdAt),
 }) as FilledBook
 
-it('Should format to insert in the sheet correctly', () => {
+it('should format to insert in the sheet correctly', () => {
   const bookFormatted = testBook.toArray()
 
   const now = new Date()
@@ -77,11 +77,11 @@ it('Should format to insert in the sheet correctly', () => {
     testBook.synopsis,
     '',
     '',
-    formatDateTimeToSheet(fixDate(testBook.createdAt, offset))
+    formatDateTimeToSheet(fixDate(testBook.createdAt, offset)),
   ])
 })
 
-it('Should parse the book from the sheet correctly', () => {
+it('should parse the book from the sheet correctly', () => {
   const formattedBook = testBook.toArray()
   const book = Book.fromDataTable(formattedBook)
 
@@ -89,42 +89,42 @@ it('Should parse the book from the sheet correctly', () => {
   expect(book).toMatchObject({
     id: testBook.id,
     code: testBook.code,
-    title: testBook.title
+    title: testBook.title,
   })
 })
 
-it('Should split the titles correctly', () => {
+it('should split the titles correctly', () => {
   const titles = {
     'Ao no Flag #01': {
       title: 'Ao no Flag',
       number: '01',
       main: 'Ao no Flag #01',
-      subtitle: null
+      subtitle: null,
     },
     'AKIRA #01: Part 1 - Tetsuo': {
       title: 'AKIRA',
       number: '01',
       main: 'AKIRA #01',
-      subtitle: 'Part 1 - Tetsuo'
+      subtitle: 'Part 1 - Tetsuo',
     },
-    Gyo: {
+    'Gyo': {
       title: 'Gyo',
       number: null,
       main: 'Gyo',
-      subtitle: null
+      subtitle: null,
     },
     'The Ghost in the Shell: The Perfect Book 1995⇾2017': {
       title: 'The Ghost in the Shell: The Perfect Book 1995⇾2017',
       number: null,
       main: 'The Ghost in the Shell',
-      subtitle: 'The Perfect Book 1995⇾2017'
+      subtitle: 'The Perfect Book 1995⇾2017',
     },
     'Jujutsu Kaisen: Batalha de Feiticeiros #01': {
       title: 'Jujutsu Kaisen: Batalha de Feiticeiros',
       number: '01',
       main: 'Jujutsu Kaisen: Batalha de Feiticeiros #01',
-      subtitle: null
-    }
+      subtitle: null,
+    },
   }
 
   for (const [title, titleParts] of Object.entries(titles)) {
@@ -132,16 +132,13 @@ it('Should split the titles correctly', () => {
   }
 })
 
-it('Should detect the correct code type', () => {
+it('should detect the correct code type', () => {
   const codes = {
-    // eslint-disable-next-line
     '9788545702870': 'ISBN-13',
-    // eslint-disable-next-line
     '8576161877': 'ISBN-10',
-    // eslint-disable-next-line
     '7897780165585': 'EAN-13',
     'a-random-string': 'ID',
-    'N/A': 'N/A'
+    'N/A': 'N/A',
   }
 
   for (const [code, type] of Object.entries(codes)) {

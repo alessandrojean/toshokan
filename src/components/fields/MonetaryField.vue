@@ -12,7 +12,7 @@ export interface MonetaryFieldProps extends BaseFieldProps {
 }
 
 const props = withDefaults(defineProps<MonetaryFieldProps>(), {
-  required: false
+  required: false,
 })
 
 const emit = defineEmits<{
@@ -26,10 +26,12 @@ const {
   label,
   error,
   required,
-  help
+  help,
 } = toRefs(props)
 
 const DEFAULT_CURRENCIES = ['BRL', 'EUR', 'JPY', 'USD']
+
+const currency = ref(monetaryValue!.value?.currency || 'BRL')
 
 const currencies = computed(() => {
   const options = DEFAULT_CURRENCIES.slice()
@@ -41,11 +43,10 @@ const currencies = computed(() => {
   return options.sort((a, b) => a.localeCompare(b, locale.value))
 })
 
-const currency = ref(monetaryValue!.value?.currency || 'BRL')
 const value = ref(
   typeof monetaryValue!.value?.value === 'number'
     ? n(monetaryValue!.value.value, 'decimal')
-    : ''
+    : '',
 )
 
 const validator = decimalComma(2)
@@ -54,9 +55,9 @@ function emitValues() {
   emit('update:modelValue', {
     currency: currency.value,
     value: validator(value.value)
-      ? parseFloat(value.value.replace(',', '.'))
+      ? Number.parseFloat(value.value.replace(',', '.'))
       : null,
-    valueStr: value.value
+    valueStr: value.value,
   })
 }
 
@@ -65,7 +66,7 @@ watch(value, () => emitValues())
 
 function currencyName(currencyCode: string) {
   const displayNames = new Intl.DisplayNames([locale.value], {
-    type: 'currency'
+    type: 'currency',
   })
 
   return displayNames.of(currencyCode)
@@ -78,7 +79,7 @@ const currencySymbol = computed(() => {
 
   const formatter = new Intl.NumberFormat(locale.value, {
     style: 'currency',
-    currency: currency.value
+    currency: currency.value,
   })
 
   const parts = formatter.formatToParts(0)
@@ -87,11 +88,11 @@ const currencySymbol = computed(() => {
 })
 
 function handlePercent() {
-  if (!base?.value || isNaN(base.value) || !validator(value.value)) {
+  if (!base?.value || Number.isNaN(base.value) || !validator(value.value)) {
     return
   }
 
-  const percent = parseFloat(value.value.replace(',', '.'))
+  const percent = Number.parseFloat(value.value.replace(',', '.'))
   value.value = n(base.value - (base.value * percent) / 100.0, 'decimal')
 }
 
@@ -104,31 +105,31 @@ function focusCurrency() {
 
 <template>
   <BaseField
+    v-slot="{ inputId }"
     :label="label"
     :error="error"
     :required="required"
     :help="help"
     class="w-full"
-    v-slot="{ inputId }"
   >
-    <div class="monetary-field" :id="inputId">
-      <label :for="inputId + '-currency'" class="sr-only">
+    <div :id="inputId" class="monetary-field">
+      <label :for="`${inputId}-currency`" class="sr-only">
         {{ t('book.properties.currency') }}
       </label>
       <input
+        ref="currencyInput"
+        v-model="currency"
         type="text"
         class="input currency"
-        v-model="currency"
         required
         maxlength="3"
         placeholder="BRL"
-        :list="inputId + '-datalist'"
-        ref="currencyInput"
-      />
+        :list="`${inputId}-datalist`"
+      >
       <span aria-hidden="true" class="currency-symbol" @click="focusCurrency">
         {{ currencySymbol }}
       </span>
-      <datalist :id="inputId + '-datalist'">
+      <datalist :id="`${inputId}-datalist`">
         <option
           v-for="currencyOption of currencies"
           :key="currencyOption"
@@ -138,13 +139,13 @@ function focusCurrency() {
         </option>
       </datalist>
       <input
+        v-model="value"
         type="text"
         class="input grow value"
         inputmode="decimal"
         :placeholder="placeholder"
-        v-model="value"
         @keydown.%.prevent="handlePercent"
-      />
+      >
     </div>
   </BaseField>
 </template>
