@@ -12,7 +12,6 @@
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky install",
     "preview": "vite preview --port 5000",
     "test": "vitest run",
     "test:watch": "vitest watch",

@@ -5,7 +5,6 @@ export default antfu({
   ignores: [
     '*.md',
     '.vscode/**',
-    '.husky/**',
     'dist/**',
     'node_modules/**',
     '.netlify/**',
