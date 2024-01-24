@@ -1,11 +1,13 @@
 import resolveConfig from 'tailwindcss/resolveConfig'
 import type { Config } from 'tailwindcss'
-import tailwindConfig from '~~/tailwind.config.js'
+import tailwindConfig from '~~/tailwind.config'
+
+export type FontFamily = keyof (typeof tailwindConfig)['theme']['fontFamily']
 
 export type TailwindTheme = Config & {
   breakpoints: Record<string, number>
-  fontFamily: (name: string) => string[] | undefined
-  color: (name: string, variantion: number | string) => string | undefined
+  fontFamily: (name: FontFamily) => string[] | undefined
+  color: (name: string, variation: number | string) => string | undefined
 }
 
 export default function useTailwindTheme(): TailwindTheme {
@@ -16,18 +18,23 @@ export default function useTailwindTheme(): TailwindTheme {
   )
 
   return {
-    ...config,
+    ...(config as unknown as Config),
     breakpoints: Object.fromEntries(breakpoints),
-    fontFamily: (name: string): string[] | undefined => {
-      const fonts = config.theme!.fontFamily as Record<string, string[]>
+    fontFamily: (name: FontFamily): string[] | undefined => {
+      const fonts = config.theme!.fontFamily
+      const font = fonts[name]
 
-      return fonts[name]
+      if (!font) {
+        return undefined
+      }
+
+      return (Array.isArray(font[0]) ? font[0] : font) as string[]
     },
-    color: (name: string, variantion: number | string): string | undefined => {
+    color: (name: string, variation: number | string): string | undefined => {
       const colors = config.theme!.colors as Record<string, any>
       const variants = colors[name] as Record<string | number, string>
 
-      return variants[variantion]
+      return variants[variation]
     },
   }
 }

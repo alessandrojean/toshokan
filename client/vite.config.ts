@@ -153,9 +153,6 @@ export default defineConfig({
       '~~': resolve(__dirname, '.'),
     },
   },
-  optimizeDeps: {
-    include: ['tailwind.config.js'],
-  },
   build: {
     commonjsOptions: {
       include: ['tailwind.config.js', 'node_modules/**'],

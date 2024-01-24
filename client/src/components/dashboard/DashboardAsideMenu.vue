@@ -34,8 +34,13 @@ withDefaults(defineProps<AsideMenuProps>(), {
 
 const emit = defineEmits<{ (e: 'navigate', location: RouteLocation): void }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const router = useRouter()
+
+const instructionsLink = computed(() => {
+  const localePath = locale.value === 'pt-BR' ? 'pt/' : ''
+  return `https://alessandrojean.github.io/toshokan/${localePath}guides/instructions`
+})
 
 const items = computed<Item[]>(() => [
   {
@@ -85,7 +90,7 @@ const items = computed<Item[]>(() => [
     key: 'help-center',
     label: t('dashboard.header.links.help'),
     icon: LifebuoyIcon,
-    to: '/help/guide/instructions',
+    to: instructionsLink.value,
     external: true,
   },
 ])
@@ -160,7 +165,14 @@ const collapsed = useLocalStorage('aside-collapsed', false)
             ]"
           >
             <li v-for="item in items" :key="item.key" class="w-full">
+              <DashboardAsideButton
+                v-if="item.external"
+                :item="item"
+                :href="(item.to as string)"
+                target="_blank"
+              />
               <RouterLink
+                v-else
                 v-slot="{ href, isActive, isExactActive, navigate, route }"
                 custom
                 :to="item.to"
@@ -168,15 +180,10 @@ const collapsed = useLocalStorage('aside-collapsed', false)
                 <DashboardAsideButton
                   :item="item"
                   :href="href"
-                  :target="item.external ? '_blank' : undefined"
                   :active="
                     active(item.active, item.exact, isExactActive, isActive)
                   "
-                  @click="
-                    item.external
-                      ? navigate($event)
-                      : handleNavigation(route, $event)
-                  "
+                  @click="handleNavigation(route, $event)"
                 />
               </RouterLink>
             </li>

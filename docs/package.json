@@ -1,0 +1,24 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@antfu/eslint-config": "^2.6.3",
+    "eslint": "^8.56.0",
+    "markdown-it-deflist": "3.0.0",
+    "markdown-it-image-figures": "2.1.1",
+    "markdown-it-kbd": "2.2.2",
+    "vitepress": "1.0.0-rc.40"
+  }
+}

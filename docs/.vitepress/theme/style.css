@@ -1,0 +1,60 @@
+/**
+ * Component: Figure
+ * -------------------------------------------------------------------------- */
+
+main figure {
+  margin: 4rem 0;
+}
+
+main figure img {
+  margin: 0 auto;
+  border-radius: 12px;
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.05);
+}
+
+main figure figcaption {
+  color: var(--vp-c-text-2);
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/**
+ * Component: Kbd
+ * -------------------------------------------------------------------------- */
+
+ :root {
+  --kbd-bg: var(--vp-c-bg-alt);
+  --kbd-border: var(--vp-c-divider);
+  --kbd-color: var(--vp-c-text-2);
+}
+
+.dark {
+  --kbd-bg: var(--vp-c-bg-elv-up);
+  --kbd-border: var(--vp-c-border);
+  --kbd-color: var(--vp-c-text-1);
+}
+
+main kbd {
+  font-family: var(--vp-font-family-base);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--kbd-color);
+  background-color: var(--kbd-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--kbd-border);
+  border-radius: 4px;
+  padding: 0 6px;
+  height: 24px;
+}
+
+/**
+ * Component: Definition lists
+ * -------------------------------------------------------------------------- */
+
+main dl > dt {
+  font-weight: 500;
+}

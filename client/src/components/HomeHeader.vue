@@ -6,7 +6,12 @@ const authStore = useAuthStore()
 const authenticated = computed(() => authStore.authenticated)
 const authorized = computed(() => authStore.authorized)
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
+
+const instructionsLink = computed(() => {
+  const localePath = locale.value === 'pt-BR' ? 'pt/' : ''
+  return `https://alessandrojean.github.io/toshokan/${localePath}guides/instructions`
+})
 </script>
 
 <template>
@@ -31,7 +36,7 @@ const { t } = useI18n({ useScope: 'global' })
           </sup>
         </h1>
         <div class="flex-1 hidden md:block md:ml-6">
-          <Button as="RouterLink" kind="ghost" to="/help/guide/instructions">
+          <Button as="a" kind="ghost" :href="instructionsLink" target="_blank">
             {{ t('home.header.instructions') }}
           </Button>
         </div>
