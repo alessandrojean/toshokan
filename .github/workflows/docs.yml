@@ -51,7 +51,7 @@ jobs:
         run: pnpm install
       - name: Run build
         working-directory: docs
-        run: pnpm docs:build
+        run: pnpm build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
