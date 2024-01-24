@@ -24,7 +24,7 @@
       "@types/gapi.client.sheets-v4",
       "@types/google.accounts",
       "@types/google.visualization",
-      "@intlify/vite-plugin-vue-i18n/client"
+      "@intlify/unplugin-vue-i18n/messages"
     ],
     "strict": true,
     "noEmit": true,
