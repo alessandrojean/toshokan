@@ -15,8 +15,8 @@ dependencies:
     specifier: 2.1.1
     version: 2.1.1(vue@3.4.15)
   '@intlify/unplugin-vue-i18n':
-    specifier: ^2.0.0
-    version: 2.0.0(rollup@2.79.1)(vue-i18n@9.9.0)
+    specifier: ^3.0.0
+    version: 3.0.1(rollup@2.79.1)(vue-i18n@9.9.0)
   '@stylistic/eslint-plugin-js':
     specifier: ^1.5.4
     version: 1.5.4(eslint@8.56.0)
@@ -2472,8 +2472,8 @@ packages:
     engines: {node: '>= 16'}
     dev: false
 
-  /@intlify/unplugin-vue-i18n@2.0.0(rollup@2.79.1)(vue-i18n@9.9.0):
-    resolution: {integrity: sha512-1oKvm92L9l2od2H9wKx2ZvR4tzn7gUtd7bPLI7AWUmm7U9H1iEypndt5d985ypxGsEs0gToDaKTrytbBIJwwSg==}
+  /@intlify/unplugin-vue-i18n@3.0.1(rollup@2.79.1)(vue-i18n@9.9.0):
+    resolution: {integrity: sha512-q1zJhA/WpoLBzAAuKA5/AEp0e+bMOM10ll/HxT4g1VAw/9JhC4TTobP9KobKH90JMZ4U2daLFlYQfKNd29lpqw==}
     engines: {node: '>= 14.16'}
     peerDependencies:
       petite-vue-i18n: '*'
@@ -2647,15 +2647,15 @@ packages:
       '@types/gapi.client.discovery-v1': 0.0.4
     dev: false
 
-  /@maxim_mazurok/gapi.client.drive-v3@0.0.20240118:
-    resolution: {integrity: sha512-hCBTOZ0Tf1iWEVB3i0iyp4WRt7oTQFB/NpNl/ApI6YIRlv0RiiaQrhU9GG3kbpkGciLaeIJsNVt9Po0+chAq/A==}
+  /@maxim_mazurok/gapi.client.drive-v3@0.0.20240304:
+    resolution: {integrity: sha512-PuGvDvRE70XsyUqnQCq5M2VJ7/E7u5pDvHZfBXunVlf5mYmkyAdbZg+ygJDJ2243wWpUXjmEcuxLDY2yamIq4g==}
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
     dev: false
 
-  /@maxim_mazurok/gapi.client.sheets-v4@0.0.20240116:
-    resolution: {integrity: sha512-CMBiBXwn3SA5kbMPPaABcb2jIa+1nYwljDCFvmYgGLPcHJ4AXGZRYrRc9O2dbGp9ocyxDD4+ijFoHTPy5sJ5HQ==}
+  /@maxim_mazurok/gapi.client.sheets-v4@0.0.20240229:
+    resolution: {integrity: sha512-O+RAuXIWQfW5IrbVYwIb0Adg3fC9f/F92/v02a6rSsWVcDHKI3MOzR/DxUGkhKB4eQENLVuTH0KOy/7r9uOSPg==}
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -5562,13 +5562,13 @@ packages:
   /@types/gapi.client.drive-v3@0.0.4:
     resolution: {integrity: sha512-jE37dJ0EzAdY0aJPFOp20xmec/aO0P4HtUIA9k07RMPyedFDOcuMlSac1r0PklwQdgXF7BHaMoObNHNAnwSQUQ==}
     dependencies:
-      '@maxim_mazurok/gapi.client.drive-v3': 0.0.20240118
+      '@maxim_mazurok/gapi.client.drive-v3': 0.0.20240304
     dev: false
 
   /@types/gapi.client.sheets-v4@0.0.4:
     resolution: {integrity: sha512-6kTJ7aDMAElfdQV1XzVJmZWjgbibpa84DMuKuaN8Cwqci/dkglPyHXKvsGrRugmuYvgFYr35AQqwz6j3q8R0dw==}
     dependencies:
-      '@maxim_mazurok/gapi.client.sheets-v4': 0.0.20240116
+      '@maxim_mazurok/gapi.client.sheets-v4': 0.0.20240229
     dev: false
 
   /@types/gapi.client@1.0.8:
@@ -15884,6 +15884,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
